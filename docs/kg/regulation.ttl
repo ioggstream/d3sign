@@ -1,0 +1,382 @@
+# Obligations, and what in D3FEND discharges them.
+#
+# Hand-authored and hand-edited: this file is the only place in the app where RDF is
+# written by a person rather than generated, which is why it is plain turtle and not
+# folded into legal.ttl.gz. A rebuild of that artifact must not be able to overwrite
+# it, and a mapping claim has to be reviewable in a diff.
+#
+# ENGINEERING JUDGEMENT, NOT LEGAL ADVICE. Every al:Mapping below is an opinion that
+# a D3FEND technique speaks to a statutory duty. It says nothing about whether the
+# control is configured, deployed, effective, or in scope. al:review-status records
+# whether a human has agreed with it yet.
+#
+# Two things not to do with this file:
+#
+#   - Do not join on dct:source. The citations here and in K:legal are display
+#     strings, unnormalised on both sides ("GDPR Art.5-2" vs "GDPR Article 32(1)(a)").
+#     Join on IRIs.
+#   - Do not point skos:broader at a term in another graph. A SPARQL property path is
+#     evaluated inside one GRAPH binding, so a hierarchy that leaves K:regulation
+#     cannot be walked (docs/adr/0025-legal-knowledge-bases.md). Links out are one
+#     hop: skos:relatedMatch, al:legal-concept, al:d3fend-class.
+#
+# Loaded into urn:d3fend-graph:kg:regulation, i.e. K:regulation in a query.
+
+@prefix ob:   <urn:d3fend-graph:obl:> .
+@prefix al:   <urn:d3fend-graph:align:> .
+@prefix d3f:  <http://d3fend.mitre.org/ontologies/d3fend.owl#> .
+@prefix dpv:  <https://w3id.org/dpv#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ===========================================================================
+# The vocabulary this file uses
+# ===========================================================================
+
+ob:Instrument a rdfs:Class ;
+  rdfs:label "Legal instrument"@en ;
+  skos:definition "A directive, regulation or act that imposes obligations."@en .
+
+ob:Obligation a rdfs:Class ;
+  rdfs:label "Obligation"@en ;
+  skos:definition "One duty imposed by an instrument, at the granularity a control can address — usually a lettered point of an article."@en .
+
+ob:instrument a rdf:Property ;
+  rdfs:label "instrument"@en ;
+  rdfs:domain ob:Obligation ; rdfs:range ob:Instrument ;
+  skos:definition "The instrument an obligation comes from."@en .
+
+# The mapping is reified rather than expressed as a bare predicate between the two
+# classes, because the rationale is the point: an unexplained claim that a control
+# covers a legal duty is worse than no claim, since it cannot be audited or argued
+# with. skos:relatedMatch and friends were considered and rejected — they cannot
+# carry a rationale without reifying anyway, their symmetry and transitivity would
+# be a lie about an owl:Class/skos:Concept pair, and DPV already uses them, so
+# overloading them would make our claims indistinguishable from upstream's.
+al:Mapping a rdfs:Class ;
+  rdfs:label "Mapping"@en ;
+  skos:definition "A claim that a D3FEND class speaks to an obligation, with the reasoning for it."@en .
+
+al:d3fend-class a rdf:Property ; rdfs:domain al:Mapping ; rdfs:label "D3FEND class"@en .
+al:legal-concept a rdf:Property ; rdfs:domain al:Mapping ; rdfs:label "legal concept"@en ;
+  skos:definition "The DPV concept in K:legal that names the same control in legal vocabulary."@en .
+al:obligation a rdf:Property ; rdfs:domain al:Mapping ; rdfs:range ob:Obligation ;
+  rdfs:label "obligation"@en .
+al:rationale a rdf:Property ; rdfs:domain al:Mapping ; rdfs:label "rationale"@en ;
+  skos:definition "Why this technique discharges this duty, and where it stops. Mandatory."@en .
+al:strength a rdf:Property ; rdfs:domain al:Mapping ; rdfs:label "strength"@en .
+al:review-status a rdf:Property ; rdfs:domain al:Mapping ; rdfs:label "review status"@en .
+
+al:Full a skos:Concept ; skos:prefLabel "full"@en ;
+  skos:definition "The obligation names this control, or the control is the whole of what the obligation asks for."@en .
+al:Partial a skos:Concept ; skos:prefLabel "partial"@en ;
+  skos:definition "The control addresses part of the duty; the rest is out of the technique's reach."@en .
+al:Supporting a skos:Concept ; skos:prefLabel "supporting"@en ;
+  skos:definition "The control helps but would not on its own be offered as evidence of compliance."@en .
+
+al:Draft a skos:Concept ; skos:prefLabel "draft"@en ;
+  skos:definition "Proposed, not yet agreed by a reviewer."@en .
+al:Reviewed a skos:Concept ; skos:prefLabel "reviewed"@en ;
+  skos:definition "A human has read the rationale and agreed with it."@en .
+
+# The predicate a CONSTRUCT query writes when it draws obligations into the diagram
+# (data/queries/13-enrich-legal-obligations.rq).
+al:satisfies a rdf:Property ; rdfs:range ob:Obligation ; rdfs:label "satisfies"@en .
+
+# ===========================================================================
+# Section 1 — the obligation catalogue
+# ===========================================================================
+#
+# Transcribed from the instruments. DPV's own eu-nis2 module is not a substitute:
+# it covers incident notices and compliance status, and has no catalogue of the
+# Article 21(2) measures at all.
+#
+# The hierarchy stays inside this graph: an article's lettered points are
+# skos:broader the article. The link out to DPV's vocabulary is skos:relatedMatch,
+# one hop, on purpose.
+
+ob:NIS2 a ob:Instrument ;
+  skos:prefLabel "NIS2 Directive"@en ;
+  dct:identifier "Directive (EU) 2022/2555" ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/dir/2022/2555/oj> .
+
+ob:GDPR a ob:Instrument ;
+  skos:prefLabel "General Data Protection Regulation"@en ;
+  dct:identifier "Regulation (EU) 2016/679" ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/oj> .
+
+ob:nis2-obligations a skos:ConceptScheme ;
+  skos:prefLabel "NIS2 cybersecurity risk-management measures"@en .
+
+ob:gdpr-obligations a skos:ConceptScheme ;
+  skos:prefLabel "GDPR security of processing"@en .
+
+ob:nis2-art21-2 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Cybersecurity risk-management measures"@en ;
+  skos:definition "Appropriate and proportionate technical, operational and organisational measures to manage the risks posed to the security of network and information systems, based on an all-hazards approach. The lettered points below are the minimum the measures shall include."@en ;
+  dct:source "NIS2 Article 21(2)"@en .
+
+ob:nis2-art21-2-a a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Policies on risk analysis and information system security"@en ;
+  dct:source "NIS2 Article 21(2)(a)"@en ;
+  skos:relatedMatch dpv:RiskAssessment .
+
+ob:nis2-art21-2-b a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Incident handling"@en ;
+  dct:source "NIS2 Article 21(2)(b)"@en ;
+  skos:relatedMatch dpv:IncidentManagementProcedures .
+
+ob:nis2-art21-2-c a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Business continuity, such as backup management and disaster recovery, and crisis management"@en ;
+  dct:source "NIS2 Article 21(2)(c)"@en ;
+  skos:relatedMatch dpv:DisasterRecoveryProcedures .
+
+ob:nis2-art21-2-d a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Supply chain security, including security-related aspects of the relationships with direct suppliers or service providers"@en ;
+  dct:source "NIS2 Article 21(2)(d)"@en .
+
+ob:nis2-art21-2-e a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Security in network and information systems acquisition, development and maintenance, including vulnerability handling and disclosure"@en ;
+  dct:source "NIS2 Article 21(2)(e)"@en ;
+  skos:relatedMatch dpv:VulnerabilityTestingMethods .
+
+ob:nis2-art21-2-f a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Policies and procedures to assess the effectiveness of cybersecurity risk-management measures"@en ;
+  dct:source "NIS2 Article 21(2)(f)"@en ;
+  skos:relatedMatch dpv:ComplianceMonitoring .
+
+# A duty no drawing can discharge: training is about people, and D3FEND has no
+# defensive technique for it. It will show as a permanent gap, which is honest.
+ob:nis2-art21-2-g a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Basic cyber hygiene practices and cybersecurity training"@en ;
+  dct:source "NIS2 Article 21(2)(g)"@en ;
+  skos:relatedMatch dpv:CybersecurityTraining .
+
+ob:nis2-art21-2-h a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Policies and procedures regarding the use of cryptography and, where appropriate, encryption"@en ;
+  dct:source "NIS2 Article 21(2)(h)"@en ;
+  skos:relatedMatch dpv:CryptographicMethods .
+
+ob:nis2-art21-2-i a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Human resources security, access control policies and asset management"@en ;
+  dct:source "NIS2 Article 21(2)(i)"@en ;
+  skos:relatedMatch dpv:AccessControlMethod .
+
+ob:nis2-art21-2-j a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Multi-factor or continuous authentication, secured voice, video and text communications and secured emergency communication systems"@en ;
+  dct:source "NIS2 Article 21(2)(j)"@en ;
+  skos:relatedMatch dpv:MultiFactorAuthentication .
+
+ob:gdpr-art32-1 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Security of processing"@en ;
+  skos:definition "Appropriate technical and organisational measures to ensure a level of security appropriate to the risk."@en ;
+  dct:source "GDPR Article 32(1)"@en .
+
+# Two duties in one point, and only one of them is reachable from a diagram: D3FEND
+# has encryption techniques but nothing for pseudonymisation. The mappings below
+# therefore cover this obligation only partly, and deliberately say so.
+ob:gdpr-art32-1-a a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art32-1 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Pseudonymisation and encryption of personal data"@en ;
+  dct:source "GDPR Article 32(1)(a)"@en ;
+  skos:relatedMatch dpv:Pseudonymisation , dpv:Encryption .
+
+ob:gdpr-art32-1-b a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art32-1 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Ongoing confidentiality, integrity, availability and resilience of processing systems and services"@en ;
+  dct:source "GDPR Article 32(1)(b)"@en .
+
+ob:gdpr-art32-1-c a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art32-1 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Ability to restore the availability and access to personal data in a timely manner in the event of a physical or technical incident"@en ;
+  dct:source "GDPR Article 32(1)(c)"@en ;
+  skos:relatedMatch dpv:DataBackupProtocols .
+
+ob:gdpr-art32-1-d a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art32-1 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Process for regularly testing, assessing and evaluating the effectiveness of the measures"@en ;
+  dct:source "GDPR Article 32(1)(d)"@en ;
+  skos:relatedMatch dpv:PenetrationTestingMethods .
+
+# ===========================================================================
+# Section 2 — the D3FEND alignment
+# ===========================================================================
+#
+# Every mapping here is al:Draft: proposed by construction of this file, not yet
+# agreed. Review means reading the rationale and deciding whether you would put the
+# claim in front of an auditor, then changing al:Draft to al:Reviewed.
+#
+# A mapping is made against the *most general* D3FEND class that the reasoning
+# actually holds for, because queries resolve subclasses with rdfs:subClassOf* —
+# mapping d3f:Credential earns the mapping for d3f:Password for free, and mapping
+# d3f:Password would not work the other way round.
+
+al:map-mfa-nis2-21-2-j a al:Mapping ;
+  al:d3fend-class  d3f:Multi-factorAuthentication ;
+  al:legal-concept dpv:MultiFactorAuthentication ;
+  al:obligation    ob:nis2-art21-2-j ;
+  al:strength      al:Full ;
+  al:rationale     "Article 21(2)(j) names multi-factor authentication in as many words; the D3FEND technique is the same control."@en ;
+  dct:source       "NIS2 Article 21(2)(j)"@en ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-message-encryption-nis2-21-2-h a al:Mapping ;
+  al:d3fend-class  d3f:MessageEncryption ;
+  al:legal-concept dpv:EncryptionInTransfer ;
+  al:obligation    ob:nis2-art21-2-h ;
+  al:strength      al:Partial ;
+  al:rationale     "Covers the cryptography-in-transit half of (h). The policies-and-procedures half is organisational and no diagram can assert it."@en ;
+  dct:source       "NIS2 Article 21(2)(h)"@en ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-encrypted-tunnels-nis2-21-2-h a al:Mapping ;
+  al:d3fend-class  d3f:EncryptedTunnels ;
+  al:legal-concept dpv:EncryptionInTransfer ;
+  al:obligation    ob:nis2-art21-2-h ;
+  al:strength      al:Supporting ;
+  al:rationale     "A tunnel protects the channel rather than the message, so it evidences use of cryptography without saying anything about the data at either end."@en ;
+  dct:source       "NIS2 Article 21(2)(h)"@en ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-disk-encryption-gdpr-32-1-a a al:Mapping ;
+  al:d3fend-class  d3f:DiskEncryption ;
+  al:legal-concept dpv:EncryptionAtRest ;
+  al:obligation    ob:gdpr-art32-1-a ;
+  al:strength      al:Supporting ;
+  al:rationale     "Article 32(1)(a) offers encryption as an example measure. Disk encryption protects data at rest against loss of the medium only, and does nothing for the pseudonymisation limb of the same point."@en ;
+  dct:source       "GDPR Article 32(1)(a)"@en ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-file-encryption-gdpr-32-1-a a al:Mapping ;
+  al:d3fend-class  d3f:FileEncryption ;
+  al:legal-concept dpv:EncryptionAtRest ;
+  al:obligation    ob:gdpr-art32-1-a ;
+  al:strength      al:Partial ;
+  al:rationale     "Encrypting the files that hold personal data addresses the encryption limb of (a) directly, at a granularity a controller can point at."@en ;
+  dct:source       "GDPR Article 32(1)(a)"@en ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-strong-password-policy-nis2-21-2-i a al:Mapping ;
+  al:d3fend-class  d3f:StrongPasswordPolicy ;
+  al:legal-concept dpv:PasswordAuthentication ;
+  al:obligation    ob:nis2-art21-2-i ;
+  al:strength      al:Partial ;
+  al:rationale     "Speaks to the access-control limb of (i). Human resources security and asset management are elsewhere in the same point and untouched by it."@en ;
+  dct:source       "NIS2 Article 21(2)(i)"@en ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-user-account-permissions-nis2-21-2-i a al:Mapping ;
+  al:d3fend-class  d3f:UserAccountPermissions ;
+  al:legal-concept dpv:AccessControlMethod ;
+  al:obligation    ob:nis2-art21-2-i ;
+  al:strength      al:Partial ;
+  al:rationale     "Per-account permissions are the enforcement point an access control policy is written for; the policy itself is organisational."@en ;
+  dct:source       "NIS2 Article 21(2)(i)"@en ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-asset-inventory-nis2-21-2-i a al:Mapping ;
+  al:d3fend-class  d3f:AssetInventory ;
+  al:legal-concept dpv:AssetManagementProcedures ;
+  al:obligation    ob:nis2-art21-2-i ;
+  al:strength      al:Partial ;
+  al:rationale     "Asset management in (i) starts from knowing what the assets are, which is what this technique produces."@en ;
+  dct:source       "NIS2 Article 21(2)(i)"@en ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-credential-rotation-nis2-21-2-i a al:Mapping ;
+  al:d3fend-class  d3f:CredentialRotation ;
+  al:legal-concept dpv:IdentityManagementMethod ;
+  al:obligation    ob:nis2-art21-2-i ;
+  al:strength      al:Supporting ;
+  al:rationale     "Rotating credentials is credential lifecycle management, which sits under the access-control limb of (i) without being what the point asks for."@en ;
+  dct:source       "NIS2 Article 21(2)(i)"@en ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-system-vulnerability-assessment-nis2-21-2-e a al:Mapping ;
+  al:d3fend-class  d3f:SystemVulnerabilityAssessment ;
+  al:legal-concept dpv:VulnerabilityTestingMethods ;
+  al:obligation    ob:nis2-art21-2-e ;
+  al:strength      al:Partial ;
+  al:rationale     "Vulnerability handling in (e) begins with finding them. Disclosure, and security during acquisition and development, are not addressed."@en ;
+  dct:source       "NIS2 Article 21(2)(e)"@en ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+# No al:legal-concept: DPV 2.3 has no concept for patching as a measure, and
+# inventing a near-miss would make the join look richer than it is.
+al:map-software-update-nis2-21-2-e a al:Mapping ;
+  al:d3fend-class  d3f:SoftwareUpdate ;
+  al:obligation    ob:nis2-art21-2-e ;
+  al:strength      al:Supporting ;
+  al:rationale     "Applying updates is how a handled vulnerability stops being one, so it evidences the maintenance limb of (e)."@en ;
+  dct:source       "NIS2 Article 21(2)(e)"@en ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-restore-disk-image-nis2-21-2-c a al:Mapping ;
+  al:d3fend-class  d3f:RestoreDiskImage ;
+  al:legal-concept dpv:DisasterRecoveryProcedures ;
+  al:obligation    ob:nis2-art21-2-c ;
+  al:strength      al:Partial ;
+  al:rationale     "Restoring an image is the recovery half of (c). Backup management and crisis management are separate duties in the same point."@en ;
+  dct:source       "NIS2 Article 21(2)(c)"@en ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-restore-database-gdpr-32-1-c a al:Mapping ;
+  al:d3fend-class  d3f:RestoreDatabase ;
+  al:legal-concept dpv:DataBackupProtocols ;
+  al:obligation    ob:gdpr-art32-1-c ;
+  al:strength      al:Partial ;
+  al:rationale     "Article 32(1)(c) asks for the ability to restore availability and access. Restoring the database that holds the personal data is that ability; whether it happens in a timely manner is not something the diagram states."@en ;
+  dct:source       "GDPR Article 32(1)(c)"@en ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-network-vulnerability-assessment-gdpr-32-1-d a al:Mapping ;
+  al:d3fend-class  d3f:NetworkVulnerabilityAssessment ;
+  al:legal-concept dpv:PenetrationTestingMethods ;
+  al:obligation    ob:gdpr-art32-1-d ;
+  al:strength      al:Partial ;
+  al:rationale     "Regular assessment of the measures' effectiveness is what (d) requires; this technique tests the network measures specifically."@en ;
+  dct:source       "GDPR Article 32(1)(d)"@en ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-auth-event-thresholding-nis2-21-2-b a al:Mapping ;
+  al:d3fend-class  d3f:AuthenticationEventThresholding ;
+  al:legal-concept dpv:ActivityMonitoring ;
+  al:obligation    ob:nis2-art21-2-b ;
+  al:strength      al:Supporting ;
+  al:rationale     "Incident handling in (b) presupposes detection. Thresholding authentication events is one detection input, not a handling process."@en ;
+  dct:source       "NIS2 Article 21(2)(b)"@en ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+# Interop courtesy, derived from the mappings above rather than asserted
+# independently: a one-hop skos:relatedMatch, so a query that has not been told
+# about al:Mapping can still get from a D3FEND class to DPV's name for it. Never
+# closeMatch or exactMatch — these are not the same concept, only related ones.
+d3f:Multi-factorAuthentication skos:relatedMatch dpv:MultiFactorAuthentication .
+d3f:MessageEncryption          skos:relatedMatch dpv:EncryptionInTransfer .
+d3f:EncryptedTunnels           skos:relatedMatch dpv:EncryptionInTransfer .
+d3f:DiskEncryption             skos:relatedMatch dpv:EncryptionAtRest .
+d3f:FileEncryption             skos:relatedMatch dpv:EncryptionAtRest .
+d3f:StrongPasswordPolicy       skos:relatedMatch dpv:PasswordAuthentication .
+d3f:UserAccountPermissions     skos:relatedMatch dpv:AccessControlMethod .
+d3f:AssetInventory             skos:relatedMatch dpv:AssetManagementProcedures .
+d3f:CredentialRotation         skos:relatedMatch dpv:IdentityManagementMethod .
+d3f:SystemVulnerabilityAssessment  skos:relatedMatch dpv:VulnerabilityTestingMethods .
+d3f:NetworkVulnerabilityAssessment skos:relatedMatch dpv:PenetrationTestingMethods .
+d3f:RestoreDiskImage           skos:relatedMatch dpv:DisasterRecoveryProcedures .
+d3f:RestoreDatabase            skos:relatedMatch dpv:DataBackupProtocols .
+d3f:AuthenticationEventThresholding skos:relatedMatch dpv:ActivityMonitoring .
