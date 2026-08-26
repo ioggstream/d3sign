@@ -1,0 +1,14 @@
+@prefix d3f: <http://d3fend.mitre.org/ontologies/d3fend.owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# Placeholder enrichment data: well-known authentication flow relationships
+# not derivable from any single diagram, merged into their own named graph
+# so they can be toggled independently of diagram-derived triples.
+
+# <urn:d3fend-graph:enrichment:ssh-public-key-auth>
+#   rdfs:label "SSH public-key authentication flow" ;
+#   a d3f:AuthenticationFlow .
+#
+# <urn:d3fend-graph:enrichment:ssh-public-key-auth>
+#   d3f:describes d3f:PublicKey, d3f:PrivateKey, d3f:Multi-factorAuthentication .
+#

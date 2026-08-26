@@ -1,0 +1,26 @@
+# title: Measures the alignment says nothing about
+# about: Defensive measures drawn here that no mapping connects to any obligation. Not a compliance gap — a gap in the alignment itself.
+# needs: d3fend regulation
+
+# Pointed at our own data rather than at the diagram. 08-obligations-without-measure
+# cannot distinguish "nothing is drawn for this duty" from "nothing is mapped to it",
+# and the second is fixed by editing app/public/kg/regulation.ttl, not by drawing.
+# This query finds the raw material for that edit: real controls in the design that
+# the alignment has no opinion about yet.
+SELECT DISTINCT ?node ?label ?class WHERE {
+  GRAPH ?g {
+    ?node a ?class .
+    OPTIONAL { ?node rdfs:label ?label }
+  }
+  FILTER(!STRSTARTS(STR(?g), STR(K:)))
+  GRAPH K:d3fend { ?class rdfs:subClassOf* d3f:DefensiveTechnique }
+
+  FILTER NOT EXISTS {
+    # Both directions of the hierarchy: a mapping made against a superclass covers
+    # this node, and a mapping made against a subclass means the alignment already
+    # has an opinion about this area even if it is more specific than the diagram.
+    GRAPH K:d3fend { { ?class rdfs:subClassOf* ?mapped } UNION { ?mapped rdfs:subClassOf* ?class } }
+    GRAPH K:regulation { ?mapping al:d3fend-class ?mapped }
+  }
+}
+ORDER BY ?label ?node

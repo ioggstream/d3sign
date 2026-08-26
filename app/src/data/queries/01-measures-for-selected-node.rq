@@ -1,0 +1,24 @@
+# title: Measures D3FEND offers for the selected node
+# about: Defensive techniques that act on the selected node's class or any of its superclasses. Select a node in the graph first.
+# needs: d3fend
+# scope: selection
+
+# The flagship query. The node panel already lists measures for a node's exact
+# class, read out of d3fend-metadata.json; this walks rdfs:subClassOf* first, so a
+# d3f:Password also collects everything D3FEND aims at d3f:Credential and
+# d3f:DigitalArtifact. That transitive step is what the precomputed projection
+# structurally cannot do, and the reason for querying the ontology at all.
+SELECT DISTINCT ?measure ?measureLabel ?verb ?appliesTo ?d3fendId WHERE {
+  GRAPH ?g { ?this a ?class }
+  FILTER(!STRSTARTS(STR(?g), STR(K:)))
+
+  GRAPH K:d3fend {
+    ?class rdfs:subClassOf* ?appliesTo .
+    ?measure ?verb ?appliesTo .
+    ?measure rdfs:subClassOf* d3f:DefensiveTechnique .
+    FILTER(STRSTARTS(STR(?verb), STR(d3f:)))
+    OPTIONAL { ?measure rdfs:label ?measureLabel }
+    OPTIONAL { ?measure d3f:d3fend-id ?d3fendId }
+  }
+}
+ORDER BY ?measureLabel

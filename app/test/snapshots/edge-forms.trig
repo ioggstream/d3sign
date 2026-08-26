@@ -1,0 +1,27 @@
+@prefix d3f: <http://d3fend.mitre.org/ontologies/d3fend.owl#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix G: <urn:d3fend-graph:>.
+@prefix E: <urn:d3fend-graph:enrichment:>.
+
+G:edge-forms {
+G:a a d3f:Host;
+    rdfs:label "Host A".
+G:b a d3f:Host;
+    rdfs:label "Host B".
+G:c a d3f:Host;
+    rdfs:label "Host C".
+G:d a d3f:Host;
+    rdfs:label "Host D".
+G:a d3f:reads G:b.
+G:b d3f:writes G:c.
+G:a d3f:abuses G:d.
+G:b d3f:abuses G:d.
+G:c d3f:reads G:d;
+    d3f:blocks G:d.
+G:b d3f:related G:c.
+G:c d3f:related G:b.
+G:a d3f:connected-to G:b.
+G:b d3f:connected-to G:a.
+G:a d3f:adds G:d
+}

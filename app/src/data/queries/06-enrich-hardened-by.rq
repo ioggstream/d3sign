@@ -1,0 +1,26 @@
+# title: Enrich — draw what hardens what (CONSTRUCT)
+# about: Builds d3f:hardened-by links between the measures and artifacts already in the document, resolved through the ontology. Add the result as a graph to see it drawn.
+# needs: d3fend
+
+# The enrichment path: a CONSTRUCT result can be added to the document as its own
+# named graph, which makes it visible in the Graphs chip, serialized in the TriG
+# pane and drawn in the graph view — no new plumbing, because the graph view is
+# built from RDF alone (docs/adr/0014-graph-view-from-rdf-only.md).
+#
+# Both endpoints are nodes the diagram already declares, so this adds edges rather
+# than nodes: the drawing gains the relations that were only implicit in D3FEND.
+CONSTRUCT { ?artifact d3f:hardened-by ?measure }
+WHERE {
+  GRAPH ?ag { ?artifact a ?artifactClass }
+  FILTER(!STRSTARTS(STR(?ag), STR(K:)))
+  GRAPH ?mg { ?measure a ?measureClass }
+  FILTER(!STRSTARTS(STR(?mg), STR(K:)))
+  FILTER(?artifact != ?measure)
+
+  GRAPH K:d3fend {
+    ?measureClass rdfs:subClassOf* d3f:DefensiveTechnique .
+    ?artifactClass rdfs:subClassOf* ?super .
+    ?measureClass ?verb ?super .
+    FILTER(STRSTARTS(STR(?verb), STR(d3f:)))
+  }
+}

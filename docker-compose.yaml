@@ -1,0 +1,20 @@
+---
+# Start this docker compose file with:
+#
+# $ docker compose up test
+#
+# Start the dev env with:
+#
+# $ docker compose up -d dev
+#
+services:
+  dev:
+    image: docker.io/library/node:24-alpine
+    volumes:
+    - ./:/code
+    user: "1000:1000"
+    command:
+    - infinity
+    entrypoint:
+    - sleep
+    - infinity

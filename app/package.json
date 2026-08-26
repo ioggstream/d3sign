@@ -1,0 +1,36 @@
+{
+  "name": "d3fend-graph-app",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@codemirror/autocomplete": "^6.16.0",
+    "@codemirror/commands": "^6.6.0",
+    "@codemirror/lang-yaml": "^6.0.0",
+    "@codemirror/search": "^6.5.0",
+    "@codemirror/state": "^6.4.0",
+    "@codemirror/view": "^6.26.0",
+    "@mermaid-js/layout-elk": "^0.1.7",
+    "cytoscape": "^3.30.0",
+    "cytoscape-elk": "^2.3.0",
+    "mermaid": "^11.0.0",
+    "n3": "^1.17.0",
+    "oxigraph": "^0.4.11",
+    "yaml": "^2.4.0"
+  },
+  "devDependencies": {
+    "vite": "^5.2.0",
+    "vitest": "^1.6.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}

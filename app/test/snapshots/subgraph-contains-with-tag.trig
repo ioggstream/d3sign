@@ -1,0 +1,22 @@
+@prefix d3f: <http://d3fend.mitre.org/ontologies/d3fend.owl#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix G: <urn:d3fend-graph:>.
+@prefix E: <urn:d3fend-graph:enrichment:>.
+
+G:default {
+G:webapp a d3f:WebApplication;
+    rdfs:label "Web Application".
+G:browser a d3f:Browser;
+    rdfs:label "Browser".
+G:host-1 a d3f:Host;
+    rdfs:label "Host 1".
+G:host-2 a d3f:Host;
+    rdfs:label "Host 2".
+G:net a d3f:Network;
+    rdfs:label "192.168.0.0/24".
+G:cluster a d3f:OrchestrationServer;
+    rdfs:label "Cluster".
+G:net d3f:contains G:webapp, G:browser, G:cluster.
+G:cluster d3f:contains G:host-1, G:host-2
+}

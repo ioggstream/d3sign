@@ -1,0 +1,34 @@
+# title: Obligations with no measure in this document
+# about: Regulatory duties that nothing drawn here addresses, resolved through the D3FEND alignment. The compliance gaps.
+# needs: d3fend regulation
+
+# The catalogue is iterated first and the document is the FILTER NOT EXISTS, which is
+# the whole point: counting outwards from the diagram could only ever list duties you
+# have already met. An obligation nobody has done anything about has to be able to
+# appear, and it can only appear if the query starts from the law.
+#
+# Two ways a duty can be uncovered, and they read the same here but mean different
+# things: no mapping claims any D3FEND class for it (see 12-unmapped-measures.rq for
+# the other side of that), or a mapping exists and the diagram has no node of that
+# class. Only the second is a gap you can close by drawing something.
+SELECT ?citation ?obligation ?label WHERE {
+  GRAPH K:regulation {
+    ?obligation a ob:Obligation ;
+      skos:prefLabel ?label ;
+      dct:source ?citation .
+  }
+
+  FILTER NOT EXISTS {
+    GRAPH K:regulation {
+      ?mapping al:obligation ?obligation ;
+               al:d3fend-class ?mapped .
+    }
+    # A node typed with a subclass of the mapped class still covers the duty: the
+    # mapping is deliberately made against the most general class its reasoning
+    # holds for.
+    GRAPH K:d3fend { ?class rdfs:subClassOf* ?mapped }
+    GRAPH ?g { ?node a ?class }
+    FILTER(!STRSTARTS(STR(?g), STR(K:)))
+  }
+}
+ORDER BY ?citation

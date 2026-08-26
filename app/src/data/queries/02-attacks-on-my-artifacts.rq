@@ -1,0 +1,22 @@
+# title: Attacks that target what I drew
+# about: Offensive techniques D3FEND records against the classes of artifacts in the document, with their ATT&CK ids.
+# needs: d3fend
+
+SELECT DISTINCT ?artifact ?label ?attack ?attackLabel ?attackId WHERE {
+  GRAPH ?g {
+    ?artifact a ?class .
+    OPTIONAL { ?artifact rdfs:label ?label }
+  }
+  FILTER(!STRSTARTS(STR(?g), STR(K:)))
+
+  GRAPH K:d3fend {
+    ?class rdfs:subClassOf* ?super .
+    ?attack ?verb ?super .
+    # An ATT&CK id is what makes a class offensive in D3FEND; the defensive branch
+    # carries d3f:d3fend-id instead.
+    ?attack d3f:attack-id ?attackId .
+    FILTER(STRSTARTS(STR(?verb), STR(d3f:)))
+    OPTIONAL { ?attack rdfs:label ?attackLabel }
+  }
+}
+ORDER BY ?attackId ?label

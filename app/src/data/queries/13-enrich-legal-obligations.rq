@@ -1,0 +1,27 @@
+# title: Enrich — draw the obligations the measures discharge (CONSTRUCT)
+# about: Adds an al:satisfies link from each measure to the article it addresses, with the article as a labelled node. Add the result as a graph to see the law in the drawing.
+# needs: d3fend regulation
+
+# The enrichment path again (06-enrich-hardened-by.rq), but the new nodes come from
+# outside D3FEND: added as a graph, this draws obligations beside the architecture.
+#
+# rdfs:label is what graphModel.js reads for a node's display text, so the obligation
+# arrives labelled with its citation instead of as a bare urn:d3fend-graph:obl:… —
+# al: and ob: are deliberately not in the document prefix set (they would rewrite the
+# TriG pane header for prefixes no diagram uses), so the IRI is what you would
+# otherwise see.
+CONSTRUCT {
+  ?node al:satisfies ?obligation .
+  ?obligation rdfs:label ?citation .
+}
+WHERE {
+  GRAPH ?g { ?node a ?measureClass }
+  FILTER(!STRSTARTS(STR(?g), STR(K:)))
+
+  GRAPH K:d3fend { ?measureClass rdfs:subClassOf* ?mapped }
+  GRAPH K:regulation {
+    ?mapping al:d3fend-class ?mapped ;
+             al:obligation ?obligation .
+    ?obligation dct:source ?citation .
+  }
+}

@@ -1,0 +1,27 @@
+# title: Legal duties the selected node speaks to
+# about: Articles the selected node's D3FEND class, or any superclass, is mapped to, with the reasoning. Engineering judgement, not legal advice. Select a node first.
+# needs: d3fend regulation
+# scope: selection
+
+# The transitive step is the point, exactly as in 01-measures-for-selected-node.rq:
+# a d3f:Password node collects every mapping made against d3f:Credential, because a
+# mapping is deliberately written against the most general class whose reasoning
+# holds. Without rdfs:subClassOf* this returns only what happens to have been mapped
+# at precisely the class the diagram used.
+SELECT DISTINCT ?citation ?obLabel ?strength ?rationale ?definition WHERE {
+  GRAPH ?g { ?this a ?class }
+  FILTER(!STRSTARTS(STR(?g), STR(K:)))
+
+  GRAPH K:d3fend { ?class rdfs:subClassOf* ?mapped }
+
+  GRAPH K:regulation {
+    ?mapping al:d3fend-class ?mapped ;
+             al:obligation ?obligation ;
+             al:strength ?strength .
+    OPTIONAL { ?mapping al:rationale ?rationale }
+    ?obligation skos:prefLabel ?obLabel ;
+                dct:source ?citation .
+    OPTIONAL { ?obligation skos:definition ?definition }
+  }
+}
+ORDER BY ?citation

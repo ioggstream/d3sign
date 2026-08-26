@@ -1,0 +1,31 @@
+# title: Measure mix by DPV family
+# about: How this document's measures distribute over DPV's technical, organisational, legal and physical measure families. A zero is a family nothing here touches.
+# needs: d3fend regulation legal
+
+# DPV's hierarchy is mixed, and this is the query that has to know it: leaf concepts
+# use skos:broader, but the top of each family uses rdfs:subClassOf
+# (dpv:TechnicalMeasure rdfs:subClassOf dpv:TechnicalOrganisationalMeasure). A bare
+# skos:broader* stops one hop short of the family root and under-reports without
+# failing — which is why the alternation below is not optional.
+#
+# The zeros are the useful rows, so the walk is inside an OPTIONAL and the families
+# come from VALUES: a family nothing maps to still has to appear.
+SELECT ?family ?familyLabel (COUNT(DISTINCT ?node) AS ?nodes) WHERE {
+  VALUES ?family {
+    dpv:TechnicalMeasure
+    dpv:OrganisationalMeasure
+    dpv:LegalMeasure
+    dpv:PhysicalMeasure
+  }
+  GRAPH K:legal { ?family skos:prefLabel ?familyLabel }
+
+  OPTIONAL {
+    GRAPH K:legal { ?concept (skos:broader|rdfs:subClassOf)* ?family }
+    GRAPH K:regulation { ?mapping al:legal-concept ?concept ; al:d3fend-class ?mapped }
+    GRAPH K:d3fend { ?class rdfs:subClassOf* ?mapped }
+    GRAPH ?g { ?node a ?class }
+    FILTER(!STRSTARTS(STR(?g), STR(K:)))
+  }
+}
+GROUP BY ?family ?familyLabel
+ORDER BY ?nodes ?familyLabel

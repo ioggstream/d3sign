@@ -1,0 +1,36 @@
+@prefix d3f: <http://d3fend.mitre.org/ontologies/d3fend.owl#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix G: <urn:d3fend-graph:>.
+@prefix E: <urn:d3fend-graph:enrichment:>.
+
+G:node-shape-forms {
+G:rect a d3f:Host;
+    rdfs:label "Rect".
+G:round a d3f:Host;
+    rdfs:label "Round".
+G:circle a d3f:Host;
+    rdfs:label "Circle".
+G:subroutine a d3f:Host;
+    rdfs:label "Subroutine".
+G:cylinder a d3f:Host;
+    rdfs:label "Cylinder".
+G:stadium a d3f:Host;
+    rdfs:label "Stadium".
+G:rhombus a d3f:Host;
+    rdfs:label "Rhombus".
+G:hexagon a d3f:Host;
+    rdfs:label "Hexagon".
+G:parallelogram a d3f:Host;
+    rdfs:label "Parallelogram".
+G:parallelogram-alt a d3f:Host;
+    rdfs:label "Parallelogram alt".
+G:trapezoid a d3f:Host;
+    rdfs:label "Trapezoid".
+G:trapezoid-alt a d3f:Host;
+    rdfs:label "Trapezoid alt".
+G:flag a d3f:Host;
+    rdfs:label "Flag".
+G:attrs a d3f:Host;
+    rdfs:label "Attrs"
+}

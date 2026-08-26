@@ -1,0 +1,28 @@
+# title: Data flows into undefended artifacts
+# about: Reads, writes and accesses whose destination has no defensive measure on it. Where data goes to be unprotected.
+# needs: d3fend
+
+SELECT ?source ?verb ?target ?targetLabel WHERE {
+  GRAPH ?g {
+    ?source ?verb ?target .
+    OPTIONAL { ?target rdfs:label ?targetLabel }
+  }
+  FILTER(!STRSTARTS(STR(?g), STR(K:)))
+  FILTER(?verb IN (d3f:reads, d3f:writes, d3f:accesses, d3f:modifies, d3f:transfers))
+
+  # The target is an artifact, so an actor or a plan on the far end is not a finding.
+  GRAPH ?tg { ?target a ?targetClass }
+  FILTER(!STRSTARTS(STR(?tg), STR(K:)))
+  GRAPH K:d3fend { ?targetClass rdfs:subClassOf* d3f:Artifact }
+
+  FILTER NOT EXISTS {
+    GRAPH ?dg {
+      ?measure a ?measureClass .
+      ?measure ?mverb ?target .
+    }
+    FILTER(!STRSTARTS(STR(?dg), STR(K:)))
+    FILTER(STRSTARTS(STR(?mverb), STR(d3f:)))
+    GRAPH K:d3fend { ?measureClass rdfs:subClassOf* d3f:DefensiveTechnique }
+  }
+}
+ORDER BY ?targetLabel ?source

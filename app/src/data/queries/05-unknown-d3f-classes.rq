@@ -1,0 +1,16 @@
+# title: d3f: classes the ontology does not define
+# about: Typo catcher. Every d3f: class the document uses that D3FEND has no record of.
+# needs: d3fend
+
+# Only answerable once the ontology is queryable: d3fend-completions.json can offer
+# the right names but cannot tell you that a name you already typed is wrong.
+SELECT DISTINCT ?class ?usedBy WHERE {
+  GRAPH ?g { ?usedBy a ?class }
+  FILTER(!STRSTARTS(STR(?g), STR(K:)))
+  FILTER(STRSTARTS(STR(?class), STR(d3f:)))
+
+  # Absent as a subject entirely — a class D3FEND knows always says something
+  # about itself, whether a label, a definition or a parent.
+  FILTER NOT EXISTS { GRAPH K:d3fend { ?class ?p ?o } }
+}
+ORDER BY ?class

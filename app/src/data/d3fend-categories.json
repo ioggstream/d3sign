@@ -1,0 +1,10977 @@
+{
+  "AML.TA0000": [
+    "Goal"
+  ],
+  "AML.TA0001": [
+    "Goal"
+  ],
+  "AML.TA0002": [
+    "Goal"
+  ],
+  "AML.TA0003": [
+    "Goal"
+  ],
+  "AML.TA0004": [
+    "Goal"
+  ],
+  "AML.TA0005": [
+    "Goal"
+  ],
+  "AML.TA0006": [
+    "Goal"
+  ],
+  "AML.TA0007": [
+    "Goal"
+  ],
+  "AML.TA0008": [
+    "Goal"
+  ],
+  "AML.TA0009": [
+    "Goal"
+  ],
+  "AML.TA0010": [
+    "Goal"
+  ],
+  "AML.TA0011": [
+    "Goal"
+  ],
+  "AML.TA0012": [
+    "Goal"
+  ],
+  "AML.TA0013": [
+    "Goal"
+  ],
+  "AML.TA0014": [
+    "Goal"
+  ],
+  "AML.TA0015": [
+    "Goal"
+  ],
+  "ANN-basedClustering": [
+    "Plan"
+  ],
+  "ARIMAModel": [
+    "Plan"
+  ],
+  "ARMA_Model": [
+    "Plan"
+  ],
+  "Access": [
+    "Event"
+  ],
+  "AccessControlAdministrationEvent": [
+    "Event"
+  ],
+  "AccessControlConfiguration": [
+    "Artifact"
+  ],
+  "AccessControlEvent": [
+    "Event"
+  ],
+  "AccessControlGroup": [
+    "Artifact"
+  ],
+  "AccessControlList": [
+    "Artifact"
+  ],
+  "AccessDeniedEvent": [
+    "Event"
+  ],
+  "AccessGrantedEvent": [
+    "Event"
+  ],
+  "AccessMediation": [
+    "Plan"
+  ],
+  "AccessMediationEvent": [
+    "Event"
+  ],
+  "AccessMediator": [
+    "Artifact"
+  ],
+  "AccessModeling": [
+    "Plan"
+  ],
+  "AccessPolicyAdministration": [
+    "Plan"
+  ],
+  "AccessProcess": [
+    "Artifact"
+  ],
+  "AccessToken": [
+    "Artifact"
+  ],
+  "AccountLocking": [
+    "Plan"
+  ],
+  "Action": [
+    "Event"
+  ],
+  "ActiveCertificateAnalysis": [
+    "Plan"
+  ],
+  "ActiveLearning": [
+    "Plan"
+  ],
+  "ActiveLogicalLinkMapping": [
+    "Plan"
+  ],
+  "ActivePhysicalLinkMapping": [
+    "Plan"
+  ],
+  "ActivityDependency": [
+    "Artifact"
+  ],
+  "Actor-Critic": [
+    "Plan"
+  ],
+  "Actuator": [
+    "Artifact"
+  ],
+  "AdaptiveResonanceTheoryClustering": [
+    "Plan"
+  ],
+  "AddUserToGroupEvent": [
+    "Event"
+  ],
+  "AddressSpace": [
+    "Artifact"
+  ],
+  "AdministrativeNetworkActivityAnalysis": [
+    "Plan"
+  ],
+  "AdministrativeNetworkTraffic": [
+    "Artifact"
+  ],
+  "Agent": [
+    "Agent"
+  ],
+  "AgentAuthentication": [
+    "Plan"
+  ],
+  "AgentGroup": [
+    "Group"
+  ],
+  "AgglomerativeClustering": [
+    "Plan"
+  ],
+  "AlethicLogic": [
+    "Plan"
+  ],
+  "Alias": [
+    "Artifact"
+  ],
+  "AllocateMemory": [
+    "Artifact"
+  ],
+  "AnalyticTechnique": [
+    "Plan"
+  ],
+  "AnalyticalPurpose": [
+    "Goal"
+  ],
+  "AnonymousPipe": [
+    "Artifact"
+  ],
+  "AnswerSetProgramming": [
+    "Plan"
+  ],
+  "Application": [
+    "Artifact"
+  ],
+  "Application-basedProcessIsolation": [
+    "Plan"
+  ],
+  "ApplicationConfiguration": [
+    "Artifact"
+  ],
+  "ApplicationConfigurationDatabase": [
+    "Artifact"
+  ],
+  "ApplicationConfigurationDatabaseRecord": [
+    "Artifact"
+  ],
+  "ApplicationConfigurationFile": [
+    "Artifact"
+  ],
+  "ApplicationConfigurationHardening": [
+    "Plan"
+  ],
+  "ApplicationConfigurationModificationEvent": [
+    "Event"
+  ],
+  "ApplicationDeletionEvent": [
+    "Event"
+  ],
+  "ApplicationDisableEvent": [
+    "Event"
+  ],
+  "ApplicationEnableEvent": [
+    "Event"
+  ],
+  "ApplicationEvent": [
+    "Event"
+  ],
+  "ApplicationExceptionMonitoring": [
+    "Plan"
+  ],
+  "ApplicationFailureCountVariable": [
+    "Artifact"
+  ],
+  "ApplicationHardening": [
+    "Plan"
+  ],
+  "ApplicationInstallationEvent": [
+    "Event"
+  ],
+  "ApplicationInstaller": [
+    "Artifact"
+  ],
+  "ApplicationInventorySensor": [
+    "Sensor"
+  ],
+  "ApplicationLayerEvent": [
+    "Event"
+  ],
+  "ApplicationLayerFirewall": [
+    "Artifact"
+  ],
+  "ApplicationLayerLink": [
+    "Link"
+  ],
+  "ApplicationPerformanceMonitoring": [
+    "Plan"
+  ],
+  "ApplicationProcess": [
+    "Artifact"
+  ],
+  "ApplicationProcessConfiguration": [
+    "Artifact"
+  ],
+  "ApplicationProtocolCommandAnalysis": [
+    "Plan"
+  ],
+  "ApplicationRestartEvent": [
+    "Event"
+  ],
+  "ApplicationRule": [
+    "Artifact"
+  ],
+  "ApplicationRuntimeVariable": [
+    "Artifact"
+  ],
+  "ApplicationScanTime": [
+    "Artifact"
+  ],
+  "ApplicationShim": [
+    "Artifact"
+  ],
+  "ApplicationStartEvent": [
+    "Event"
+  ],
+  "ApplicationStopEvent": [
+    "Event"
+  ],
+  "ApplicationUpdateEvent": [
+    "Event"
+  ],
+  "ApproximateStringMatching": [
+    "Plan"
+  ],
+  "ArchiveFile": [
+    "Artifact"
+  ],
+  "Artifact": [
+    "Artifact"
+  ],
+  "ArtifactServer": [
+    "Artifact"
+  ],
+  "ArtificialNeuralNetClassification": [
+    "Plan"
+  ],
+  "AssetInventory": [
+    "Plan"
+  ],
+  "AssetInventoryAgent": [
+    "Artifact"
+  ],
+  "AssetVulnerabilityEnumeration": [
+    "Plan"
+  ],
+  "AssignPrivilegesToGroupEvent": [
+    "Event"
+  ],
+  "AssociationRuleLearning": [
+    "Plan"
+  ],
+  "AsymmetricFeature-basedTransferLearning": [
+    "Plan"
+  ],
+  "AsymmetricKey": [
+    "Artifact"
+  ],
+  "AtomicClock": [
+    "Artifact"
+  ],
+  "Attacker": [
+    "Agent"
+  ],
+  "AudioInputDevice": [
+    "Artifact"
+  ],
+  "AuthenticateUser": [
+    "Artifact"
+  ],
+  "Authentication": [
+    "Event"
+  ],
+  "AuthenticationCacheInvalidation": [
+    "Plan"
+  ],
+  "AuthenticationEvent": [
+    "Event"
+  ],
+  "AuthenticationEventThresholding": [
+    "Plan"
+  ],
+  "AuthenticationFunction": [
+    "Artifact"
+  ],
+  "AuthenticationLog": [
+    "Log"
+  ],
+  "AuthenticationServer": [
+    "Artifact"
+  ],
+  "AuthenticationService": [
+    "Artifact"
+  ],
+  "AuthenticationServiceApplication": [
+    "Artifact"
+  ],
+  "Authorization": [
+    "Event"
+  ],
+  "AuthorizationEvent": [
+    "Event"
+  ],
+  "AuthorizationEventThresholding": [
+    "Plan"
+  ],
+  "AuthorizationLog": [
+    "Log"
+  ],
+  "AuthorizationService": [
+    "Artifact"
+  ],
+  "Autoencoding": [
+    "Plan"
+  ],
+  "AutoregressiveModel": [
+    "Plan"
+  ],
+  "AverageAbsoluteDeviation": [
+    "Plan"
+  ],
+  "BERT": [
+    "Plan"
+  ],
+  "BarcodeScannerInputDevice": [
+    "Artifact"
+  ],
+  "BayesOptimalClassifier": [
+    "Plan"
+  ],
+  "BayesianEstimation": [
+    "Plan"
+  ],
+  "BayesianHypothesisTesting": [
+    "Plan"
+  ],
+  "BayesianLinearRegression": [
+    "Plan"
+  ],
+  "BayesianLinearRegressionLearning": [
+    "Plan"
+  ],
+  "BayesianMethod": [
+    "Plan"
+  ],
+  "BayesianModelAveraging": [
+    "Plan"
+  ],
+  "BayesianModelCombination": [
+    "Plan"
+  ],
+  "BinaryClassification": [
+    "Goal"
+  ],
+  "BinaryLargeObject": [
+    "Artifact"
+  ],
+  "BinarySegment": [
+    "Artifact"
+  ],
+  "BiometricAuthentication": [
+    "Plan"
+  ],
+  "BitmapImage": [
+    "Artifact"
+  ],
+  "BitmapImageFile": [
+    "Artifact"
+  ],
+  "BlockDevice": [
+    "Artifact"
+  ],
+  "BooleanExpressionMatching": [
+    "Plan"
+  ],
+  "Boosting": [
+    "Plan"
+  ],
+  "BootLoader": [
+    "Artifact"
+  ],
+  "BootROM": [
+    "Artifact"
+  ],
+  "BootRecord": [
+    "Artifact"
+  ],
+  "BootSector": [
+    "Artifact"
+  ],
+  "BootloaderAuthentication": [
+    "Plan"
+  ],
+  "BootstrapAggregating": [
+    "Plan"
+  ],
+  "BroadcastDomainIsolation": [
+    "Plan"
+  ],
+  "Browser": [
+    "Artifact"
+  ],
+  "BrowserExtension": [
+    "Artifact"
+  ],
+  "BucketOfModels": [
+    "Plan"
+  ],
+  "BuildTool": [
+    "Artifact"
+  ],
+  "BusMessage": [
+    "Artifact"
+  ],
+  "BusMessageAuthentication": [
+    "Plan"
+  ],
+  "BusNetwork": [
+    "Artifact"
+  ],
+  "BusNetworkFrame": [
+    "Artifact"
+  ],
+  "BusNetworkNode": [
+    "Artifact"
+  ],
+  "BusNetworkTraffic": [
+    "Artifact"
+  ],
+  "BusinessCommunicationPlatformClient": [
+    "Artifact"
+  ],
+  "ByteSequenceEmulation": [
+    "Plan"
+  ],
+  "C4.5": [
+    "Plan"
+  ],
+  "C5.0": [
+    "Plan"
+  ],
+  "CACertificateFile": [
+    "Artifact"
+  ],
+  "CART": [
+    "Plan"
+  ],
+  "CWE-1004": [
+    "Weakness"
+  ],
+  "CWE-1007": [
+    "Weakness"
+  ],
+  "CWE-102": [
+    "Weakness"
+  ],
+  "CWE-1021": [
+    "Weakness"
+  ],
+  "CWE-1022": [
+    "Weakness"
+  ],
+  "CWE-1023": [
+    "Weakness"
+  ],
+  "CWE-1024": [
+    "Weakness"
+  ],
+  "CWE-1025": [
+    "Weakness"
+  ],
+  "CWE-103": [
+    "Weakness"
+  ],
+  "CWE-1037": [
+    "Weakness"
+  ],
+  "CWE-1038": [
+    "Weakness"
+  ],
+  "CWE-1039": [
+    "Weakness"
+  ],
+  "CWE-104": [
+    "Weakness"
+  ],
+  "CWE-1041": [
+    "Weakness"
+  ],
+  "CWE-1042": [
+    "Weakness"
+  ],
+  "CWE-1043": [
+    "Weakness"
+  ],
+  "CWE-1044": [
+    "Weakness"
+  ],
+  "CWE-1045": [
+    "Weakness"
+  ],
+  "CWE-1046": [
+    "Weakness"
+  ],
+  "CWE-1047": [
+    "Weakness"
+  ],
+  "CWE-1048": [
+    "Weakness"
+  ],
+  "CWE-1049": [
+    "Weakness"
+  ],
+  "CWE-105": [
+    "Weakness"
+  ],
+  "CWE-1050": [
+    "Weakness"
+  ],
+  "CWE-1051": [
+    "Weakness"
+  ],
+  "CWE-1052": [
+    "Weakness"
+  ],
+  "CWE-1053": [
+    "Weakness"
+  ],
+  "CWE-1054": [
+    "Weakness"
+  ],
+  "CWE-1055": [
+    "Weakness"
+  ],
+  "CWE-1056": [
+    "Weakness"
+  ],
+  "CWE-1057": [
+    "Weakness"
+  ],
+  "CWE-1058": [
+    "Weakness"
+  ],
+  "CWE-1059": [
+    "Weakness"
+  ],
+  "CWE-106": [
+    "Weakness"
+  ],
+  "CWE-1060": [
+    "Weakness"
+  ],
+  "CWE-1061": [
+    "Weakness"
+  ],
+  "CWE-1062": [
+    "Weakness"
+  ],
+  "CWE-1063": [
+    "Weakness"
+  ],
+  "CWE-1064": [
+    "Weakness"
+  ],
+  "CWE-1065": [
+    "Weakness"
+  ],
+  "CWE-1066": [
+    "Weakness"
+  ],
+  "CWE-1067": [
+    "Weakness"
+  ],
+  "CWE-1068": [
+    "Weakness"
+  ],
+  "CWE-1069": [
+    "Weakness"
+  ],
+  "CWE-107": [
+    "Weakness"
+  ],
+  "CWE-1070": [
+    "Weakness"
+  ],
+  "CWE-1071": [
+    "Weakness"
+  ],
+  "CWE-1072": [
+    "Weakness"
+  ],
+  "CWE-1073": [
+    "Weakness"
+  ],
+  "CWE-1074": [
+    "Weakness"
+  ],
+  "CWE-1075": [
+    "Weakness"
+  ],
+  "CWE-1076": [
+    "Weakness"
+  ],
+  "CWE-1077": [
+    "Weakness"
+  ],
+  "CWE-1078": [
+    "Weakness"
+  ],
+  "CWE-1079": [
+    "Weakness"
+  ],
+  "CWE-108": [
+    "Weakness"
+  ],
+  "CWE-1080": [
+    "Weakness"
+  ],
+  "CWE-1082": [
+    "Weakness"
+  ],
+  "CWE-1083": [
+    "Weakness"
+  ],
+  "CWE-1084": [
+    "Weakness"
+  ],
+  "CWE-1085": [
+    "Weakness"
+  ],
+  "CWE-1086": [
+    "Weakness"
+  ],
+  "CWE-1087": [
+    "Weakness"
+  ],
+  "CWE-1088": [
+    "Weakness"
+  ],
+  "CWE-1089": [
+    "Weakness"
+  ],
+  "CWE-109": [
+    "Weakness"
+  ],
+  "CWE-1090": [
+    "Weakness"
+  ],
+  "CWE-1091": [
+    "Weakness"
+  ],
+  "CWE-1092": [
+    "Weakness"
+  ],
+  "CWE-1093": [
+    "Weakness"
+  ],
+  "CWE-1094": [
+    "Weakness"
+  ],
+  "CWE-1095": [
+    "Weakness"
+  ],
+  "CWE-1096": [
+    "Weakness"
+  ],
+  "CWE-1097": [
+    "Weakness"
+  ],
+  "CWE-1098": [
+    "Weakness"
+  ],
+  "CWE-1099": [
+    "Weakness"
+  ],
+  "CWE-11": [
+    "Weakness"
+  ],
+  "CWE-110": [
+    "Weakness"
+  ],
+  "CWE-1100": [
+    "Weakness"
+  ],
+  "CWE-1101": [
+    "Weakness"
+  ],
+  "CWE-1102": [
+    "Weakness"
+  ],
+  "CWE-1103": [
+    "Weakness"
+  ],
+  "CWE-1104": [
+    "Weakness"
+  ],
+  "CWE-1105": [
+    "Weakness"
+  ],
+  "CWE-1106": [
+    "Weakness"
+  ],
+  "CWE-1107": [
+    "Weakness"
+  ],
+  "CWE-1108": [
+    "Weakness"
+  ],
+  "CWE-1109": [
+    "Weakness"
+  ],
+  "CWE-111": [
+    "Weakness"
+  ],
+  "CWE-1110": [
+    "Weakness"
+  ],
+  "CWE-1111": [
+    "Weakness"
+  ],
+  "CWE-1112": [
+    "Weakness"
+  ],
+  "CWE-1113": [
+    "Weakness"
+  ],
+  "CWE-1114": [
+    "Weakness"
+  ],
+  "CWE-1115": [
+    "Weakness"
+  ],
+  "CWE-1116": [
+    "Weakness"
+  ],
+  "CWE-1117": [
+    "Weakness"
+  ],
+  "CWE-1118": [
+    "Weakness"
+  ],
+  "CWE-1119": [
+    "Weakness"
+  ],
+  "CWE-112": [
+    "Weakness"
+  ],
+  "CWE-1120": [
+    "Weakness"
+  ],
+  "CWE-1121": [
+    "Weakness"
+  ],
+  "CWE-1122": [
+    "Weakness"
+  ],
+  "CWE-1123": [
+    "Weakness"
+  ],
+  "CWE-1124": [
+    "Weakness"
+  ],
+  "CWE-1125": [
+    "Weakness"
+  ],
+  "CWE-1126": [
+    "Weakness"
+  ],
+  "CWE-1127": [
+    "Weakness"
+  ],
+  "CWE-113": [
+    "Weakness"
+  ],
+  "CWE-114": [
+    "Weakness"
+  ],
+  "CWE-115": [
+    "Weakness"
+  ],
+  "CWE-116": [
+    "Weakness"
+  ],
+  "CWE-1164": [
+    "Weakness"
+  ],
+  "CWE-117": [
+    "Weakness"
+  ],
+  "CWE-1173": [
+    "Weakness"
+  ],
+  "CWE-1174": [
+    "Weakness"
+  ],
+  "CWE-1176": [
+    "Weakness"
+  ],
+  "CWE-1177": [
+    "Weakness"
+  ],
+  "CWE-118": [
+    "Weakness"
+  ],
+  "CWE-1188": [
+    "Weakness"
+  ],
+  "CWE-1189": [
+    "Weakness"
+  ],
+  "CWE-119": [
+    "Weakness"
+  ],
+  "CWE-1190": [
+    "Weakness"
+  ],
+  "CWE-1191": [
+    "Weakness"
+  ],
+  "CWE-1192": [
+    "Weakness"
+  ],
+  "CWE-1193": [
+    "Weakness"
+  ],
+  "CWE-12": [
+    "Weakness"
+  ],
+  "CWE-120": [
+    "Weakness"
+  ],
+  "CWE-1204": [
+    "Weakness"
+  ],
+  "CWE-1209": [
+    "Weakness"
+  ],
+  "CWE-121": [
+    "Weakness"
+  ],
+  "CWE-122": [
+    "Weakness"
+  ],
+  "CWE-1220": [
+    "Weakness"
+  ],
+  "CWE-1221": [
+    "Weakness"
+  ],
+  "CWE-1222": [
+    "Weakness"
+  ],
+  "CWE-1223": [
+    "Weakness"
+  ],
+  "CWE-1224": [
+    "Weakness"
+  ],
+  "CWE-1229": [
+    "Weakness"
+  ],
+  "CWE-123": [
+    "Weakness"
+  ],
+  "CWE-1230": [
+    "Weakness"
+  ],
+  "CWE-1231": [
+    "Weakness"
+  ],
+  "CWE-1232": [
+    "Weakness"
+  ],
+  "CWE-1233": [
+    "Weakness"
+  ],
+  "CWE-1234": [
+    "Weakness"
+  ],
+  "CWE-1235": [
+    "Weakness"
+  ],
+  "CWE-1236": [
+    "Weakness"
+  ],
+  "CWE-1239": [
+    "Weakness"
+  ],
+  "CWE-124": [
+    "Weakness"
+  ],
+  "CWE-1240": [
+    "Weakness"
+  ],
+  "CWE-1241": [
+    "Weakness"
+  ],
+  "CWE-1242": [
+    "Weakness"
+  ],
+  "CWE-1243": [
+    "Weakness"
+  ],
+  "CWE-1244": [
+    "Weakness"
+  ],
+  "CWE-1245": [
+    "Weakness"
+  ],
+  "CWE-1246": [
+    "Weakness"
+  ],
+  "CWE-1247": [
+    "Weakness"
+  ],
+  "CWE-1248": [
+    "Weakness"
+  ],
+  "CWE-1249": [
+    "Weakness"
+  ],
+  "CWE-125": [
+    "Weakness"
+  ],
+  "CWE-1250": [
+    "Weakness"
+  ],
+  "CWE-1251": [
+    "Weakness"
+  ],
+  "CWE-1252": [
+    "Weakness"
+  ],
+  "CWE-1253": [
+    "Weakness"
+  ],
+  "CWE-1254": [
+    "Weakness"
+  ],
+  "CWE-1255": [
+    "Weakness"
+  ],
+  "CWE-1256": [
+    "Weakness"
+  ],
+  "CWE-1257": [
+    "Weakness"
+  ],
+  "CWE-1258": [
+    "Weakness"
+  ],
+  "CWE-1259": [
+    "Weakness"
+  ],
+  "CWE-126": [
+    "Weakness"
+  ],
+  "CWE-1260": [
+    "Weakness"
+  ],
+  "CWE-1261": [
+    "Weakness"
+  ],
+  "CWE-1262": [
+    "Weakness"
+  ],
+  "CWE-1263": [
+    "Weakness"
+  ],
+  "CWE-1264": [
+    "Weakness"
+  ],
+  "CWE-1265": [
+    "Weakness"
+  ],
+  "CWE-1266": [
+    "Weakness"
+  ],
+  "CWE-1267": [
+    "Weakness"
+  ],
+  "CWE-1268": [
+    "Weakness"
+  ],
+  "CWE-1269": [
+    "Weakness"
+  ],
+  "CWE-127": [
+    "Weakness"
+  ],
+  "CWE-1270": [
+    "Weakness"
+  ],
+  "CWE-1271": [
+    "Weakness"
+  ],
+  "CWE-1272": [
+    "Weakness"
+  ],
+  "CWE-1273": [
+    "Weakness"
+  ],
+  "CWE-1274": [
+    "Weakness"
+  ],
+  "CWE-1275": [
+    "Weakness"
+  ],
+  "CWE-1276": [
+    "Weakness"
+  ],
+  "CWE-1277": [
+    "Weakness"
+  ],
+  "CWE-1278": [
+    "Weakness"
+  ],
+  "CWE-1279": [
+    "Weakness"
+  ],
+  "CWE-128": [
+    "Weakness"
+  ],
+  "CWE-1280": [
+    "Weakness"
+  ],
+  "CWE-1281": [
+    "Weakness"
+  ],
+  "CWE-1282": [
+    "Weakness"
+  ],
+  "CWE-1283": [
+    "Weakness"
+  ],
+  "CWE-1284": [
+    "Weakness"
+  ],
+  "CWE-1285": [
+    "Weakness"
+  ],
+  "CWE-1286": [
+    "Weakness"
+  ],
+  "CWE-1287": [
+    "Weakness"
+  ],
+  "CWE-1288": [
+    "Weakness"
+  ],
+  "CWE-1289": [
+    "Weakness"
+  ],
+  "CWE-129": [
+    "Weakness"
+  ],
+  "CWE-1290": [
+    "Weakness"
+  ],
+  "CWE-1291": [
+    "Weakness"
+  ],
+  "CWE-1292": [
+    "Weakness"
+  ],
+  "CWE-1293": [
+    "Weakness"
+  ],
+  "CWE-1294": [
+    "Weakness"
+  ],
+  "CWE-1295": [
+    "Weakness"
+  ],
+  "CWE-1296": [
+    "Weakness"
+  ],
+  "CWE-1297": [
+    "Weakness"
+  ],
+  "CWE-1298": [
+    "Weakness"
+  ],
+  "CWE-1299": [
+    "Weakness"
+  ],
+  "CWE-13": [
+    "Weakness"
+  ],
+  "CWE-130": [
+    "Weakness"
+  ],
+  "CWE-1300": [
+    "Weakness"
+  ],
+  "CWE-1301": [
+    "Weakness"
+  ],
+  "CWE-1302": [
+    "Weakness"
+  ],
+  "CWE-1303": [
+    "Weakness"
+  ],
+  "CWE-1304": [
+    "Weakness"
+  ],
+  "CWE-131": [
+    "Weakness"
+  ],
+  "CWE-1310": [
+    "Weakness"
+  ],
+  "CWE-1311": [
+    "Weakness"
+  ],
+  "CWE-1312": [
+    "Weakness"
+  ],
+  "CWE-1313": [
+    "Weakness"
+  ],
+  "CWE-1314": [
+    "Weakness"
+  ],
+  "CWE-1315": [
+    "Weakness"
+  ],
+  "CWE-1316": [
+    "Weakness"
+  ],
+  "CWE-1317": [
+    "Weakness"
+  ],
+  "CWE-1318": [
+    "Weakness"
+  ],
+  "CWE-1319": [
+    "Weakness"
+  ],
+  "CWE-1320": [
+    "Weakness"
+  ],
+  "CWE-1321": [
+    "Weakness"
+  ],
+  "CWE-1322": [
+    "Weakness"
+  ],
+  "CWE-1323": [
+    "Weakness"
+  ],
+  "CWE-1325": [
+    "Weakness"
+  ],
+  "CWE-1326": [
+    "Weakness"
+  ],
+  "CWE-1327": [
+    "Weakness"
+  ],
+  "CWE-1328": [
+    "Weakness"
+  ],
+  "CWE-1329": [
+    "Weakness"
+  ],
+  "CWE-1330": [
+    "Weakness"
+  ],
+  "CWE-1331": [
+    "Weakness"
+  ],
+  "CWE-1332": [
+    "Weakness"
+  ],
+  "CWE-1333": [
+    "Weakness"
+  ],
+  "CWE-1334": [
+    "Weakness"
+  ],
+  "CWE-1335": [
+    "Weakness"
+  ],
+  "CWE-1336": [
+    "Weakness"
+  ],
+  "CWE-1338": [
+    "Weakness"
+  ],
+  "CWE-1339": [
+    "Weakness"
+  ],
+  "CWE-134": [
+    "Weakness"
+  ],
+  "CWE-1341": [
+    "Weakness"
+  ],
+  "CWE-1342": [
+    "Weakness"
+  ],
+  "CWE-135": [
+    "Weakness"
+  ],
+  "CWE-1351": [
+    "Weakness"
+  ],
+  "CWE-1357": [
+    "Weakness"
+  ],
+  "CWE-138": [
+    "Weakness"
+  ],
+  "CWE-1384": [
+    "Weakness"
+  ],
+  "CWE-1385": [
+    "Weakness"
+  ],
+  "CWE-1386": [
+    "Weakness"
+  ],
+  "CWE-1389": [
+    "Weakness"
+  ],
+  "CWE-1390": [
+    "Weakness"
+  ],
+  "CWE-1391": [
+    "Weakness"
+  ],
+  "CWE-1392": [
+    "Weakness"
+  ],
+  "CWE-1393": [
+    "Weakness"
+  ],
+  "CWE-1394": [
+    "Weakness"
+  ],
+  "CWE-1395": [
+    "Weakness"
+  ],
+  "CWE-14": [
+    "Weakness"
+  ],
+  "CWE-140": [
+    "Weakness"
+  ],
+  "CWE-141": [
+    "Weakness"
+  ],
+  "CWE-1419": [
+    "Weakness"
+  ],
+  "CWE-142": [
+    "Weakness"
+  ],
+  "CWE-1420": [
+    "Weakness"
+  ],
+  "CWE-1421": [
+    "Weakness"
+  ],
+  "CWE-1422": [
+    "Weakness"
+  ],
+  "CWE-1423": [
+    "Weakness"
+  ],
+  "CWE-1426": [
+    "Weakness"
+  ],
+  "CWE-1427": [
+    "Weakness"
+  ],
+  "CWE-1428": [
+    "Weakness"
+  ],
+  "CWE-1429": [
+    "Weakness"
+  ],
+  "CWE-143": [
+    "Weakness"
+  ],
+  "CWE-1431": [
+    "Weakness"
+  ],
+  "CWE-144": [
+    "Weakness"
+  ],
+  "CWE-145": [
+    "Weakness"
+  ],
+  "CWE-146": [
+    "Weakness"
+  ],
+  "CWE-147": [
+    "Weakness"
+  ],
+  "CWE-148": [
+    "Weakness"
+  ],
+  "CWE-149": [
+    "Weakness"
+  ],
+  "CWE-15": [
+    "Weakness"
+  ],
+  "CWE-150": [
+    "Weakness"
+  ],
+  "CWE-151": [
+    "Weakness"
+  ],
+  "CWE-152": [
+    "Weakness"
+  ],
+  "CWE-153": [
+    "Weakness"
+  ],
+  "CWE-154": [
+    "Weakness"
+  ],
+  "CWE-155": [
+    "Weakness"
+  ],
+  "CWE-156": [
+    "Weakness"
+  ],
+  "CWE-157": [
+    "Weakness"
+  ],
+  "CWE-158": [
+    "Weakness"
+  ],
+  "CWE-159": [
+    "Weakness"
+  ],
+  "CWE-160": [
+    "Weakness"
+  ],
+  "CWE-161": [
+    "Weakness"
+  ],
+  "CWE-162": [
+    "Weakness"
+  ],
+  "CWE-163": [
+    "Weakness"
+  ],
+  "CWE-164": [
+    "Weakness"
+  ],
+  "CWE-165": [
+    "Weakness"
+  ],
+  "CWE-166": [
+    "Weakness"
+  ],
+  "CWE-167": [
+    "Weakness"
+  ],
+  "CWE-168": [
+    "Weakness"
+  ],
+  "CWE-170": [
+    "Weakness"
+  ],
+  "CWE-172": [
+    "Weakness"
+  ],
+  "CWE-173": [
+    "Weakness"
+  ],
+  "CWE-174": [
+    "Weakness"
+  ],
+  "CWE-175": [
+    "Weakness"
+  ],
+  "CWE-176": [
+    "Weakness"
+  ],
+  "CWE-177": [
+    "Weakness"
+  ],
+  "CWE-178": [
+    "Weakness"
+  ],
+  "CWE-179": [
+    "Weakness"
+  ],
+  "CWE-180": [
+    "Weakness"
+  ],
+  "CWE-181": [
+    "Weakness"
+  ],
+  "CWE-182": [
+    "Weakness"
+  ],
+  "CWE-183": [
+    "Weakness"
+  ],
+  "CWE-184": [
+    "Weakness"
+  ],
+  "CWE-185": [
+    "Weakness"
+  ],
+  "CWE-186": [
+    "Weakness"
+  ],
+  "CWE-187": [
+    "Weakness"
+  ],
+  "CWE-188": [
+    "Weakness"
+  ],
+  "CWE-190": [
+    "Weakness"
+  ],
+  "CWE-191": [
+    "Weakness"
+  ],
+  "CWE-192": [
+    "Weakness"
+  ],
+  "CWE-193": [
+    "Weakness"
+  ],
+  "CWE-194": [
+    "Weakness"
+  ],
+  "CWE-195": [
+    "Weakness"
+  ],
+  "CWE-196": [
+    "Weakness"
+  ],
+  "CWE-197": [
+    "Weakness"
+  ],
+  "CWE-198": [
+    "Weakness"
+  ],
+  "CWE-20": [
+    "Weakness"
+  ],
+  "CWE-200": [
+    "Weakness"
+  ],
+  "CWE-201": [
+    "Weakness"
+  ],
+  "CWE-202": [
+    "Weakness"
+  ],
+  "CWE-203": [
+    "Weakness"
+  ],
+  "CWE-204": [
+    "Weakness"
+  ],
+  "CWE-205": [
+    "Weakness"
+  ],
+  "CWE-206": [
+    "Weakness"
+  ],
+  "CWE-207": [
+    "Weakness"
+  ],
+  "CWE-208": [
+    "Weakness"
+  ],
+  "CWE-209": [
+    "Weakness"
+  ],
+  "CWE-210": [
+    "Weakness"
+  ],
+  "CWE-211": [
+    "Weakness"
+  ],
+  "CWE-212": [
+    "Weakness"
+  ],
+  "CWE-213": [
+    "Weakness"
+  ],
+  "CWE-214": [
+    "Weakness"
+  ],
+  "CWE-215": [
+    "Weakness"
+  ],
+  "CWE-219": [
+    "Weakness"
+  ],
+  "CWE-22": [
+    "Weakness"
+  ],
+  "CWE-220": [
+    "Weakness"
+  ],
+  "CWE-221": [
+    "Weakness"
+  ],
+  "CWE-222": [
+    "Weakness"
+  ],
+  "CWE-223": [
+    "Weakness"
+  ],
+  "CWE-224": [
+    "Weakness"
+  ],
+  "CWE-226": [
+    "Weakness"
+  ],
+  "CWE-228": [
+    "Weakness"
+  ],
+  "CWE-229": [
+    "Weakness"
+  ],
+  "CWE-23": [
+    "Weakness"
+  ],
+  "CWE-230": [
+    "Weakness"
+  ],
+  "CWE-231": [
+    "Weakness"
+  ],
+  "CWE-232": [
+    "Weakness"
+  ],
+  "CWE-233": [
+    "Weakness"
+  ],
+  "CWE-234": [
+    "Weakness"
+  ],
+  "CWE-235": [
+    "Weakness"
+  ],
+  "CWE-236": [
+    "Weakness"
+  ],
+  "CWE-237": [
+    "Weakness"
+  ],
+  "CWE-238": [
+    "Weakness"
+  ],
+  "CWE-239": [
+    "Weakness"
+  ],
+  "CWE-24": [
+    "Weakness"
+  ],
+  "CWE-240": [
+    "Weakness"
+  ],
+  "CWE-241": [
+    "Weakness"
+  ],
+  "CWE-242": [
+    "Weakness"
+  ],
+  "CWE-243": [
+    "Weakness"
+  ],
+  "CWE-244": [
+    "Weakness"
+  ],
+  "CWE-245": [
+    "Weakness"
+  ],
+  "CWE-246": [
+    "Weakness"
+  ],
+  "CWE-248": [
+    "Weakness"
+  ],
+  "CWE-25": [
+    "Weakness"
+  ],
+  "CWE-250": [
+    "Weakness"
+  ],
+  "CWE-252": [
+    "Weakness"
+  ],
+  "CWE-253": [
+    "Weakness"
+  ],
+  "CWE-256": [
+    "Weakness"
+  ],
+  "CWE-257": [
+    "Weakness"
+  ],
+  "CWE-258": [
+    "Weakness"
+  ],
+  "CWE-259": [
+    "Weakness"
+  ],
+  "CWE-26": [
+    "Weakness"
+  ],
+  "CWE-260": [
+    "Weakness"
+  ],
+  "CWE-261": [
+    "Weakness"
+  ],
+  "CWE-262": [
+    "Weakness"
+  ],
+  "CWE-263": [
+    "Weakness"
+  ],
+  "CWE-266": [
+    "Weakness"
+  ],
+  "CWE-267": [
+    "Weakness"
+  ],
+  "CWE-268": [
+    "Weakness"
+  ],
+  "CWE-269": [
+    "Weakness"
+  ],
+  "CWE-27": [
+    "Weakness"
+  ],
+  "CWE-270": [
+    "Weakness"
+  ],
+  "CWE-271": [
+    "Weakness"
+  ],
+  "CWE-272": [
+    "Weakness"
+  ],
+  "CWE-273": [
+    "Weakness"
+  ],
+  "CWE-274": [
+    "Weakness"
+  ],
+  "CWE-276": [
+    "Weakness"
+  ],
+  "CWE-277": [
+    "Weakness"
+  ],
+  "CWE-278": [
+    "Weakness"
+  ],
+  "CWE-279": [
+    "Weakness"
+  ],
+  "CWE-28": [
+    "Weakness"
+  ],
+  "CWE-280": [
+    "Weakness"
+  ],
+  "CWE-281": [
+    "Weakness"
+  ],
+  "CWE-282": [
+    "Weakness"
+  ],
+  "CWE-283": [
+    "Weakness"
+  ],
+  "CWE-284": [
+    "Weakness"
+  ],
+  "CWE-285": [
+    "Weakness"
+  ],
+  "CWE-286": [
+    "Weakness"
+  ],
+  "CWE-287": [
+    "Weakness"
+  ],
+  "CWE-288": [
+    "Weakness"
+  ],
+  "CWE-289": [
+    "Weakness"
+  ],
+  "CWE-29": [
+    "Weakness"
+  ],
+  "CWE-290": [
+    "Weakness"
+  ],
+  "CWE-291": [
+    "Weakness"
+  ],
+  "CWE-293": [
+    "Weakness"
+  ],
+  "CWE-294": [
+    "Weakness"
+  ],
+  "CWE-295": [
+    "Weakness"
+  ],
+  "CWE-296": [
+    "Weakness"
+  ],
+  "CWE-297": [
+    "Weakness"
+  ],
+  "CWE-298": [
+    "Weakness"
+  ],
+  "CWE-299": [
+    "Weakness"
+  ],
+  "CWE-30": [
+    "Weakness"
+  ],
+  "CWE-300": [
+    "Weakness"
+  ],
+  "CWE-301": [
+    "Weakness"
+  ],
+  "CWE-302": [
+    "Weakness"
+  ],
+  "CWE-303": [
+    "Weakness"
+  ],
+  "CWE-304": [
+    "Weakness"
+  ],
+  "CWE-305": [
+    "Weakness"
+  ],
+  "CWE-306": [
+    "Weakness"
+  ],
+  "CWE-307": [
+    "Weakness"
+  ],
+  "CWE-308": [
+    "Weakness"
+  ],
+  "CWE-309": [
+    "Weakness"
+  ],
+  "CWE-31": [
+    "Weakness"
+  ],
+  "CWE-311": [
+    "Weakness"
+  ],
+  "CWE-312": [
+    "Weakness"
+  ],
+  "CWE-313": [
+    "Weakness"
+  ],
+  "CWE-314": [
+    "Weakness"
+  ],
+  "CWE-315": [
+    "Weakness"
+  ],
+  "CWE-316": [
+    "Weakness"
+  ],
+  "CWE-317": [
+    "Weakness"
+  ],
+  "CWE-318": [
+    "Weakness"
+  ],
+  "CWE-319": [
+    "Weakness"
+  ],
+  "CWE-32": [
+    "Weakness"
+  ],
+  "CWE-321": [
+    "Weakness"
+  ],
+  "CWE-322": [
+    "Weakness"
+  ],
+  "CWE-323": [
+    "Weakness"
+  ],
+  "CWE-324": [
+    "Weakness"
+  ],
+  "CWE-325": [
+    "Weakness"
+  ],
+  "CWE-326": [
+    "Weakness"
+  ],
+  "CWE-327": [
+    "Weakness"
+  ],
+  "CWE-328": [
+    "Weakness"
+  ],
+  "CWE-329": [
+    "Weakness"
+  ],
+  "CWE-33": [
+    "Weakness"
+  ],
+  "CWE-330": [
+    "Weakness"
+  ],
+  "CWE-331": [
+    "Weakness"
+  ],
+  "CWE-332": [
+    "Weakness"
+  ],
+  "CWE-333": [
+    "Weakness"
+  ],
+  "CWE-334": [
+    "Weakness"
+  ],
+  "CWE-335": [
+    "Weakness"
+  ],
+  "CWE-336": [
+    "Weakness"
+  ],
+  "CWE-337": [
+    "Weakness"
+  ],
+  "CWE-338": [
+    "Weakness"
+  ],
+  "CWE-339": [
+    "Weakness"
+  ],
+  "CWE-34": [
+    "Weakness"
+  ],
+  "CWE-340": [
+    "Weakness"
+  ],
+  "CWE-341": [
+    "Weakness"
+  ],
+  "CWE-342": [
+    "Weakness"
+  ],
+  "CWE-343": [
+    "Weakness"
+  ],
+  "CWE-344": [
+    "Weakness"
+  ],
+  "CWE-345": [
+    "Weakness"
+  ],
+  "CWE-346": [
+    "Weakness"
+  ],
+  "CWE-347": [
+    "Weakness"
+  ],
+  "CWE-348": [
+    "Weakness"
+  ],
+  "CWE-349": [
+    "Weakness"
+  ],
+  "CWE-35": [
+    "Weakness"
+  ],
+  "CWE-350": [
+    "Weakness"
+  ],
+  "CWE-351": [
+    "Weakness"
+  ],
+  "CWE-352": [
+    "Weakness"
+  ],
+  "CWE-353": [
+    "Weakness"
+  ],
+  "CWE-354": [
+    "Weakness"
+  ],
+  "CWE-356": [
+    "Weakness"
+  ],
+  "CWE-357": [
+    "Weakness"
+  ],
+  "CWE-358": [
+    "Weakness"
+  ],
+  "CWE-359": [
+    "Weakness"
+  ],
+  "CWE-36": [
+    "Weakness"
+  ],
+  "CWE-360": [
+    "Weakness"
+  ],
+  "CWE-362": [
+    "Weakness"
+  ],
+  "CWE-363": [
+    "Weakness"
+  ],
+  "CWE-364": [
+    "Weakness"
+  ],
+  "CWE-366": [
+    "Weakness"
+  ],
+  "CWE-367": [
+    "Weakness"
+  ],
+  "CWE-368": [
+    "Weakness"
+  ],
+  "CWE-369": [
+    "Weakness"
+  ],
+  "CWE-37": [
+    "Weakness"
+  ],
+  "CWE-370": [
+    "Weakness"
+  ],
+  "CWE-372": [
+    "Weakness"
+  ],
+  "CWE-374": [
+    "Weakness"
+  ],
+  "CWE-375": [
+    "Weakness"
+  ],
+  "CWE-377": [
+    "Weakness"
+  ],
+  "CWE-378": [
+    "Weakness"
+  ],
+  "CWE-379": [
+    "Weakness"
+  ],
+  "CWE-38": [
+    "Weakness"
+  ],
+  "CWE-382": [
+    "Weakness"
+  ],
+  "CWE-383": [
+    "Weakness"
+  ],
+  "CWE-384": [
+    "Weakness"
+  ],
+  "CWE-385": [
+    "Weakness"
+  ],
+  "CWE-386": [
+    "Weakness"
+  ],
+  "CWE-39": [
+    "Weakness"
+  ],
+  "CWE-390": [
+    "Weakness"
+  ],
+  "CWE-391": [
+    "Weakness"
+  ],
+  "CWE-392": [
+    "Weakness"
+  ],
+  "CWE-393": [
+    "Weakness"
+  ],
+  "CWE-394": [
+    "Weakness"
+  ],
+  "CWE-395": [
+    "Weakness"
+  ],
+  "CWE-396": [
+    "Weakness"
+  ],
+  "CWE-397": [
+    "Weakness"
+  ],
+  "CWE-40": [
+    "Weakness"
+  ],
+  "CWE-400": [
+    "Weakness"
+  ],
+  "CWE-401": [
+    "Weakness"
+  ],
+  "CWE-402": [
+    "Weakness"
+  ],
+  "CWE-403": [
+    "Weakness"
+  ],
+  "CWE-404": [
+    "Weakness"
+  ],
+  "CWE-405": [
+    "Weakness"
+  ],
+  "CWE-406": [
+    "Weakness"
+  ],
+  "CWE-407": [
+    "Weakness"
+  ],
+  "CWE-408": [
+    "Weakness"
+  ],
+  "CWE-409": [
+    "Weakness"
+  ],
+  "CWE-41": [
+    "Weakness"
+  ],
+  "CWE-410": [
+    "Weakness"
+  ],
+  "CWE-412": [
+    "Weakness"
+  ],
+  "CWE-413": [
+    "Weakness"
+  ],
+  "CWE-414": [
+    "Weakness"
+  ],
+  "CWE-415": [
+    "Weakness"
+  ],
+  "CWE-416": [
+    "Weakness"
+  ],
+  "CWE-419": [
+    "Weakness"
+  ],
+  "CWE-42": [
+    "Weakness"
+  ],
+  "CWE-420": [
+    "Weakness"
+  ],
+  "CWE-421": [
+    "Weakness"
+  ],
+  "CWE-422": [
+    "Weakness"
+  ],
+  "CWE-424": [
+    "Weakness"
+  ],
+  "CWE-425": [
+    "Weakness"
+  ],
+  "CWE-426": [
+    "Weakness"
+  ],
+  "CWE-427": [
+    "Weakness"
+  ],
+  "CWE-428": [
+    "Weakness"
+  ],
+  "CWE-43": [
+    "Weakness"
+  ],
+  "CWE-430": [
+    "Weakness"
+  ],
+  "CWE-431": [
+    "Weakness"
+  ],
+  "CWE-432": [
+    "Weakness"
+  ],
+  "CWE-433": [
+    "Weakness"
+  ],
+  "CWE-434": [
+    "Weakness"
+  ],
+  "CWE-435": [
+    "Weakness"
+  ],
+  "CWE-436": [
+    "Weakness"
+  ],
+  "CWE-437": [
+    "Weakness"
+  ],
+  "CWE-439": [
+    "Weakness"
+  ],
+  "CWE-44": [
+    "Weakness"
+  ],
+  "CWE-440": [
+    "Weakness"
+  ],
+  "CWE-441": [
+    "Weakness"
+  ],
+  "CWE-444": [
+    "Weakness"
+  ],
+  "CWE-446": [
+    "Weakness"
+  ],
+  "CWE-447": [
+    "Weakness"
+  ],
+  "CWE-448": [
+    "Weakness"
+  ],
+  "CWE-449": [
+    "Weakness"
+  ],
+  "CWE-45": [
+    "Weakness"
+  ],
+  "CWE-450": [
+    "Weakness"
+  ],
+  "CWE-451": [
+    "Weakness"
+  ],
+  "CWE-453": [
+    "Weakness"
+  ],
+  "CWE-454": [
+    "Weakness"
+  ],
+  "CWE-455": [
+    "Weakness"
+  ],
+  "CWE-456": [
+    "Weakness"
+  ],
+  "CWE-457": [
+    "Weakness"
+  ],
+  "CWE-459": [
+    "Weakness"
+  ],
+  "CWE-46": [
+    "Weakness"
+  ],
+  "CWE-460": [
+    "Weakness"
+  ],
+  "CWE-462": [
+    "Weakness"
+  ],
+  "CWE-463": [
+    "Weakness"
+  ],
+  "CWE-464": [
+    "Weakness"
+  ],
+  "CWE-466": [
+    "Weakness"
+  ],
+  "CWE-467": [
+    "Weakness"
+  ],
+  "CWE-468": [
+    "Weakness"
+  ],
+  "CWE-469": [
+    "Weakness"
+  ],
+  "CWE-47": [
+    "Weakness"
+  ],
+  "CWE-470": [
+    "Weakness"
+  ],
+  "CWE-471": [
+    "Weakness"
+  ],
+  "CWE-472": [
+    "Weakness"
+  ],
+  "CWE-473": [
+    "Weakness"
+  ],
+  "CWE-474": [
+    "Weakness"
+  ],
+  "CWE-475": [
+    "Weakness"
+  ],
+  "CWE-476": [
+    "Weakness"
+  ],
+  "CWE-477": [
+    "Weakness"
+  ],
+  "CWE-478": [
+    "Weakness"
+  ],
+  "CWE-479": [
+    "Weakness"
+  ],
+  "CWE-48": [
+    "Weakness"
+  ],
+  "CWE-480": [
+    "Weakness"
+  ],
+  "CWE-481": [
+    "Weakness"
+  ],
+  "CWE-482": [
+    "Weakness"
+  ],
+  "CWE-483": [
+    "Weakness"
+  ],
+  "CWE-484": [
+    "Weakness"
+  ],
+  "CWE-486": [
+    "Weakness"
+  ],
+  "CWE-487": [
+    "Weakness"
+  ],
+  "CWE-488": [
+    "Weakness"
+  ],
+  "CWE-489": [
+    "Weakness"
+  ],
+  "CWE-49": [
+    "Weakness"
+  ],
+  "CWE-491": [
+    "Weakness"
+  ],
+  "CWE-492": [
+    "Weakness"
+  ],
+  "CWE-493": [
+    "Weakness"
+  ],
+  "CWE-494": [
+    "Weakness"
+  ],
+  "CWE-495": [
+    "Weakness"
+  ],
+  "CWE-496": [
+    "Weakness"
+  ],
+  "CWE-497": [
+    "Weakness"
+  ],
+  "CWE-498": [
+    "Weakness"
+  ],
+  "CWE-499": [
+    "Weakness"
+  ],
+  "CWE-5": [
+    "Weakness"
+  ],
+  "CWE-50": [
+    "Weakness"
+  ],
+  "CWE-500": [
+    "Weakness"
+  ],
+  "CWE-501": [
+    "Weakness"
+  ],
+  "CWE-502": [
+    "Weakness"
+  ],
+  "CWE-506": [
+    "Weakness"
+  ],
+  "CWE-507": [
+    "Weakness"
+  ],
+  "CWE-508": [
+    "Weakness"
+  ],
+  "CWE-509": [
+    "Weakness"
+  ],
+  "CWE-51": [
+    "Weakness"
+  ],
+  "CWE-510": [
+    "Weakness"
+  ],
+  "CWE-511": [
+    "Weakness"
+  ],
+  "CWE-512": [
+    "Weakness"
+  ],
+  "CWE-514": [
+    "Weakness"
+  ],
+  "CWE-515": [
+    "Weakness"
+  ],
+  "CWE-52": [
+    "Weakness"
+  ],
+  "CWE-520": [
+    "Weakness"
+  ],
+  "CWE-521": [
+    "Weakness"
+  ],
+  "CWE-522": [
+    "Weakness"
+  ],
+  "CWE-523": [
+    "Weakness"
+  ],
+  "CWE-524": [
+    "Weakness"
+  ],
+  "CWE-525": [
+    "Weakness"
+  ],
+  "CWE-526": [
+    "Weakness"
+  ],
+  "CWE-527": [
+    "Weakness"
+  ],
+  "CWE-528": [
+    "Weakness"
+  ],
+  "CWE-529": [
+    "Weakness"
+  ],
+  "CWE-53": [
+    "Weakness"
+  ],
+  "CWE-530": [
+    "Weakness"
+  ],
+  "CWE-531": [
+    "Weakness"
+  ],
+  "CWE-532": [
+    "Weakness"
+  ],
+  "CWE-535": [
+    "Weakness"
+  ],
+  "CWE-536": [
+    "Weakness"
+  ],
+  "CWE-537": [
+    "Weakness"
+  ],
+  "CWE-538": [
+    "Weakness"
+  ],
+  "CWE-539": [
+    "Weakness"
+  ],
+  "CWE-54": [
+    "Weakness"
+  ],
+  "CWE-540": [
+    "Weakness"
+  ],
+  "CWE-541": [
+    "Weakness"
+  ],
+  "CWE-543": [
+    "Weakness"
+  ],
+  "CWE-544": [
+    "Weakness"
+  ],
+  "CWE-546": [
+    "Weakness"
+  ],
+  "CWE-547": [
+    "Weakness"
+  ],
+  "CWE-548": [
+    "Weakness"
+  ],
+  "CWE-549": [
+    "Weakness"
+  ],
+  "CWE-55": [
+    "Weakness"
+  ],
+  "CWE-550": [
+    "Weakness"
+  ],
+  "CWE-551": [
+    "Weakness"
+  ],
+  "CWE-552": [
+    "Weakness"
+  ],
+  "CWE-553": [
+    "Weakness"
+  ],
+  "CWE-554": [
+    "Weakness"
+  ],
+  "CWE-555": [
+    "Weakness"
+  ],
+  "CWE-556": [
+    "Weakness"
+  ],
+  "CWE-558": [
+    "Weakness"
+  ],
+  "CWE-56": [
+    "Weakness"
+  ],
+  "CWE-560": [
+    "Weakness"
+  ],
+  "CWE-561": [
+    "Weakness"
+  ],
+  "CWE-562": [
+    "Weakness"
+  ],
+  "CWE-563": [
+    "Weakness"
+  ],
+  "CWE-564": [
+    "Weakness"
+  ],
+  "CWE-565": [
+    "Weakness"
+  ],
+  "CWE-566": [
+    "Weakness"
+  ],
+  "CWE-567": [
+    "Weakness"
+  ],
+  "CWE-568": [
+    "Weakness"
+  ],
+  "CWE-57": [
+    "Weakness"
+  ],
+  "CWE-570": [
+    "Weakness"
+  ],
+  "CWE-571": [
+    "Weakness"
+  ],
+  "CWE-572": [
+    "Weakness"
+  ],
+  "CWE-573": [
+    "Weakness"
+  ],
+  "CWE-574": [
+    "Weakness"
+  ],
+  "CWE-575": [
+    "Weakness"
+  ],
+  "CWE-576": [
+    "Weakness"
+  ],
+  "CWE-577": [
+    "Weakness"
+  ],
+  "CWE-578": [
+    "Weakness"
+  ],
+  "CWE-579": [
+    "Weakness"
+  ],
+  "CWE-58": [
+    "Weakness"
+  ],
+  "CWE-580": [
+    "Weakness"
+  ],
+  "CWE-581": [
+    "Weakness"
+  ],
+  "CWE-582": [
+    "Weakness"
+  ],
+  "CWE-583": [
+    "Weakness"
+  ],
+  "CWE-584": [
+    "Weakness"
+  ],
+  "CWE-585": [
+    "Weakness"
+  ],
+  "CWE-586": [
+    "Weakness"
+  ],
+  "CWE-587": [
+    "Weakness"
+  ],
+  "CWE-588": [
+    "Weakness"
+  ],
+  "CWE-589": [
+    "Weakness"
+  ],
+  "CWE-59": [
+    "Weakness"
+  ],
+  "CWE-590": [
+    "Weakness"
+  ],
+  "CWE-591": [
+    "Weakness"
+  ],
+  "CWE-593": [
+    "Weakness"
+  ],
+  "CWE-594": [
+    "Weakness"
+  ],
+  "CWE-595": [
+    "Weakness"
+  ],
+  "CWE-597": [
+    "Weakness"
+  ],
+  "CWE-598": [
+    "Weakness"
+  ],
+  "CWE-599": [
+    "Weakness"
+  ],
+  "CWE-6": [
+    "Weakness"
+  ],
+  "CWE-600": [
+    "Weakness"
+  ],
+  "CWE-601": [
+    "Weakness"
+  ],
+  "CWE-602": [
+    "Weakness"
+  ],
+  "CWE-603": [
+    "Weakness"
+  ],
+  "CWE-605": [
+    "Weakness"
+  ],
+  "CWE-606": [
+    "Weakness"
+  ],
+  "CWE-607": [
+    "Weakness"
+  ],
+  "CWE-608": [
+    "Weakness"
+  ],
+  "CWE-609": [
+    "Weakness"
+  ],
+  "CWE-61": [
+    "Weakness"
+  ],
+  "CWE-610": [
+    "Weakness"
+  ],
+  "CWE-611": [
+    "Weakness"
+  ],
+  "CWE-612": [
+    "Weakness"
+  ],
+  "CWE-613": [
+    "Weakness"
+  ],
+  "CWE-614": [
+    "Weakness"
+  ],
+  "CWE-615": [
+    "Weakness"
+  ],
+  "CWE-616": [
+    "Weakness"
+  ],
+  "CWE-617": [
+    "Weakness"
+  ],
+  "CWE-618": [
+    "Weakness"
+  ],
+  "CWE-619": [
+    "Weakness"
+  ],
+  "CWE-62": [
+    "Weakness"
+  ],
+  "CWE-620": [
+    "Weakness"
+  ],
+  "CWE-621": [
+    "Weakness"
+  ],
+  "CWE-622": [
+    "Weakness"
+  ],
+  "CWE-623": [
+    "Weakness"
+  ],
+  "CWE-624": [
+    "Weakness"
+  ],
+  "CWE-625": [
+    "Weakness"
+  ],
+  "CWE-626": [
+    "Weakness"
+  ],
+  "CWE-627": [
+    "Weakness"
+  ],
+  "CWE-628": [
+    "Weakness"
+  ],
+  "CWE-636": [
+    "Weakness"
+  ],
+  "CWE-637": [
+    "Weakness"
+  ],
+  "CWE-638": [
+    "Weakness"
+  ],
+  "CWE-639": [
+    "Weakness"
+  ],
+  "CWE-64": [
+    "Weakness"
+  ],
+  "CWE-640": [
+    "Weakness"
+  ],
+  "CWE-641": [
+    "Weakness"
+  ],
+  "CWE-642": [
+    "Weakness"
+  ],
+  "CWE-643": [
+    "Weakness"
+  ],
+  "CWE-644": [
+    "Weakness"
+  ],
+  "CWE-645": [
+    "Weakness"
+  ],
+  "CWE-646": [
+    "Weakness"
+  ],
+  "CWE-647": [
+    "Weakness"
+  ],
+  "CWE-648": [
+    "Weakness"
+  ],
+  "CWE-649": [
+    "Weakness"
+  ],
+  "CWE-65": [
+    "Weakness"
+  ],
+  "CWE-650": [
+    "Weakness"
+  ],
+  "CWE-651": [
+    "Weakness"
+  ],
+  "CWE-652": [
+    "Weakness"
+  ],
+  "CWE-653": [
+    "Weakness"
+  ],
+  "CWE-654": [
+    "Weakness"
+  ],
+  "CWE-655": [
+    "Weakness"
+  ],
+  "CWE-656": [
+    "Weakness"
+  ],
+  "CWE-657": [
+    "Weakness"
+  ],
+  "CWE-66": [
+    "Weakness"
+  ],
+  "CWE-662": [
+    "Weakness"
+  ],
+  "CWE-663": [
+    "Weakness"
+  ],
+  "CWE-664": [
+    "Weakness"
+  ],
+  "CWE-665": [
+    "Weakness"
+  ],
+  "CWE-666": [
+    "Weakness"
+  ],
+  "CWE-667": [
+    "Weakness"
+  ],
+  "CWE-668": [
+    "Weakness"
+  ],
+  "CWE-669": [
+    "Weakness"
+  ],
+  "CWE-67": [
+    "Weakness"
+  ],
+  "CWE-670": [
+    "Weakness"
+  ],
+  "CWE-671": [
+    "Weakness"
+  ],
+  "CWE-672": [
+    "Weakness"
+  ],
+  "CWE-673": [
+    "Weakness"
+  ],
+  "CWE-674": [
+    "Weakness"
+  ],
+  "CWE-675": [
+    "Weakness"
+  ],
+  "CWE-676": [
+    "Weakness"
+  ],
+  "CWE-680": [
+    "Weakness"
+  ],
+  "CWE-681": [
+    "Weakness"
+  ],
+  "CWE-682": [
+    "Weakness"
+  ],
+  "CWE-683": [
+    "Weakness"
+  ],
+  "CWE-684": [
+    "Weakness"
+  ],
+  "CWE-685": [
+    "Weakness"
+  ],
+  "CWE-686": [
+    "Weakness"
+  ],
+  "CWE-687": [
+    "Weakness"
+  ],
+  "CWE-688": [
+    "Weakness"
+  ],
+  "CWE-689": [
+    "Weakness"
+  ],
+  "CWE-69": [
+    "Weakness"
+  ],
+  "CWE-690": [
+    "Weakness"
+  ],
+  "CWE-691": [
+    "Weakness"
+  ],
+  "CWE-692": [
+    "Weakness"
+  ],
+  "CWE-693": [
+    "Weakness"
+  ],
+  "CWE-694": [
+    "Weakness"
+  ],
+  "CWE-695": [
+    "Weakness"
+  ],
+  "CWE-696": [
+    "Weakness"
+  ],
+  "CWE-697": [
+    "Weakness"
+  ],
+  "CWE-698": [
+    "Weakness"
+  ],
+  "CWE-7": [
+    "Weakness"
+  ],
+  "CWE-703": [
+    "Weakness"
+  ],
+  "CWE-704": [
+    "Weakness"
+  ],
+  "CWE-705": [
+    "Weakness"
+  ],
+  "CWE-706": [
+    "Weakness"
+  ],
+  "CWE-707": [
+    "Weakness"
+  ],
+  "CWE-708": [
+    "Weakness"
+  ],
+  "CWE-710": [
+    "Weakness"
+  ],
+  "CWE-72": [
+    "Weakness"
+  ],
+  "CWE-73": [
+    "Weakness"
+  ],
+  "CWE-732": [
+    "Weakness"
+  ],
+  "CWE-733": [
+    "Weakness"
+  ],
+  "CWE-74": [
+    "Weakness"
+  ],
+  "CWE-749": [
+    "Weakness"
+  ],
+  "CWE-75": [
+    "Weakness"
+  ],
+  "CWE-754": [
+    "Weakness"
+  ],
+  "CWE-755": [
+    "Weakness"
+  ],
+  "CWE-756": [
+    "Weakness"
+  ],
+  "CWE-757": [
+    "Weakness"
+  ],
+  "CWE-758": [
+    "Weakness"
+  ],
+  "CWE-759": [
+    "Weakness"
+  ],
+  "CWE-76": [
+    "Weakness"
+  ],
+  "CWE-760": [
+    "Weakness"
+  ],
+  "CWE-761": [
+    "Weakness"
+  ],
+  "CWE-762": [
+    "Weakness"
+  ],
+  "CWE-763": [
+    "Weakness"
+  ],
+  "CWE-764": [
+    "Weakness"
+  ],
+  "CWE-765": [
+    "Weakness"
+  ],
+  "CWE-766": [
+    "Weakness"
+  ],
+  "CWE-767": [
+    "Weakness"
+  ],
+  "CWE-768": [
+    "Weakness"
+  ],
+  "CWE-77": [
+    "Weakness"
+  ],
+  "CWE-770": [
+    "Weakness"
+  ],
+  "CWE-771": [
+    "Weakness"
+  ],
+  "CWE-772": [
+    "Weakness"
+  ],
+  "CWE-773": [
+    "Weakness"
+  ],
+  "CWE-774": [
+    "Weakness"
+  ],
+  "CWE-775": [
+    "Weakness"
+  ],
+  "CWE-776": [
+    "Weakness"
+  ],
+  "CWE-777": [
+    "Weakness"
+  ],
+  "CWE-778": [
+    "Weakness"
+  ],
+  "CWE-779": [
+    "Weakness"
+  ],
+  "CWE-78": [
+    "Weakness"
+  ],
+  "CWE-780": [
+    "Weakness"
+  ],
+  "CWE-781": [
+    "Weakness"
+  ],
+  "CWE-782": [
+    "Weakness"
+  ],
+  "CWE-783": [
+    "Weakness"
+  ],
+  "CWE-784": [
+    "Weakness"
+  ],
+  "CWE-785": [
+    "Weakness"
+  ],
+  "CWE-786": [
+    "Weakness"
+  ],
+  "CWE-787": [
+    "Weakness"
+  ],
+  "CWE-788": [
+    "Weakness"
+  ],
+  "CWE-789": [
+    "Weakness"
+  ],
+  "CWE-79": [
+    "Weakness"
+  ],
+  "CWE-790": [
+    "Weakness"
+  ],
+  "CWE-791": [
+    "Weakness"
+  ],
+  "CWE-792": [
+    "Weakness"
+  ],
+  "CWE-793": [
+    "Weakness"
+  ],
+  "CWE-794": [
+    "Weakness"
+  ],
+  "CWE-795": [
+    "Weakness"
+  ],
+  "CWE-796": [
+    "Weakness"
+  ],
+  "CWE-797": [
+    "Weakness"
+  ],
+  "CWE-798": [
+    "Weakness"
+  ],
+  "CWE-799": [
+    "Weakness"
+  ],
+  "CWE-8": [
+    "Weakness"
+  ],
+  "CWE-80": [
+    "Weakness"
+  ],
+  "CWE-804": [
+    "Weakness"
+  ],
+  "CWE-805": [
+    "Weakness"
+  ],
+  "CWE-806": [
+    "Weakness"
+  ],
+  "CWE-807": [
+    "Weakness"
+  ],
+  "CWE-81": [
+    "Weakness"
+  ],
+  "CWE-82": [
+    "Weakness"
+  ],
+  "CWE-820": [
+    "Weakness"
+  ],
+  "CWE-821": [
+    "Weakness"
+  ],
+  "CWE-822": [
+    "Weakness"
+  ],
+  "CWE-823": [
+    "Weakness"
+  ],
+  "CWE-824": [
+    "Weakness"
+  ],
+  "CWE-825": [
+    "Weakness"
+  ],
+  "CWE-826": [
+    "Weakness"
+  ],
+  "CWE-827": [
+    "Weakness"
+  ],
+  "CWE-828": [
+    "Weakness"
+  ],
+  "CWE-829": [
+    "Weakness"
+  ],
+  "CWE-83": [
+    "Weakness"
+  ],
+  "CWE-830": [
+    "Weakness"
+  ],
+  "CWE-831": [
+    "Weakness"
+  ],
+  "CWE-832": [
+    "Weakness"
+  ],
+  "CWE-833": [
+    "Weakness"
+  ],
+  "CWE-834": [
+    "Weakness"
+  ],
+  "CWE-835": [
+    "Weakness"
+  ],
+  "CWE-836": [
+    "Weakness"
+  ],
+  "CWE-837": [
+    "Weakness"
+  ],
+  "CWE-838": [
+    "Weakness"
+  ],
+  "CWE-839": [
+    "Weakness"
+  ],
+  "CWE-84": [
+    "Weakness"
+  ],
+  "CWE-841": [
+    "Weakness"
+  ],
+  "CWE-842": [
+    "Weakness"
+  ],
+  "CWE-843": [
+    "Weakness"
+  ],
+  "CWE-85": [
+    "Weakness"
+  ],
+  "CWE-86": [
+    "Weakness"
+  ],
+  "CWE-862": [
+    "Weakness"
+  ],
+  "CWE-863": [
+    "Weakness"
+  ],
+  "CWE-87": [
+    "Weakness"
+  ],
+  "CWE-88": [
+    "Weakness"
+  ],
+  "CWE-89": [
+    "Weakness"
+  ],
+  "CWE-9": [
+    "Weakness"
+  ],
+  "CWE-90": [
+    "Weakness"
+  ],
+  "CWE-908": [
+    "Weakness"
+  ],
+  "CWE-909": [
+    "Weakness"
+  ],
+  "CWE-91": [
+    "Weakness"
+  ],
+  "CWE-910": [
+    "Weakness"
+  ],
+  "CWE-911": [
+    "Weakness"
+  ],
+  "CWE-912": [
+    "Weakness"
+  ],
+  "CWE-913": [
+    "Weakness"
+  ],
+  "CWE-914": [
+    "Weakness"
+  ],
+  "CWE-915": [
+    "Weakness"
+  ],
+  "CWE-916": [
+    "Weakness"
+  ],
+  "CWE-917": [
+    "Weakness"
+  ],
+  "CWE-918": [
+    "Weakness"
+  ],
+  "CWE-920": [
+    "Weakness"
+  ],
+  "CWE-921": [
+    "Weakness"
+  ],
+  "CWE-922": [
+    "Weakness"
+  ],
+  "CWE-923": [
+    "Weakness"
+  ],
+  "CWE-924": [
+    "Weakness"
+  ],
+  "CWE-925": [
+    "Weakness"
+  ],
+  "CWE-926": [
+    "Weakness"
+  ],
+  "CWE-927": [
+    "Weakness"
+  ],
+  "CWE-93": [
+    "Weakness"
+  ],
+  "CWE-939": [
+    "Weakness"
+  ],
+  "CWE-94": [
+    "Weakness"
+  ],
+  "CWE-940": [
+    "Weakness"
+  ],
+  "CWE-941": [
+    "Weakness"
+  ],
+  "CWE-942": [
+    "Weakness"
+  ],
+  "CWE-943": [
+    "Weakness"
+  ],
+  "CWE-95": [
+    "Weakness"
+  ],
+  "CWE-96": [
+    "Weakness"
+  ],
+  "CWE-97": [
+    "Weakness"
+  ],
+  "CWE-98": [
+    "Weakness"
+  ],
+  "CWE-99": [
+    "Weakness"
+  ],
+  "CacheMemory": [
+    "Artifact"
+  ],
+  "CallStack": [
+    "Artifact"
+  ],
+  "CanopyClustering": [
+    "Plan"
+  ],
+  "CentralProcessingUnit": [
+    "Artifact"
+  ],
+  "CentralTendency": [
+    "Plan"
+  ],
+  "Centroid-basedClustering": [
+    "Plan"
+  ],
+  "Certificate": [
+    "Artifact"
+  ],
+  "Certificate-basedAuthentication": [
+    "Plan"
+  ],
+  "CertificateAnalysis": [
+    "Plan"
+  ],
+  "CertificateFile": [
+    "Artifact"
+  ],
+  "CertificatePinning": [
+    "Plan"
+  ],
+  "CertificateRotation": [
+    "Plan"
+  ],
+  "CertificateTrustStore": [
+    "Artifact"
+  ],
+  "ChangeDefaultPassword": [
+    "Plan"
+  ],
+  "ChatroomClient": [
+    "Artifact"
+  ],
+  "ChildProcess": [
+    "Artifact"
+  ],
+  "Classification": [
+    "Plan"
+  ],
+  "Classifying": [
+    "Goal"
+  ],
+  "Client-serverPayloadProfiling": [
+    "Plan"
+  ],
+  "ClientApplication": [
+    "Artifact"
+  ],
+  "ClientComputer": [
+    "Artifact"
+  ],
+  "Clipboard": [
+    "Artifact"
+  ],
+  "Clock": [
+    "Artifact"
+  ],
+  "ClockEvent": [
+    "Event"
+  ],
+  "ClockSynchronizationEvent": [
+    "Event"
+  ],
+  "Cloud-basedDatabaseApplication": [
+    "Artifact"
+  ],
+  "CloudConfiguration": [
+    "Artifact"
+  ],
+  "CloudConfigurationModificationEvent": [
+    "Event"
+  ],
+  "CloudInstanceMetadata": [
+    "Artifact"
+  ],
+  "CloudServiceAuthentication": [
+    "Event"
+  ],
+  "CloudServiceAuthorization": [
+    "Event"
+  ],
+  "CloudServiceProvider": [
+    "Agent",
+    "Group"
+  ],
+  "CloudServiceSensor": [
+    "Sensor"
+  ],
+  "CloudStorage": [
+    "Artifact"
+  ],
+  "CloudUserAccount": [
+    "Artifact"
+  ],
+  "ClusterAnalysis": [
+    "Plan"
+  ],
+  "Clustering": [
+    "Goal"
+  ],
+  "CodeAnalyzer": [
+    "Artifact"
+  ],
+  "CodeRepository": [
+    "Artifact"
+  ],
+  "CodecApplication": [
+    "Artifact"
+  ],
+  "CodecLibrary": [
+    "Artifact"
+  ],
+  "CoefficientOfVariation": [
+    "Plan"
+  ],
+  "CollaborativeSoftware": [
+    "Artifact"
+  ],
+  "CollectionTechnique": [
+    "Plan"
+  ],
+  "CombinationLock": [
+    "Artifact"
+  ],
+  "Command": [
+    "Artifact"
+  ],
+  "CommandAndControlTechnique": [
+    "Plan"
+  ],
+  "CommandHistoryLog": [
+    "Log"
+  ],
+  "CommandHistoryLogFile": [
+    "Artifact"
+  ],
+  "CommandLineInterface": [
+    "Artifact"
+  ],
+  "Compiler": [
+    "Artifact"
+  ],
+  "CompilerConfigurationFile": [
+    "Artifact"
+  ],
+  "ComputeDeviceEvent": [
+    "Event"
+  ],
+  "ComputerCabinet": [
+    "Artifact"
+  ],
+  "ComputerCase": [
+    "Artifact"
+  ],
+  "ComputerEnclosure": [
+    "Artifact"
+  ],
+  "ComputerNetworkNode": [
+    "Artifact"
+  ],
+  "ComputerPlatform": [
+    "Artifact"
+  ],
+  "ComputingImage": [
+    "Artifact"
+  ],
+  "ComputingServer": [
+    "Artifact"
+  ],
+  "ComputingSnapshot": [
+    "Artifact"
+  ],
+  "Condition": [
+    "Condition"
+  ],
+  "ConfigurationDatabase": [
+    "Artifact"
+  ],
+  "ConfigurationDatabaseRecord": [
+    "Artifact"
+  ],
+  "ConfigurationEvent": [
+    "Event"
+  ],
+  "ConfigurationFile": [
+    "Artifact"
+  ],
+  "ConfigurationInventory": [
+    "Plan"
+  ],
+  "ConfigurationManagementDatabase": [
+    "Artifact"
+  ],
+  "ConfigurationModificationEvent": [
+    "Event"
+  ],
+  "ConfigurationResource": [
+    "Artifact"
+  ],
+  "ConnectSocket": [
+    "Artifact"
+  ],
+  "ConnectedHoneynet": [
+    "Plan"
+  ],
+  "ConnectionAttemptAnalysis": [
+    "Plan"
+  ],
+  "ConsoleOutputFunction": [
+    "Artifact"
+  ],
+  "ContainerBuildTool": [
+    "Artifact"
+  ],
+  "ContainerImage": [
+    "Artifact"
+  ],
+  "ContainerImageAnalysis": [
+    "Plan"
+  ],
+  "ContainerOrchestrationSoftware": [
+    "Artifact"
+  ],
+  "ContainerProcess": [
+    "Artifact"
+  ],
+  "ContainerRuntime": [
+    "Artifact"
+  ],
+  "ContentExcision": [
+    "Plan"
+  ],
+  "ContentFiltering": [
+    "Plan"
+  ],
+  "ContentFormatConversion": [
+    "Plan"
+  ],
+  "ContentModification": [
+    "Plan"
+  ],
+  "ContentPolicy": [
+    "Artifact"
+  ],
+  "ContentQuarantine": [
+    "Plan"
+  ],
+  "ContentRebuild": [
+    "Plan"
+  ],
+  "ContentSubstitution": [
+    "Plan"
+  ],
+  "ContentValidation": [
+    "Plan"
+  ],
+  "ControlFlowGraph": [
+    "Artifact"
+  ],
+  "ControlFlowIntegrity": [
+    "Plan"
+  ],
+  "ControlFlowPolicy": [
+    "Artifact"
+  ],
+  "ConvolutionalNeuralNetwork": [
+    "Plan"
+  ],
+  "CopyMemoryFunction": [
+    "Artifact"
+  ],
+  "CopyToken": [
+    "Artifact"
+  ],
+  "Correlation": [
+    "Plan"
+  ],
+  "CorrelationClustering": [
+    "Plan"
+  ],
+  "CramersV": [
+    "Plan"
+  ],
+  "CreateFile": [
+    "Artifact"
+  ],
+  "CreateProcess": [
+    "Artifact"
+  ],
+  "CreateSocket": [
+    "Artifact"
+  ],
+  "CreateThread": [
+    "Artifact"
+  ],
+  "Credential": [
+    "Artifact"
+  ],
+  "CredentialAccessTechnique": [
+    "Plan"
+  ],
+  "CredentialCompromiseScopeAnalysis": [
+    "Plan"
+  ],
+  "CredentialEviction": [
+    "Plan"
+  ],
+  "CredentialHardening": [
+    "Plan"
+  ],
+  "CredentialManagementSystem": [
+    "Artifact"
+  ],
+  "CredentialRevocation": [
+    "Plan"
+  ],
+  "CredentialRotation": [
+    "Plan"
+  ],
+  "CredentialScrubbing": [
+    "Plan"
+  ],
+  "CredentialTransmissionScoping": [
+    "Plan"
+  ],
+  "CryptographicKey": [
+    "Artifact"
+  ],
+  "CustomArchiveFile": [
+    "Artifact"
+  ],
+  "CyberAction": [
+    "Event"
+  ],
+  "CyberSensor": [
+    "Sensor"
+  ],
+  "CyberTechnique": [
+    "Plan"
+  ],
+  "CycleGAN": [
+    "Plan"
+  ],
+  "DBSCAN": [
+    "Plan"
+  ],
+  "DHCPAckEvent": [
+    "Event"
+  ],
+  "DHCPDiscoverEvent": [
+    "Event"
+  ],
+  "DHCPEvent": [
+    "Event"
+  ],
+  "DHCPInformEvent": [
+    "Event"
+  ],
+  "DHCPLeaseExpireEvent": [
+    "Event"
+  ],
+  "DHCPNakEvent": [
+    "Event"
+  ],
+  "DHCPNetworkTraffic": [
+    "Artifact"
+  ],
+  "DHCPOfferEvent": [
+    "Event"
+  ],
+  "DHCPReleaseEvent": [
+    "Event"
+  ],
+  "DHCPRequestEvent": [
+    "Event"
+  ],
+  "DHCPServer": [
+    "Artifact"
+  ],
+  "DHCPService": [
+    "Artifact"
+  ],
+  "DHCPServiceApplication": [
+    "Artifact"
+  ],
+  "DNN-basedClustering": [
+    "Plan"
+  ],
+  "DNSAllowlisting": [
+    "Plan"
+  ],
+  "DNSCacheEviction": [
+    "Plan"
+  ],
+  "DNSDenylisting": [
+    "Plan"
+  ],
+  "DNSEvent": [
+    "Event"
+  ],
+  "DNSLookup": [
+    "Artifact"
+  ],
+  "DNSNetworkTraffic": [
+    "Artifact"
+  ],
+  "DNSQueryEvent": [
+    "Event"
+  ],
+  "DNSRecord": [
+    "Artifact"
+  ],
+  "DNSResponseEvent": [
+    "Event"
+  ],
+  "DNSServer": [
+    "Artifact"
+  ],
+  "DNSTrafficAnalysis": [
+    "Plan"
+  ],
+  "DataAcquisitionAgent": [
+    "Artifact"
+  ],
+  "DataAcquisitionUnit": [
+    "Artifact"
+  ],
+  "DataArtifactServer": [
+    "Artifact"
+  ],
+  "DataDependency": [
+    "Artifact"
+  ],
+  "DataExchangeMapping": [
+    "Plan"
+  ],
+  "DataInventory": [
+    "Plan"
+  ],
+  "DataLinkLink": [
+    "Link"
+  ],
+  "Database": [
+    "Artifact"
+  ],
+  "DatabaseApplication": [
+    "Artifact"
+  ],
+  "DatabaseFile": [
+    "Artifact"
+  ],
+  "DatabaseQuery": [
+    "Artifact"
+  ],
+  "DatabaseQueryStringAnalysis": [
+    "Plan"
+  ],
+  "DatabaseRecord": [
+    "Artifact"
+  ],
+  "DatabaseServer": [
+    "Artifact"
+  ],
+  "DatabaseService": [
+    "Artifact"
+  ],
+  "DatabaseServiceApplication": [
+    "Artifact"
+  ],
+  "Datalog": [
+    "Plan"
+  ],
+  "DeadCodeElimination": [
+    "Plan"
+  ],
+  "Deceive": [
+    "Goal"
+  ],
+  "DecisionTree": [
+    "Plan"
+  ],
+  "DecisionTreeRegression": [
+    "Plan"
+  ],
+  "DecoderApplication": [
+    "Artifact"
+  ],
+  "DecoyArtifact": [
+    "Artifact"
+  ],
+  "DecoyEnvironment": [
+    "Plan"
+  ],
+  "DecoyFile": [
+    "Plan"
+  ],
+  "DecoyNetworkResource": [
+    "Plan"
+  ],
+  "DecoyObject": [
+    "Plan"
+  ],
+  "DecoyPersona": [
+    "Plan"
+  ],
+  "DecoyPublicRelease": [
+    "Plan"
+  ],
+  "DecoySessionToken": [
+    "Plan"
+  ],
+  "DecoyUserCredential": [
+    "Plan"
+  ],
+  "DeepConvolutionalGAN": [
+    "Plan"
+  ],
+  "DeepNeuralNetClassification": [
+    "Plan"
+  ],
+  "DeepQ-learning": [
+    "Plan"
+  ],
+  "DefaultUserAccount": [
+    "Artifact"
+  ],
+  "DefenseEvasionTechnique": [
+    "Plan"
+  ],
+  "DefensiveAction": [
+    "Event"
+  ],
+  "DefensiveTactic": [
+    "Goal"
+  ],
+  "DefensiveTechnique": [
+    "Plan"
+  ],
+  "DeleteFile": [
+    "Artifact"
+  ],
+  "Density-basedClustering": [
+    "Plan"
+  ],
+  "Density-weightedMethod": [
+    "Plan"
+  ],
+  "DeonticLogic": [
+    "Plan"
+  ],
+  "Dependency": [
+    "Artifact"
+  ],
+  "DescriptionLogic": [
+    "Plan"
+  ],
+  "DescriptiveStatistics": [
+    "Plan"
+  ],
+  "DeserializationFunction": [
+    "Artifact"
+  ],
+  "DesktopComputer": [
+    "Artifact"
+  ],
+  "Detect": [
+    "Goal"
+  ],
+  "DetectionEvent": [
+    "Event"
+  ],
+  "DeveloperApplication": [
+    "Artifact"
+  ],
+  "DialUpModem": [
+    "Artifact"
+  ],
+  "DifferentialVolumeSnapshot": [
+    "Artifact"
+  ],
+  "DigitalAccessBadge": [
+    "Artifact"
+  ],
+  "DigitalArtifact": [
+    "Artifact"
+  ],
+  "DigitalAudio": [
+    "Artifact"
+  ],
+  "DigitalAudioVisualMedia": [
+    "Artifact"
+  ],
+  "DigitalCamera": [
+    "Artifact"
+  ],
+  "DigitalDocument": [
+    "Artifact"
+  ],
+  "DigitalEvent": [
+    "Event"
+  ],
+  "DigitalEventRecord": [
+    "Artifact"
+  ],
+  "DigitalFingerprint": [
+    "Artifact"
+  ],
+  "DigitalIdentity": [
+    "Artifact"
+  ],
+  "DigitalImage": [
+    "Artifact"
+  ],
+  "DigitalInformation": [
+    "Artifact"
+  ],
+  "DigitalInformationBearer": [
+    "Artifact"
+  ],
+  "DigitalMedia": [
+    "Artifact"
+  ],
+  "DigitalMessage": [
+    "Artifact"
+  ],
+  "DigitalMultimedia": [
+    "Artifact"
+  ],
+  "DigitalSignalProcessingApplication": [
+    "Artifact"
+  ],
+  "DigitalSystem": [
+    "Artifact"
+  ],
+  "DigitalText": [
+    "Artifact"
+  ],
+  "DigitalVideo": [
+    "Artifact"
+  ],
+  "DimensionReduction": [
+    "Plan"
+  ],
+  "DirectPhysicalLinkMapping": [
+    "Plan"
+  ],
+  "DirectionalNetworkLink": [
+    "Plan"
+  ],
+  "Directory": [
+    "Artifact"
+  ],
+  "DirectoryService": [
+    "Artifact"
+  ],
+  "DisableRemoteAccess": [
+    "Plan"
+  ],
+  "DiscoveryTechnique": [
+    "Plan"
+  ],
+  "DiscriminantAnalysis": [
+    "Plan"
+  ],
+  "DiskEncryption": [
+    "Plan"
+  ],
+  "DiskErasure": [
+    "Plan"
+  ],
+  "DiskFormatting": [
+    "Plan"
+  ],
+  "DiskImage": [
+    "Artifact"
+  ],
+  "DiskPartitioning": [
+    "Plan"
+  ],
+  "DisplayAdapter": [
+    "Artifact"
+  ],
+  "DisplayDeviceDriver": [
+    "Artifact"
+  ],
+  "DisplayServer": [
+    "Artifact"
+  ],
+  "Distribution-basedClustering": [
+    "Plan"
+  ],
+  "DistributionProperties": [
+    "Plan"
+  ],
+  "DivisiveClustering": [
+    "Plan"
+  ],
+  "DocumentFile": [
+    "Artifact"
+  ],
+  "DomainAccountMonitoring": [
+    "Plan"
+  ],
+  "DomainLogicValidation": [
+    "Plan"
+  ],
+  "DomainName": [
+    "Artifact"
+  ],
+  "DomainNameReputationAnalysis": [
+    "Plan"
+  ],
+  "DomainRegistration": [
+    "Artifact"
+  ],
+  "DomainRegistrationTakedown": [
+    "Plan"
+  ],
+  "DomainTrustPolicy": [
+    "Plan"
+  ],
+  "DomainUserAccount": [
+    "Artifact"
+  ],
+  "DriverLoadIntegrityChecking": [
+    "Plan"
+  ],
+  "Dyna-Q": [
+    "Plan"
+  ],
+  "DynamicAnalysis": [
+    "Plan"
+  ],
+  "DynamicAnalysisTool": [
+    "Artifact"
+  ],
+  "ElectricalSignal": [
+    "Artifact"
+  ],
+  "ElectromagneticRadiationHardening": [
+    "Plan"
+  ],
+  "ElectromagneticSignal": [
+    "Artifact"
+  ],
+  "ElectronicCombinationLock": [
+    "Artifact"
+  ],
+  "ElectronicCombinationLockEvent": [
+    "Event"
+  ],
+  "ElectronicLockMonitoring": [
+    "Plan"
+  ],
+  "Email": [
+    "Artifact"
+  ],
+  "EmailAttachment": [
+    "Artifact"
+  ],
+  "EmailEvent": [
+    "Event"
+  ],
+  "EmailFiltering": [
+    "Plan"
+  ],
+  "EmailReceiveEvent": [
+    "Event"
+  ],
+  "EmailRemoval": [
+    "Plan"
+  ],
+  "EmailRule": [
+    "Artifact"
+  ],
+  "EmailScanEvent": [
+    "Event"
+  ],
+  "EmailSendEvent": [
+    "Event"
+  ],
+  "EmbeddedComputer": [
+    "Artifact"
+  ],
+  "EmbeddedDatabaseApplication": [
+    "Artifact"
+  ],
+  "EmulatedFileAnalysis": [
+    "Plan"
+  ],
+  "Enclave": [
+    "Artifact"
+  ],
+  "EncoderApplication": [
+    "Artifact"
+  ],
+  "EncryptedCredential": [
+    "Artifact"
+  ],
+  "EncryptedPassword": [
+    "Artifact"
+  ],
+  "EncryptedTunnels": [
+    "Plan"
+  ],
+  "Endpoint-basedWebServerAccessMediation": [
+    "Plan"
+  ],
+  "EndpointHealthBeacon": [
+    "Plan"
+  ],
+  "EndpointSensor": [
+    "Sensor"
+  ],
+  "EnsembleLearning": [
+    "Plan"
+  ],
+  "EpistemicLogic": [
+    "Plan"
+  ],
+  "EquivalenceMatching": [
+    "Plan"
+  ],
+  "Estimation": [
+    "Plan"
+  ],
+  "EvalFunction": [
+    "Artifact"
+  ],
+  "Event": [
+    "Event"
+  ],
+  "EventLog": [
+    "Log"
+  ],
+  "EventLogArchiveEvent": [
+    "Event"
+  ],
+  "EventLogClearEvent": [
+    "Event"
+  ],
+  "EventLogDeleteEvent": [
+    "Event"
+  ],
+  "EventLogDisableEvent": [
+    "Event"
+  ],
+  "EventLogEnableEvent": [
+    "Event"
+  ],
+  "EventLogEvent": [
+    "Event"
+  ],
+  "EventLogExportEvent": [
+    "Event"
+  ],
+  "EventLogRestartEvent": [
+    "Event"
+  ],
+  "EventLogRotateEvent": [
+    "Event"
+  ],
+  "EventLogStartEvent": [
+    "Event"
+  ],
+  "EventLogStopEvent": [
+    "Event"
+  ],
+  "Evict": [
+    "Goal"
+  ],
+  "EvictionEvent": [
+    "Event"
+  ],
+  "ExactMatching": [
+    "Plan"
+  ],
+  "ExceptionHandler": [
+    "Artifact"
+  ],
+  "ExceptionHandlerPointerValidation": [
+    "Plan"
+  ],
+  "Exec": [
+    "Artifact"
+  ],
+  "ExecutableAllowlisting": [
+    "Plan"
+  ],
+  "ExecutableBinary": [
+    "Artifact"
+  ],
+  "ExecutableDenylisting": [
+    "Plan"
+  ],
+  "ExecutableFile": [
+    "Artifact"
+  ],
+  "ExecutableScript": [
+    "Artifact"
+  ],
+  "ExecutionIsolation": [
+    "Plan"
+  ],
+  "ExecutionTechnique": [
+    "Plan"
+  ],
+  "ExfiltrationTechnique": [
+    "Plan"
+  ],
+  "Expectation-maximizationClustering": [
+    "Plan"
+  ],
+  "ExpectedErrorReduction": [
+    "Plan"
+  ],
+  "ExpectedModelChange": [
+    "Plan"
+  ],
+  "ExternalContentInclusionFunction": [
+    "Artifact"
+  ],
+  "FPGABitstream": [
+    "Artifact"
+  ],
+  "FTPDeleteEvent": [
+    "Event"
+  ],
+  "FTPEvent": [
+    "Event"
+  ],
+  "FTPGetEvent": [
+    "Event"
+  ],
+  "FTPListEvent": [
+    "Event"
+  ],
+  "FTPPollEvent": [
+    "Event"
+  ],
+  "FTPPutEvent": [
+    "Event"
+  ],
+  "FTPRenameEvent": [
+    "Event"
+  ],
+  "FastSymbolicLink": [
+    "Artifact"
+  ],
+  "File": [
+    "Artifact"
+  ],
+  "FileAccessEvent": [
+    "Event"
+  ],
+  "FileAccessPatternAnalysis": [
+    "Plan"
+  ],
+  "FileAnalysis": [
+    "Plan"
+  ],
+  "FileCarving": [
+    "Plan"
+  ],
+  "FileContentAnalysis": [
+    "Plan"
+  ],
+  "FileContentBlock": [
+    "Artifact"
+  ],
+  "FileContentBlockData": [
+    "Artifact"
+  ],
+  "FileContentBlockMetadata": [
+    "Artifact"
+  ],
+  "FileContentDecompressionChecking": [
+    "Plan"
+  ],
+  "FileContentRules": [
+    "Plan"
+  ],
+  "FileCopyEvent": [
+    "Event"
+  ],
+  "FileCreationAnalysis": [
+    "Plan"
+  ],
+  "FileCreationEvent": [
+    "Event"
+  ],
+  "FileDecryptionEvent": [
+    "Event"
+  ],
+  "FileDeletionEvent": [
+    "Event"
+  ],
+  "FileEncryption": [
+    "Plan"
+  ],
+  "FileEncryptionEvent": [
+    "Event"
+  ],
+  "FileEvent": [
+    "Event"
+  ],
+  "FileEviction": [
+    "Plan"
+  ],
+  "FileFooterBlock": [
+    "Artifact"
+  ],
+  "FileFooterBlockContent": [
+    "Artifact"
+  ],
+  "FileFooterBlockSignature": [
+    "Artifact"
+  ],
+  "FileFormatVerification": [
+    "Plan"
+  ],
+  "FileGetAttributesEvent": [
+    "Event"
+  ],
+  "FileGetPermissionsEvent": [
+    "Event"
+  ],
+  "FileHash": [
+    "Artifact"
+  ],
+  "FileHashReputationAnalysis": [
+    "Plan"
+  ],
+  "FileHashing": [
+    "Plan"
+  ],
+  "FileHeaderBlock": [
+    "Artifact"
+  ],
+  "FileHeaderBlockContent": [
+    "Artifact"
+  ],
+  "FileHeaderBlockSignature": [
+    "Artifact"
+  ],
+  "FileIntegrityMonitoring": [
+    "Plan"
+  ],
+  "FileInternalStructureVerification": [
+    "Plan"
+  ],
+  "FileMagicByteVerification": [
+    "Plan"
+  ],
+  "FileMagicBytes": [
+    "Artifact"
+  ],
+  "FileMetadata": [
+    "Artifact"
+  ],
+  "FileMetadataConsistencyValidation": [
+    "Plan"
+  ],
+  "FileMetadataValueVerification": [
+    "Plan"
+  ],
+  "FileMountEvent": [
+    "Event"
+  ],
+  "FilePathOpenFunction": [
+    "Artifact"
+  ],
+  "FileRenamingEvent": [
+    "Event"
+  ],
+  "FileSection": [
+    "Artifact"
+  ],
+  "FileServer": [
+    "Artifact"
+  ],
+  "FileSetAttributesEvent": [
+    "Event"
+  ],
+  "FileSetPermissionsEvent": [
+    "Event"
+  ],
+  "FileShareService": [
+    "Artifact"
+  ],
+  "FileSystem": [
+    "Artifact"
+  ],
+  "FileSystemLink": [
+    "Artifact"
+  ],
+  "FileSystemMetadata": [
+    "Artifact"
+  ],
+  "FileSystemSensor": [
+    "Sensor"
+  ],
+  "FileTransferNetworkTraffic": [
+    "Artifact"
+  ],
+  "FileUnmountEvent": [
+    "Event"
+  ],
+  "FileUpdateEvent": [
+    "Event"
+  ],
+  "FingerPrintScannerInputDevice": [
+    "Artifact"
+  ],
+  "Firewall": [
+    "Artifact"
+  ],
+  "Firmware": [
+    "Artifact"
+  ],
+  "FirmwareBehaviorAnalysis": [
+    "Plan"
+  ],
+  "FirmwareEmbeddedMonitoringCode": [
+    "Plan"
+  ],
+  "FirmwareSensor": [
+    "Sensor"
+  ],
+  "FirmwareVerification": [
+    "Plan"
+  ],
+  "First-orderLogic": [
+    "Plan"
+  ],
+  "First-stageBootLoader": [
+    "Artifact"
+  ],
+  "FlashMemory": [
+    "Artifact"
+  ],
+  "Forecasting": [
+    "Goal"
+  ],
+  "ForwardProxyServer": [
+    "Artifact"
+  ],
+  "ForwardResolutionDomainDenylisting": [
+    "Plan"
+  ],
+  "ForwardResolutionIPDenylisting": [
+    "Plan"
+  ],
+  "FreeMemory": [
+    "Artifact"
+  ],
+  "FullVolumeSnapshot": [
+    "Artifact"
+  ],
+  "FuzzyLogic": [
+    "Plan"
+  ],
+  "GNSSReceiver": [
+    "Artifact"
+  ],
+  "GNSSSatellite": [
+    "Artifact"
+  ],
+  "GNSSSignal": [
+    "Artifact"
+  ],
+  "GNSSTimeRecord": [
+    "Artifact"
+  ],
+  "GPT": [
+    "Plan"
+  ],
+  "GatedRecurrentUnit": [
+    "Plan"
+  ],
+  "Generation": [
+    "Goal"
+  ],
+  "GenerativeAdversarialNetwork": [
+    "Plan"
+  ],
+  "GeometricMean": [
+    "Plan"
+  ],
+  "GetOpenSockets": [
+    "Artifact"
+  ],
+  "GetOpenWindows": [
+    "Artifact"
+  ],
+  "GetRunningProcesses": [
+    "Artifact"
+  ],
+  "GetScreenCapture": [
+    "Artifact"
+  ],
+  "GetSystemConfigValue": [
+    "Artifact"
+  ],
+  "GetSystemNetworkConfigValue": [
+    "Artifact"
+  ],
+  "GetSystemTime": [
+    "Artifact"
+  ],
+  "GetThreadContext": [
+    "Artifact"
+  ],
+  "GlobalUserAccount": [
+    "Artifact"
+  ],
+  "Goal": [
+    "Goal"
+  ],
+  "GoodmanAndKruskalsGamma": [
+    "Plan"
+  ],
+  "GradientBoostedDecisionTree": [
+    "Plan"
+  ],
+  "Graph-basedClustering": [
+    "Plan"
+  ],
+  "Graph-basedSemi-supervisedLearning": [
+    "Plan"
+  ],
+  "GraphicalUserInterface": [
+    "Artifact"
+  ],
+  "GraphicsCardFirmware": [
+    "Artifact"
+  ],
+  "GraphicsProcessingUnit": [
+    "Artifact"
+  ],
+  "Grid-CNN": [
+    "Plan"
+  ],
+  "Grid-basedClustering": [
+    "Plan"
+  ],
+  "Group": [
+    "Group"
+  ],
+  "GroupCreationEvent": [
+    "Event"
+  ],
+  "GroupDeletionEvent": [
+    "Event"
+  ],
+  "GroupManagementEvent": [
+    "Event"
+  ],
+  "GroupPolicy": [
+    "Artifact"
+  ],
+  "Grouping": [
+    "Goal"
+  ],
+  "HMIApplication": [
+    "Artifact"
+  ],
+  "HMIApplicationProcess": [
+    "Artifact"
+  ],
+  "HTMLFile": [
+    "Artifact"
+  ],
+  "HTTPConnectEvent": [
+    "Event"
+  ],
+  "HTTPDeleteEvent": [
+    "Event"
+  ],
+  "HTTPEvent": [
+    "Event"
+  ],
+  "HTTPGetEvent": [
+    "Event"
+  ],
+  "HTTPHeadEvent": [
+    "Event"
+  ],
+  "HTTPOptionsEvent": [
+    "Event"
+  ],
+  "HTTPPostEvent": [
+    "Event"
+  ],
+  "HTTPPutEvent": [
+    "Event"
+  ],
+  "HTTPRequestEvent": [
+    "Event"
+  ],
+  "HTTPResponseEvent": [
+    "Event"
+  ],
+  "HTTPTraceEvent": [
+    "Event"
+  ],
+  "HardDiskFirmware": [
+    "Artifact"
+  ],
+  "HardLink": [
+    "Artifact"
+  ],
+  "Harden": [
+    "Goal"
+  ],
+  "HardeningEvent": [
+    "Event"
+  ],
+  "Hardware-basedProcessIsolation": [
+    "Plan"
+  ],
+  "Hardware-basedWriteProtection": [
+    "Plan"
+  ],
+  "HardwareClock": [
+    "Artifact"
+  ],
+  "HardwareClockDeviceDriver": [
+    "Artifact"
+  ],
+  "HardwareClockEvent": [
+    "Event"
+  ],
+  "HardwareComponentInventory": [
+    "Plan"
+  ],
+  "HardwareDevice": [
+    "Artifact"
+  ],
+  "HardwareDeviceBindEvent": [
+    "Event"
+  ],
+  "HardwareDeviceConfiguration": [
+    "Artifact"
+  ],
+  "HardwareDeviceConnectionEvent": [
+    "Event"
+  ],
+  "HardwareDeviceDisabledEvent": [
+    "Event"
+  ],
+  "HardwareDeviceDisconnectionEvent": [
+    "Event"
+  ],
+  "HardwareDeviceEnabledEvent": [
+    "Event"
+  ],
+  "HardwareDeviceEvent": [
+    "Event"
+  ],
+  "HardwareDeviceMoveEvent": [
+    "Event"
+  ],
+  "HardwareDeviceStateEvent": [
+    "Event"
+  ],
+  "HardwareDeviceUnbindEvent": [
+    "Event"
+  ],
+  "HardwareDeviceUpdateEvent": [
+    "Event"
+  ],
+  "HardwareDriver": [
+    "Artifact"
+  ],
+  "HardwareTimer": [
+    "Artifact"
+  ],
+  "HardwareTimerConfigurationEvent": [
+    "Event"
+  ],
+  "HardwareTimerDeviceDriver": [
+    "Artifact"
+  ],
+  "HardwareTimerEvent": [
+    "Event"
+  ],
+  "HardwareTimerInterruptEvent": [
+    "Event"
+  ],
+  "HardwareWatchdogTimer": [
+    "Artifact"
+  ],
+  "HarmonicMean": [
+    "Plan"
+  ],
+  "HeapSegment": [
+    "Artifact"
+  ],
+  "HeterogeneousAsymmetricFeature-basedTransferLearning": [
+    "Plan"
+  ],
+  "HeterogeneousFeature-basedTransferLearning": [
+    "Plan"
+  ],
+  "HeterogeneousTransferLearning": [
+    "Plan"
+  ],
+  "HierarchicalClustering": [
+    "Plan"
+  ],
+  "HierarchicalDomainDenylisting": [
+    "Plan"
+  ],
+  "High-dimensionClustering": [
+    "Plan"
+  ],
+  "Higher-orderLogic": [
+    "Plan"
+  ],
+  "Histogramming": [
+    "Goal"
+  ],
+  "HomogenousTransferLearning": [
+    "Plan"
+  ],
+  "HomoglyphDenylisting": [
+    "Plan"
+  ],
+  "HomoglyphDetection": [
+    "Plan"
+  ],
+  "Host": [
+    "Artifact"
+  ],
+  "Host-basedFirewall": [
+    "Artifact"
+  ],
+  "HostConfigurationSensor": [
+    "Sensor"
+  ],
+  "HostGroup": [
+    "Artifact"
+  ],
+  "HostReboot": [
+    "Plan"
+  ],
+  "HostShutdown": [
+    "Plan"
+  ],
+  "Hostname": [
+    "Artifact"
+  ],
+  "HumanInputDeviceFirmware": [
+    "Artifact"
+  ],
+  "Hybrid-basedTransferLearning": [
+    "Plan"
+  ],
+  "HypothesisTesting": [
+    "Plan"
+  ],
+  "ID3": [
+    "Plan"
+  ],
+  "IOModule": [
+    "Artifact"
+  ],
+  "IOPortRestriction": [
+    "Plan"
+  ],
+  "IPAddress": [
+    "Artifact"
+  ],
+  "IPCNetworkTraffic": [
+    "Artifact"
+  ],
+  "IPCTrafficAnalysis": [
+    "Plan"
+  ],
+  "IPPhone": [
+    "Artifact"
+  ],
+  "IPReputationAnalysis": [
+    "Plan"
+  ],
+  "Identifier": [
+    "Artifact"
+  ],
+  "IdentifierActivityAnalysis": [
+    "Plan"
+  ],
+  "IdentifierAnalysis": [
+    "Plan"
+  ],
+  "IdentifierReputationAnalysis": [
+    "Plan"
+  ],
+  "Image-to-ImageTranslationGAN": [
+    "Plan"
+  ],
+  "ImageCodeSegment": [
+    "Artifact"
+  ],
+  "ImageDataSegment": [
+    "Artifact"
+  ],
+  "ImageFile": [
+    "Artifact"
+  ],
+  "ImageScannerInputDevice": [
+    "Artifact"
+  ],
+  "ImageSegment": [
+    "Artifact"
+  ],
+  "ImageSynthesisGAN": [
+    "Plan"
+  ],
+  "ImpactTechnique": [
+    "Plan"
+  ],
+  "ImpersonateUser": [
+    "Artifact"
+  ],
+  "ImportLibraryFunction": [
+    "Artifact"
+  ],
+  "In-memoryPasswordStore": [
+    "Artifact"
+  ],
+  "InboundInternetDNSResponseTraffic": [
+    "Artifact"
+  ],
+  "InboundInternetEncryptedTraffic": [
+    "Artifact"
+  ],
+  "InboundInternetEncryptedWebTraffic": [
+    "Artifact"
+  ],
+  "InboundInternetMailTraffic": [
+    "Artifact"
+  ],
+  "InboundInternetNetworkTraffic": [
+    "Artifact"
+  ],
+  "InboundInternetWebTraffic": [
+    "Artifact"
+  ],
+  "InboundNetworkTraffic": [
+    "Artifact"
+  ],
+  "InboundSessionVolumeAnalysis": [
+    "Plan"
+  ],
+  "InboundTrafficFiltering": [
+    "Plan"
+  ],
+  "IndirectBranchCallAnalysis": [
+    "Plan"
+  ],
+  "InferentialStatistics": [
+    "Plan"
+  ],
+  "InitScript": [
+    "Artifact"
+  ],
+  "InitialAccessTechnique": [
+    "Plan"
+  ],
+  "InputDevice": [
+    "Artifact"
+  ],
+  "InputDeviceAnalysis": [
+    "Plan"
+  ],
+  "InputDeviceEvent": [
+    "Event"
+  ],
+  "InputFunction": [
+    "Artifact"
+  ],
+  "Instance-basedTransferLearning": [
+    "Plan"
+  ],
+  "InstantMessagingClient": [
+    "Artifact"
+  ],
+  "IntegerRangeValidation": [
+    "Plan"
+  ],
+  "IntegratedHoneynet": [
+    "Plan"
+  ],
+  "IntegrationTestExecutionTool": [
+    "Artifact"
+  ],
+  "InternetBasedAttacker": [
+    "Agent"
+  ],
+  "InternetDNSLookup": [
+    "Artifact"
+  ],
+  "InternetFileTransferTraffic": [
+    "Artifact"
+  ],
+  "InternetNetwork": [
+    "Artifact"
+  ],
+  "InternetNetworkTraffic": [
+    "Artifact"
+  ],
+  "InternetPersona": [
+    "Artifact"
+  ],
+  "InterprocessCommunication": [
+    "Artifact"
+  ],
+  "InterquartileRange": [
+    "Plan"
+  ],
+  "IntervalEstimation": [
+    "Plan"
+  ],
+  "IntranetAdministrativeNetworkTraffic": [
+    "Artifact"
+  ],
+  "IntranetDNSLookup": [
+    "Artifact"
+  ],
+  "IntranetFileTransferTraffic": [
+    "Artifact"
+  ],
+  "IntranetIPCNetworkTraffic": [
+    "Artifact"
+  ],
+  "IntranetMulticastNetworkTraffic": [
+    "Artifact"
+  ],
+  "IntranetNetwork": [
+    "Artifact"
+  ],
+  "IntranetNetworkTraffic": [
+    "Artifact"
+  ],
+  "IntranetRPCNetworkTraffic": [
+    "Artifact"
+  ],
+  "IntranetWebNetworkTraffic": [
+    "Artifact"
+  ],
+  "IntrinsicallySemi-supervisedLearning": [
+    "Plan"
+  ],
+  "IntrusionDetectionSystem": [
+    "Artifact"
+  ],
+  "IntrusionPreventionSystem": [
+    "Artifact"
+  ],
+  "Isolate": [
+    "Goal"
+  ],
+  "IsolationEvent": [
+    "Event"
+  ],
+  "JavaArchive": [
+    "Artifact"
+  ],
+  "JavaScriptBlob": [
+    "Artifact"
+  ],
+  "JobFunctionAccessPatternAnalysis": [
+    "Plan"
+  ],
+  "JobSchedule": [
+    "Artifact"
+  ],
+  "JobSchedulerSoftware": [
+    "Artifact"
+  ],
+  "K-CenterClustering": [
+    "Plan"
+  ],
+  "K-FoldCross-Validation": [
+    "Plan"
+  ],
+  "K-NearestNeighbors": [
+    "Plan"
+  ],
+  "K-meansClustering": [
+    "Plan"
+  ],
+  "KendallsRankCorrelationCoefficient": [
+    "Plan"
+  ],
+  "KerberosTicket": [
+    "Artifact"
+  ],
+  "KerberosTicketGrantingServiceTicket": [
+    "Artifact"
+  ],
+  "KerberosTicketGrantingTicket": [
+    "Artifact"
+  ],
+  "KerberosTicketGrantingTicketAccount": [
+    "Artifact"
+  ],
+  "Kernel": [
+    "Artifact"
+  ],
+  "Kernel-basedProcessIsolation": [
+    "Plan"
+  ],
+  "KernelAPISensor": [
+    "Sensor"
+  ],
+  "KernelEvent": [
+    "Event"
+  ],
+  "KernelModule": [
+    "Artifact"
+  ],
+  "KernelModuleEvent": [
+    "Event"
+  ],
+  "KernelModuleLoadEvent": [
+    "Event"
+  ],
+  "KernelModuleUnloadEvent": [
+    "Event"
+  ],
+  "KernelProcessTable": [
+    "Artifact"
+  ],
+  "KeyboardInputDevice": [
+    "Artifact"
+  ],
+  "KioskComputer": [
+    "Artifact"
+  ],
+  "Kurtosis": [
+    "Plan"
+  ],
+  "LANAccessMediation": [
+    "Plan"
+  ],
+  "LaptopComputer": [
+    "Artifact"
+  ],
+  "LateralMovementTechnique": [
+    "Plan"
+  ],
+  "LegacySystem": [
+    "Artifact"
+  ],
+  "LevenshteinMatching": [
+    "Plan"
+  ],
+  "LinearClassifier": [
+    "Plan"
+  ],
+  "LinearLogicProgramming": [
+    "Plan"
+  ],
+  "LinearRegression": [
+    "Plan"
+  ],
+  "LinearRegressionLearning": [
+    "Plan"
+  ],
+  "Link": [
+    "Link"
+  ],
+  "LinuxClone": [
+    "Artifact"
+  ],
+  "LinuxClone3": [
+    "Artifact"
+  ],
+  "LinuxClone3ArgumentCLONE_THREAD": [
+    "Artifact"
+  ],
+  "LinuxCloneArgumentCLONE_THREAD": [
+    "Artifact"
+  ],
+  "LinuxConnect": [
+    "Artifact"
+  ],
+  "LinuxCreat": [
+    "Artifact"
+  ],
+  "LinuxDeleteModule": [
+    "Artifact"
+  ],
+  "LinuxExecve": [
+    "Artifact"
+  ],
+  "LinuxExecveat": [
+    "Artifact"
+  ],
+  "LinuxFork": [
+    "Artifact"
+  ],
+  "LinuxInitModule": [
+    "Artifact"
+  ],
+  "LinuxKillArgumentSIGKILL": [
+    "Artifact"
+  ],
+  "LinuxMmap": [
+    "Artifact"
+  ],
+  "LinuxMmap2": [
+    "Artifact"
+  ],
+  "LinuxMunmap": [
+    "Artifact"
+  ],
+  "LinuxOpenArgumentO_CREAT": [
+    "Artifact"
+  ],
+  "LinuxOpenArgumentO_RDONLY-O_WRONLY-O_RDWR": [
+    "Artifact"
+  ],
+  "LinuxOpenAt2ArgumentO_CREAT": [
+    "Artifact"
+  ],
+  "LinuxOpenAt2ArgumentO_RDONLY-O_WRONLY-O_RDWR": [
+    "Artifact"
+  ],
+  "LinuxOpenAtArgumentO_CREAT": [
+    "Artifact"
+  ],
+  "LinuxOpenAtArgumentO_RDONLY-O_WRONLY-O_RDWR": [
+    "Artifact"
+  ],
+  "LinuxPauseProcess": [
+    "Artifact"
+  ],
+  "LinuxPauseThread": [
+    "Artifact"
+  ],
+  "LinuxPtraceArgumentPTRACEATTACH": [
+    "Artifact"
+  ],
+  "LinuxPtraceArgumentPTRACECONT": [
+    "Artifact"
+  ],
+  "LinuxPtraceArgumentPTRACEGETREGS": [
+    "Artifact"
+  ],
+  "LinuxPtraceArgumentPTRACEINTERRUPT": [
+    "Artifact"
+  ],
+  "LinuxPtraceArgumentPTRACEPEEKTEXT": [
+    "Artifact"
+  ],
+  "LinuxPtraceArgumentPTRACEPOKETEXT": [
+    "Artifact"
+  ],
+  "LinuxPtraceArgumentPTRACESETREGS": [
+    "Artifact"
+  ],
+  "LinuxPtraceArgumentPTRACE_DETACH": [
+    "Artifact"
+  ],
+  "LinuxPtraceArgumentPTRACE_TRACEME": [
+    "Artifact"
+  ],
+  "LinuxRead": [
+    "Artifact"
+  ],
+  "LinuxReadv": [
+    "Artifact"
+  ],
+  "LinuxRename": [
+    "Artifact"
+  ],
+  "LinuxRenameat": [
+    "Artifact"
+  ],
+  "LinuxRenameat2": [
+    "Artifact"
+  ],
+  "LinuxSocket": [
+    "Artifact"
+  ],
+  "LinuxSocketcallArgumentSYS_CONNECT": [
+    "Artifact"
+  ],
+  "LinuxSocketcallArgumentSYS_SOCKET": [
+    "Artifact"
+  ],
+  "LinuxTime": [
+    "Artifact"
+  ],
+  "LinuxUnlink": [
+    "Artifact"
+  ],
+  "LinuxUnlinkat": [
+    "Artifact"
+  ],
+  "LinuxVfork": [
+    "Artifact"
+  ],
+  "LinuxWrite": [
+    "Artifact"
+  ],
+  "LinuxWritev": [
+    "Artifact"
+  ],
+  "Linux_Exit": [
+    "Artifact"
+  ],
+  "LoadLibraryEvent": [
+    "Event"
+  ],
+  "LoadModule": [
+    "Artifact"
+  ],
+  "LocalAccountMonitoring": [
+    "Plan"
+  ],
+  "LocalAreaNetwork": [
+    "Artifact"
+  ],
+  "LocalAreaNetworkAttacker": [
+    "Agent"
+  ],
+  "LocalAreaNetworkTraffic": [
+    "Artifact"
+  ],
+  "LocalAttacker": [
+    "Agent"
+  ],
+  "LocalAuthenticationService": [
+    "Artifact"
+  ],
+  "LocalAuthorizationService": [
+    "Artifact"
+  ],
+  "LocalFileAccessMediation": [
+    "Plan"
+  ],
+  "LocalFilePermissions": [
+    "Plan"
+  ],
+  "LocalResource": [
+    "Artifact"
+  ],
+  "LocalResourceAccess": [
+    "Artifact"
+  ],
+  "LocalUserAccount": [
+    "Artifact"
+  ],
+  "Log": [
+    "Log"
+  ],
+  "LogFile": [
+    "Artifact"
+  ],
+  "LogMessageFunction": [
+    "Artifact"
+  ],
+  "LogicProgramming": [
+    "Plan"
+  ],
+  "LogicalLink": [
+    "Link"
+  ],
+  "LogicalLinkMapping": [
+    "Plan"
+  ],
+  "LogicalRules": [
+    "Plan"
+  ],
+  "LoginSession": [
+    "Artifact"
+  ],
+  "LogisticRegression": [
+    "Plan"
+  ],
+  "LogististicRegressionLearning": [
+    "Plan"
+  ],
+  "LogoffEvent": [
+    "Event"
+  ],
+  "LogonEvent": [
+    "Event"
+  ],
+  "LogonUser": [
+    "Artifact"
+  ],
+  "LongShort-termMemory": [
+    "Plan"
+  ],
+  "MACAddress": [
+    "Artifact"
+  ],
+  "MacOSKeychain": [
+    "Artifact"
+  ],
+  "MachineLearning": [
+    "Plan"
+  ],
+  "MailNetworkTraffic": [
+    "Artifact"
+  ],
+  "MailServer": [
+    "Artifact"
+  ],
+  "MailService": [
+    "Artifact"
+  ],
+  "Matching": [
+    "Goal"
+  ],
+  "MathematicalFunction": [
+    "Artifact"
+  ],
+  "Maximum-marginLearning": [
+    "Plan"
+  ],
+  "Mean": [
+    "Plan"
+  ],
+  "MeanAbsoluteDeviation": [
+    "Plan"
+  ],
+  "MediaGeneration": [
+    "Goal"
+  ],
+  "MediaServer": [
+    "Artifact"
+  ],
+  "Median": [
+    "Plan"
+  ],
+  "MedianAbsoluteDeviation": [
+    "Plan"
+  ],
+  "MemoryAddress": [
+    "Artifact"
+  ],
+  "MemoryAddressSpace": [
+    "Artifact"
+  ],
+  "MemoryAllocationEvent": [
+    "Event"
+  ],
+  "MemoryAllocationFunction": [
+    "Artifact"
+  ],
+  "MemoryBlock": [
+    "Artifact"
+  ],
+  "MemoryBlockStartValidation": [
+    "Plan"
+  ],
+  "MemoryBoundaryTracking": [
+    "Plan"
+  ],
+  "MemoryDeletionEvent": [
+    "Event"
+  ],
+  "MemoryDeviceEvent": [
+    "Event"
+  ],
+  "MemoryEvent": [
+    "Event"
+  ],
+  "MemoryExtent": [
+    "Artifact"
+  ],
+  "MemoryFreeFunction": [
+    "Artifact"
+  ],
+  "MemoryManagementUnit": [
+    "Artifact"
+  ],
+  "MemoryManagementUnitComponent": [
+    "Artifact"
+  ],
+  "MemoryMapEvent": [
+    "Event"
+  ],
+  "MemoryModificationEvent": [
+    "Event"
+  ],
+  "MemoryPool": [
+    "Artifact"
+  ],
+  "MemoryProtectionUnit": [
+    "Artifact"
+  ],
+  "MemoryReadEvent": [
+    "Event"
+  ],
+  "MemoryWord": [
+    "Artifact"
+  ],
+  "MemoryWriteEvent": [
+    "Event"
+  ],
+  "MessageAnalysis": [
+    "Plan"
+  ],
+  "MessageAuthentication": [
+    "Plan"
+  ],
+  "MessageEncryption": [
+    "Plan"
+  ],
+  "MessageHardening": [
+    "Plan"
+  ],
+  "MessageTransferAgent": [
+    "Artifact"
+  ],
+  "Metadata": [
+    "Artifact"
+  ],
+  "Microcode": [
+    "Artifact"
+  ],
+  "MicrosoftHTMLApplication": [
+    "Artifact"
+  ],
+  "MobilePhone": [
+    "Artifact"
+  ],
+  "ModalLogic": [
+    "Plan"
+  ],
+  "Mode": [
+    "Plan"
+  ],
+  "Model": [
+    "Goal"
+  ],
+  "Model-basedPolicyOptimization": [
+    "Plan"
+  ],
+  "Model-basedReinforcementLearning": [
+    "Plan"
+  ],
+  "Model-basedValueIteration": [
+    "Plan"
+  ],
+  "Model-freeReinforcementLearning": [
+    "Plan"
+  ],
+  "Modem": [
+    "Artifact"
+  ],
+  "Moments": [
+    "Plan"
+  ],
+  "MotionDetectedEvent": [
+    "Event"
+  ],
+  "MotionDetector": [
+    "Artifact",
+    "Sensor"
+  ],
+  "MotionSensorMonitoring": [
+    "Plan"
+  ],
+  "MouseInputDevice": [
+    "Artifact"
+  ],
+  "MoveFile": [
+    "Artifact"
+  ],
+  "MovingAverageModel": [
+    "Plan"
+  ],
+  "Multi-factorAuthentication": [
+    "Plan"
+  ],
+  "MulticlassClassification": [
+    "Goal"
+  ],
+  "MultilayerPerceptronClassification": [
+    "Plan"
+  ],
+  "MultimediaDocumentFile": [
+    "Artifact"
+  ],
+  "MultimediaFile": [
+    "Artifact"
+  ],
+  "MultipleRegression": [
+    "Plan"
+  ],
+  "MultipleRegressionLearning": [
+    "Plan"
+  ],
+  "MultivariateAnalysis": [
+    "Plan"
+  ],
+  "NTFSHardLink": [
+    "Artifact"
+  ],
+  "NTFSJunctionPoint": [
+    "Artifact"
+  ],
+  "NTFSLink": [
+    "Artifact"
+  ],
+  "NTFSSymbolicLink": [
+    "Artifact"
+  ],
+  "NTPBroadcastEvent": [
+    "Event"
+  ],
+  "NTPClientSyncEvent": [
+    "Event"
+  ],
+  "NTPControlMessageEvent": [
+    "Event"
+  ],
+  "NTPEvent": [
+    "Event"
+  ],
+  "NTPServerResponseEvent": [
+    "Event"
+  ],
+  "NTPSymmetricActiveExchangeEvent": [
+    "Event"
+  ],
+  "NTPSymmetricPassiveExchangeEvent": [
+    "Event"
+  ],
+  "NaiveBayesClassifier": [
+    "Plan"
+  ],
+  "NamedPipe": [
+    "Artifact"
+  ],
+  "Network": [
+    "Artifact"
+  ],
+  "NetworkAccessMediation": [
+    "Plan"
+  ],
+  "NetworkAgent": [
+    "Artifact"
+  ],
+  "NetworkAudioStreamingResource": [
+    "Artifact"
+  ],
+  "NetworkAudioVisualStreamingResource": [
+    "Artifact"
+  ],
+  "NetworkCardFirmware": [
+    "Artifact"
+  ],
+  "NetworkConnectionCloseEvent": [
+    "Event"
+  ],
+  "NetworkConnectionEvent": [
+    "Event"
+  ],
+  "NetworkConnectionFailEvent": [
+    "Event"
+  ],
+  "NetworkConnectionListenEvent": [
+    "Event"
+  ],
+  "NetworkConnectionOpenEvent": [
+    "Event"
+  ],
+  "NetworkConnectionRefuseEvent": [
+    "Event"
+  ],
+  "NetworkConnectionResetEvent": [
+    "Event"
+  ],
+  "NetworkDeviceEvent": [
+    "Event"
+  ],
+  "NetworkDirectoryResource": [
+    "Artifact"
+  ],
+  "NetworkEvent": [
+    "Event"
+  ],
+  "NetworkFileResource": [
+    "Artifact"
+  ],
+  "NetworkFileShareResource": [
+    "Artifact"
+  ],
+  "NetworkFlow": [
+    "Artifact"
+  ],
+  "NetworkFlowSensor": [
+    "Sensor"
+  ],
+  "NetworkFrame": [
+    "Artifact"
+  ],
+  "NetworkInitScriptFileResource": [
+    "Artifact"
+  ],
+  "NetworkInterfaceCard": [
+    "Artifact"
+  ],
+  "NetworkIsolation": [
+    "Plan"
+  ],
+  "NetworkLink": [
+    "Link"
+  ],
+  "NetworkMapping": [
+    "Plan"
+  ],
+  "NetworkMediaStreamingResource": [
+    "Artifact"
+  ],
+  "NetworkMultimediaStreamingResource": [
+    "Artifact"
+  ],
+  "NetworkNode": [
+    "Artifact"
+  ],
+  "NetworkNodeInventory": [
+    "Plan"
+  ],
+  "NetworkPacket": [
+    "Artifact"
+  ],
+  "NetworkPrinter": [
+    "Artifact"
+  ],
+  "NetworkProtocolAnalyzer": [
+    "Sensor"
+  ],
+  "NetworkResource": [
+    "Artifact"
+  ],
+  "NetworkResourceAccess": [
+    "Artifact"
+  ],
+  "NetworkResourceAccessMediation": [
+    "Plan"
+  ],
+  "NetworkScanner": [
+    "Sensor"
+  ],
+  "NetworkSensor": [
+    "Sensor"
+  ],
+  "NetworkService": [
+    "Artifact"
+  ],
+  "NetworkSession": [
+    "Artifact"
+  ],
+  "NetworkTimeServer": [
+    "Artifact"
+  ],
+  "NetworkTraffic": [
+    "Artifact"
+  ],
+  "NetworkTrafficAnalysis": [
+    "Plan"
+  ],
+  "NetworkTrafficAnalysisSoftware": [
+    "Artifact"
+  ],
+  "NetworkTrafficCommunityDeviation": [
+    "Plan"
+  ],
+  "NetworkTrafficFiltering": [
+    "Plan"
+  ],
+  "NetworkTrafficPolicyMapping": [
+    "Plan"
+  ],
+  "NetworkTrafficSignatureAnalysis": [
+    "Plan"
+  ],
+  "NetworkVideoStreamingResource": [
+    "Artifact"
+  ],
+  "NetworkVulnerabilityAssessment": [
+    "Plan"
+  ],
+  "Non-ParametricTests": [
+    "Plan"
+  ],
+  "Non-PersonEntity": [
+    "Agent"
+  ],
+  "Non-monotonicLogic": [
+    "Plan"
+  ],
+  "NonlinearRegression": [
+    "Plan"
+  ],
+  "NonlinearRegressionLearning": [
+    "Plan"
+  ],
+  "NullPointerChecking": [
+    "Plan"
+  ],
+  "NumericPatternMatching": [
+    "Plan"
+  ],
+  "OSAPIAccessProcess": [
+    "Artifact"
+  ],
+  "OSAPIAllocateMemory": [
+    "Artifact"
+  ],
+  "OSAPIConnectSocket": [
+    "Artifact"
+  ],
+  "OSAPICopyToken": [
+    "Artifact"
+  ],
+  "OSAPICreateFile": [
+    "Artifact"
+  ],
+  "OSAPICreateProcess": [
+    "Artifact"
+  ],
+  "OSAPICreateSocket": [
+    "Artifact"
+  ],
+  "OSAPICreateThread": [
+    "Artifact"
+  ],
+  "OSAPIDeleteFile": [
+    "Artifact"
+  ],
+  "OSAPIExec": [
+    "Artifact"
+  ],
+  "OSAPIFreeMemory": [
+    "Artifact"
+  ],
+  "OSAPIFunction": [
+    "Artifact"
+  ],
+  "OSAPIGetSystemTime": [
+    "Artifact"
+  ],
+  "OSAPIGetThreadContext": [
+    "Artifact"
+  ],
+  "OSAPILoadModule": [
+    "Artifact"
+  ],
+  "OSAPIMoveFile": [
+    "Artifact"
+  ],
+  "OSAPIOpenFile": [
+    "Artifact"
+  ],
+  "OSAPIReadFile": [
+    "Artifact"
+  ],
+  "OSAPIReadMemory": [
+    "Artifact"
+  ],
+  "OSAPIResumeProcess": [
+    "Artifact"
+  ],
+  "OSAPIResumeThread": [
+    "Artifact"
+  ],
+  "OSAPISaveRegisters": [
+    "Artifact"
+  ],
+  "OSAPISetRegisters": [
+    "Artifact"
+  ],
+  "OSAPISetThreadContext": [
+    "Artifact"
+  ],
+  "OSAPISuspendProcess": [
+    "Artifact"
+  ],
+  "OSAPISuspendThread": [
+    "Artifact"
+  ],
+  "OSAPISystemFunction": [
+    "Artifact"
+  ],
+  "OSAPITerminateProcess": [
+    "Artifact"
+  ],
+  "OSAPITraceProcess": [
+    "Artifact"
+  ],
+  "OSAPITraceThread": [
+    "Artifact"
+  ],
+  "OSAPIUnloadModule": [
+    "Artifact"
+  ],
+  "OSAPIWriteFile": [
+    "Artifact"
+  ],
+  "OSAPIWriteMemory": [
+    "Artifact"
+  ],
+  "OTAbortCommand": [
+    "Artifact"
+  ],
+  "OTAbortCommandEvent": [
+    "Event"
+  ],
+  "OTActuator": [
+    "Artifact"
+  ],
+  "OTAlarmMessage": [
+    "Artifact"
+  ],
+  "OTAlarmMessageEvent": [
+    "Event"
+  ],
+  "OTChangeControlProgramCommand": [
+    "Artifact"
+  ],
+  "OTChangeControlProgramCommandEvent": [
+    "Event"
+  ],
+  "OTChangeDataCommand": [
+    "Artifact"
+  ],
+  "OTChangeDataCommandEvent": [
+    "Event"
+  ],
+  "OTConnectionCommand": [
+    "Artifact"
+  ],
+  "OTConnectionCommandEvent": [
+    "Event"
+  ],
+  "OTControlCommand": [
+    "Artifact"
+  ],
+  "OTControlCommandEvent": [
+    "Event"
+  ],
+  "OTControlFunction": [
+    "Artifact"
+  ],
+  "OTControlLogicProcess": [
+    "Artifact"
+  ],
+  "OTControlProgram": [
+    "Artifact"
+  ],
+  "OTControlVariable": [
+    "Artifact"
+  ],
+  "OTController": [
+    "Artifact"
+  ],
+  "OTControllerOperatingMode": [
+    "Artifact"
+  ],
+  "OTCreateDataCommand": [
+    "Artifact"
+  ],
+  "OTCreateDataCommandEvent": [
+    "Event"
+  ],
+  "OTCreateNewControlProgramCommand": [
+    "Artifact"
+  ],
+  "OTCreateNewControlProgramCommandEvent": [
+    "Event"
+  ],
+  "OTDebugCommand": [
+    "Artifact"
+  ],
+  "OTDebugCommandEvent": [
+    "Event"
+  ],
+  "OTDeleteControlProgramCommand": [
+    "Artifact"
+  ],
+  "OTDeleteControlProgramCommandEvent": [
+    "Event"
+  ],
+  "OTDeleteDataCommand": [
+    "Artifact"
+  ],
+  "OTDeleteDataCommandEvent": [
+    "Event"
+  ],
+  "OTDeviceConfigurationCommand": [
+    "Artifact"
+  ],
+  "OTDeviceConfigurationCommandEvent": [
+    "Event"
+  ],
+  "OTDeviceDescriptionMessage": [
+    "Artifact"
+  ],
+  "OTDeviceDescriptionMessageEvent": [
+    "Event"
+  ],
+  "OTDeviceFirmwareCommand": [
+    "Artifact"
+  ],
+  "OTDeviceFirmwareCommandEvent": [
+    "Event"
+  ],
+  "OTDeviceIdentificationMessage": [
+    "Artifact"
+  ],
+  "OTDeviceIdentificationMessageEvent": [
+    "Event"
+  ],
+  "OTDeviceManagementMessage": [
+    "Artifact"
+  ],
+  "OTDeviceManagementMessageEvent": [
+    "Event"
+  ],
+  "OTDiagnosticsMessage": [
+    "Artifact"
+  ],
+  "OTDiagnosticsMessageEvent": [
+    "Event"
+  ],
+  "OTDisconnectRemoteConnectionCommand": [
+    "Artifact"
+  ],
+  "OTDisconnectRemoteConnectionCommandEvent": [
+    "Event"
+  ],
+  "OTDownloadControlProgramCommand": [
+    "Artifact"
+  ],
+  "OTDownloadControlProgramCommandEvent": [
+    "Event"
+  ],
+  "OTEmbeddedComputer": [
+    "Artifact"
+  ],
+  "OTEngineeringSoftware": [
+    "Artifact"
+  ],
+  "OTEngineeringWorkstation": [
+    "Artifact"
+  ],
+  "OTErrorMessage": [
+    "Artifact"
+  ],
+  "OTErrorMessageEvent": [
+    "Event"
+  ],
+  "OTEstablishRemoteConnectionCommand": [
+    "Artifact"
+  ],
+  "OTEstablishRemoteConnectionCommandEvent": [
+    "Event"
+  ],
+  "OTEvent": [
+    "Event"
+  ],
+  "OTExceptionMessage": [
+    "Artifact"
+  ],
+  "OTExceptionMessageEvent": [
+    "Event"
+  ],
+  "OTHumanMachineInterface": [
+    "Artifact"
+  ],
+  "OTIOModule": [
+    "Artifact"
+  ],
+  "OTLogicVariable": [
+    "Artifact"
+  ],
+  "OTModeSwitch": [
+    "Artifact"
+  ],
+  "OTModifyControlProgramCommand": [
+    "Artifact"
+  ],
+  "OTModifyControlProgramCommandEvent": [
+    "Event"
+  ],
+  "OTModifyDeviceConfigurationCommand": [
+    "Artifact"
+  ],
+  "OTModifyDeviceConfigurationCommandEvent": [
+    "Event"
+  ],
+  "OTModifyDeviceOperatingModeCommand": [
+    "Artifact"
+  ],
+  "OTModifyDeviceOperatingModeCommandEvent": [
+    "Event"
+  ],
+  "OTNetwork": [
+    "Artifact"
+  ],
+  "OTNetworkManagementCommand": [
+    "Artifact"
+  ],
+  "OTNetworkManagementCommandEvent": [
+    "Event"
+  ],
+  "OTNetworkTraffic": [
+    "Artifact"
+  ],
+  "OTPauseCommand": [
+    "Artifact"
+  ],
+  "OTPauseCommandEvent": [
+    "Event"
+  ],
+  "OTPowerSupply": [
+    "Artifact"
+  ],
+  "OTProcessDataCommand": [
+    "Artifact"
+  ],
+  "OTProcessDataCommandEvent": [
+    "Event"
+  ],
+  "OTProcessDataHistorian": [
+    "Artifact"
+  ],
+  "OTProcessVariable": [
+    "Artifact"
+  ],
+  "OTProgramModeCommand": [
+    "Artifact"
+  ],
+  "OTProgramModeCommandEvent": [
+    "Event"
+  ],
+  "OTProprietaryMessage": [
+    "Artifact"
+  ],
+  "OTProprietaryMessageEvent": [
+    "Event"
+  ],
+  "OTProtocolMessage": [
+    "Artifact"
+  ],
+  "OTReadCommand": [
+    "Artifact"
+  ],
+  "OTReadCommandEvent": [
+    "Event"
+  ],
+  "OTReadDeviceConfigurationCommand": [
+    "Artifact"
+  ],
+  "OTReadDeviceConfigurationCommandEvent": [
+    "Event"
+  ],
+  "OTReadFileCommand": [
+    "Artifact"
+  ],
+  "OTReadFileCommandEvent": [
+    "Event"
+  ],
+  "OTReadTimeCommand": [
+    "Artifact"
+  ],
+  "OTReadTimeCommandEvent": [
+    "Event"
+  ],
+  "OTReadValueCommand": [
+    "Artifact"
+  ],
+  "OTReadValueCommandEvent": [
+    "Event"
+  ],
+  "OTRemoteModeCommand": [
+    "Artifact"
+  ],
+  "OTRemoteModeCommandEvent": [
+    "Event"
+  ],
+  "OTRunCommand": [
+    "Artifact"
+  ],
+  "OTRunCommandEvent": [
+    "Event"
+  ],
+  "OTScanTime": [
+    "Artifact"
+  ],
+  "OTSecurityCommand": [
+    "Artifact"
+  ],
+  "OTSecurityCommandEvent": [
+    "Event"
+  ],
+  "OTSensor": [
+    "Artifact",
+    "Sensor"
+  ],
+  "OTSetTimeCommand": [
+    "Artifact"
+  ],
+  "OTSetTimeCommandEvent": [
+    "Event"
+  ],
+  "OTStopCommand": [
+    "Artifact"
+  ],
+  "OTStopCommandEvent": [
+    "Event"
+  ],
+  "OTSynchronizeTimeCommand": [
+    "Artifact"
+  ],
+  "OTSynchronizeTimeCommandEvent": [
+    "Event"
+  ],
+  "OTTestCommand": [
+    "Artifact"
+  ],
+  "OTTestCommandEvent": [
+    "Event"
+  ],
+  "OTTimeCommand": [
+    "Artifact"
+  ],
+  "OTTimeCommandEvent": [
+    "Event"
+  ],
+  "OTTransportConfigurationCommand": [
+    "Artifact"
+  ],
+  "OTTransportConfigurationCommandEvent": [
+    "Event"
+  ],
+  "OTVariableAccessRestriction": [
+    "Plan"
+  ],
+  "OTWatchdogTimer": [
+    "Artifact"
+  ],
+  "OTWriteCommand": [
+    "Artifact"
+  ],
+  "OTWriteCommandEvent": [
+    "Event"
+  ],
+  "OWL": [
+    "Plan"
+  ],
+  "ObjectEviction": [
+    "Plan"
+  ],
+  "ObjectFile": [
+    "Artifact"
+  ],
+  "OffensiveAction": [
+    "Event"
+  ],
+  "OffensiveTactic": [
+    "Goal"
+  ],
+  "OffensiveTechnique": [
+    "Plan"
+  ],
+  "OfficeApplication": [
+    "Artifact"
+  ],
+  "OfficeApplicationFile": [
+    "Artifact"
+  ],
+  "OnboardComputer": [
+    "Artifact"
+  ],
+  "One-timePassword": [
+    "Plan"
+  ],
+  "Open-sourceDeveloper": [
+    "Agent",
+    "Group"
+  ],
+  "OpenFile": [
+    "Artifact"
+  ],
+  "OperatingMode": [
+    "Artifact"
+  ],
+  "OperatingModeMonitoring": [
+    "Plan"
+  ],
+  "OperatingModeRestriction": [
+    "Plan"
+  ],
+  "OperatingSystem": [
+    "Artifact"
+  ],
+  "OperatingSystemClock": [
+    "Artifact"
+  ],
+  "OperatingSystemConfiguration": [
+    "Artifact"
+  ],
+  "OperatingSystemConfigurationComponent": [
+    "Artifact"
+  ],
+  "OperatingSystemConfigurationFile": [
+    "Artifact"
+  ],
+  "OperatingSystemConfigurationModificationEvent": [
+    "Event"
+  ],
+  "OperatingSystemExecutableFile": [
+    "Artifact"
+  ],
+  "OperatingSystemFile": [
+    "Artifact"
+  ],
+  "OperatingSystemLogFile": [
+    "Artifact"
+  ],
+  "OperatingSystemMonitoring": [
+    "Plan"
+  ],
+  "OperatingSystemPackagingTool": [
+    "Artifact"
+  ],
+  "OperatingSystemProcess": [
+    "Artifact"
+  ],
+  "OperatingSystemSharedLibraryFile": [
+    "Artifact"
+  ],
+  "OperationalActivityMapping": [
+    "Plan"
+  ],
+  "OperationalActivityPlan": [
+    "Plan"
+  ],
+  "OperationalDependencyMapping": [
+    "Plan"
+  ],
+  "OperationalEvent": [
+    "Event"
+  ],
+  "OperationalLogicValidation": [
+    "Plan"
+  ],
+  "OperationalProcessMonitoring": [
+    "Plan"
+  ],
+  "OperationalRiskAssessment": [
+    "Plan"
+  ],
+  "OperationsCenterComputer": [
+    "Artifact"
+  ],
+  "OpticalDiscImage": [
+    "Artifact"
+  ],
+  "OpticalModem": [
+    "Artifact"
+  ],
+  "OrchestrationController": [
+    "Artifact"
+  ],
+  "OrchestrationServer": [
+    "Artifact"
+  ],
+  "OrchestrationWorker": [
+    "Artifact"
+  ],
+  "Organization": [
+    "Agent",
+    "Group"
+  ],
+  "OrganizationMapping": [
+    "Plan"
+  ],
+  "OutboundInternetDNSLookupTraffic": [
+    "Artifact"
+  ],
+  "OutboundInternetEncryptedRemoteTerminalTraffic": [
+    "Artifact"
+  ],
+  "OutboundInternetEncryptedTraffic": [
+    "Artifact"
+  ],
+  "OutboundInternetEncryptedWebTraffic": [
+    "Artifact"
+  ],
+  "OutboundInternetFileTransferTraffic": [
+    "Artifact"
+  ],
+  "OutboundInternetMailTraffic": [
+    "Artifact"
+  ],
+  "OutboundInternetNetworkTraffic": [
+    "Artifact"
+  ],
+  "OutboundInternetRPCTraffic": [
+    "Artifact"
+  ],
+  "OutboundInternetWebTraffic": [
+    "Artifact"
+  ],
+  "OutboundNetworkTraffic": [
+    "Artifact"
+  ],
+  "OutboundTrafficFiltering": [
+    "Plan"
+  ],
+  "OutputDevice": [
+    "Artifact"
+  ],
+  "OutputDeviceEvent": [
+    "Event"
+  ],
+  "POSIXSymbolicLink": [
+    "Artifact"
+  ],
+  "PackageURL": [
+    "Artifact"
+  ],
+  "PacketCaptureFile": [
+    "Artifact"
+  ],
+  "PacketLog": [
+    "Log"
+  ],
+  "Page": [
+    "Artifact"
+  ],
+  "PageFrame": [
+    "Artifact"
+  ],
+  "PageTable": [
+    "Artifact"
+  ],
+  "Parameter-basedTransferLearning": [
+    "Plan"
+  ],
+  "ParametricTests": [
+    "Plan"
+  ],
+  "ParentProcess": [
+    "Artifact"
+  ],
+  "PartialMatching": [
+    "Plan"
+  ],
+  "ParticleRadiationHardening": [
+    "Plan"
+  ],
+  "Partition": [
+    "Artifact"
+  ],
+  "PartitionTable": [
+    "Artifact"
+  ],
+  "PassiveCertificateAnalysis": [
+    "Plan"
+  ],
+  "PassiveLogicalLinkMapping": [
+    "Plan"
+  ],
+  "Password": [
+    "Artifact"
+  ],
+  "PasswordAuthentication": [
+    "Plan"
+  ],
+  "PasswordDatabase": [
+    "Artifact"
+  ],
+  "PasswordFile": [
+    "Artifact"
+  ],
+  "PasswordManager": [
+    "Artifact"
+  ],
+  "PasswordRotation": [
+    "Plan"
+  ],
+  "PasswordStore": [
+    "Artifact"
+  ],
+  "PatternMatching": [
+    "Plan"
+  ],
+  "PearsonsCorrelationCoefficient": [
+    "Plan"
+  ],
+  "PerHostDownload-UploadRatioAnalysis": [
+    "Plan"
+  ],
+  "PeripheralDeviceEvent": [
+    "Event"
+  ],
+  "PeripheralFirmware": [
+    "Artifact"
+  ],
+  "PeripheralFirmwareVerification": [
+    "Plan"
+  ],
+  "PeripheralHubFirmware": [
+    "Artifact"
+  ],
+  "PermissionGrantingEvent": [
+    "Event"
+  ],
+  "PermissionRevokingEvent": [
+    "Event"
+  ],
+  "PersistenceTechnique": [
+    "Plan"
+  ],
+  "Person": [
+    "Agent"
+  ],
+  "PersonalComputer": [
+    "Artifact"
+  ],
+  "Perturbation-basedLearning": [
+    "Plan"
+  ],
+  "PhiCoefficient": [
+    "Plan"
+  ],
+  "PhysicalAccessAlarmEvent": [
+    "Event"
+  ],
+  "PhysicalAccessMediation": [
+    "Plan"
+  ],
+  "PhysicalAccessMonitoring": [
+    "Plan"
+  ],
+  "PhysicalAddress": [
+    "Artifact"
+  ],
+  "PhysicalArtifact": [
+    "Artifact"
+  ],
+  "PhysicalAttacker": [
+    "Agent"
+  ],
+  "PhysicalDataDiode": [
+    "Artifact"
+  ],
+  "PhysicalEnclosureHardening": [
+    "Plan"
+  ],
+  "PhysicalKey": [
+    "Artifact"
+  ],
+  "PhysicalKeyLock": [
+    "Artifact"
+  ],
+  "PhysicalLink": [
+    "Link"
+  ],
+  "PhysicalLinkConnectEvent": [
+    "Event"
+  ],
+  "PhysicalLinkDisableEvent": [
+    "Event"
+  ],
+  "PhysicalLinkDisconnectEvent": [
+    "Event"
+  ],
+  "PhysicalLinkDownEvent": [
+    "Event"
+  ],
+  "PhysicalLinkErrorDisableEvent": [
+    "Event"
+  ],
+  "PhysicalLinkEvent": [
+    "Event"
+  ],
+  "PhysicalLinkMapping": [
+    "Plan"
+  ],
+  "PhysicalLinkUpEvent": [
+    "Event"
+  ],
+  "PhysicalLocation": [
+    "PhysicalLocation"
+  ],
+  "PhysicalLock": [
+    "Artifact"
+  ],
+  "PhysicalLocking": [
+    "Plan"
+  ],
+  "Pipe": [
+    "Artifact"
+  ],
+  "Pix2Pix": [
+    "Plan"
+  ],
+  "Plan": [
+    "Plan"
+  ],
+  "Planning": [
+    "Goal"
+  ],
+  "PlatformHardening": [
+    "Plan"
+  ],
+  "PlatformMonitoring": [
+    "Plan"
+  ],
+  "PlatformUptime": [
+    "Artifact"
+  ],
+  "PlatformUptimeMonitoring": [
+    "Plan"
+  ],
+  "Point-biserialCorrelationCoefficient": [
+    "Plan"
+  ],
+  "PointEstimation": [
+    "Plan"
+  ],
+  "Pointer": [
+    "Artifact"
+  ],
+  "PointerAuthentication": [
+    "Plan"
+  ],
+  "PointerDereferencingFunction": [
+    "Artifact"
+  ],
+  "PointerValidation": [
+    "Plan"
+  ],
+  "PolicyGradient": [
+    "Plan"
+  ],
+  "PowerAndThermalDeviceEvent": [
+    "Event"
+  ],
+  "PowerShellProfileScript": [
+    "Artifact"
+  ],
+  "PowerSupply": [
+    "Artifact"
+  ],
+  "PreAuthenticationEvent": [
+    "Event"
+  ],
+  "PredicateLogic": [
+    "Plan"
+  ],
+  "PrimaryStorage": [
+    "Artifact"
+  ],
+  "PrincipalComponentAnalysis": [
+    "Plan"
+  ],
+  "PrincipalComponentsAnalysis": [
+    "Plan"
+  ],
+  "PrintServer": [
+    "Artifact"
+  ],
+  "PrivateKey": [
+    "Artifact"
+  ],
+  "PrivilegeEscalationTechnique": [
+    "Plan"
+  ],
+  "PrivilegedUserAccount": [
+    "Artifact"
+  ],
+  "ProbabilisticLogic": [
+    "Plan"
+  ],
+  "Procedure": [
+    "Plan"
+  ],
+  "Process": [
+    "Artifact"
+  ],
+  "ProcessAccessEvent": [
+    "Event"
+  ],
+  "ProcessAnalysis": [
+    "Plan"
+  ],
+  "ProcessCodeSegment": [
+    "Artifact"
+  ],
+  "ProcessCodeSegmentVerification": [
+    "Plan"
+  ],
+  "ProcessCreationEvent": [
+    "Event"
+  ],
+  "ProcessDataSegment": [
+    "Artifact"
+  ],
+  "ProcessEnvironmentVariable": [
+    "Artifact"
+  ],
+  "ProcessEvent": [
+    "Event"
+  ],
+  "ProcessEviction": [
+    "Plan"
+  ],
+  "ProcessImage": [
+    "Artifact"
+  ],
+  "ProcessLineageAnalysis": [
+    "Plan"
+  ],
+  "ProcessSegment": [
+    "Artifact"
+  ],
+  "ProcessSegmentExecutionPrevention": [
+    "Plan"
+  ],
+  "ProcessSelf-ModificationDetection": [
+    "Plan"
+  ],
+  "ProcessSetUserIDEvent": [
+    "Event"
+  ],
+  "ProcessSpawnAnalysis": [
+    "Plan"
+  ],
+  "ProcessStartFunction": [
+    "Artifact"
+  ],
+  "ProcessSuspension": [
+    "Plan"
+  ],
+  "ProcessTermination": [
+    "Plan"
+  ],
+  "ProcessTerminationEvent": [
+    "Event"
+  ],
+  "ProcessTree": [
+    "Artifact"
+  ],
+  "Processor": [
+    "Artifact"
+  ],
+  "ProcessorComponent": [
+    "Artifact"
+  ],
+  "ProcessorRegister": [
+    "Artifact"
+  ],
+  "ProductDeveloper": [
+    "Agent",
+    "Group"
+  ],
+  "ProgressivelyGrowingGAN": [
+    "Plan"
+  ],
+  "ProjectedClustering": [
+    "Plan"
+  ],
+  "Projection-basedClustering": [
+    "Plan"
+  ],
+  "Prolog": [
+    "Plan"
+  ],
+  "PropertyListFile": [
+    "Artifact"
+  ],
+  "PropositionalLogic": [
+    "Plan"
+  ],
+  "ProtocolMetadataAnomalyDetection": [
+    "Plan"
+  ],
+  "Provider": [
+    "Agent",
+    "Group"
+  ],
+  "ProximitySensor": [
+    "Artifact",
+    "Sensor"
+  ],
+  "ProximitySensorEvent": [
+    "Event"
+  ],
+  "ProximitySensorMonitoring": [
+    "Plan"
+  ],
+  "Proxy-basedWebServerAccessMediation": [
+    "Plan"
+  ],
+  "ProxyServer": [
+    "Artifact"
+  ],
+  "PublicKey": [
+    "Artifact"
+  ],
+  "PythonPackage": [
+    "Artifact"
+  ],
+  "PythonScriptFile": [
+    "Artifact"
+  ],
+  "Q-Learning": [
+    "Plan"
+  ],
+  "QueryByCommittee": [
+    "Plan"
+  ],
+  "RAM": [
+    "Artifact"
+  ],
+  "RDPConnectRequestEvent": [
+    "Event"
+  ],
+  "RDPConnectResponseEvent": [
+    "Event"
+  ],
+  "RDPEvent": [
+    "Event"
+  ],
+  "RDPInitialRequestEvent": [
+    "Event"
+  ],
+  "RDPInitialResponseEvent": [
+    "Event"
+  ],
+  "RDPSession": [
+    "Artifact"
+  ],
+  "RDPTLSHandshakeEvent": [
+    "Event"
+  ],
+  "RFShielding": [
+    "Plan"
+  ],
+  "ROM": [
+    "Artifact"
+  ],
+  "RPCNetworkTraffic": [
+    "Artifact"
+  ],
+  "RPCTrafficAnalysis": [
+    "Plan"
+  ],
+  "RTCUpdateEvent": [
+    "Event"
+  ],
+  "RTSPServer": [
+    "Artifact"
+  ],
+  "RadiationHardening": [
+    "Plan"
+  ],
+  "RadioModem": [
+    "Artifact"
+  ],
+  "RandomForest": [
+    "Plan"
+  ],
+  "RandomSplits": [
+    "Plan"
+  ],
+  "Range": [
+    "Plan"
+  ],
+  "RangeMatching": [
+    "Plan"
+  ],
+  "RankCorrelationCoefficient": [
+    "Plan"
+  ],
+  "RawMemoryAccessFunction": [
+    "Artifact"
+  ],
+  "ReadFile": [
+    "Artifact"
+  ],
+  "ReadMemory": [
+    "Artifact"
+  ],
+  "Real-timeOperatingSystem": [
+    "Artifact"
+  ],
+  "RealtimeClock": [
+    "Artifact"
+  ],
+  "Receiver": [
+    "Artifact"
+  ],
+  "ReconnaissanceTechnique": [
+    "Plan"
+  ],
+  "Record": [
+    "Artifact"
+  ],
+  "RecurrentNeuralNetwork": [
+    "Plan"
+  ],
+  "ReferenceNullification": [
+    "Plan"
+  ],
+  "RegexMatching": [
+    "Plan"
+  ],
+  "RegistryKeyDeletion": [
+    "Plan"
+  ],
+  "RegressionAnalysis": [
+    "Plan"
+  ],
+  "RegressionAnalysisLearning": [
+    "Plan"
+  ],
+  "ReinforcementLearning": [
+    "Plan"
+  ],
+  "ReissueCredential": [
+    "Plan"
+  ],
+  "Relational-basedTransferLearning": [
+    "Plan"
+  ],
+  "RelayPatternAnalysis": [
+    "Plan"
+  ],
+  "RemoteAttacker": [
+    "Agent"
+  ],
+  "RemoteAuthenticationService": [
+    "Artifact"
+  ],
+  "RemoteAuthorizationService": [
+    "Artifact"
+  ],
+  "RemoteCommand": [
+    "Artifact"
+  ],
+  "RemoteDatabaseQuery": [
+    "Artifact"
+  ],
+  "RemoteFileAccessMediation": [
+    "Plan"
+  ],
+  "RemoteFirmwareUpdateMonitoring": [
+    "Plan"
+  ],
+  "RemoteLoginSession": [
+    "Artifact"
+  ],
+  "RemoteProcedureCall": [
+    "Artifact"
+  ],
+  "RemoteResource": [
+    "Artifact"
+  ],
+  "RemoteSession": [
+    "Artifact"
+  ],
+  "RemoteShellCommand": [
+    "Artifact"
+  ],
+  "RemoteTerminalSession": [
+    "Artifact"
+  ],
+  "RemoteTerminalSessionDetection": [
+    "Plan"
+  ],
+  "RemovableMediaDevice": [
+    "Artifact"
+  ],
+  "RemoveUserFromGroupEvent": [
+    "Event"
+  ],
+  "Repository": [
+    "Artifact"
+  ],
+  "ResamplingEnsemble": [
+    "Plan"
+  ],
+  "ResidualNeuralNetwork": [
+    "Plan"
+  ],
+  "Resource": [
+    "Artifact"
+  ],
+  "ResourceAccess": [
+    "Artifact"
+  ],
+  "ResourceAccessPatternAnalysis": [
+    "Plan"
+  ],
+  "ResourceDevelopmentTechnique": [
+    "Plan"
+  ],
+  "ResourceFork": [
+    "Artifact"
+  ],
+  "RestorationEvent": [
+    "Event"
+  ],
+  "Restore": [
+    "Goal"
+  ],
+  "RestoreAccess": [
+    "Plan"
+  ],
+  "RestoreConfiguration": [
+    "Plan"
+  ],
+  "RestoreDatabase": [
+    "Plan"
+  ],
+  "RestoreDiskImage": [
+    "Plan"
+  ],
+  "RestoreEmail": [
+    "Plan"
+  ],
+  "RestoreFile": [
+    "Plan"
+  ],
+  "RestoreNetworkAccess": [
+    "Plan"
+  ],
+  "RestoreObject": [
+    "Plan"
+  ],
+  "RestoreSoftware": [
+    "Plan"
+  ],
+  "RestoreUserAccountAccess": [
+    "Plan"
+  ],
+  "ResumeProcess": [
+    "Artifact"
+  ],
+  "ResumeThread": [
+    "Artifact"
+  ],
+  "ReverseProxyServer": [
+    "Artifact"
+  ],
+  "ReverseResolutionIPDenylisting": [
+    "Plan"
+  ],
+  "RevokePrivilegesFromGroupEvent": [
+    "Event"
+  ],
+  "Router": [
+    "Artifact"
+  ],
+  "RoutingAccessMediation": [
+    "Plan"
+  ],
+  "RuntimeVariable": [
+    "Artifact"
+  ],
+  "SARSA": [
+    "Plan"
+  ],
+  "SMBEvent": [
+    "Event"
+  ],
+  "SMBFileCreateEvent": [
+    "Event"
+  ],
+  "SMBFileOpenEvent": [
+    "Event"
+  ],
+  "SMBFileOpenIfEvent": [
+    "Event"
+  ],
+  "SMBFileOverwriteEvent": [
+    "Event"
+  ],
+  "SMBFileOverwriteIfEvent": [
+    "Event"
+  ],
+  "SMBFileSupersedeEvent": [
+    "Event"
+  ],
+  "SSHConnectionCloseEvent": [
+    "Event"
+  ],
+  "SSHConnectionFailEvent": [
+    "Event"
+  ],
+  "SSHConnectionOpenEvent": [
+    "Event"
+  ],
+  "SSHConnectionRefuseEvent": [
+    "Event"
+  ],
+  "SSHConnectionResetEvent": [
+    "Event"
+  ],
+  "SSHEvent": [
+    "Event"
+  ],
+  "SSHListenEvent": [
+    "Event"
+  ],
+  "SSHSession": [
+    "Artifact"
+  ],
+  "ST0001": [
+    "Goal"
+  ],
+  "ST0002": [
+    "Goal"
+  ],
+  "ST0003": [
+    "Goal"
+  ],
+  "ST0004": [
+    "Goal"
+  ],
+  "ST0005": [
+    "Goal"
+  ],
+  "ST0006": [
+    "Goal"
+  ],
+  "ST0007": [
+    "Goal"
+  ],
+  "ST0008": [
+    "Goal"
+  ],
+  "ST0009": [
+    "Goal"
+  ],
+  "SafeMode": [
+    "Artifact"
+  ],
+  "Satellite": [
+    "Artifact"
+  ],
+  "SatelliteTransponder": [
+    "Artifact"
+  ],
+  "SaveRegister": [
+    "Artifact"
+  ],
+  "SavedInstructionPointer": [
+    "Artifact"
+  ],
+  "ScheduledJob": [
+    "Artifact"
+  ],
+  "ScheduledJobAnalysis": [
+    "Plan"
+  ],
+  "ScheduledJobCreationEvent": [
+    "Event"
+  ],
+  "ScheduledJobDeletionEvent": [
+    "Event"
+  ],
+  "ScheduledJobDisableEvent": [
+    "Event"
+  ],
+  "ScheduledJobEnableEvent": [
+    "Event"
+  ],
+  "ScheduledJobEvent": [
+    "Event"
+  ],
+  "ScheduledJobStartEvent": [
+    "Event"
+  ],
+  "ScheduledJobUpdateEvent": [
+    "Event"
+  ],
+  "Scheduling": [
+    "Goal"
+  ],
+  "ScriptApplicationProcess": [
+    "Artifact"
+  ],
+  "ScriptExecutionAnalysis": [
+    "Plan"
+  ],
+  "Second-stageBootLoader": [
+    "Artifact"
+  ],
+  "SecondaryStorage": [
+    "Artifact"
+  ],
+  "SecurityEvent": [
+    "Event"
+  ],
+  "SecurityToken": [
+    "Artifact"
+  ],
+  "SegmentAddressOffsetRandomization": [
+    "Plan"
+  ],
+  "Self-organizingMap": [
+    "Plan"
+  ],
+  "Semi-SupervisedLearning": [
+    "Plan"
+  ],
+  "Semi-supervisedBoosting": [
+    "Plan"
+  ],
+  "Semi-supervisedCluster-then-label": [
+    "Plan"
+  ],
+  "Semi-supervisedCo-training": [
+    "Plan"
+  ],
+  "Semi-supervisedFeatureExtraction": [
+    "Plan"
+  ],
+  "Semi-supervisedGenerativeModelLearning": [
+    "Plan"
+  ],
+  "Semi-supervisedInductiveLearning": [
+    "Plan"
+  ],
+  "Semi-supervisedManifoldLearning": [
+    "Plan"
+  ],
+  "Semi-supervisedPre-training": [
+    "Plan"
+  ],
+  "Semi-supervisedSelf-training": [
+    "Plan"
+  ],
+  "Semi-supervisedTransductiveLearning": [
+    "Plan"
+  ],
+  "Semi-supervisedWrapperMethod": [
+    "Plan"
+  ],
+  "SenderMTAReputationAnalysis": [
+    "Plan"
+  ],
+  "SenderReputationAnalysis": [
+    "Plan"
+  ],
+  "Sensor": [
+    "Sensor"
+  ],
+  "SeqGAN": [
+    "Plan"
+  ],
+  "SerializationFunction": [
+    "Artifact"
+  ],
+  "Server": [
+    "Artifact"
+  ],
+  "ServiceAccount": [
+    "Artifact"
+  ],
+  "ServiceApplication": [
+    "Artifact"
+  ],
+  "ServiceApplicationProcess": [
+    "Artifact"
+  ],
+  "ServiceBinaryVerification": [
+    "Plan"
+  ],
+  "ServiceDeletionEvent": [
+    "Event"
+  ],
+  "ServiceDependency": [
+    "Artifact"
+  ],
+  "ServiceDependencyMapping": [
+    "Plan"
+  ],
+  "ServiceDisableEvent": [
+    "Event"
+  ],
+  "ServiceEnableEvent": [
+    "Event"
+  ],
+  "ServiceEvent": [
+    "Event"
+  ],
+  "ServiceInstallationEvent": [
+    "Event"
+  ],
+  "ServiceProvider": [
+    "Agent",
+    "Group"
+  ],
+  "ServiceRestartEvent": [
+    "Event"
+  ],
+  "ServiceStartEvent": [
+    "Event"
+  ],
+  "ServiceStopEvent": [
+    "Event"
+  ],
+  "ServiceUpdateEvent": [
+    "Event"
+  ],
+  "Session": [
+    "Artifact"
+  ],
+  "SessionCookie": [
+    "Artifact"
+  ],
+  "SessionDurationAnalysis": [
+    "Plan"
+  ],
+  "SessionTermination": [
+    "Plan"
+  ],
+  "SessionToken": [
+    "Artifact"
+  ],
+  "SetRegisters": [
+    "Artifact"
+  ],
+  "SetSystemConfigValue": [
+    "Artifact"
+  ],
+  "SetThreadContext": [
+    "Artifact"
+  ],
+  "ShadowStack": [
+    "Artifact"
+  ],
+  "ShadowStackComparisons": [
+    "Plan"
+  ],
+  "SharedComputer": [
+    "Artifact"
+  ],
+  "SharedLibraryFile": [
+    "Artifact"
+  ],
+  "SharedResourceAccessFunction": [
+    "Artifact"
+  ],
+  "ShellCommand": [
+    "Artifact"
+  ],
+  "Shim": [
+    "Artifact"
+  ],
+  "ShimDatabase": [
+    "Artifact"
+  ],
+  "ShortcutFile": [
+    "Artifact"
+  ],
+  "Signal": [
+    "Artifact"
+  ],
+  "Simulation": [
+    "Goal"
+  ],
+  "SingularValueDecomposition": [
+    "Plan"
+  ],
+  "Skewness": [
+    "Plan"
+  ],
+  "SlowSymbolicLink": [
+    "Artifact"
+  ],
+  "Software": [
+    "Artifact"
+  ],
+  "Software-definedRadio": [
+    "Artifact"
+  ],
+  "Software-definedRadioComputer": [
+    "Artifact"
+  ],
+  "Software-definedRadioConfiguration": [
+    "Artifact"
+  ],
+  "Software-definedRadioDevice": [
+    "Artifact"
+  ],
+  "Software-definedRadioEvent": [
+    "Event"
+  ],
+  "Software-definedRadioRFStateChangeEvent": [
+    "Event"
+  ],
+  "Software-definedRadioWaveformApplication": [
+    "Artifact"
+  ],
+  "Software-definedRadioWaveformConfigurationEvent": [
+    "Event"
+  ],
+  "Software-definedRadioWaveformLoadEvent": [
+    "Event"
+  ],
+  "SoftwareArtifactServer": [
+    "Artifact"
+  ],
+  "SoftwareClock": [
+    "Artifact"
+  ],
+  "SoftwareClockEvent": [
+    "Event"
+  ],
+  "SoftwareDeploymentTool": [
+    "Artifact"
+  ],
+  "SoftwareInventory": [
+    "Plan"
+  ],
+  "SoftwareLibrary": [
+    "Artifact"
+  ],
+  "SoftwareLibraryFile": [
+    "Artifact"
+  ],
+  "SoftwarePackage": [
+    "Artifact"
+  ],
+  "SoftwarePackagingTool": [
+    "Artifact"
+  ],
+  "SoftwarePatch": [
+    "Artifact"
+  ],
+  "SoftwareRepository": [
+    "Artifact"
+  ],
+  "SoftwareTimer": [
+    "Artifact"
+  ],
+  "SoftwareTimerEvent": [
+    "Event"
+  ],
+  "SoftwareUpdate": [
+    "Plan"
+  ],
+  "SoftwareWatchdogTimer": [
+    "Artifact"
+  ],
+  "SomersD": [
+    "Plan"
+  ],
+  "SoundexMatching": [
+    "Plan"
+  ],
+  "SourceCodeAnalyzerTool": [
+    "Artifact"
+  ],
+  "SourceCodeHardening": [
+    "Plan"
+  ],
+  "Spacecraft": [
+    "Artifact"
+  ],
+  "SpacecraftSafeMode": [
+    "Artifact"
+  ],
+  "SpearmansRankCorrelationCoefficient": [
+    "Plan"
+  ],
+  "SpectralClustering": [
+    "Plan"
+  ],
+  "StackComponent": [
+    "Artifact"
+  ],
+  "StackFrame": [
+    "Artifact"
+  ],
+  "StackFrameCanary": [
+    "Artifact"
+  ],
+  "StackFrameCanaryValidation": [
+    "Plan"
+  ],
+  "StackSegment": [
+    "Artifact"
+  ],
+  "Stacking": [
+    "Plan"
+  ],
+  "StandaloneHoneynet": [
+    "Plan"
+  ],
+  "StandardDeviation": [
+    "Plan"
+  ],
+  "StartupDirectory": [
+    "Artifact"
+  ],
+  "StaticAnalysisTool": [
+    "Artifact"
+  ],
+  "StatisticalMethod": [
+    "Plan"
+  ],
+  "Step": [
+    "Plan"
+  ],
+  "Storage": [
+    "Artifact"
+  ],
+  "StorageDeviceEvent": [
+    "Event"
+  ],
+  "StorageImage": [
+    "Artifact"
+  ],
+  "StorageSnapshot": [
+    "Artifact"
+  ],
+  "StoredProcedure": [
+    "Artifact"
+  ],
+  "StringEquivalenceMatching": [
+    "Plan"
+  ],
+  "StringFormatFunction": [
+    "Artifact"
+  ],
+  "StringPatternMatching": [
+    "Plan"
+  ],
+  "StrongPasswordPolicy": [
+    "Plan"
+  ],
+  "StyleGAN": [
+    "Plan"
+  ],
+  "Subroutine": [
+    "Artifact"
+  ],
+  "SubspaceClustering": [
+    "Plan"
+  ],
+  "SubstringMatching": [
+    "Plan"
+  ],
+  "Summarizing": [
+    "Goal"
+  ],
+  "SupervisedLearning": [
+    "Plan"
+  ],
+  "SupplyChainAttacker": [
+    "Agent"
+  ],
+  "SupportVectorMachineClassification": [
+    "Plan"
+  ],
+  "SuspendProcess": [
+    "Artifact"
+  ],
+  "SuspendThread": [
+    "Artifact"
+  ],
+  "Switch": [
+    "Artifact"
+  ],
+  "SymbolicAI": [
+    "Plan"
+  ],
+  "SymbolicLink": [
+    "Artifact"
+  ],
+  "SymbolicLogic": [
+    "Plan"
+  ],
+  "SymmetricFeature-basedTransferLearning": [
+    "Plan"
+  ],
+  "SymmetricKey": [
+    "Artifact"
+  ],
+  "System": [
+    "Artifact"
+  ],
+  "SystemApplicationCycleCount": [
+    "Artifact"
+  ],
+  "SystemCall": [
+    "Artifact"
+  ],
+  "SystemCallAnalysis": [
+    "Plan"
+  ],
+  "SystemCallEvent": [
+    "Event"
+  ],
+  "SystemCallFiltering": [
+    "Plan"
+  ],
+  "SystemClockUpdateEvent": [
+    "Event"
+  ],
+  "SystemConfigSystemCall": [
+    "Artifact"
+  ],
+  "SystemConfigurationDatabase": [
+    "Artifact"
+  ],
+  "SystemConfigurationDatabaseRecord": [
+    "Artifact"
+  ],
+  "SystemConfigurationInitDatabaseRecord": [
+    "Artifact"
+  ],
+  "SystemConfigurationInitResource": [
+    "Artifact"
+  ],
+  "SystemConfigurationPermissions": [
+    "Plan"
+  ],
+  "SystemDaemonMonitoring": [
+    "Plan"
+  ],
+  "SystemDependency": [
+    "Artifact"
+  ],
+  "SystemDependencyMapping": [
+    "Plan"
+  ],
+  "SystemFileAnalysis": [
+    "Plan"
+  ],
+  "SystemFirewallConfiguration": [
+    "Artifact"
+  ],
+  "SystemFirmware": [
+    "Artifact"
+  ],
+  "SystemFirmwareVerification": [
+    "Plan"
+  ],
+  "SystemInitConfigAnalysis": [
+    "Plan"
+  ],
+  "SystemInitConfiguration": [
+    "Artifact"
+  ],
+  "SystemInitProcess": [
+    "Artifact"
+  ],
+  "SystemInitScript": [
+    "Artifact"
+  ],
+  "SystemMapping": [
+    "Plan"
+  ],
+  "SystemPasswordDatabase": [
+    "Artifact"
+  ],
+  "SystemPlatformVariable": [
+    "Artifact"
+  ],
+  "SystemServiceSoftware": [
+    "Artifact"
+  ],
+  "SystemSoftware": [
+    "Artifact"
+  ],
+  "SystemStartupDirectory": [
+    "Artifact"
+  ],
+  "SystemStateImage": [
+    "Artifact"
+  ],
+  "SystemTime": [
+    "Artifact"
+  ],
+  "SystemTimeApplication": [
+    "Artifact"
+  ],
+  "SystemUtilizationRecord": [
+    "Artifact"
+  ],
+  "SystemVulnerabilityAssessment": [
+    "Plan"
+  ],
+  "T1001": [
+    "Plan"
+  ],
+  "T1001.001": [
+    "Plan"
+  ],
+  "T1001.002": [
+    "Plan"
+  ],
+  "T1001.003": [
+    "Plan"
+  ],
+  "T1002": [
+    "Plan"
+  ],
+  "T1003": [
+    "Plan"
+  ],
+  "T1003.001": [
+    "Plan"
+  ],
+  "T1003.002": [
+    "Plan"
+  ],
+  "T1003.003": [
+    "Plan"
+  ],
+  "T1003.004": [
+    "Plan"
+  ],
+  "T1003.005": [
+    "Plan"
+  ],
+  "T1003.006": [
+    "Plan"
+  ],
+  "T1003.007": [
+    "Plan"
+  ],
+  "T1003.008": [
+    "Plan"
+  ],
+  "T1004": [
+    "Plan"
+  ],
+  "T1005": [
+    "Plan"
+  ],
+  "T1006": [
+    "Plan"
+  ],
+  "T1007": [
+    "Plan"
+  ],
+  "T1008": [
+    "Plan"
+  ],
+  "T1009": [
+    "Plan"
+  ],
+  "T1010": [
+    "Plan"
+  ],
+  "T1011": [
+    "Plan"
+  ],
+  "T1011.001": [
+    "Plan"
+  ],
+  "T1012": [
+    "Plan"
+  ],
+  "T1013": [
+    "Plan"
+  ],
+  "T1014": [
+    "Plan"
+  ],
+  "T1015": [
+    "Plan"
+  ],
+  "T1016": [
+    "Plan"
+  ],
+  "T1016.001": [
+    "Plan"
+  ],
+  "T1016.002": [
+    "Plan"
+  ],
+  "T1017": [
+    "Plan"
+  ],
+  "T1018": [
+    "Plan"
+  ],
+  "T1019": [
+    "Plan"
+  ],
+  "T1020": [
+    "Plan"
+  ],
+  "T1020.001": [
+    "Plan"
+  ],
+  "T1021": [
+    "Plan"
+  ],
+  "T1021.001": [
+    "Plan"
+  ],
+  "T1021.002": [
+    "Plan"
+  ],
+  "T1021.003": [
+    "Plan"
+  ],
+  "T1021.004": [
+    "Plan"
+  ],
+  "T1021.005": [
+    "Plan"
+  ],
+  "T1021.006": [
+    "Plan"
+  ],
+  "T1021.007": [
+    "Plan"
+  ],
+  "T1021.008": [
+    "Plan"
+  ],
+  "T1022": [
+    "Plan"
+  ],
+  "T1023": [
+    "Plan"
+  ],
+  "T1024": [
+    "Plan"
+  ],
+  "T1025": [
+    "Plan"
+  ],
+  "T1026": [
+    "Plan"
+  ],
+  "T1027": [
+    "Plan"
+  ],
+  "T1027.001": [
+    "Plan"
+  ],
+  "T1027.002": [
+    "Plan"
+  ],
+  "T1027.003": [
+    "Plan"
+  ],
+  "T1027.004": [
+    "Plan"
+  ],
+  "T1027.005": [
+    "Plan"
+  ],
+  "T1027.006": [
+    "Plan"
+  ],
+  "T1027.007": [
+    "Plan"
+  ],
+  "T1027.008": [
+    "Plan"
+  ],
+  "T1027.009": [
+    "Plan"
+  ],
+  "T1027.010": [
+    "Plan"
+  ],
+  "T1027.011": [
+    "Plan"
+  ],
+  "T1027.012": [
+    "Plan"
+  ],
+  "T1027.013": [
+    "Plan"
+  ],
+  "T1027.014": [
+    "Plan"
+  ],
+  "T1027.015": [
+    "Plan"
+  ],
+  "T1027.016": [
+    "Plan"
+  ],
+  "T1027.017": [
+    "Plan"
+  ],
+  "T1028": [
+    "Plan"
+  ],
+  "T1029": [
+    "Plan"
+  ],
+  "T1030": [
+    "Plan"
+  ],
+  "T1031": [
+    "Plan"
+  ],
+  "T1032": [
+    "Plan"
+  ],
+  "T1033": [
+    "Plan"
+  ],
+  "T1034": [
+    "Plan"
+  ],
+  "T1035": [
+    "Plan"
+  ],
+  "T1036": [
+    "Plan"
+  ],
+  "T1036.001": [
+    "Plan"
+  ],
+  "T1036.002": [
+    "Plan"
+  ],
+  "T1036.003": [
+    "Plan"
+  ],
+  "T1036.004": [
+    "Plan"
+  ],
+  "T1036.005": [
+    "Plan"
+  ],
+  "T1036.006": [
+    "Plan"
+  ],
+  "T1036.007": [
+    "Plan"
+  ],
+  "T1036.008": [
+    "Plan"
+  ],
+  "T1036.009": [
+    "Plan"
+  ],
+  "T1036.010": [
+    "Plan"
+  ],
+  "T1036.011": [
+    "Plan"
+  ],
+  "T1036.012": [
+    "Plan"
+  ],
+  "T1037": [
+    "Plan"
+  ],
+  "T1037.001": [
+    "Plan"
+  ],
+  "T1037.002": [
+    "Plan"
+  ],
+  "T1037.003": [
+    "Plan"
+  ],
+  "T1037.004": [
+    "Plan"
+  ],
+  "T1037.005": [
+    "Plan"
+  ],
+  "T1038": [
+    "Plan"
+  ],
+  "T1039": [
+    "Plan"
+  ],
+  "T1040": [
+    "Plan"
+  ],
+  "T1041": [
+    "Plan"
+  ],
+  "T1042": [
+    "Plan"
+  ],
+  "T1043": [
+    "Plan"
+  ],
+  "T1044": [
+    "Plan"
+  ],
+  "T1045": [
+    "Plan"
+  ],
+  "T1046": [
+    "Plan"
+  ],
+  "T1047": [
+    "Plan"
+  ],
+  "T1048": [
+    "Plan"
+  ],
+  "T1048.001": [
+    "Plan"
+  ],
+  "T1048.002": [
+    "Plan"
+  ],
+  "T1048.003": [
+    "Plan"
+  ],
+  "T1049": [
+    "Plan"
+  ],
+  "T1050": [
+    "Plan"
+  ],
+  "T1051": [
+    "Plan"
+  ],
+  "T1052": [
+    "Plan"
+  ],
+  "T1052.001": [
+    "Plan"
+  ],
+  "T1053": [
+    "Plan"
+  ],
+  "T1053.001": [
+    "Plan"
+  ],
+  "T1053.002": [
+    "Plan"
+  ],
+  "T1053.003": [
+    "Plan"
+  ],
+  "T1053.004": [
+    "Plan"
+  ],
+  "T1053.005": [
+    "Plan"
+  ],
+  "T1053.006": [
+    "Plan"
+  ],
+  "T1053.007": [
+    "Plan"
+  ],
+  "T1054": [
+    "Plan"
+  ],
+  "T1055": [
+    "Plan"
+  ],
+  "T1055.001": [
+    "Plan"
+  ],
+  "T1055.002": [
+    "Plan"
+  ],
+  "T1055.003": [
+    "Plan"
+  ],
+  "T1055.004": [
+    "Plan"
+  ],
+  "T1055.005": [
+    "Plan"
+  ],
+  "T1055.008": [
+    "Plan"
+  ],
+  "T1055.009": [
+    "Plan"
+  ],
+  "T1055.011": [
+    "Plan"
+  ],
+  "T1055.012": [
+    "Plan"
+  ],
+  "T1055.013": [
+    "Plan"
+  ],
+  "T1055.014": [
+    "Plan"
+  ],
+  "T1055.015": [
+    "Plan"
+  ],
+  "T1056": [
+    "Plan"
+  ],
+  "T1056.001": [
+    "Plan"
+  ],
+  "T1056.002": [
+    "Plan"
+  ],
+  "T1056.003": [
+    "Plan"
+  ],
+  "T1056.004": [
+    "Plan"
+  ],
+  "T1057": [
+    "Plan"
+  ],
+  "T1058": [
+    "Plan"
+  ],
+  "T1059": [
+    "Plan"
+  ],
+  "T1059.001": [
+    "Plan"
+  ],
+  "T1059.002": [
+    "Plan"
+  ],
+  "T1059.003": [
+    "Plan"
+  ],
+  "T1059.004": [
+    "Plan"
+  ],
+  "T1059.005": [
+    "Plan"
+  ],
+  "T1059.006": [
+    "Plan"
+  ],
+  "T1059.007": [
+    "Plan"
+  ],
+  "T1059.008": [
+    "Plan"
+  ],
+  "T1059.009": [
+    "Plan"
+  ],
+  "T1059.010": [
+    "Plan"
+  ],
+  "T1059.011": [
+    "Plan"
+  ],
+  "T1059.012": [
+    "Plan"
+  ],
+  "T1059.013": [
+    "Plan"
+  ],
+  "T1060": [
+    "Plan"
+  ],
+  "T1061": [
+    "Plan"
+  ],
+  "T1062": [
+    "Plan"
+  ],
+  "T1063": [
+    "Plan"
+  ],
+  "T1064": [
+    "Plan"
+  ],
+  "T1065": [
+    "Plan"
+  ],
+  "T1066": [
+    "Plan"
+  ],
+  "T1067": [
+    "Plan"
+  ],
+  "T1068": [
+    "Plan"
+  ],
+  "T1069": [
+    "Plan"
+  ],
+  "T1069.001": [
+    "Plan"
+  ],
+  "T1069.002": [
+    "Plan"
+  ],
+  "T1069.003": [
+    "Plan"
+  ],
+  "T1070": [
+    "Plan"
+  ],
+  "T1070.001": [
+    "Plan"
+  ],
+  "T1070.002": [
+    "Plan"
+  ],
+  "T1070.003": [
+    "Plan"
+  ],
+  "T1070.004": [
+    "Plan"
+  ],
+  "T1070.005": [
+    "Plan"
+  ],
+  "T1070.006": [
+    "Plan"
+  ],
+  "T1070.007": [
+    "Plan"
+  ],
+  "T1070.008": [
+    "Plan"
+  ],
+  "T1070.009": [
+    "Plan"
+  ],
+  "T1070.010": [
+    "Plan"
+  ],
+  "T1071": [
+    "Plan"
+  ],
+  "T1071.001": [
+    "Plan"
+  ],
+  "T1071.002": [
+    "Plan"
+  ],
+  "T1071.003": [
+    "Plan"
+  ],
+  "T1071.004": [
+    "Plan"
+  ],
+  "T1071.005": [
+    "Plan"
+  ],
+  "T1072": [
+    "Plan"
+  ],
+  "T1073": [
+    "Plan"
+  ],
+  "T1074": [
+    "Plan"
+  ],
+  "T1074.001": [
+    "Plan"
+  ],
+  "T1074.002": [
+    "Plan"
+  ],
+  "T1075": [
+    "Plan"
+  ],
+  "T1076": [
+    "Plan"
+  ],
+  "T1077": [
+    "Plan"
+  ],
+  "T1078": [
+    "Plan"
+  ],
+  "T1078.001": [
+    "Plan"
+  ],
+  "T1078.002": [
+    "Plan"
+  ],
+  "T1078.003": [
+    "Plan"
+  ],
+  "T1078.004": [
+    "Plan"
+  ],
+  "T1079": [
+    "Plan"
+  ],
+  "T1080": [
+    "Plan"
+  ],
+  "T1081": [
+    "Plan"
+  ],
+  "T1082": [
+    "Plan"
+  ],
+  "T1083": [
+    "Plan"
+  ],
+  "T1084": [
+    "Plan"
+  ],
+  "T1085": [
+    "Plan"
+  ],
+  "T1086": [
+    "Plan"
+  ],
+  "T1087": [
+    "Plan"
+  ],
+  "T1087.001": [
+    "Plan"
+  ],
+  "T1087.002": [
+    "Plan"
+  ],
+  "T1087.003": [
+    "Plan"
+  ],
+  "T1087.004": [
+    "Plan"
+  ],
+  "T1088": [
+    "Plan"
+  ],
+  "T1089": [
+    "Plan"
+  ],
+  "T1090": [
+    "Plan"
+  ],
+  "T1090.001": [
+    "Plan"
+  ],
+  "T1090.002": [
+    "Plan"
+  ],
+  "T1090.003": [
+    "Plan"
+  ],
+  "T1090.004": [
+    "Plan"
+  ],
+  "T1091": [
+    "Plan"
+  ],
+  "T1092": [
+    "Plan"
+  ],
+  "T1093": [
+    "Plan"
+  ],
+  "T1094": [
+    "Plan"
+  ],
+  "T1095": [
+    "Plan"
+  ],
+  "T1096": [
+    "Plan"
+  ],
+  "T1097": [
+    "Plan"
+  ],
+  "T1098": [
+    "Plan"
+  ],
+  "T1098.001": [
+    "Plan"
+  ],
+  "T1098.002": [
+    "Plan"
+  ],
+  "T1098.003": [
+    "Plan"
+  ],
+  "T1098.004": [
+    "Plan"
+  ],
+  "T1098.005": [
+    "Plan"
+  ],
+  "T1098.006": [
+    "Plan"
+  ],
+  "T1098.007": [
+    "Plan"
+  ],
+  "T1099": [
+    "Plan"
+  ],
+  "T1100": [
+    "Plan"
+  ],
+  "T1101": [
+    "Plan"
+  ],
+  "T1102": [
+    "Plan"
+  ],
+  "T1102.001": [
+    "Plan"
+  ],
+  "T1102.002": [
+    "Plan"
+  ],
+  "T1102.003": [
+    "Plan"
+  ],
+  "T1103": [
+    "Plan"
+  ],
+  "T1104": [
+    "Plan"
+  ],
+  "T1105": [
+    "Plan"
+  ],
+  "T1106": [
+    "Plan"
+  ],
+  "T1107": [
+    "Plan"
+  ],
+  "T1108": [
+    "Plan"
+  ],
+  "T1109": [
+    "Plan"
+  ],
+  "T1110": [
+    "Plan"
+  ],
+  "T1110.001": [
+    "Plan"
+  ],
+  "T1110.002": [
+    "Plan"
+  ],
+  "T1110.003": [
+    "Plan"
+  ],
+  "T1110.004": [
+    "Plan"
+  ],
+  "T1111": [
+    "Plan"
+  ],
+  "T1112": [
+    "Plan"
+  ],
+  "T1113": [
+    "Plan"
+  ],
+  "T1114": [
+    "Plan"
+  ],
+  "T1114.001": [
+    "Plan"
+  ],
+  "T1114.002": [
+    "Plan"
+  ],
+  "T1114.003": [
+    "Plan"
+  ],
+  "T1115": [
+    "Plan"
+  ],
+  "T1116": [
+    "Plan"
+  ],
+  "T1117": [
+    "Plan"
+  ],
+  "T1118": [
+    "Plan"
+  ],
+  "T1119": [
+    "Plan"
+  ],
+  "T1120": [
+    "Plan"
+  ],
+  "T1121": [
+    "Plan"
+  ],
+  "T1122": [
+    "Plan"
+  ],
+  "T1123": [
+    "Plan"
+  ],
+  "T1124": [
+    "Plan"
+  ],
+  "T1125": [
+    "Plan"
+  ],
+  "T1126": [
+    "Plan"
+  ],
+  "T1127": [
+    "Plan"
+  ],
+  "T1127.001": [
+    "Plan"
+  ],
+  "T1127.002": [
+    "Plan"
+  ],
+  "T1127.003": [
+    "Plan"
+  ],
+  "T1128": [
+    "Plan"
+  ],
+  "T1129": [
+    "Plan"
+  ],
+  "T1130": [
+    "Plan"
+  ],
+  "T1131": [
+    "Plan"
+  ],
+  "T1132": [
+    "Plan"
+  ],
+  "T1132.001": [
+    "Plan"
+  ],
+  "T1132.002": [
+    "Plan"
+  ],
+  "T1133": [
+    "Plan"
+  ],
+  "T1134": [
+    "Plan"
+  ],
+  "T1134.001": [
+    "Plan"
+  ],
+  "T1134.002": [
+    "Plan"
+  ],
+  "T1134.003": [
+    "Plan"
+  ],
+  "T1134.004": [
+    "Plan"
+  ],
+  "T1134.005": [
+    "Plan"
+  ],
+  "T1135": [
+    "Plan"
+  ],
+  "T1136": [
+    "Plan"
+  ],
+  "T1136.001": [
+    "Plan"
+  ],
+  "T1136.002": [
+    "Plan"
+  ],
+  "T1136.003": [
+    "Plan"
+  ],
+  "T1137": [
+    "Plan"
+  ],
+  "T1137.001": [
+    "Plan"
+  ],
+  "T1137.002": [
+    "Plan"
+  ],
+  "T1137.003": [
+    "Plan"
+  ],
+  "T1137.004": [
+    "Plan"
+  ],
+  "T1137.005": [
+    "Plan"
+  ],
+  "T1137.006": [
+    "Plan"
+  ],
+  "T1138": [
+    "Plan"
+  ],
+  "T1139": [
+    "Plan"
+  ],
+  "T1140": [
+    "Plan"
+  ],
+  "T1141": [
+    "Plan"
+  ],
+  "T1142": [
+    "Plan"
+  ],
+  "T1143": [
+    "Plan"
+  ],
+  "T1144": [
+    "Plan"
+  ],
+  "T1145": [
+    "Plan"
+  ],
+  "T1146": [
+    "Plan"
+  ],
+  "T1147": [
+    "Plan"
+  ],
+  "T1148": [
+    "Plan"
+  ],
+  "T1149": [
+    "Plan"
+  ],
+  "T1150": [
+    "Plan"
+  ],
+  "T1151": [
+    "Plan"
+  ],
+  "T1152": [
+    "Plan"
+  ],
+  "T1153": [
+    "Plan"
+  ],
+  "T1154": [
+    "Plan"
+  ],
+  "T1155": [
+    "Plan"
+  ],
+  "T1156": [
+    "Plan"
+  ],
+  "T1157": [
+    "Plan"
+  ],
+  "T1158": [
+    "Plan"
+  ],
+  "T1159": [
+    "Plan"
+  ],
+  "T1160": [
+    "Plan"
+  ],
+  "T1161": [
+    "Plan"
+  ],
+  "T1162": [
+    "Plan"
+  ],
+  "T1163": [
+    "Plan"
+  ],
+  "T1164": [
+    "Plan"
+  ],
+  "T1165": [
+    "Plan"
+  ],
+  "T1166": [
+    "Plan"
+  ],
+  "T1167": [
+    "Plan"
+  ],
+  "T1168": [
+    "Plan"
+  ],
+  "T1169": [
+    "Plan"
+  ],
+  "T1170": [
+    "Plan"
+  ],
+  "T1171": [
+    "Plan"
+  ],
+  "T1172": [
+    "Plan"
+  ],
+  "T1173": [
+    "Plan"
+  ],
+  "T1174": [
+    "Plan"
+  ],
+  "T1175": [
+    "Plan"
+  ],
+  "T1176": [
+    "Plan"
+  ],
+  "T1176.001": [
+    "Plan"
+  ],
+  "T1176.002": [
+    "Plan"
+  ],
+  "T1177": [
+    "Plan"
+  ],
+  "T1178": [
+    "Plan"
+  ],
+  "T1179": [
+    "Plan"
+  ],
+  "T1180": [
+    "Plan"
+  ],
+  "T1181": [
+    "Plan"
+  ],
+  "T1182": [
+    "Plan"
+  ],
+  "T1183": [
+    "Plan"
+  ],
+  "T1184": [
+    "Plan"
+  ],
+  "T1185": [
+    "Plan"
+  ],
+  "T1186": [
+    "Plan"
+  ],
+  "T1187": [
+    "Plan"
+  ],
+  "T1188": [
+    "Plan"
+  ],
+  "T1189": [
+    "Plan"
+  ],
+  "T1190": [
+    "Plan"
+  ],
+  "T1191": [
+    "Plan"
+  ],
+  "T1192": [
+    "Plan"
+  ],
+  "T1193": [
+    "Plan"
+  ],
+  "T1194": [
+    "Plan"
+  ],
+  "T1195": [
+    "Plan"
+  ],
+  "T1195.001": [
+    "Plan"
+  ],
+  "T1195.002": [
+    "Plan"
+  ],
+  "T1195.003": [
+    "Plan"
+  ],
+  "T1196": [
+    "Plan"
+  ],
+  "T1197": [
+    "Plan"
+  ],
+  "T1198": [
+    "Plan"
+  ],
+  "T1199": [
+    "Plan"
+  ],
+  "T1200": [
+    "Plan"
+  ],
+  "T1201": [
+    "Plan"
+  ],
+  "T1202": [
+    "Plan"
+  ],
+  "T1203": [
+    "Plan"
+  ],
+  "T1204": [
+    "Plan"
+  ],
+  "T1204.001": [
+    "Plan"
+  ],
+  "T1204.002": [
+    "Plan"
+  ],
+  "T1204.003": [
+    "Plan"
+  ],
+  "T1204.004": [
+    "Plan"
+  ],
+  "T1204.005": [
+    "Plan"
+  ],
+  "T1205": [
+    "Plan"
+  ],
+  "T1205.001": [
+    "Plan"
+  ],
+  "T1205.002": [
+    "Plan"
+  ],
+  "T1206": [
+    "Plan"
+  ],
+  "T1207": [
+    "Plan"
+  ],
+  "T1208": [
+    "Plan"
+  ],
+  "T1209": [
+    "Plan"
+  ],
+  "T1210": [
+    "Plan"
+  ],
+  "T1211": [
+    "Plan"
+  ],
+  "T1212": [
+    "Plan"
+  ],
+  "T1213": [
+    "Plan"
+  ],
+  "T1213.001": [
+    "Plan"
+  ],
+  "T1213.002": [
+    "Plan"
+  ],
+  "T1213.003": [
+    "Plan"
+  ],
+  "T1213.004": [
+    "Plan"
+  ],
+  "T1213.005": [
+    "Plan"
+  ],
+  "T1213.006": [
+    "Plan"
+  ],
+  "T1214": [
+    "Plan"
+  ],
+  "T1215": [
+    "Plan"
+  ],
+  "T1216": [
+    "Plan"
+  ],
+  "T1216.001": [
+    "Plan"
+  ],
+  "T1216.002": [
+    "Plan"
+  ],
+  "T1217": [
+    "Plan"
+  ],
+  "T1218": [
+    "Plan"
+  ],
+  "T1218.001": [
+    "Plan"
+  ],
+  "T1218.002": [
+    "Plan"
+  ],
+  "T1218.003": [
+    "Plan"
+  ],
+  "T1218.004": [
+    "Plan"
+  ],
+  "T1218.005": [
+    "Plan"
+  ],
+  "T1218.007": [
+    "Plan"
+  ],
+  "T1218.008": [
+    "Plan"
+  ],
+  "T1218.009": [
+    "Plan"
+  ],
+  "T1218.010": [
+    "Plan"
+  ],
+  "T1218.011": [
+    "Plan"
+  ],
+  "T1218.012": [
+    "Plan"
+  ],
+  "T1218.013": [
+    "Plan"
+  ],
+  "T1218.014": [
+    "Plan"
+  ],
+  "T1218.015": [
+    "Plan"
+  ],
+  "T1219": [
+    "Plan"
+  ],
+  "T1219.001": [
+    "Plan"
+  ],
+  "T1219.002": [
+    "Plan"
+  ],
+  "T1219.003": [
+    "Plan"
+  ],
+  "T1220": [
+    "Plan"
+  ],
+  "T1221": [
+    "Plan"
+  ],
+  "T1222": [
+    "Plan"
+  ],
+  "T1222.001": [
+    "Plan"
+  ],
+  "T1222.002": [
+    "Plan"
+  ],
+  "T1223": [
+    "Plan"
+  ],
+  "T1480": [
+    "Plan"
+  ],
+  "T1480.001": [
+    "Plan"
+  ],
+  "T1480.002": [
+    "Plan"
+  ],
+  "T1482": [
+    "Plan"
+  ],
+  "T1483": [
+    "Plan"
+  ],
+  "T1484": [
+    "Plan"
+  ],
+  "T1484.001": [
+    "Plan"
+  ],
+  "T1484.002": [
+    "Plan"
+  ],
+  "T1485": [
+    "Plan"
+  ],
+  "T1485.001": [
+    "Plan"
+  ],
+  "T1486": [
+    "Plan"
+  ],
+  "T1487": [
+    "Plan"
+  ],
+  "T1488": [
+    "Plan"
+  ],
+  "T1489": [
+    "Plan"
+  ],
+  "T1490": [
+    "Plan"
+  ],
+  "T1491": [
+    "Plan"
+  ],
+  "T1491.001": [
+    "Plan"
+  ],
+  "T1491.002": [
+    "Plan"
+  ],
+  "T1492": [
+    "Plan"
+  ],
+  "T1493": [
+    "Plan"
+  ],
+  "T1494": [
+    "Plan"
+  ],
+  "T1495": [
+    "Plan"
+  ],
+  "T1496": [
+    "Plan"
+  ],
+  "T1496.001": [
+    "Plan"
+  ],
+  "T1496.002": [
+    "Plan"
+  ],
+  "T1496.003": [
+    "Plan"
+  ],
+  "T1496.004": [
+    "Plan"
+  ],
+  "T1497": [
+    "Plan"
+  ],
+  "T1497.001": [
+    "Plan"
+  ],
+  "T1497.002": [
+    "Plan"
+  ],
+  "T1497.003": [
+    "Plan"
+  ],
+  "T1498": [
+    "Plan"
+  ],
+  "T1498.001": [
+    "Plan"
+  ],
+  "T1498.002": [
+    "Plan"
+  ],
+  "T1499": [
+    "Plan"
+  ],
+  "T1499.001": [
+    "Plan"
+  ],
+  "T1499.002": [
+    "Plan"
+  ],
+  "T1499.003": [
+    "Plan"
+  ],
+  "T1499.004": [
+    "Plan"
+  ],
+  "T1500": [
+    "Plan"
+  ],
+  "T1501": [
+    "Plan"
+  ],
+  "T1502": [
+    "Plan"
+  ],
+  "T1503": [
+    "Plan"
+  ],
+  "T1504": [
+    "Plan"
+  ],
+  "T1505": [
+    "Plan"
+  ],
+  "T1505.001": [
+    "Plan"
+  ],
+  "T1505.002": [
+    "Plan"
+  ],
+  "T1505.003": [
+    "Plan"
+  ],
+  "T1505.004": [
+    "Plan"
+  ],
+  "T1505.005": [
+    "Plan"
+  ],
+  "T1505.006": [
+    "Plan"
+  ],
+  "T1506": [
+    "Plan"
+  ],
+  "T1514": [
+    "Plan"
+  ],
+  "T1518": [
+    "Plan"
+  ],
+  "T1518.001": [
+    "Plan"
+  ],
+  "T1518.002": [
+    "Plan"
+  ],
+  "T1519": [
+    "Plan"
+  ],
+  "T1522": [
+    "Plan"
+  ],
+  "T1525": [
+    "Plan"
+  ],
+  "T1526": [
+    "Plan"
+  ],
+  "T1527": [
+    "Plan"
+  ],
+  "T1528": [
+    "Plan"
+  ],
+  "T1529": [
+    "Plan"
+  ],
+  "T1530": [
+    "Plan"
+  ],
+  "T1531": [
+    "Plan"
+  ],
+  "T1534": [
+    "Plan"
+  ],
+  "T1535": [
+    "Plan"
+  ],
+  "T1536": [
+    "Plan"
+  ],
+  "T1537": [
+    "Plan"
+  ],
+  "T1538": [
+    "Plan"
+  ],
+  "T1539": [
+    "Plan"
+  ],
+  "T1542": [
+    "Plan"
+  ],
+  "T1542.001": [
+    "Plan"
+  ],
+  "T1542.002": [
+    "Plan"
+  ],
+  "T1542.003": [
+    "Plan"
+  ],
+  "T1542.004": [
+    "Plan"
+  ],
+  "T1542.005": [
+    "Plan"
+  ],
+  "T1543": [
+    "Plan"
+  ],
+  "T1543.001": [
+    "Plan"
+  ],
+  "T1543.002": [
+    "Plan"
+  ],
+  "T1543.003": [
+    "Plan"
+  ],
+  "T1543.004": [
+    "Plan"
+  ],
+  "T1543.005": [
+    "Plan"
+  ],
+  "T1546": [
+    "Plan"
+  ],
+  "T1546.001": [
+    "Plan"
+  ],
+  "T1546.002": [
+    "Plan"
+  ],
+  "T1546.003": [
+    "Plan"
+  ],
+  "T1546.004": [
+    "Plan"
+  ],
+  "T1546.005": [
+    "Plan"
+  ],
+  "T1546.006": [
+    "Plan"
+  ],
+  "T1546.007": [
+    "Plan"
+  ],
+  "T1546.008": [
+    "Plan"
+  ],
+  "T1546.009": [
+    "Plan"
+  ],
+  "T1546.010": [
+    "Plan"
+  ],
+  "T1546.011": [
+    "Plan"
+  ],
+  "T1546.012": [
+    "Plan"
+  ],
+  "T1546.013": [
+    "Plan"
+  ],
+  "T1546.014": [
+    "Plan"
+  ],
+  "T1546.015": [
+    "Plan"
+  ],
+  "T1546.016": [
+    "Plan"
+  ],
+  "T1546.017": [
+    "Plan"
+  ],
+  "T1546.018": [
+    "Plan"
+  ],
+  "T1547": [
+    "Plan"
+  ],
+  "T1547.001": [
+    "Plan"
+  ],
+  "T1547.002": [
+    "Plan"
+  ],
+  "T1547.003": [
+    "Plan"
+  ],
+  "T1547.004": [
+    "Plan"
+  ],
+  "T1547.005": [
+    "Plan"
+  ],
+  "T1547.006": [
+    "Plan"
+  ],
+  "T1547.007": [
+    "Plan"
+  ],
+  "T1547.008": [
+    "Plan"
+  ],
+  "T1547.009": [
+    "Plan"
+  ],
+  "T1547.010": [
+    "Plan"
+  ],
+  "T1547.011": [
+    "Plan"
+  ],
+  "T1547.012": [
+    "Plan"
+  ],
+  "T1547.013": [
+    "Plan"
+  ],
+  "T1547.014": [
+    "Plan"
+  ],
+  "T1547.015": [
+    "Plan"
+  ],
+  "T1548": [
+    "Plan"
+  ],
+  "T1548.001": [
+    "Plan"
+  ],
+  "T1548.002": [
+    "Plan"
+  ],
+  "T1548.003": [
+    "Plan"
+  ],
+  "T1548.004": [
+    "Plan"
+  ],
+  "T1548.005": [
+    "Plan"
+  ],
+  "T1548.006": [
+    "Plan"
+  ],
+  "T1550": [
+    "Plan"
+  ],
+  "T1550.001": [
+    "Plan"
+  ],
+  "T1550.002": [
+    "Plan"
+  ],
+  "T1550.003": [
+    "Plan"
+  ],
+  "T1550.004": [
+    "Plan"
+  ],
+  "T1552": [
+    "Plan"
+  ],
+  "T1552.001": [
+    "Plan"
+  ],
+  "T1552.002": [
+    "Plan"
+  ],
+  "T1552.003": [
+    "Plan"
+  ],
+  "T1552.004": [
+    "Plan"
+  ],
+  "T1552.005": [
+    "Plan"
+  ],
+  "T1552.006": [
+    "Plan"
+  ],
+  "T1552.007": [
+    "Plan"
+  ],
+  "T1552.008": [
+    "Plan"
+  ],
+  "T1553": [
+    "Plan"
+  ],
+  "T1553.001": [
+    "Plan"
+  ],
+  "T1553.002": [
+    "Plan"
+  ],
+  "T1553.003": [
+    "Plan"
+  ],
+  "T1553.004": [
+    "Plan"
+  ],
+  "T1553.005": [
+    "Plan"
+  ],
+  "T1553.006": [
+    "Plan"
+  ],
+  "T1554": [
+    "Plan"
+  ],
+  "T1555": [
+    "Plan"
+  ],
+  "T1555.001": [
+    "Plan"
+  ],
+  "T1555.002": [
+    "Plan"
+  ],
+  "T1555.003": [
+    "Plan"
+  ],
+  "T1555.004": [
+    "Plan"
+  ],
+  "T1555.005": [
+    "Plan"
+  ],
+  "T1555.006": [
+    "Plan"
+  ],
+  "T1556": [
+    "Plan"
+  ],
+  "T1556.001": [
+    "Plan"
+  ],
+  "T1556.002": [
+    "Plan"
+  ],
+  "T1556.003": [
+    "Plan"
+  ],
+  "T1556.004": [
+    "Plan"
+  ],
+  "T1556.005": [
+    "Plan"
+  ],
+  "T1556.006": [
+    "Plan"
+  ],
+  "T1556.007": [
+    "Plan"
+  ],
+  "T1556.008": [
+    "Plan"
+  ],
+  "T1556.009": [
+    "Plan"
+  ],
+  "T1557": [
+    "Plan"
+  ],
+  "T1557.001": [
+    "Plan"
+  ],
+  "T1557.002": [
+    "Plan"
+  ],
+  "T1557.003": [
+    "Plan"
+  ],
+  "T1557.004": [
+    "Plan"
+  ],
+  "T1558": [
+    "Plan"
+  ],
+  "T1558.001": [
+    "Plan"
+  ],
+  "T1558.002": [
+    "Plan"
+  ],
+  "T1558.003": [
+    "Plan"
+  ],
+  "T1558.004": [
+    "Plan"
+  ],
+  "T1558.005": [
+    "Plan"
+  ],
+  "T1559": [
+    "Plan"
+  ],
+  "T1559.001": [
+    "Plan"
+  ],
+  "T1559.002": [
+    "Plan"
+  ],
+  "T1559.003": [
+    "Plan"
+  ],
+  "T1560": [
+    "Plan"
+  ],
+  "T1560.001": [
+    "Plan"
+  ],
+  "T1560.002": [
+    "Plan"
+  ],
+  "T1560.003": [
+    "Plan"
+  ],
+  "T1561": [
+    "Plan"
+  ],
+  "T1561.001": [
+    "Plan"
+  ],
+  "T1561.002": [
+    "Plan"
+  ],
+  "T1562": [
+    "Plan"
+  ],
+  "T1562.001": [
+    "Plan"
+  ],
+  "T1562.002": [
+    "Plan"
+  ],
+  "T1562.003": [
+    "Plan"
+  ],
+  "T1562.004": [
+    "Plan"
+  ],
+  "T1562.006": [
+    "Plan"
+  ],
+  "T1562.007": [
+    "Plan"
+  ],
+  "T1562.008": [
+    "Plan"
+  ],
+  "T1562.009": [
+    "Plan"
+  ],
+  "T1562.010": [
+    "Plan"
+  ],
+  "T1562.011": [
+    "Plan"
+  ],
+  "T1562.012": [
+    "Plan"
+  ],
+  "T1562.013": [
+    "Plan"
+  ],
+  "T1563": [
+    "Plan"
+  ],
+  "T1563.001": [
+    "Plan"
+  ],
+  "T1563.002": [
+    "Plan"
+  ],
+  "T1564": [
+    "Plan"
+  ],
+  "T1564.001": [
+    "Plan"
+  ],
+  "T1564.002": [
+    "Plan"
+  ],
+  "T1564.003": [
+    "Plan"
+  ],
+  "T1564.004": [
+    "Plan"
+  ],
+  "T1564.005": [
+    "Plan"
+  ],
+  "T1564.006": [
+    "Plan"
+  ],
+  "T1564.007": [
+    "Plan"
+  ],
+  "T1564.008": [
+    "Plan"
+  ],
+  "T1564.009": [
+    "Plan"
+  ],
+  "T1564.010": [
+    "Plan"
+  ],
+  "T1564.011": [
+    "Plan"
+  ],
+  "T1564.012": [
+    "Plan"
+  ],
+  "T1564.013": [
+    "Plan"
+  ],
+  "T1564.014": [
+    "Plan"
+  ],
+  "T1565": [
+    "Plan"
+  ],
+  "T1565.001": [
+    "Plan"
+  ],
+  "T1565.002": [
+    "Plan"
+  ],
+  "T1565.003": [
+    "Plan"
+  ],
+  "T1566": [
+    "Plan"
+  ],
+  "T1566.001": [
+    "Plan"
+  ],
+  "T1566.002": [
+    "Plan"
+  ],
+  "T1566.003": [
+    "Plan"
+  ],
+  "T1566.004": [
+    "Plan"
+  ],
+  "T1567": [
+    "Plan"
+  ],
+  "T1567.001": [
+    "Plan"
+  ],
+  "T1567.002": [
+    "Plan"
+  ],
+  "T1567.003": [
+    "Plan"
+  ],
+  "T1567.004": [
+    "Plan"
+  ],
+  "T1568": [
+    "Plan"
+  ],
+  "T1568.001": [
+    "Plan"
+  ],
+  "T1568.002": [
+    "Plan"
+  ],
+  "T1568.003": [
+    "Plan"
+  ],
+  "T1569": [
+    "Plan"
+  ],
+  "T1569.001": [
+    "Plan"
+  ],
+  "T1569.002": [
+    "Plan"
+  ],
+  "T1569.003": [
+    "Plan"
+  ],
+  "T1570": [
+    "Plan"
+  ],
+  "T1571": [
+    "Plan"
+  ],
+  "T1572": [
+    "Plan"
+  ],
+  "T1573": [
+    "Plan"
+  ],
+  "T1573.001": [
+    "Plan"
+  ],
+  "T1573.002": [
+    "Plan"
+  ],
+  "T1574": [
+    "Plan"
+  ],
+  "T1574.001": [
+    "Plan"
+  ],
+  "T1574.002": [
+    "Plan"
+  ],
+  "T1574.004": [
+    "Plan"
+  ],
+  "T1574.005": [
+    "Plan"
+  ],
+  "T1574.006": [
+    "Plan"
+  ],
+  "T1574.007": [
+    "Plan"
+  ],
+  "T1574.008": [
+    "Plan"
+  ],
+  "T1574.009": [
+    "Plan"
+  ],
+  "T1574.010": [
+    "Plan"
+  ],
+  "T1574.011": [
+    "Plan"
+  ],
+  "T1574.012": [
+    "Plan"
+  ],
+  "T1574.013": [
+    "Plan"
+  ],
+  "T1574.014": [
+    "Plan"
+  ],
+  "T1578": [
+    "Plan"
+  ],
+  "T1578.001": [
+    "Plan"
+  ],
+  "T1578.002": [
+    "Plan"
+  ],
+  "T1578.003": [
+    "Plan"
+  ],
+  "T1578.004": [
+    "Plan"
+  ],
+  "T1578.005": [
+    "Plan"
+  ],
+  "T1580": [
+    "Plan"
+  ],
+  "T1583": [
+    "Plan"
+  ],
+  "T1583.001": [
+    "Plan"
+  ],
+  "T1583.002": [
+    "Plan"
+  ],
+  "T1583.003": [
+    "Plan"
+  ],
+  "T1583.004": [
+    "Plan"
+  ],
+  "T1583.005": [
+    "Plan"
+  ],
+  "T1583.006": [
+    "Plan"
+  ],
+  "T1583.007": [
+    "Plan"
+  ],
+  "T1583.008": [
+    "Plan"
+  ],
+  "T1584": [
+    "Plan"
+  ],
+  "T1584.001": [
+    "Plan"
+  ],
+  "T1584.002": [
+    "Plan"
+  ],
+  "T1584.003": [
+    "Plan"
+  ],
+  "T1584.004": [
+    "Plan"
+  ],
+  "T1584.005": [
+    "Plan"
+  ],
+  "T1584.006": [
+    "Plan"
+  ],
+  "T1584.007": [
+    "Plan"
+  ],
+  "T1584.008": [
+    "Plan"
+  ],
+  "T1585": [
+    "Plan"
+  ],
+  "T1585.001": [
+    "Plan"
+  ],
+  "T1585.002": [
+    "Plan"
+  ],
+  "T1585.003": [
+    "Plan"
+  ],
+  "T1586": [
+    "Plan"
+  ],
+  "T1586.001": [
+    "Plan"
+  ],
+  "T1586.002": [
+    "Plan"
+  ],
+  "T1586.003": [
+    "Plan"
+  ],
+  "T1587": [
+    "Plan"
+  ],
+  "T1587.001": [
+    "Plan"
+  ],
+  "T1587.002": [
+    "Plan"
+  ],
+  "T1587.003": [
+    "Plan"
+  ],
+  "T1587.004": [
+    "Plan"
+  ],
+  "T1588": [
+    "Plan"
+  ],
+  "T1588.001": [
+    "Plan"
+  ],
+  "T1588.002": [
+    "Plan"
+  ],
+  "T1588.003": [
+    "Plan"
+  ],
+  "T1588.004": [
+    "Plan"
+  ],
+  "T1588.005": [
+    "Plan"
+  ],
+  "T1588.006": [
+    "Plan"
+  ],
+  "T1588.007": [
+    "Plan"
+  ],
+  "T1589": [
+    "Plan"
+  ],
+  "T1589.001": [
+    "Plan"
+  ],
+  "T1589.002": [
+    "Plan"
+  ],
+  "T1589.003": [
+    "Plan"
+  ],
+  "T1590": [
+    "Plan"
+  ],
+  "T1590.001": [
+    "Plan"
+  ],
+  "T1590.002": [
+    "Plan"
+  ],
+  "T1590.003": [
+    "Plan"
+  ],
+  "T1590.004": [
+    "Plan"
+  ],
+  "T1590.005": [
+    "Plan"
+  ],
+  "T1590.006": [
+    "Plan"
+  ],
+  "T1591": [
+    "Plan"
+  ],
+  "T1591.001": [
+    "Plan"
+  ],
+  "T1591.002": [
+    "Plan"
+  ],
+  "T1591.003": [
+    "Plan"
+  ],
+  "T1591.004": [
+    "Plan"
+  ],
+  "T1592": [
+    "Plan"
+  ],
+  "T1592.001": [
+    "Plan"
+  ],
+  "T1592.002": [
+    "Plan"
+  ],
+  "T1592.003": [
+    "Plan"
+  ],
+  "T1592.004": [
+    "Plan"
+  ],
+  "T1593": [
+    "Plan"
+  ],
+  "T1593.001": [
+    "Plan"
+  ],
+  "T1593.002": [
+    "Plan"
+  ],
+  "T1593.003": [
+    "Plan"
+  ],
+  "T1594": [
+    "Plan"
+  ],
+  "T1595": [
+    "Plan"
+  ],
+  "T1595.001": [
+    "Plan"
+  ],
+  "T1595.002": [
+    "Plan"
+  ],
+  "T1595.003": [
+    "Plan"
+  ],
+  "T1596": [
+    "Plan"
+  ],
+  "T1596.001": [
+    "Plan"
+  ],
+  "T1596.002": [
+    "Plan"
+  ],
+  "T1596.003": [
+    "Plan"
+  ],
+  "T1596.004": [
+    "Plan"
+  ],
+  "T1596.005": [
+    "Plan"
+  ],
+  "T1597": [
+    "Plan"
+  ],
+  "T1597.001": [
+    "Plan"
+  ],
+  "T1597.002": [
+    "Plan"
+  ],
+  "T1598": [
+    "Plan"
+  ],
+  "T1598.001": [
+    "Plan"
+  ],
+  "T1598.002": [
+    "Plan"
+  ],
+  "T1598.003": [
+    "Plan"
+  ],
+  "T1598.004": [
+    "Plan"
+  ],
+  "T1599": [
+    "Plan"
+  ],
+  "T1599.001": [
+    "Plan"
+  ],
+  "T1600": [
+    "Plan"
+  ],
+  "T1600.001": [
+    "Plan"
+  ],
+  "T1600.002": [
+    "Plan"
+  ],
+  "T1601": [
+    "Plan"
+  ],
+  "T1601.001": [
+    "Plan"
+  ],
+  "T1601.002": [
+    "Plan"
+  ],
+  "T1602": [
+    "Plan"
+  ],
+  "T1602.001": [
+    "Plan"
+  ],
+  "T1602.002": [
+    "Plan"
+  ],
+  "T1606": [
+    "Plan"
+  ],
+  "T1606.001": [
+    "Plan"
+  ],
+  "T1606.002": [
+    "Plan"
+  ],
+  "T1608": [
+    "Plan"
+  ],
+  "T1608.001": [
+    "Plan"
+  ],
+  "T1608.002": [
+    "Plan"
+  ],
+  "T1608.003": [
+    "Plan"
+  ],
+  "T1608.004": [
+    "Plan"
+  ],
+  "T1608.005": [
+    "Plan"
+  ],
+  "T1608.006": [
+    "Plan"
+  ],
+  "T1609": [
+    "Plan"
+  ],
+  "T1610": [
+    "Plan"
+  ],
+  "T1611": [
+    "Plan"
+  ],
+  "T1612": [
+    "Plan"
+  ],
+  "T1613": [
+    "Plan"
+  ],
+  "T1614": [
+    "Plan"
+  ],
+  "T1614.001": [
+    "Plan"
+  ],
+  "T1615": [
+    "Plan"
+  ],
+  "T1619": [
+    "Plan"
+  ],
+  "T1620": [
+    "Plan"
+  ],
+  "T1621": [
+    "Plan"
+  ],
+  "T1622": [
+    "Plan"
+  ],
+  "T1647": [
+    "Plan"
+  ],
+  "T1648": [
+    "Plan"
+  ],
+  "T1649": [
+    "Plan"
+  ],
+  "T1650": [
+    "Plan"
+  ],
+  "T1651": [
+    "Plan"
+  ],
+  "T1652": [
+    "Plan"
+  ],
+  "T1653": [
+    "Plan"
+  ],
+  "T1654": [
+    "Plan"
+  ],
+  "T1656": [
+    "Plan"
+  ],
+  "T1657": [
+    "Plan"
+  ],
+  "T1659": [
+    "Plan"
+  ],
+  "T1665": [
+    "Plan"
+  ],
+  "T1666": [
+    "Plan"
+  ],
+  "T1667": [
+    "Plan"
+  ],
+  "T1668": [
+    "Plan"
+  ],
+  "T1669": [
+    "Plan"
+  ],
+  "T1671": [
+    "Plan"
+  ],
+  "T1672": [
+    "Plan"
+  ],
+  "T1673": [
+    "Plan"
+  ],
+  "T1674": [
+    "Plan"
+  ],
+  "T1675": [
+    "Plan"
+  ],
+  "T1677": [
+    "Plan"
+  ],
+  "T1678": [
+    "Plan"
+  ],
+  "T1679": [
+    "Plan"
+  ],
+  "T1680": [
+    "Plan"
+  ],
+  "T1681": [
+    "Plan"
+  ],
+  "TA0001": [
+    "Goal"
+  ],
+  "TA0002": [
+    "Goal"
+  ],
+  "TA0003": [
+    "Goal"
+  ],
+  "TA0004": [
+    "Goal"
+  ],
+  "TA0005": [
+    "Goal"
+  ],
+  "TA0006": [
+    "Goal"
+  ],
+  "TA0007": [
+    "Goal"
+  ],
+  "TA0008": [
+    "Goal"
+  ],
+  "TA0009": [
+    "Goal"
+  ],
+  "TA0010": [
+    "Goal"
+  ],
+  "TA0011": [
+    "Goal"
+  ],
+  "TA0027": [
+    "Goal"
+  ],
+  "TA0028": [
+    "Goal"
+  ],
+  "TA0029": [
+    "Goal"
+  ],
+  "TA0030": [
+    "Goal"
+  ],
+  "TA0031": [
+    "Goal"
+  ],
+  "TA0032": [
+    "Goal"
+  ],
+  "TA0033": [
+    "Goal"
+  ],
+  "TA0034": [
+    "Goal"
+  ],
+  "TA0035": [
+    "Goal"
+  ],
+  "TA0036": [
+    "Goal"
+  ],
+  "TA0037": [
+    "Goal"
+  ],
+  "TA0040": [
+    "Goal"
+  ],
+  "TA0041": [
+    "Goal"
+  ],
+  "TA0042": [
+    "Goal"
+  ],
+  "TA0043": [
+    "Goal"
+  ],
+  "TA0100": [
+    "Goal"
+  ],
+  "TA0101": [
+    "Goal"
+  ],
+  "TA0102": [
+    "Goal"
+  ],
+  "TA0103": [
+    "Goal"
+  ],
+  "TA0104": [
+    "Goal"
+  ],
+  "TA0105": [
+    "Goal"
+  ],
+  "TA0106": [
+    "Goal"
+  ],
+  "TA0107": [
+    "Goal"
+  ],
+  "TA0108": [
+    "Goal"
+  ],
+  "TA0109": [
+    "Goal"
+  ],
+  "TA0110": [
+    "Goal"
+  ],
+  "TA0111": [
+    "Goal"
+  ],
+  "TCPEvent": [
+    "Event"
+  ],
+  "TFTPNetworkTraffic": [
+    "Artifact"
+  ],
+  "TFTPServer": [
+    "Artifact"
+  ],
+  "TPMBootIntegrity": [
+    "Plan"
+  ],
+  "TabletComputer": [
+    "Artifact"
+  ],
+  "TargetAudience": [
+    "Group"
+  ],
+  "Technique": [
+    "Plan"
+  ],
+  "Telecommand": [
+    "Artifact"
+  ],
+  "TemporalDifferenceLearning": [
+    "Plan"
+  ],
+  "TemporalLogic": [
+    "Plan"
+  ],
+  "TerminateProcess": [
+    "Artifact"
+  ],
+  "TertiaryStorage": [
+    "Artifact"
+  ],
+  "TestExecutionTool": [
+    "Artifact"
+  ],
+  "ThinClientComputer": [
+    "Artifact"
+  ],
+  "Thread": [
+    "Artifact"
+  ],
+  "ThreadStartFunction": [
+    "Artifact"
+  ],
+  "TicketGrantingTicket": [
+    "Artifact"
+  ],
+  "Time": [
+    "Time"
+  ],
+  "TimeInstant": [
+    "Time"
+  ],
+  "TimeInterval": [
+    "Time"
+  ],
+  "TimeRecord": [
+    "Artifact"
+  ],
+  "TimeSeriesAnalysis": [
+    "Plan"
+  ],
+  "TimeSeriesDatabase": [
+    "Artifact"
+  ],
+  "Timer": [
+    "Artifact"
+  ],
+  "TimerEvent": [
+    "Event"
+  ],
+  "TimerExpirationEvent": [
+    "Event"
+  ],
+  "TimerModificationEvent": [
+    "Event"
+  ],
+  "TimerSetEvent": [
+    "Event"
+  ],
+  "Token-basedAuthentication": [
+    "Plan"
+  ],
+  "TokenBinding": [
+    "Plan"
+  ],
+  "TraceProcess": [
+    "Artifact"
+  ],
+  "TraceThread": [
+    "Artifact"
+  ],
+  "TrajectoryPrediction": [
+    "Goal"
+  ],
+  "Transceiver": [
+    "Artifact"
+  ],
+  "TransducerSensor": [
+    "Sensor"
+  ],
+  "TransferAgentAuthentication": [
+    "Plan"
+  ],
+  "TransferLearning": [
+    "Plan"
+  ],
+  "Transformer-XL": [
+    "Plan"
+  ],
+  "Transformer-basedLearning": [
+    "Plan"
+  ],
+  "TranslationLookasideBuffer": [
+    "Artifact"
+  ],
+  "Transmitter": [
+    "Artifact"
+  ],
+  "Transponder": [
+    "Artifact"
+  ],
+  "TransportLayerEvent": [
+    "Event"
+  ],
+  "TransportLink": [
+    "Link"
+  ],
+  "TrimmedMean": [
+    "Plan"
+  ],
+  "TrustStore": [
+    "Artifact"
+  ],
+  "TrustedAdministratorAttacker": [
+    "Agent"
+  ],
+  "TrustedAttacker": [
+    "Agent"
+  ],
+  "TrustedLibrary": [
+    "Plan"
+  ],
+  "TrustedUserAttacker": [
+    "Agent"
+  ],
+  "TunnelCloseEvent": [
+    "Event"
+  ],
+  "TunnelEvent": [
+    "Event"
+  ],
+  "TunnelOpenEvent": [
+    "Event"
+  ],
+  "TunnelRenewEvent": [
+    "Event"
+  ],
+  "UDPEvent": [
+    "Event"
+  ],
+  "URL": [
+    "Artifact"
+  ],
+  "URLAnalysis": [
+    "Plan"
+  ],
+  "URLReputationAnalysis": [
+    "Plan"
+  ],
+  "UncertaintySampling": [
+    "Plan"
+  ],
+  "UnitTestExecutionTool": [
+    "Artifact"
+  ],
+  "UnixHardLink": [
+    "Artifact"
+  ],
+  "UnixLink": [
+    "Artifact"
+  ],
+  "UnloadLibraryEvent": [
+    "Event"
+  ],
+  "UnloadModule": [
+    "Artifact"
+  ],
+  "UnlockAccount": [
+    "Plan"
+  ],
+  "UnsupervisedLearning": [
+    "Plan"
+  ],
+  "UnsupervisedPreprocessing": [
+    "Plan"
+  ],
+  "UseCaseGoal": [
+    "Goal"
+  ],
+  "UseCaseProcedure": [
+    "Plan"
+  ],
+  "UseCaseStep": [
+    "Plan"
+  ],
+  "User": [
+    "Agent"
+  ],
+  "UserAccount": [
+    "Artifact"
+  ],
+  "UserAccountAttachPolicyEvent": [
+    "Event"
+  ],
+  "UserAccountCreationEvent": [
+    "Event"
+  ],
+  "UserAccountDeletionEvent": [
+    "Event"
+  ],
+  "UserAccountDetachPolicyEvent": [
+    "Event"
+  ],
+  "UserAccountDisableEvent": [
+    "Event"
+  ],
+  "UserAccountEnableEvent": [
+    "Event"
+  ],
+  "UserAccountEvent": [
+    "Event"
+  ],
+  "UserAccountLockEvent": [
+    "Event"
+  ],
+  "UserAccountMFADisableEvent": [
+    "Event"
+  ],
+  "UserAccountMFAEnableEvent": [
+    "Event"
+  ],
+  "UserAccountPasswordChangeEvent": [
+    "Event"
+  ],
+  "UserAccountPasswordResetEvent": [
+    "Event"
+  ],
+  "UserAccountPermissions": [
+    "Plan"
+  ],
+  "UserAccountUpdateEvent": [
+    "Event"
+  ],
+  "UserAction": [
+    "Artifact"
+  ],
+  "UserApplication": [
+    "Artifact"
+  ],
+  "UserBehavior": [
+    "Artifact"
+  ],
+  "UserBehaviorAnalysis": [
+    "Plan"
+  ],
+  "UserDataTransferAnalysis": [
+    "Plan"
+  ],
+  "UserGeolocationLogonPatternAnalysis": [
+    "Plan"
+  ],
+  "UserGroup": [
+    "Artifact"
+  ],
+  "UserGroupPermissions": [
+    "Plan"
+  ],
+  "UserInitConfigurationFile": [
+    "Artifact"
+  ],
+  "UserInitScript": [
+    "Artifact"
+  ],
+  "UserInputFunction": [
+    "Artifact"
+  ],
+  "UserInterface": [
+    "Artifact"
+  ],
+  "UserLogonInitResource": [
+    "Artifact"
+  ],
+  "UserProcess": [
+    "Artifact"
+  ],
+  "UserProfile": [
+    "Artifact"
+  ],
+  "UserSessionInitConfigAnalysis": [
+    "Plan"
+  ],
+  "UserStartupDirectory": [
+    "Artifact"
+  ],
+  "UserStartupScriptFile": [
+    "Artifact"
+  ],
+  "UserToUserMessage": [
+    "Artifact"
+  ],
+  "UtilitySoftware": [
+    "Artifact"
+  ],
+  "VMImage": [
+    "Artifact"
+  ],
+  "VPNServer": [
+    "Artifact"
+  ],
+  "Variability": [
+    "Plan"
+  ],
+  "VariableInitialization": [
+    "Plan"
+  ],
+  "VariableTypeValidation": [
+    "Plan"
+  ],
+  "Variance": [
+    "Plan"
+  ],
+  "VarianceReduction": [
+    "Plan"
+  ],
+  "VectorImage": [
+    "Artifact"
+  ],
+  "VectorImageFile": [
+    "Artifact"
+  ],
+  "Vehicle": [
+    "Artifact"
+  ],
+  "VehicleOperatingMode": [
+    "Artifact"
+  ],
+  "Vendor": [
+    "Agent",
+    "Group"
+  ],
+  "VersionControlTool": [
+    "Artifact"
+  ],
+  "VideoInputDevice": [
+    "Artifact"
+  ],
+  "VideoSurveillance": [
+    "Plan"
+  ],
+  "VirtualAddress": [
+    "Artifact"
+  ],
+  "VirtualMemorySpace": [
+    "Artifact"
+  ],
+  "VirtualizationSoftware": [
+    "Artifact"
+  ],
+  "Volume": [
+    "Artifact"
+  ],
+  "VolumeBootRecord": [
+    "Artifact"
+  ],
+  "VolumeSnapshot": [
+    "Artifact"
+  ],
+  "Voting": [
+    "Plan"
+  ],
+  "Vulnerability": [
+    "Vulnerability"
+  ],
+  "WatchdogTimer": [
+    "Artifact"
+  ],
+  "WatchdogTimerConfigurationEvent": [
+    "Event"
+  ],
+  "WatchdogTimerEvent": [
+    "Event"
+  ],
+  "WatchdogTimerExpirationEvent": [
+    "Event"
+  ],
+  "WatchdogTimerResetEvent": [
+    "Event"
+  ],
+  "WatchdogTimerServiceEvent": [
+    "Event"
+  ],
+  "Weakness": [
+    "Weakness"
+  ],
+  "WebAPIResource": [
+    "Artifact"
+  ],
+  "WebAccessToken": [
+    "Artifact"
+  ],
+  "WebApplication": [
+    "Artifact"
+  ],
+  "WebApplicationFirewall": [
+    "Artifact"
+  ],
+  "WebApplicationServer": [
+    "Artifact"
+  ],
+  "WebAuthentication": [
+    "Event"
+  ],
+  "WebFileResource": [
+    "Artifact"
+  ],
+  "WebIdentityToken": [
+    "Artifact"
+  ],
+  "WebNetworkTraffic": [
+    "Artifact"
+  ],
+  "WebResource": [
+    "Artifact"
+  ],
+  "WebResourceAccess": [
+    "Artifact"
+  ],
+  "WebScriptFile": [
+    "Artifact"
+  ],
+  "WebServer": [
+    "Artifact"
+  ],
+  "WebServerApplication": [
+    "Artifact"
+  ],
+  "WebSessionAccessMediation": [
+    "Plan"
+  ],
+  "WebSessionActivityAnalysis": [
+    "Plan"
+  ],
+  "WeightedMean": [
+    "Plan"
+  ],
+  "WideAreaNetwork": [
+    "Artifact"
+  ],
+  "WindowOpenFile": [
+    "Artifact"
+  ],
+  "WindowsCreateFileA": [
+    "Artifact"
+  ],
+  "WindowsCreateProcessA": [
+    "Artifact"
+  ],
+  "WindowsCreateRemoteThread": [
+    "Artifact"
+  ],
+  "WindowsCreateThread": [
+    "Artifact"
+  ],
+  "WindowsDeleteFile": [
+    "Artifact"
+  ],
+  "WindowsDuplicateToken": [
+    "Artifact"
+  ],
+  "WindowsGetThreadContext": [
+    "Artifact"
+  ],
+  "WindowsNTGetThreadContext": [
+    "Artifact"
+  ],
+  "WindowsNtAllocateVirtualMemory": [
+    "Artifact"
+  ],
+  "WindowsNtAllocateVirtualMemoryEx": [
+    "Artifact"
+  ],
+  "WindowsNtCreateFile": [
+    "Artifact"
+  ],
+  "WindowsNtCreateMailslotFile": [
+    "Artifact"
+  ],
+  "WindowsNtCreateNamedPipeFile": [
+    "Artifact"
+  ],
+  "WindowsNtCreatePagingFile": [
+    "Artifact"
+  ],
+  "WindowsNtCreateProcess": [
+    "Artifact"
+  ],
+  "WindowsNtCreateProcessEx": [
+    "Artifact"
+  ],
+  "WindowsNtCreateThread": [
+    "Artifact"
+  ],
+  "WindowsNtCreateThreadEx": [
+    "Artifact"
+  ],
+  "WindowsNtDeleteFile": [
+    "Artifact"
+  ],
+  "WindowsNtDuplicateToken": [
+    "Artifact"
+  ],
+  "WindowsNtFlushInstructionCache": [
+    "Artifact"
+  ],
+  "WindowsNtFreeVirtualMemory": [
+    "Artifact"
+  ],
+  "WindowsNtOpenFile": [
+    "Artifact"
+  ],
+  "WindowsNtOpenProcess": [
+    "Artifact"
+  ],
+  "WindowsNtOpenThread": [
+    "Artifact"
+  ],
+  "WindowsNtProtectVirtualMemory": [
+    "Artifact"
+  ],
+  "WindowsNtQuerySystemTime": [
+    "Artifact"
+  ],
+  "WindowsNtReadFile": [
+    "Artifact"
+  ],
+  "WindowsNtReadFileScatter": [
+    "Artifact"
+  ],
+  "WindowsNtResumeThread": [
+    "Artifact"
+  ],
+  "WindowsNtSetInformationFileArgumentFileDispositionInformation": [
+    "Artifact"
+  ],
+  "WindowsNtSetThreadContext": [
+    "Artifact"
+  ],
+  "WindowsNtSuspendProcess": [
+    "Artifact"
+  ],
+  "WindowsNtSuspendThread": [
+    "Artifact"
+  ],
+  "WindowsNtTerminateProcess": [
+    "Artifact"
+  ],
+  "WindowsNtWriteFile": [
+    "Artifact"
+  ],
+  "WindowsNtWriteFileGather": [
+    "Artifact"
+  ],
+  "WindowsNtWriteVirtualMemory": [
+    "Artifact"
+  ],
+  "WindowsOpenProcess": [
+    "Artifact"
+  ],
+  "WindowsOpenThread": [
+    "Artifact"
+  ],
+  "WindowsQueryPerformanceCounter": [
+    "Artifact"
+  ],
+  "WindowsReadFile": [
+    "Artifact"
+  ],
+  "WindowsRegistry": [
+    "Artifact"
+  ],
+  "WindowsRegistryEvent": [
+    "Event"
+  ],
+  "WindowsRegistryKey": [
+    "Artifact"
+  ],
+  "WindowsRegistryKeyCreationEvent": [
+    "Event"
+  ],
+  "WindowsRegistryKeyDeletionEvent": [
+    "Event"
+  ],
+  "WindowsRegistryKeyEvent": [
+    "Event"
+  ],
+  "WindowsRegistryKeyExportEvent": [
+    "Event"
+  ],
+  "WindowsRegistryKeyImportEvent": [
+    "Event"
+  ],
+  "WindowsRegistryKeyReadEvent": [
+    "Event"
+  ],
+  "WindowsRegistryKeyRenamingEvent": [
+    "Event"
+  ],
+  "WindowsRegistryKeyRestoreEvent": [
+    "Event"
+  ],
+  "WindowsRegistryKeySetSecurityEvent": [
+    "Event"
+  ],
+  "WindowsRegistryKeyUpdateEvent": [
+    "Event"
+  ],
+  "WindowsRegistryValue": [
+    "Artifact"
+  ],
+  "WindowsRegistryValueDeletionEvent": [
+    "Event"
+  ],
+  "WindowsRegistryValueEvent": [
+    "Event"
+  ],
+  "WindowsRegistryValueGetEvent": [
+    "Event"
+  ],
+  "WindowsRegistryValueSetEvent": [
+    "Event"
+  ],
+  "WindowsRegistryValueUpdateEvent": [
+    "Event"
+  ],
+  "WindowsResumeThread": [
+    "Artifact"
+  ],
+  "WindowsSetThreadContext": [
+    "Artifact"
+  ],
+  "WindowsShortcutFile": [
+    "Artifact"
+  ],
+  "WindowsSuspendThread": [
+    "Artifact"
+  ],
+  "WindowsTerminateProcess": [
+    "Artifact"
+  ],
+  "WindowsVirtualAllocEx": [
+    "Artifact"
+  ],
+  "WindowsVirtualFree": [
+    "Artifact"
+  ],
+  "WindowsVirtualProtectEx": [
+    "Artifact"
+  ],
+  "WindowsWriteFile": [
+    "Artifact"
+  ],
+  "WindowsWriteProcessMemory": [
+    "Artifact"
+  ],
+  "WiredLink": [
+    "Link"
+  ],
+  "WirelessAccessPoint": [
+    "Artifact"
+  ],
+  "WirelessAttacker": [
+    "Agent"
+  ],
+  "WirelessLink": [
+    "Link"
+  ],
+  "WirelessRouter": [
+    "Artifact"
+  ],
+  "WriteFile": [
+    "Artifact"
+  ],
+  "WriteMemory": [
+    "Artifact"
+  ],
+  "WriteProtectSwitch": [
+    "Artifact"
+  ],
+  "ZeroClientComputer": [
+    "Artifact"
+  ],
+  "t-SNEClustering": [
+    "Plan"
+  ]
+}

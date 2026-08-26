@@ -1,0 +1,224 @@
+{
+  "byD3fendClass": {
+    "d3f:AssetInventory": [
+      {
+        "instrument": "NIS2 Directive",
+        "legalConcept": "dpv:AssetManagementProcedures",
+        "obligation": "ob:nis2-art21-2-i",
+        "obligationLabel": "Human resources security, access control policies and asset management",
+        "rationale": "Asset management in (i) starts from knowing what the assets are, which is what this technique produces.",
+        "reviewStatus": "Draft",
+        "source": "NIS2 Article 21(2)(i)",
+        "strength": "Partial"
+      }
+    ],
+    "d3f:AuthenticationEventThresholding": [
+      {
+        "instrument": "NIS2 Directive",
+        "legalConcept": "dpv:ActivityMonitoring",
+        "obligation": "ob:nis2-art21-2-b",
+        "obligationLabel": "Incident handling",
+        "rationale": "Incident handling in (b) presupposes detection. Thresholding authentication events is one detection input, not a handling process.",
+        "reviewStatus": "Draft",
+        "source": "NIS2 Article 21(2)(b)",
+        "strength": "Supporting"
+      }
+    ],
+    "d3f:CredentialRotation": [
+      {
+        "instrument": "NIS2 Directive",
+        "legalConcept": "dpv:IdentityManagementMethod",
+        "obligation": "ob:nis2-art21-2-i",
+        "obligationLabel": "Human resources security, access control policies and asset management",
+        "rationale": "Rotating credentials is credential lifecycle management, which sits under the access-control limb of (i) without being what the point asks for.",
+        "reviewStatus": "Draft",
+        "source": "NIS2 Article 21(2)(i)",
+        "strength": "Supporting"
+      }
+    ],
+    "d3f:DiskEncryption": [
+      {
+        "instrument": "General Data Protection Regulation",
+        "legalConcept": "dpv:EncryptionAtRest",
+        "obligation": "ob:gdpr-art32-1-a",
+        "obligationLabel": "Pseudonymisation and encryption of personal data",
+        "rationale": "Article 32(1)(a) offers encryption as an example measure. Disk encryption protects data at rest against loss of the medium only, and does nothing for the pseudonymisation limb of the same point.",
+        "reviewStatus": "Draft",
+        "source": "GDPR Article 32(1)(a)",
+        "strength": "Supporting"
+      }
+    ],
+    "d3f:EncryptedTunnels": [
+      {
+        "instrument": "NIS2 Directive",
+        "legalConcept": "dpv:EncryptionInTransfer",
+        "obligation": "ob:nis2-art21-2-h",
+        "obligationLabel": "Policies and procedures regarding the use of cryptography and, where appropriate, encryption",
+        "rationale": "A tunnel protects the channel rather than the message, so it evidences use of cryptography without saying anything about the data at either end.",
+        "reviewStatus": "Draft",
+        "source": "NIS2 Article 21(2)(h)",
+        "strength": "Supporting"
+      }
+    ],
+    "d3f:FileEncryption": [
+      {
+        "instrument": "General Data Protection Regulation",
+        "legalConcept": "dpv:EncryptionAtRest",
+        "obligation": "ob:gdpr-art32-1-a",
+        "obligationLabel": "Pseudonymisation and encryption of personal data",
+        "rationale": "Encrypting the files that hold personal data addresses the encryption limb of (a) directly, at a granularity a controller can point at.",
+        "reviewStatus": "Draft",
+        "source": "GDPR Article 32(1)(a)",
+        "strength": "Partial"
+      }
+    ],
+    "d3f:MessageEncryption": [
+      {
+        "instrument": "NIS2 Directive",
+        "legalConcept": "dpv:EncryptionInTransfer",
+        "obligation": "ob:nis2-art21-2-h",
+        "obligationLabel": "Policies and procedures regarding the use of cryptography and, where appropriate, encryption",
+        "rationale": "Covers the cryptography-in-transit half of (h). The policies-and-procedures half is organisational and no diagram can assert it.",
+        "reviewStatus": "Draft",
+        "source": "NIS2 Article 21(2)(h)",
+        "strength": "Partial"
+      }
+    ],
+    "d3f:Multi-factorAuthentication": [
+      {
+        "instrument": "NIS2 Directive",
+        "legalConcept": "dpv:MultiFactorAuthentication",
+        "obligation": "ob:nis2-art21-2-j",
+        "obligationLabel": "Multi-factor or continuous authentication, secured voice, video and text communications and secured emergency communication systems",
+        "rationale": "Article 21(2)(j) names multi-factor authentication in as many words; the D3FEND technique is the same control.",
+        "reviewStatus": "Draft",
+        "source": "NIS2 Article 21(2)(j)",
+        "strength": "Full"
+      }
+    ],
+    "d3f:NetworkVulnerabilityAssessment": [
+      {
+        "instrument": "General Data Protection Regulation",
+        "legalConcept": "dpv:PenetrationTestingMethods",
+        "obligation": "ob:gdpr-art32-1-d",
+        "obligationLabel": "Process for regularly testing, assessing and evaluating the effectiveness of the measures",
+        "rationale": "Regular assessment of the measures' effectiveness is what (d) requires; this technique tests the network measures specifically.",
+        "reviewStatus": "Draft",
+        "source": "GDPR Article 32(1)(d)",
+        "strength": "Partial"
+      }
+    ],
+    "d3f:RestoreDatabase": [
+      {
+        "instrument": "General Data Protection Regulation",
+        "legalConcept": "dpv:DataBackupProtocols",
+        "obligation": "ob:gdpr-art32-1-c",
+        "obligationLabel": "Ability to restore the availability and access to personal data in a timely manner in the event of a physical or technical incident",
+        "rationale": "Article 32(1)(c) asks for the ability to restore availability and access. Restoring the database that holds the personal data is that ability; whether it happens in a timely manner is not something the diagram states.",
+        "reviewStatus": "Draft",
+        "source": "GDPR Article 32(1)(c)",
+        "strength": "Partial"
+      }
+    ],
+    "d3f:RestoreDiskImage": [
+      {
+        "instrument": "NIS2 Directive",
+        "legalConcept": "dpv:DisasterRecoveryProcedures",
+        "obligation": "ob:nis2-art21-2-c",
+        "obligationLabel": "Business continuity, such as backup management and disaster recovery, and crisis management",
+        "rationale": "Restoring an image is the recovery half of (c). Backup management and crisis management are separate duties in the same point.",
+        "reviewStatus": "Draft",
+        "source": "NIS2 Article 21(2)(c)",
+        "strength": "Partial"
+      }
+    ],
+    "d3f:SoftwareUpdate": [
+      {
+        "instrument": "NIS2 Directive",
+        "legalConcept": null,
+        "obligation": "ob:nis2-art21-2-e",
+        "obligationLabel": "Security in network and information systems acquisition, development and maintenance, including vulnerability handling and disclosure",
+        "rationale": "Applying updates is how a handled vulnerability stops being one, so it evidences the maintenance limb of (e).",
+        "reviewStatus": "Draft",
+        "source": "NIS2 Article 21(2)(e)",
+        "strength": "Supporting"
+      }
+    ],
+    "d3f:StrongPasswordPolicy": [
+      {
+        "instrument": "NIS2 Directive",
+        "legalConcept": "dpv:PasswordAuthentication",
+        "obligation": "ob:nis2-art21-2-i",
+        "obligationLabel": "Human resources security, access control policies and asset management",
+        "rationale": "Speaks to the access-control limb of (i). Human resources security and asset management are elsewhere in the same point and untouched by it.",
+        "reviewStatus": "Draft",
+        "source": "NIS2 Article 21(2)(i)",
+        "strength": "Partial"
+      }
+    ],
+    "d3f:SystemVulnerabilityAssessment": [
+      {
+        "instrument": "NIS2 Directive",
+        "legalConcept": "dpv:VulnerabilityTestingMethods",
+        "obligation": "ob:nis2-art21-2-e",
+        "obligationLabel": "Security in network and information systems acquisition, development and maintenance, including vulnerability handling and disclosure",
+        "rationale": "Vulnerability handling in (e) begins with finding them. Disclosure, and security during acquisition and development, are not addressed.",
+        "reviewStatus": "Draft",
+        "source": "NIS2 Article 21(2)(e)",
+        "strength": "Partial"
+      }
+    ],
+    "d3f:UserAccountPermissions": [
+      {
+        "instrument": "NIS2 Directive",
+        "legalConcept": "dpv:AccessControlMethod",
+        "obligation": "ob:nis2-art21-2-i",
+        "obligationLabel": "Human resources security, access control policies and asset management",
+        "rationale": "Per-account permissions are the enforcement point an access control policy is written for; the policy itself is organisational.",
+        "reviewStatus": "Draft",
+        "source": "NIS2 Article 21(2)(i)",
+        "strength": "Partial"
+      }
+    ]
+  },
+  "byLegalConcept": {
+    "dpv:AccessControlMethod": [
+      "d3f:UserAccountPermissions"
+    ],
+    "dpv:ActivityMonitoring": [
+      "d3f:AuthenticationEventThresholding"
+    ],
+    "dpv:AssetManagementProcedures": [
+      "d3f:AssetInventory"
+    ],
+    "dpv:DataBackupProtocols": [
+      "d3f:RestoreDatabase"
+    ],
+    "dpv:DisasterRecoveryProcedures": [
+      "d3f:RestoreDiskImage"
+    ],
+    "dpv:EncryptionAtRest": [
+      "d3f:DiskEncryption",
+      "d3f:FileEncryption"
+    ],
+    "dpv:EncryptionInTransfer": [
+      "d3f:EncryptedTunnels",
+      "d3f:MessageEncryption"
+    ],
+    "dpv:IdentityManagementMethod": [
+      "d3f:CredentialRotation"
+    ],
+    "dpv:MultiFactorAuthentication": [
+      "d3f:Multi-factorAuthentication"
+    ],
+    "dpv:PasswordAuthentication": [
+      "d3f:StrongPasswordPolicy"
+    ],
+    "dpv:PenetrationTestingMethods": [
+      "d3f:NetworkVulnerabilityAssessment"
+    ],
+    "dpv:VulnerabilityTestingMethods": [
+      "d3f:SystemVulnerabilityAssessment"
+    ]
+  }
+}

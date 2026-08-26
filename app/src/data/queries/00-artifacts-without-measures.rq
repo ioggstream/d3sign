@@ -1,0 +1,30 @@
+# title: Artifacts with no defensive measure
+# about: Artifacts a diagram declares that no defensive measure in the same document acts on. The gaps in your threat model.
+# needs: d3fend
+
+# Document graphs are everything that is not a knowledge base. Naming them by
+# what they are not keeps the query working when a diagram is renamed or a
+# second knowledge base is loaded.
+SELECT ?artifact ?label ?class WHERE {
+  GRAPH ?g {
+    ?artifact a ?class .
+    OPTIONAL { ?artifact rdfs:label ?label }
+  }
+  FILTER(!STRSTARTS(STR(?g), STR(K:)))
+
+  # ?class is an artifact according to D3FEND, not according to the diagram.
+  GRAPH K:d3fend { ?class rdfs:subClassOf* d3f:Artifact }
+
+  FILTER NOT EXISTS {
+    GRAPH ?dg {
+      ?measure a ?measureClass .
+      ?measure ?verb ?artifact .
+    }
+    FILTER(!STRSTARTS(STR(?dg), STR(K:)))
+    # Any d3f: verb from a defensive technique counts: the real set is 25+ and
+    # open-ended, so enumerating it would silently miss measures.
+    FILTER(STRSTARTS(STR(?verb), STR(d3f:)))
+    GRAPH K:d3fend { ?measureClass rdfs:subClassOf* d3f:DefensiveTechnique }
+  }
+}
+ORDER BY ?label ?artifact

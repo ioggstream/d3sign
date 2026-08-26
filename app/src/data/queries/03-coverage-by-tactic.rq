@@ -1,0 +1,23 @@
+# title: Coverage by D3FEND tactic
+# about: How many measures the document places under each D3FEND kill-chain tactic. The tactics with a zero are the finding.
+# needs: d3fend
+
+# Every tactic is listed, then left-joined against the document, so a tactic you
+# have not addressed appears with a count of 0. Counting only what the diagram has
+# would hide exactly the answer this query is for.
+SELECT ?tactic ?tacticLabel (COUNT(DISTINCT ?measure) AS ?measures) WHERE {
+  GRAPH K:d3fend {
+    ?tactic rdfs:subClassOf d3f:DefensiveTactic .
+    OPTIONAL { ?tactic rdfs:label ?tacticLabel }
+  }
+  OPTIONAL {
+    GRAPH K:d3fend {
+      ?measureClass rdfs:subClassOf* d3f:DefensiveTechnique .
+      ?measureClass d3f:enables ?tactic .
+    }
+    GRAPH ?g { ?measure a ?measureClass }
+    FILTER(!STRSTARTS(STR(?g), STR(K:)))
+  }
+}
+GROUP BY ?tactic ?tacticLabel
+ORDER BY ?measures ?tacticLabel

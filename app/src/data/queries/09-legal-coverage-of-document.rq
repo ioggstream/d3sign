@@ -1,0 +1,35 @@
+# title: Which obligations this document covers, and how
+# about: Each measure drawn here, the duty it addresses, how completely, and the reasoning. Engineering judgement, not legal advice.
+# needs: d3fend regulation legal
+
+# The four-graph join, and the reason the legal tier exists: the document says what
+# is drawn, K:d3fend resolves the class hierarchy, K:regulation carries the claim and
+# its rationale, K:legal supplies the vocabulary's own name for the control.
+#
+# ?strength and ?rationale are projected rather than filtered on purpose. "Covered"
+# is not a fact about the drawing, and a row that says `supporting` with a reason
+# attached is honest in a way a green tick is not.
+SELECT ?citation ?obLabel ?node ?nodeLabel ?strength ?conceptLabel ?rationale WHERE {
+  GRAPH ?g {
+    ?node a ?measureClass .
+    OPTIONAL { ?node rdfs:label ?nodeLabel }
+  }
+  FILTER(!STRSTARTS(STR(?g), STR(K:)))
+
+  GRAPH K:d3fend { ?measureClass rdfs:subClassOf* ?mapped }
+
+  GRAPH K:regulation {
+    ?mapping al:d3fend-class ?mapped ;
+             al:obligation ?obligation ;
+             al:strength ?strength .
+    OPTIONAL { ?mapping al:rationale ?rationale }
+    OPTIONAL { ?mapping al:legal-concept ?concept }
+    ?obligation skos:prefLabel ?obLabel ;
+                dct:source ?citation .
+  }
+
+  # Optional because a mapping may deliberately name no legal concept: DPV has no
+  # term for every control, and a near-miss would make the join look richer than it is.
+  OPTIONAL { GRAPH K:legal { ?concept skos:prefLabel ?conceptLabel } }
+}
+ORDER BY ?citation ?nodeLabel
