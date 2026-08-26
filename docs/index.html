@@ -3,10 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <title>Design &amp; D3FEND</title>
-  <script type="module" crossorigin src="./assets/index-DSIxmXvM.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-wsXLuQnQ.css">
+  <script type="module" crossorigin src="./assets/index-DDt9RQ7E.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-BTEVNYgg.css">
 </head>
 <body>
+  <!-- The workbench is this element, not <body>: libraries append their working
+       elements to <body> (mermaid parks a temp <div> there for the whole of a
+       render, CodeMirror its tooltip containers), and as grid items those stole a
+       row from the layout and shrank every pane while they were up. See the
+       #app-shell rule in styles/app.css. -->
+  <div id="app-shell">
   <header>
     <!-- The mark is three connected nodes: the diagram is what the app is about,
          and it is the one place in the chrome that carries brand colour. -->
@@ -42,7 +48,8 @@
       <section id="editor-pane" class="pane" role="tabpanel">
         <div class="pane-header">
           <h2>Mermaid + D3FEND source</h2>
-          <button type="button" id="copy-editor-button" class="copy-button">Copy</button>
+          <button type="button" id="copy-editor-button" class="copy-button"
+                  title="Copy the whole markdown source, mermaid blocks and all, to the clipboard">Copy</button>
         </div>
         <div id="editor-host"></div>
       </section>
@@ -93,7 +100,8 @@
           <div class="turtle-tools">
             <button type="button" id="regenerate-turtle-button" class="copy-button" hidden
                     title="Discard the hand-edits and re-serialize from the mermaid source">Regenerate</button>
-            <button type="button" id="copy-turtle-button" class="copy-button">Copy</button>
+            <button type="button" id="copy-turtle-button" class="copy-button"
+                    title="Copy the whole TriG document — every named graph — to the clipboard">Copy</button>
             <button type="button" id="turtle-hide-button" class="icon-button"
                     title="Move to its own column (Alt+,)">⇤</button>
           </div>
@@ -135,7 +143,8 @@
                     title="Run the query (Ctrl+Enter)">▶ Run <span class="tab-key">Ctrl+Enter</span></button>
             <button type="button" id="cancel-query-button" class="icon-button" hidden
                     title="Cancel by restarting the query engine — a running SPARQL query cannot be interrupted">⏹</button>
-            <button type="button" id="copy-query-button" class="copy-button">Copy</button>
+            <button type="button" id="copy-query-button" class="copy-button"
+                    title="Copy the query text to the clipboard, without the prefix preamble">Copy</button>
           </div>
         </div>
         <div id="query-grid">
@@ -147,6 +156,7 @@
       </section>
     </div>
   </main>
+  </div>
 
 </body>
 </html>
