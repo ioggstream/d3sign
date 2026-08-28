@@ -37,6 +37,9 @@ Sequentiality is
 described by the `d3f:precedes` property.
 
 ```mermaid
+---
+title: Pipeline sequence
+---
 graph LR
 
 p0 -->|d3f:precedes| p1 -->|d3f:precedes| p2

@@ -88,6 +88,9 @@ gh-ssh -->|d3f:modifies| repo
 On-premise mirror
 
 ```mermaid
+---
+title: On-premise mirror
+---
 graph
 
 backup[d3f:CodeRepository d3f:RestoreDatabase]

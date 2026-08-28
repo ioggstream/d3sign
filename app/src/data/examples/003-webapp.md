@@ -1,6 +1,9 @@
 # A simple webapp
 
 ```mermaid
+---
+title: Simple webapp
+---
 graph
 
 u((User d3f:User))
