@@ -4,7 +4,8 @@
  * and resultModel.js has many.
  */
 
-import { CONSTRUCT_GRAPH_CAP } from './resultModel.js';
+import { CONSTRUCT_GRAPH_CAP, resultTsv } from './resultModel.js';
+import { wireCopyButton } from '../clipboard.js';
 
 function clear(host) {
   host.replaceChildren();
@@ -37,6 +38,8 @@ export function renderQueryResults(host, table, { onReveal, onAddGraph } = {}) {
     renderQueryPlaceholder(host, 'No results.');
     return;
   }
+
+  host.append(copyTableButton(table));
 
   if (table.truncated || table.capped) {
     const warning = document.createElement('p');
@@ -95,6 +98,26 @@ export function renderQueryResults(host, table, { onReveal, onAddGraph } = {}) {
   host.append(wrapper);
 
   if (table.kind === 'construct') renderAddGraph(host, table, onAddGraph);
+}
+
+/**
+ * Above the table, not below it: a long result would push a footer button off
+ * the bottom of the pane, and the rows it copies are the rows at the top.
+ */
+function copyTableButton(table) {
+  const actions = document.createElement('div');
+  actions.className = 'query-results-actions';
+
+  const copy = document.createElement('button');
+  copy.type = 'button';
+  // `.copy-button`, not `.btn`, because the copied / failed states are styled on it.
+  copy.className = 'copy-button';
+  copy.textContent = 'Copy table';
+  copy.title = 'Copy the table as tab-separated text, to paste into a spreadsheet';
+  wireCopyButton(copy, () => resultTsv(table));
+
+  actions.append(copy);
+  return actions;
 }
 
 /**

@@ -219,6 +219,28 @@ export function resultTable(result, { rowCap = ROW_CAP, prefixes = {}, knownNode
 }
 
 /**
+ * The table as tab-separated text, for pasting elsewhere.
+ *
+ * TSV because a spreadsheet turns tabs into cells on paste and needs no quoting
+ * rules. The text is the text on screen — short CURIEs, quoted literals — so the
+ * clipboard matches what the user is looking at, and only the rows `resultTable`
+ * kept, which is what the warning above the table already says.
+ */
+export function resultTsv(table) {
+  const header = table.columns.map((column) => (table.kind === 'select' ? `?${column}` : column));
+  const lines = [header.join('\t'), ...table.rows.map((row) => row.map(flattenCell).join('\t'))];
+  return lines.join('\n');
+}
+
+/**
+ * A tab or a newline inside a literal would become a cell or a row break on
+ * paste, so the pasted grid would no longer match the table. One space keeps it.
+ */
+function flattenCell(cell) {
+  return cell.text.replace(/[\t\r\n]+/g, ' ');
+}
+
+/**
  * The status line. Built here rather than in the renderer so the caps are
  * asserted in tests: silently showing 500 of 40000 rows as if that were the
  * answer is the failure mode this text exists to prevent.

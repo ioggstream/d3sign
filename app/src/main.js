@@ -37,6 +37,7 @@ import { renderSelectionBox } from './viz/selectionBox.js';
 import { loadEnrichmentTurtle, ENRICHMENT_GRAPH } from './rdf/enrichment.js';
 import { parseTrigText } from './rdf/parseTrig.js';
 import { createColumnLayout } from './layout/columns.js';
+import { wireCopyButton } from './clipboard.js';
 import {
   currentFile,
   deleteFile,
@@ -115,41 +116,6 @@ const querySelect = document.getElementById('query-select');
 const runQueryButton = document.getElementById('run-query-button');
 const cancelQueryButton = document.getElementById('cancel-query-button');
 const copyQueryButton = document.getElementById('copy-query-button');
-
-async function copyToClipboard(text) {
-  if (navigator.clipboard?.writeText) {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch {
-      // fall through to the execCommand fallback below
-    }
-  }
-  const textarea = document.createElement('textarea');
-  textarea.value = text;
-  textarea.style.position = 'fixed';
-  textarea.style.opacity = '0';
-  document.body.appendChild(textarea);
-  textarea.focus();
-  textarea.select();
-  const ok = document.execCommand('copy');
-  document.body.removeChild(textarea);
-  return ok;
-}
-
-function wireCopyButton(button, getText) {
-  button.addEventListener('click', async () => {
-    const ok = await copyToClipboard(getText());
-    const original = button.textContent;
-    button.textContent = ok ? 'Copied!' : 'Copy failed';
-    button.classList.toggle('copied', ok);
-    button.classList.toggle('copy-failed', !ok);
-    setTimeout(() => {
-      button.textContent = original;
-      button.classList.remove('copied', 'copy-failed');
-    }, 1200);
-  });
-}
 
 // Typing narrows the list; Enter flips the visibility of everything still listed,
 // so a graph can be shown or hidden without touching the mouse (Alt+T opens it).

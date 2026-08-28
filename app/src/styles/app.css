@@ -984,6 +984,7 @@ main#app-grid {
 .query-cell--bnode .query-cell-text, .query-cell--unbound .query-cell-text { color: var(--c-text-faint); }
 .query-reveal { font-size: var(--fs-md); line-height: 1; padding: 0 2px; }
 
+.query-results-actions { display: flex; justify-content: flex-end; margin-bottom: var(--s-2); }
 .query-construct-actions { display: flex; align-items: center; gap: var(--s-4); margin-top: var(--s-4); flex-wrap: wrap; }
 .query-construct-name { display: inline-flex; align-items: center; gap: var(--s-2); font-size: var(--fs-sm); }
 .query-construct-input {

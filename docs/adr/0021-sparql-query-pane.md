@@ -113,6 +113,14 @@ drawing.
   is the enrichment path the README promises. Capped
   at 2000 triples, and refused outright for a
   truncated result — adding one would draw a lie.
+- [x] Results **copy as TSV**, from a button above the
+  table. A tab-separated paste becomes real cells in
+  Excel, Sheets and LibreOffice, and needs no quoting
+  rules. The text copied is the text shown: short
+  CURIEs, quoted literals, and only the rows left by
+  `ROW_CAP`. Tabs and newlines inside a literal become
+  spaces, because a paste is a grid and a literal must
+  not break it.
 - [x] Status and errors go to a **pane-local status
   line**, not the global `#lint-message`, which belongs
   to the mermaid and TriG parses.
@@ -144,6 +152,9 @@ Cons:
 - A hand-written query gets no `needs:` metadata, so
   which knowledge bases it wants is inferred from the
   `K:<id>` names in its text.
+- Copying a capped result copies the first 500 rows,
+  not the whole answer. The warning above the table
+  says so, but the clipboard cannot.
 - SPARQL UPDATE is not offered. The TriG pane is the
   authoring surface, and a second write path would
   reopen ADR 0009's reconciliation problem with a
@@ -176,6 +187,12 @@ before trusting them.
 - `createGraphPane` gained `selectNode(iri)`, which
   returns false when the node is not drawn, and an
   `onQuery` callback feeding `nodeMenuItems`.
+- `resultTsv(table)` in `resultModel.js` builds the
+  copied text; the button lives in `resultsView.js` and
+  needs no wiring in `main.js`.
+- `copyToClipboard` and `wireCopyButton` moved out of
+  `main.js` into `app/src/clipboard.js`, so the results
+  toolbar and the query Copy button share them.
 - The shortcuts are in `main.js`: `TAB_SHORTCUTS.KeyQ`,
   `CHIP_SHORTCUTS.KeyK`, `GRAPH_SHORTCUTS.q`. Each is
   printed on its own affordance, which is the rule

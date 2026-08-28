@@ -5,6 +5,7 @@ import {
   bindSelection,
   parseQueryDoc,
   resultTable,
+  resultTsv,
   termCell,
   usesThis,
 } from '../src/query/resultModel.js';
@@ -140,6 +141,57 @@ describe('resultTable', () => {
     const table = resultTable({ kind: 'select', vars: ['x'], rows: [] }, { prefixes });
     expect(table.rows).toEqual([]);
     expect(table.summary).toBe('0 rows');
+  });
+});
+
+describe('resultTsv', () => {
+  it('names SELECT columns as variables and separates every cell with a tab', () => {
+    const table = resultTable(
+      {
+        kind: 'select',
+        vars: ['artifact', 'label'],
+        rows: [{ artifact: iri('urn:d3fend-graph:db-1'), label: lit('Primary database') }, { artifact: iri('urn:d3fend-graph:api') }],
+      },
+      { prefixes },
+    );
+    expect(resultTsv(table)).toBe(
+      ['?artifact\t?label', 'G:db-1\t"Primary database"', 'G:api\t'].join('\n'),
+    );
+  });
+
+  it('keeps an unbound cell as an empty field, so the columns still line up', () => {
+    const table = resultTable({ kind: 'select', vars: ['a', 'b', 'c'], rows: [{ b: lit('x') }] }, { prefixes });
+    expect(resultTsv(table).split('\n')[1]).toBe('\t"x"\t');
+  });
+
+  it('flattens tabs and newlines inside a literal, which would break the pasted grid', () => {
+    const table = resultTable(
+      { kind: 'select', vars: ['x'], rows: [{ x: lit('one\ttwo\nthree') }] },
+      { prefixes },
+    );
+    expect(resultTsv(table)).toBe('?x\n"one two three"');
+  });
+
+  it('writes an ASK as a one-cell table', () => {
+    expect(resultTsv(resultTable({ kind: 'ask', boolean: true }, { prefixes }))).toBe('result\ntrue');
+  });
+
+  it('writes a CONSTRUCT as its four quad columns, with no leading question marks', () => {
+    const quad = {
+      subject: iri('urn:d3fend-graph:db-1'),
+      predicate: iri('http://d3fend.mitre.org/ontologies/d3fend.owl#accesses'),
+      object: iri('urn:d3fend-graph:api'),
+      graph: iri('urn:d3fend-graph:query:enrichment'),
+    };
+    const lines = resultTsv(resultTable({ kind: 'construct', quads: [quad] }, { prefixes })).split('\n');
+    expect(lines[0]).toBe('subject\tpredicate\tobject\tgraph');
+    expect(lines[1].split('\t')).toHaveLength(4);
+  });
+
+  it('copies only the rows the table kept, which is what the warning promises', () => {
+    const rows = Array.from({ length: 20 }, (_, i) => ({ x: lit(String(i)) }));
+    const table = resultTable({ kind: 'select', vars: ['x'], rows }, { prefixes, rowCap: 5 });
+    expect(resultTsv(table).split('\n')).toHaveLength(6);
   });
 });
 
