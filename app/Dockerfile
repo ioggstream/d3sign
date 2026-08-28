@@ -1,5 +1,6 @@
 # Build the static SPA
-FROM node:24-alpine AS build
+FROM docker.io/library/node@sha256:e67514e5d0f6c46656005e1b693b2ec9d52e80b641307de684d4a015ba7a4eaf AS build
+# node:24-alpine
 
 WORKDIR /app
 
@@ -11,7 +12,8 @@ COPY . .
 RUN pnpm run build
 
 # Serve the built assets
-FROM nginx:alpine AS runtime
+FROM docker.io/library/nginx@sha256:db35bfc6b2951e7f8a72db5db120288c127ffaeeb4a6d4b95a26fead017d5913 AS runtime
+# nginx:alpine
 
 RUN apk --no-cache upgrade
 

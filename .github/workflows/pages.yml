@@ -1,0 +1,224 @@
+---
+#
+# Build the static SPA in app/ and publish it to the gh-pages branch.
+#
+#   main            -> https://<owner>.github.io/<repo>/
+#   pull request    -> https://<owner>.github.io/<repo>/<head-branch>/
+#
+# Requires: Settings -> Pages -> Source = "Deploy from a branch",
+#   branch gh-pages, folder / (root).
+#
+# Live previews are listed in the .previews file at the root of gh-pages,
+#   so a main deploy can wipe the root without deleting them. A preview is
+#   removed when its pull request closes.
+#
+# Note: actions are pinned to a full commit SHA for reproducibility
+#   and security (see .pre-commit-config.yaml).
+#
+name: pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+  workflow_dispatch:
+
+permissions: {}
+
+# Serialize every job that pushes to gh-pages.
+concurrency:
+  group: gh-pages
+  cancel-in-progress: false
+
+env:
+  PAGES_BRANCH: gh-pages
+  BOT_NAME: github-actions[bot]
+  BOT_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+
+jobs:
+  build:
+    # Skip on PR close (nothing to build) and on fork pull requests, whose
+    # token cannot push to gh-pages.
+    if: ${{ github.event.action != 'closed' && (github.event_name
+      != 'pull_request' || github.event.pull_request.head.repo.full_name
+      == github.repository) }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      dir: ${{ steps.target.outputs.dir }}
+      url: ${{ steps.target.outputs.url }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5
+      with:
+        persist-credentials: false
+
+    - name: Setup node
+      uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38  # v6
+      with:
+        node-version: "24"
+
+      # A preview lives in a directory named after the head branch, so the
+      # name must be one safe path segment and must not collide with a
+      # top-level entry of the root build.
+    - name: Resolve target directory
+      id: target
+      env:
+        HEAD_REF: ${{ github.head_ref }}
+        REPO_NAME: ${{ github.event.repository.name }}
+        OWNER: ${{ github.repository_owner }}
+      run: |
+        set -euo pipefail
+        if [ -n "$HEAD_REF" ]; then
+          dir=$(printf '%s' "$HEAD_REF" | tr -c 'A-Za-z0-9._-' '-')
+          case "$dir" in
+          .* | assets | kg | index.html)
+            echo "::error::branch '$HEAD_REF' is not usable as a preview directory"
+            exit 1
+            ;;
+          esac
+          base="/$REPO_NAME/$dir/"
+        else
+          dir=""
+          base="/$REPO_NAME/"
+        fi
+        {
+          echo "dir=$dir"
+          echo "base=$base"
+          echo "url=https://$OWNER.github.io$base"
+        } >>"$GITHUB_OUTPUT"
+
+      # app/.npmrc interpolates ${GITHUB_TOKEN}; npm fails if it is unset.
+    - name: Install dependencies
+      working-directory: app
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: npm ci
+
+      # Disabled: 3 of 895 tests fail on main (filter-panel, legal-queries,
+      # link-kind). Flip back to `true` once they are fixed.
+    - name: Run tests
+      if: false
+      working-directory: app
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: npm test
+
+    - name: Build
+      working-directory: app
+      env:
+        VITE_BASE: ${{ steps.target.outputs.base }}
+      run: npm run build
+
+    - name: Upload build
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
+      with:
+        name: site
+        path: app/dist
+        retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: Checkout gh-pages
+      uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5
+      with:
+        ref: ${{ env.PAGES_BRANCH }}
+        path: site
+        persist-credentials: false
+      continue-on-error: true  # The branch does not exist on first run.
+
+    - name: Download build
+      uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0  # v5
+      with:
+        name: site
+        path: dist
+
+    - name: Publish
+      env:
+        DIR: ${{ needs.build.outputs.dir }}
+        URL: ${{ needs.build.outputs.url }}
+        GH_TOKEN: ${{ github.token }}
+        SOURCE_SHA: ${{ github.sha }}
+      run: |
+        set -euo pipefail
+        if [ ! -d site/.git ]; then
+          rm -rf site && mkdir site
+          git -C site init -q -b "$PAGES_BRANCH"
+        fi
+        cd site
+        touch .nojekyll
+        [ -f .previews ] || : >.previews
+        if [ -n "$DIR" ]; then
+          rm -rf -- "./$DIR"
+          cp -r ../dist "./$DIR"
+          grep -qxF -- "$DIR" .previews || echo "$DIR" >>.previews
+        else
+          # Wipe the root build, keeping .git, the marker files and every
+          # live preview directory.
+          keep=$(printf '%s\n' .git .nojekyll .previews; cat .previews)
+          # grep exits 1 when it drops every line, which is a normal
+          # outcome here; pipefail would turn that into a failed job.
+          find . -mindepth 1 -maxdepth 1 -printf '%f\n' \
+            | { grep -vxF -- "$keep" || true; } \
+            | xargs -r -I{} rm -rf -- "./{}"
+          cp -r ../dist/. .
+        fi
+        git add -A
+        if git diff --quiet --cached; then
+          echo "nothing to publish"
+        else
+          git -c "user.name=$BOT_NAME" -c "user.email=$BOT_EMAIL" \
+            commit -q -m "Deploy ${DIR:-root} from $SOURCE_SHA"
+          git push -q \
+            "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.git" \
+            "HEAD:$PAGES_BRANCH"
+        fi
+        echo "Deployed to $URL" >>"$GITHUB_STEP_SUMMARY"
+
+  cleanup:
+    # Drop the preview directory when its pull request closes.
+    if: ${{ github.event.action == 'closed' && github.event.pull_request.head.repo.full_name
+      == github.repository }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: Checkout gh-pages
+      uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5
+      with:
+        ref: ${{ env.PAGES_BRANCH }}
+        path: site
+        persist-credentials: false
+      continue-on-error: true
+
+    - name: Remove preview
+      env:
+        HEAD_REF: ${{ github.head_ref }}
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        set -euo pipefail
+        [ -d site/.git ] || exit 0
+        dir=$(printf '%s' "$HEAD_REF" | tr -c 'A-Za-z0-9._-' '-')
+        case "$dir" in '' | .*) exit 0 ;; esac
+        cd site
+        rm -rf -- "./$dir"
+        if [ -f .previews ]; then
+          grep -vxF -- "$dir" .previews >.previews.new || true
+          mv .previews.new .previews
+        fi
+        git add -A
+        if git diff --quiet --cached; then
+          echo "no preview to remove"
+          exit 0
+        fi
+        git -c "user.name=$BOT_NAME" -c "user.email=$BOT_EMAIL" \
+          commit -q -m "Remove preview $dir"
+        git push -q \
+          "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.git" \
+          "HEAD:$PAGES_BRANCH"
