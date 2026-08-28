@@ -5,6 +5,7 @@ Two networks connected via a router.
 ```mermaid
 ---
 id: net
+title: Networks and router
 ---
 graph
 
@@ -22,6 +23,7 @@ Each network has a host.
 ```mermaid
 ---
 id: host
+title: Hosts in each network
 ---
 graph
 
@@ -43,6 +45,7 @@ and proxies the second host's network service.
 ```mermaid
 ---
 id: process
+title: WAF mediating a network service
 ---
 graph
 

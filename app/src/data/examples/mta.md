@@ -1,4 +1,7 @@
 ```mermaid
+---
+title: Mail transfer agent
+---
 graph
 
 classDef dt color:green

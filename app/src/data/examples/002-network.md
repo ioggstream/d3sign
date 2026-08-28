@@ -7,6 +7,7 @@
 ```mermaid
 ---
 id: net
+title: Management and production networks
 ---
 graph LR
 

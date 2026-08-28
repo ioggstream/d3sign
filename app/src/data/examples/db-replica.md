@@ -43,6 +43,7 @@ Datacenter offers DNS and NTP facilities to the servers.
 ```mermaid
 ---
 id: hla
+title: Datacenter DNS and NTP
 ---
 graph
 subgraph dc-1
@@ -98,6 +99,7 @@ I can further detail the replication configuration
 ```mermaid
 ---
 id: replication
+title: Replication internals
 ---
 graph
 

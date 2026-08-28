@@ -19,6 +19,7 @@ Given
 ```mermaid
 ---
 id: id-is-graph-name
+title: id-is-graph-name
 ---
 graph
 
@@ -65,6 +66,9 @@ G:id-is-graph-name {
 Given
 
 ```mermaid
+---
+title: id-default-is-default
+---
 graph
 webapp[Web Application<br>d3f:WebApplication]
 ```
@@ -85,6 +89,9 @@ G:default {
 Given
 
 ```mermaid
+---
+title: subgraph-ignored-without-tag
+---
 graph
 
 subgraph subgraph-without-tag
@@ -111,6 +118,9 @@ G:default {
 Given
 
 ```mermaid
+---
+title: subgraph-contains-with-tag
+---
 graph
 
 subgraph net [192.168.0.0/24 d3f:Network]
@@ -157,6 +167,9 @@ G:default {
 Given
 
 ```mermaid
+---
+title: complex-node-syntax
+---
 graph
 
 p[pre-commit d3f:Process]
@@ -184,6 +197,7 @@ Given
 ```mermaid
 ---
 id: merge-me
+title: merge-diagrams-with-same-id 1
 ---
 graph
 
@@ -197,6 +211,7 @@ and
 ```mermaid
 ---
 id: merge-me
+title: merge-diagrams-with-same-id 2
 ---
 graph
 
@@ -226,6 +241,9 @@ G:merge-me {
 Given
 
 ```mermaid
+---
+title: inherit-subgraph-without-tag-1
+---
 graph
 
 subgraph net [net d3f:Network]
@@ -255,6 +273,9 @@ G:default {
 Given
 
 ```mermaid
+---
+title: inherit-subgraph-without-tag-2
+---
 graph
 
 subgraph net [net d3f:Network]
@@ -288,6 +309,9 @@ G:default {
 Given
 
 ```mermaid
+---
+title: subgraph-with-relationships
+---
 graph
 
 a[Host 1 d3f:Host]
@@ -322,6 +346,7 @@ Given
 ```mermaid
 ---
 id: parse-links
+title: parse-links
 ---
 graph
 
@@ -356,6 +381,7 @@ Given every mermaid node shape, plus the
 ```mermaid
 ---
 id: node-shape-forms
+title: node-shape-forms
 ---
 graph
 
@@ -416,6 +442,7 @@ Given the labelled-arrow forms.
 ```mermaid
 ---
 id: edge-forms
+title: edge-forms
 ---
 graph
 
@@ -488,6 +515,7 @@ Given arrows with no `|predicate|`.
 ```mermaid
 ---
 id: unlabelled-arrows-dropped
+title: unlabelled-arrows-dropped
 ---
 graph
 
@@ -523,6 +551,7 @@ Given arrows with a head on the left only.
 ```mermaid
 ---
 id: back-arrows-rejected
+title: back-arrows-rejected
 ---
 graph
 

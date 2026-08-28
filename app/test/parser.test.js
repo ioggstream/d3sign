@@ -253,4 +253,12 @@ describe('the shipped example diagrams still parse', () => {
     expect(diagrams.length).toBeGreaterThan(0);
     expect(diagrams.some((d) => d.ast.nodes.length > 0)).toBe(true);
   });
+
+  // A title is required (parseDocument warns without one) and names the diagram in
+  // the diagram list and the symbol tooltips, so the shipped examples must carry one.
+  it.each(examples)('%s titles every diagram, without repeating a title', (name) => {
+    const { warnings } = parseDocument(readFixture(name));
+    expect(warnings.filter((w) => w.includes('missing a required title'))).toEqual([]);
+    expect(warnings.filter((w) => w.includes('Duplicate diagram title'))).toEqual([]);
+  });
 });
