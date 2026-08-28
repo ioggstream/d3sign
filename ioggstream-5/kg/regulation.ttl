@@ -1,0 +1,744 @@
+# Obligations, and what in D3FEND discharges them.
+#
+# Hand-authored and hand-edited: this file is the only place in the app where RDF is
+# written by a person rather than generated, which is why it is plain turtle and not
+# folded into legal.ttl.gz. A rebuild of that artifact must not be able to overwrite
+# it, and a mapping claim has to be reviewable in a diff.
+#
+# ENGINEERING JUDGEMENT, NOT LEGAL ADVICE. Every al:Mapping below is an opinion that
+# a D3FEND technique speaks to a statutory duty. It says nothing about whether the
+# control is configured, deployed, effective, or in scope. al:review-status records
+# whether a human has agreed with it yet.
+#
+# Two things not to do with this file:
+#
+#   - Do not join on dct:source. The citations here and in K:legal are display
+#     strings, unnormalised on both sides ("GDPR Art.5-2" vs "GDPR Article 32(1)(a)").
+#     Join on IRIs.
+#   - Do not point skos:broader at a term in another graph. A SPARQL property path is
+#     evaluated inside one GRAPH binding, so a hierarchy that leaves K:regulation
+#     cannot be walked (docs/adr/0025-legal-knowledge-bases.md). Links out are one
+#     hop: skos:relatedMatch, al:legal-concept, al:d3fend-class.
+#
+# Loaded into urn:d3fend-graph:kg:regulation, i.e. K:regulation in a query.
+
+@prefix ob:   <urn:d3fend-graph:obl:> .
+@prefix al:   <urn:d3fend-graph:align:> .
+@prefix d3f:  <http://d3fend.mitre.org/ontologies/d3fend.owl#> .
+@prefix dpv:  <https://w3id.org/dpv#> .
+# DPV's own label for its GDPR extension — `eu-gdpr:`, not `gdpr:`, so a term pasted out
+# of the DPV documentation resolves as written (docs/adr/0028-support-data-privacy-vocabulary.md).
+# It is where the principles, the Article 6 legal bases and the rights live, all of which
+# name a GDPR duty far more precisely than a generic dpv: measure could.
+@prefix eu-gdpr: <https://w3id.org/dpv/legal/eu/gdpr#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ===========================================================================
+# The vocabulary this file uses
+# ===========================================================================
+
+ob:Instrument a rdfs:Class ;
+  rdfs:label "Legal instrument"@en ;
+  skos:definition "A directive, regulation or act that imposes obligations."@en .
+
+ob:Obligation a rdfs:Class ;
+  rdfs:label "Obligation"@en ;
+  skos:definition "One duty imposed by an instrument, at the granularity a control can address — usually a lettered point of an article."@en .
+
+ob:instrument a rdf:Property ;
+  rdfs:label "instrument"@en ;
+  rdfs:domain ob:Obligation ; rdfs:range ob:Instrument ;
+  skos:definition "The instrument an obligation comes from."@en .
+
+# The mapping is reified rather than expressed as a bare predicate between the two
+# classes, because the rationale is the point: an unexplained claim that a control
+# covers a legal duty is worse than no claim, since it cannot be audited or argued
+# with. skos:relatedMatch and friends were considered and rejected — they cannot
+# carry a rationale without reifying anyway, their symmetry and transitivity would
+# be a lie about an owl:Class/skos:Concept pair, and DPV already uses them, so
+# overloading them would make our claims indistinguishable from upstream's.
+al:Mapping a rdfs:Class ;
+  rdfs:label "Mapping"@en ;
+  skos:definition "A claim that a D3FEND class speaks to an obligation, with the reasoning for it."@en .
+
+al:d3fend-class a rdf:Property ; rdfs:domain al:Mapping ; rdfs:label "D3FEND class"@en .
+al:legal-concept a rdf:Property ; rdfs:domain al:Mapping ; rdfs:label "legal concept"@en ;
+  skos:definition "The DPV concept in K:legal that names the same control in legal vocabulary."@en .
+al:obligation a rdf:Property ; rdfs:domain al:Mapping ; rdfs:range ob:Obligation ;
+  rdfs:label "obligation"@en .
+al:rationale a rdf:Property ; rdfs:domain al:Mapping ; rdfs:label "rationale"@en ;
+  skos:definition "Why this technique discharges this duty, and where it stops. Mandatory."@en .
+al:strength a rdf:Property ; rdfs:domain al:Mapping ; rdfs:label "strength"@en .
+al:review-status a rdf:Property ; rdfs:domain al:Mapping ; rdfs:label "review status"@en .
+
+al:Full a skos:Concept ; skos:prefLabel "full"@en ;
+  skos:definition "The obligation names this control, or the control is the whole of what the obligation asks for."@en .
+al:Partial a skos:Concept ; skos:prefLabel "partial"@en ;
+  skos:definition "The control addresses part of the duty; the rest is out of the technique's reach."@en .
+al:Supporting a skos:Concept ; skos:prefLabel "supporting"@en ;
+  skos:definition "The control helps but would not on its own be offered as evidence of compliance."@en .
+
+al:Draft a skos:Concept ; skos:prefLabel "draft"@en ;
+  skos:definition "Proposed, not yet agreed by a reviewer."@en .
+al:Reviewed a skos:Concept ; skos:prefLabel "reviewed"@en ;
+  skos:definition "A human has read the rationale and agreed with it."@en .
+
+# The predicate a CONSTRUCT query writes when it draws obligations into the diagram
+# (data/queries/13-enrich-legal-obligations.rq).
+al:satisfies a rdf:Property ; rdfs:range ob:Obligation ; rdfs:label "satisfies"@en .
+
+# ===========================================================================
+# Section 1 — the obligation catalogue
+# ===========================================================================
+#
+# Transcribed from the instruments. DPV's own eu-nis2 module is not a substitute:
+# it covers incident notices and compliance status, and has no catalogue of the
+# Article 21(2) measures at all.
+#
+# The hierarchy stays inside this graph: an article's lettered points are
+# skos:broader the article. The link out to DPV's vocabulary is skos:relatedMatch,
+# one hop, on purpose.
+
+ob:NIS2 a ob:Instrument ;
+  skos:prefLabel "NIS2 Directive"@en ;
+  dct:identifier "Directive (EU) 2022/2555" ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/dir/2022/2555/oj> .
+
+ob:GDPR a ob:Instrument ;
+  skos:prefLabel "General Data Protection Regulation"@en ;
+  dct:identifier "Regulation (EU) 2016/679" ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/oj> .
+
+ob:nis2-obligations a skos:ConceptScheme ;
+  skos:prefLabel "NIS2 cybersecurity risk-management measures"@en .
+
+ob:gdpr-obligations a skos:ConceptScheme ;
+  skos:prefLabel "GDPR obligations"@en .
+
+ob:nis2-art21-2 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Cybersecurity risk-management measures"@en ;
+  skos:definition "Appropriate and proportionate technical, operational and organisational measures to manage the risks posed to the security of network and information systems, based on an all-hazards approach. The lettered points below are the minimum the measures shall include."@en ;
+  dct:source "NIS2 Article 21(2)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> .
+
+ob:nis2-art21-2-a a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Policies on risk analysis and information system security"@en ;
+  dct:source "NIS2 Article 21(2)(a)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  skos:relatedMatch dpv:RiskAssessment .
+
+ob:nis2-art21-2-b a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Incident handling"@en ;
+  dct:source "NIS2 Article 21(2)(b)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  skos:relatedMatch dpv:IncidentManagementProcedures .
+
+ob:nis2-art21-2-c a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Business continuity, such as backup management and disaster recovery, and crisis management"@en ;
+  dct:source "NIS2 Article 21(2)(c)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  skos:relatedMatch dpv:DisasterRecoveryProcedures .
+
+ob:nis2-art21-2-d a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Supply chain security, including security-related aspects of the relationships with direct suppliers or service providers"@en ;
+  dct:source "NIS2 Article 21(2)(d)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> .
+
+ob:nis2-art21-2-e a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Security in network and information systems acquisition, development and maintenance, including vulnerability handling and disclosure"@en ;
+  dct:source "NIS2 Article 21(2)(e)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  skos:relatedMatch dpv:VulnerabilityTestingMethods .
+
+ob:nis2-art21-2-f a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Policies and procedures to assess the effectiveness of cybersecurity risk-management measures"@en ;
+  dct:source "NIS2 Article 21(2)(f)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  skos:relatedMatch dpv:ComplianceMonitoring .
+
+# A duty no drawing can discharge: training is about people, and D3FEND has no
+# defensive technique for it. It will show as a permanent gap, which is honest.
+ob:nis2-art21-2-g a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Basic cyber hygiene practices and cybersecurity training"@en ;
+  dct:source "NIS2 Article 21(2)(g)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  skos:relatedMatch dpv:CybersecurityTraining .
+
+ob:nis2-art21-2-h a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Policies and procedures regarding the use of cryptography and, where appropriate, encryption"@en ;
+  dct:source "NIS2 Article 21(2)(h)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  skos:relatedMatch dpv:CryptographicMethods .
+
+ob:nis2-art21-2-i a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Human resources security, access control policies and asset management"@en ;
+  dct:source "NIS2 Article 21(2)(i)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  skos:relatedMatch dpv:AccessControlMethod .
+
+ob:nis2-art21-2-j a ob:Obligation, skos:Concept ;
+  ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
+  skos:prefLabel "Multi-factor or continuous authentication, secured voice, video and text communications and secured emergency communication systems"@en ;
+  dct:source "NIS2 Article 21(2)(j)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  skos:relatedMatch dpv:MultiFactorAuthentication .
+
+# --- GDPR ------------------------------------------------------------------
+#
+# The whole duty set, not only Article 32. Most of what the GDPR asks for is
+# organisational — a notice, a contract, a register, an assessment, a person — and has no
+# D3FEND counterpart at all. Those obligations are transcribed anyway and left unmapped on
+# purpose: a catalogue that only contained the duties a diagram can discharge would answer
+# "what is left to do?" with the flattering half of the truth, and
+# 08-obligations-without-measure.rq exists to ask that question honestly.
+#
+# The DPV link is one hop, as everywhere in this file, and prefers a term from DPV's own
+# GDPR extension over a generic dpv: measure when an exact one exists: eu-gdpr:A17 is the
+# right to erasure, where dpv:StorageDeletion is only a technique someone might use to
+# honour it. Both are given where both apply.
+
+ob:gdpr-art5 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Principles relating to processing of personal data"@en ;
+  skos:definition "The six principles personal data must be processed under, and the controller's responsibility to demonstrate compliance with them."@en ;
+  dct:source "GDPR Article 5"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_5/oj> .
+
+ob:gdpr-art5-1-a a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art5 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Lawfulness, fairness and transparency"@en ;
+  dct:source "GDPR Article 5(1)(a)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_5/oj> ;
+  skos:relatedMatch eu-gdpr:LawfulnessPrinciple , eu-gdpr:FairnessPrinciple , eu-gdpr:TransparencyPrinciple .
+
+ob:gdpr-art5-1-b a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art5 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Purpose limitation"@en ;
+  dct:source "GDPR Article 5(1)(b)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_5/oj> ;
+  skos:relatedMatch eu-gdpr:PurposeLimitationPrinciple .
+
+ob:gdpr-art5-1-c a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art5 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Data minimisation"@en ;
+  dct:source "GDPR Article 5(1)(c)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_5/oj> ;
+  skos:relatedMatch eu-gdpr:DataMinimisationPrinciple .
+
+ob:gdpr-art5-1-d a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art5 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Accuracy"@en ;
+  dct:source "GDPR Article 5(1)(d)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_5/oj> ;
+  skos:relatedMatch eu-gdpr:AccuracyPrinciple .
+
+ob:gdpr-art5-1-e a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art5 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Storage limitation"@en ;
+  dct:source "GDPR Article 5(1)(e)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_5/oj> ;
+  skos:relatedMatch eu-gdpr:StorageLimitationPrinciple .
+
+ob:gdpr-art5-1-f a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art5 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Integrity and confidentiality"@en ;
+  dct:source "GDPR Article 5(1)(f)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_5/oj> ;
+  skos:relatedMatch eu-gdpr:IntegrityConfidentialityPrinciple .
+
+# The duty that makes the record in Article 30 and the assessment in Article 35 obligatory
+# rather than good practice. Nothing is mapped to it directly: accountability is discharged
+# by the artefacts those articles ask for, and claiming a technique proves it would be
+# claiming that drawing a diagram is the same as being able to demonstrate compliance.
+ob:gdpr-art5-2 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art5 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Accountability"@en ;
+  dct:source "GDPR Article 5(2)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_5/oj> ;
+  skos:relatedMatch eu-gdpr:AccountabilityPrinciple .
+
+# Article 6 is a list of six bases, not a list of measures: choosing one and recording the
+# choice is a legal act. Only the two a system usually implements are transcribed. Note
+# that the conditions consent has to satisfy — the check-box, the record, the withdrawal —
+# are Article 7, not Article 6.
+ob:gdpr-art6-1 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Lawfulness of processing"@en ;
+  skos:definition "Processing is lawful only if at least one of the six bases in Article 6(1) applies, and the controller must be able to say which."@en ;
+  dct:source "GDPR Article 6(1)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_6/oj> .
+
+ob:gdpr-art6-1-a a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art6-1 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Consent of the data subject"@en ;
+  dct:source "GDPR Article 6(1)(a)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_6/oj> ;
+  skos:relatedMatch eu-gdpr:A6-1-a , eu-gdpr:Consent .
+
+ob:gdpr-art6-1-f a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art6-1 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Legitimate interests of the controller or a third party"@en ;
+  dct:source "GDPR Article 6(1)(f)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_6/oj> ;
+  skos:relatedMatch eu-gdpr:A6-1-f , dpv:LegitimateInterestAssessment .
+
+ob:gdpr-art12 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Transparent information, communication and modalities for the exercise of the rights of the data subject"@en ;
+  skos:definition "Information under Articles 13 and 14 and communications under Articles 15 to 22 and 34 must be concise, transparent, intelligible and easily accessible, in clear and plain language."@en ;
+  dct:source "GDPR Article 12"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_12/oj> ;
+  skos:relatedMatch dpv:PrivacyNotice .
+
+# One month, extendable by two further months where the request is complex — not 30 days.
+ob:gdpr-art12-3 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art12 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Information on action taken, without undue delay and in any event within one month"@en ;
+  dct:source "GDPR Article 12(3)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_12/oj> .
+
+# Not d3f:AgentAuthentication: that authenticates an agent already provisioned in a system,
+# where this is identity proofing of a possibly unregistered natural person, out of band,
+# under a rule that also limits how much extra identity data may be collected to do it.
+ob:gdpr-art12-6 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art12 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Additional information to confirm the identity of the data subject"@en ;
+  dct:source "GDPR Article 12(6)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_12/oj> ;
+  skos:relatedMatch dpv:IdentityVerification .
+
+ob:gdpr-art13 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Information to be provided where personal data are collected from the data subject"@en ;
+  dct:source "GDPR Article 13"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_13/oj> ;
+  skos:relatedMatch eu-gdpr:DirectDataCollectionNotice .
+
+ob:gdpr-art14 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Information to be provided where personal data have not been obtained from the data subject"@en ;
+  dct:source "GDPR Article 14"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_14/oj> ;
+  skos:relatedMatch eu-gdpr:IndirectDataCollectionNotice .
+
+# Articles 15 to 22 — the rights. Each is a request-handling workflow: receive, verify,
+# search, redact somebody else's personal data out of the answer, respond in time. D3FEND
+# describes defensive techniques against adversary activity and has nothing for any of it,
+# so all eight are permanent gaps. The single exception is erasure, where the act of
+# deleting the data is a technique, and it is mapped in Section 2 as Supporting only.
+ob:gdpr-art15 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Right of access by the data subject"@en ;
+  dct:source "GDPR Article 15"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_15/oj> ;
+  skos:relatedMatch eu-gdpr:A15 , eu-gdpr:SARNotice .
+
+ob:gdpr-art16 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Right to rectification"@en ;
+  dct:source "GDPR Article 16"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_16/oj> ;
+  skos:relatedMatch eu-gdpr:A16 .
+
+ob:gdpr-art17 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Right to erasure ('right to be forgotten')"@en ;
+  dct:source "GDPR Article 17"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_17/oj> ;
+  skos:relatedMatch eu-gdpr:A17 , dpv:StorageDeletion .
+
+ob:gdpr-art18 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Right to restriction of processing"@en ;
+  dct:source "GDPR Article 18"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_18/oj> ;
+  skos:relatedMatch eu-gdpr:A18 .
+
+ob:gdpr-art19 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Notification obligation regarding rectification or erasure of personal data or restriction of processing"@en ;
+  dct:source "GDPR Article 19"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_19/oj> ;
+  skos:relatedMatch eu-gdpr:A19 .
+
+ob:gdpr-art20 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Right to data portability"@en ;
+  dct:source "GDPR Article 20"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_20/oj> ;
+  skos:relatedMatch eu-gdpr:A20 .
+
+ob:gdpr-art21 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Right to object"@en ;
+  dct:source "GDPR Article 21"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_21/oj> ;
+  skos:relatedMatch eu-gdpr:A21 .
+
+ob:gdpr-art22 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Automated individual decision-making, including profiling"@en ;
+  dct:source "GDPR Article 22"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_22/oj> ;
+  skos:relatedMatch eu-gdpr:A22 .
+
+ob:gdpr-art25 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Data protection by design and by default"@en ;
+  skos:definition "Technical and organisational measures designed to implement the data-protection principles, decided when the means of processing are determined and again during the processing itself."@en ;
+  dct:source "GDPR Article 25"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_25/oj> .
+
+# Article 25(1) names pseudonymisation, and D3FEND has no technique for it — nor for
+# anonymisation, masking or tokenisation; a sweep of every label and definition in the
+# ontology finds only d3f:AnonymousPipe, which is an artifact, and the encryption
+# techniques, which protect the same personal data rather than reduce its identifiability.
+# So this stays unmapped. Note also that anonymised data falls outside the Regulation
+# altogether (Recital 26), which makes anonymisation an exit from Article 25, not a way of
+# satisfying it.
+ob:gdpr-art25-1 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art25 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Data protection by design"@en ;
+  dct:source "GDPR Article 25(1)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_25/oj> ;
+  skos:relatedMatch dpv:PrivacyByDesign , eu-gdpr:Pseudonymisation .
+
+ob:gdpr-art25-2 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art25 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Data protection by default"@en ;
+  dct:source "GDPR Article 25(2)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_25/oj> ;
+  skos:relatedMatch dpv:PrivacyByDefault .
+
+# Vetting a supplier and auditing it are relationship management, not techniques. Article 28
+# sets no audit cadence either: the right to audit is a term of the contract under 28(3)(h).
+ob:gdpr-art28 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Processor"@en ;
+  skos:definition "A controller may use only processors that provide sufficient guarantees, under a contract that binds them to the controller's instructions."@en ;
+  dct:source "GDPR Article 28"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_28/oj> ;
+  skos:relatedMatch eu-gdpr:Processor .
+
+ob:gdpr-art28-1 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art28 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Sufficient guarantees from the processor"@en ;
+  dct:source "GDPR Article 28(1)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_28/oj> .
+
+ob:gdpr-art28-3 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art28 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Processing governed by a contract"@en ;
+  dct:source "GDPR Article 28(3)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_28/oj> ;
+  skos:relatedMatch dpv:DataProcessingAgreement .
+
+# The record has to be accurate and current; the Regulation prescribes no annual cycle.
+ob:gdpr-art30 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Records of processing activities"@en ;
+  skos:definition "A record of the processing activities under the controller's responsibility, covering purposes, categories of data subjects and of personal data, categories of recipients, transfers to third countries, retention periods and the security measures."@en ;
+  dct:source "GDPR Article 30"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_30/oj> ;
+  skos:relatedMatch dpv:ROPA , dpv:RecordsOfActivities .
+
+ob:gdpr-art32-1 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Security of processing"@en ;
+  skos:definition "Appropriate technical and organisational measures to ensure a level of security appropriate to the risk."@en ;
+  dct:source "GDPR Article 32(1)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_32/oj> .
+
+# Two duties in one point, and only one of them is reachable from a diagram: D3FEND
+# has encryption techniques but nothing for pseudonymisation. The mappings below
+# therefore cover this obligation only partly, and deliberately say so.
+ob:gdpr-art32-1-a a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art32-1 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Pseudonymisation and encryption of personal data"@en ;
+  dct:source "GDPR Article 32(1)(a)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_32/oj> ;
+  skos:relatedMatch dpv:Pseudonymisation , dpv:Encryption .
+
+ob:gdpr-art32-1-b a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art32-1 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Ongoing confidentiality, integrity, availability and resilience of processing systems and services"@en ;
+  dct:source "GDPR Article 32(1)(b)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_32/oj> ;
+  skos:relatedMatch dpv:AccessControlMethod .
+
+ob:gdpr-art32-1-c a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art32-1 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Ability to restore the availability and access to personal data in a timely manner in the event of a physical or technical incident"@en ;
+  dct:source "GDPR Article 32(1)(c)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_32/oj> ;
+  skos:relatedMatch dpv:DataBackupProtocols .
+
+ob:gdpr-art32-1-d a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art32-1 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Process for regularly testing, assessing and evaluating the effectiveness of the measures"@en ;
+  dct:source "GDPR Article 32(1)(d)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_32/oj> ;
+  skos:relatedMatch dpv:PenetrationTestingMethods .
+
+# Notification is a deadline and a form: 72 hours to the supervisory authority here, without
+# undue delay to the data subject in Article 34. Nothing is mapped to either. Detection is
+# the precondition, and it is a D3FEND *tactic* (d3f:Detect) rather than a technique, so
+# mapping it would claim the entire detection catalogue for one notification duty; the
+# individual analytics that would feed it are mapped where they belong, to Article 5(1)(f).
+ob:gdpr-art33 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Notification of a personal data breach to the supervisory authority within 72 hours"@en ;
+  skos:definition "Notify without undue delay and, where feasible, not later than 72 hours after becoming aware of the breach, unless it is unlikely to result in a risk to the rights and freedoms of natural persons."@en ;
+  dct:source "GDPR Article 33(1)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_33/oj> ;
+  skos:relatedMatch eu-gdpr:DPABreachNotice .
+
+ob:gdpr-art33-5 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art33 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Documentation of any personal data breach"@en ;
+  dct:source "GDPR Article 33(5)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_33/oj> ;
+  skos:relatedMatch eu-gdpr:DataBreachRegister .
+
+ob:gdpr-art34 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Communication of a personal data breach to the data subject"@en ;
+  skos:definition "Where the breach is likely to result in a high risk to the rights and freedoms of natural persons, communicate it to the data subject without undue delay."@en ;
+  dct:source "GDPR Article 34(1)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_34/oj> ;
+  skos:relatedMatch eu-gdpr:DataSubjectBreachNotice .
+
+ob:gdpr-art35 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Data protection impact assessment"@en ;
+  skos:definition "Where a type of processing is likely to result in a high risk to the rights and freedoms of natural persons, assess the impact of the envisaged operations before the processing starts."@en ;
+  dct:source "GDPR Article 35"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_35/oj> ;
+  skos:relatedMatch eu-gdpr:DPIAProcedure , dpv:DPIA .
+
+ob:gdpr-art36 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Prior consultation of the supervisory authority"@en ;
+  skos:definition "Consult the supervisory authority before processing where the impact assessment indicates a high risk that the controller has not mitigated."@en ;
+  dct:source "GDPR Article 36"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_36/oj> .
+
+# A duty about a person, like NIS2 Article 21(2)(g): D3FEND has no technique for appointing
+# anyone. Article 37(7) asks for the contact details to be published and communicated to the
+# supervisory authority — there is no registration regime to enrol the officer in.
+ob:gdpr-art37 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Designation of the data protection officer"@en ;
+  skos:definition "Designate a data protection officer where the processing is carried out by a public authority, or where the core activities require regular and systematic monitoring on a large scale or large-scale processing of special categories of data."@en ;
+  dct:source "GDPR Article 37"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_37/oj> ;
+  skos:relatedMatch dpv:DataProtectionOfficer .
+
+ob:gdpr-art37-7 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:broader ob:gdpr-art37 ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Publication of the DPO's contact details and communication to the supervisory authority"@en ;
+  dct:source "GDPR Article 37(7)"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_37/oj> .
+
+ob:gdpr-art39 a ob:Obligation, skos:Concept ;
+  ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
+  skos:prefLabel "Tasks of the data protection officer"@en ;
+  dct:source "GDPR Article 39"@en ;
+  rdfs:seeAlso <https://eur-lex.europa.eu/eli/reg/2016/679/art_39/oj> .
+
+# ===========================================================================
+# Section 2 — the D3FEND alignment
+# ===========================================================================
+#
+# Every mapping here is al:Draft: proposed by construction of this file, not yet
+# agreed. Review means reading the rationale and deciding whether you would put the
+# claim in front of an auditor, then changing al:Draft to al:Reviewed.
+#
+# A mapping is made against the *most general* D3FEND class that the reasoning
+# actually holds for, because queries resolve subclasses with rdfs:subClassOf* —
+# mapping d3f:Credential earns the mapping for d3f:Password for free, and mapping
+# d3f:Password would not work the other way round.
+
+al:map-mfa-nis2-21-2-j a al:Mapping ;
+  al:d3fend-class  d3f:Multi-factorAuthentication ;
+  al:legal-concept dpv:MultiFactorAuthentication ;
+  al:obligation    ob:nis2-art21-2-j ;
+  al:strength      al:Full ;
+  al:rationale     "Article 21(2)(j) names multi-factor authentication in as many words; the D3FEND technique is the same control."@en ;
+  dct:source       "NIS2 Article 21(2)(j)"@en ;
+  rdfs:seeAlso     <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-message-encryption-nis2-21-2-h a al:Mapping ;
+  al:d3fend-class  d3f:MessageEncryption ;
+  al:legal-concept dpv:EncryptionInTransfer ;
+  al:obligation    ob:nis2-art21-2-h ;
+  al:strength      al:Partial ;
+  al:rationale     "Covers the cryptography-in-transit half of (h). The policies-and-procedures half is organisational and no diagram can assert it."@en ;
+  dct:source       "NIS2 Article 21(2)(h)"@en ;
+  rdfs:seeAlso     <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-encrypted-tunnels-nis2-21-2-h a al:Mapping ;
+  al:d3fend-class  d3f:EncryptedTunnels ;
+  al:legal-concept dpv:EncryptionInTransfer ;
+  al:obligation    ob:nis2-art21-2-h ;
+  al:strength      al:Supporting ;
+  al:rationale     "A tunnel protects the channel rather than the message, so it evidences use of cryptography without saying anything about the data at either end."@en ;
+  dct:source       "NIS2 Article 21(2)(h)"@en ;
+  rdfs:seeAlso     <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-disk-encryption-gdpr-32-1-a a al:Mapping ;
+  al:d3fend-class  d3f:DiskEncryption ;
+  al:legal-concept dpv:EncryptionAtRest ;
+  al:obligation    ob:gdpr-art32-1-a ;
+  al:strength      al:Supporting ;
+  al:rationale     "Article 32(1)(a) offers encryption as an example measure. Disk encryption protects data at rest against loss of the medium only, and does nothing for the pseudonymisation limb of the same point."@en ;
+  dct:source       "GDPR Article 32(1)(a)"@en ;
+  rdfs:seeAlso     <https://eur-lex.europa.eu/eli/reg/2016/679/art_32/oj> ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-file-encryption-gdpr-32-1-a a al:Mapping ;
+  al:d3fend-class  d3f:FileEncryption ;
+  al:legal-concept dpv:EncryptionAtRest ;
+  al:obligation    ob:gdpr-art32-1-a ;
+  al:strength      al:Partial ;
+  al:rationale     "Encrypting the files that hold personal data addresses the encryption limb of (a) directly, at a granularity a controller can point at."@en ;
+  dct:source       "GDPR Article 32(1)(a)"@en ;
+  rdfs:seeAlso     <https://eur-lex.europa.eu/eli/reg/2016/679/art_32/oj> ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-strong-password-policy-nis2-21-2-i a al:Mapping ;
+  al:d3fend-class  d3f:StrongPasswordPolicy ;
+  al:legal-concept dpv:PasswordAuthentication ;
+  al:obligation    ob:nis2-art21-2-i ;
+  al:strength      al:Partial ;
+  al:rationale     "Speaks to the access-control limb of (i). Human resources security and asset management are elsewhere in the same point and untouched by it."@en ;
+  dct:source       "NIS2 Article 21(2)(i)"@en ;
+  rdfs:seeAlso     <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-user-account-permissions-nis2-21-2-i a al:Mapping ;
+  al:d3fend-class  d3f:UserAccountPermissions ;
+  al:legal-concept dpv:AccessControlMethod ;
+  al:obligation    ob:nis2-art21-2-i ;
+  al:strength      al:Partial ;
+  al:rationale     "Per-account permissions are the enforcement point an access control policy is written for; the policy itself is organisational."@en ;
+  dct:source       "NIS2 Article 21(2)(i)"@en ;
+  rdfs:seeAlso     <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-asset-inventory-nis2-21-2-i a al:Mapping ;
+  al:d3fend-class  d3f:AssetInventory ;
+  al:legal-concept dpv:AssetManagementProcedures ;
+  al:obligation    ob:nis2-art21-2-i ;
+  al:strength      al:Partial ;
+  al:rationale     "Asset management in (i) starts from knowing what the assets are, which is what this technique produces."@en ;
+  dct:source       "NIS2 Article 21(2)(i)"@en ;
+  rdfs:seeAlso     <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-credential-rotation-nis2-21-2-i a al:Mapping ;
+  al:d3fend-class  d3f:CredentialRotation ;
+  al:legal-concept dpv:IdentityManagementMethod ;
+  al:obligation    ob:nis2-art21-2-i ;
+  al:strength      al:Supporting ;
+  al:rationale     "Rotating credentials is credential lifecycle management, which sits under the access-control limb of (i) without being what the point asks for."@en ;
+  dct:source       "NIS2 Article 21(2)(i)"@en ;
+  rdfs:seeAlso     <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-system-vulnerability-assessment-nis2-21-2-e a al:Mapping ;
+  al:d3fend-class  d3f:SystemVulnerabilityAssessment ;
+  al:legal-concept dpv:VulnerabilityTestingMethods ;
+  al:obligation    ob:nis2-art21-2-e ;
+  al:strength      al:Partial ;
+  al:rationale     "Vulnerability handling in (e) begins with finding them. Disclosure, and security during acquisition and development, are not addressed."@en ;
+  dct:source       "NIS2 Article 21(2)(e)"@en ;
+  rdfs:seeAlso     <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+# No al:legal-concept: DPV 2.3 has no concept for patching as a measure, and
+# inventing a near-miss would make the join look richer than it is.
+al:map-software-update-nis2-21-2-e a al:Mapping ;
+  al:d3fend-class  d3f:SoftwareUpdate ;
+  al:obligation    ob:nis2-art21-2-e ;
+  al:strength      al:Supporting ;
+  al:rationale     "Applying updates is how a handled vulnerability stops being one, so it evidences the maintenance limb of (e)."@en ;
+  dct:source       "NIS2 Article 21(2)(e)"@en ;
+  rdfs:seeAlso     <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-restore-disk-image-nis2-21-2-c a al:Mapping ;
+  al:d3fend-class  d3f:RestoreDiskImage ;
+  al:legal-concept dpv:DisasterRecoveryProcedures ;
+  al:obligation    ob:nis2-art21-2-c ;
+  al:strength      al:Partial ;
+  al:rationale     "Restoring an image is the recovery half of (c). Backup management and crisis management are separate duties in the same point."@en ;
+  dct:source       "NIS2 Article 21(2)(c)"@en ;
+  rdfs:seeAlso     <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-restore-database-gdpr-32-1-c a al:Mapping ;
+  al:d3fend-class  d3f:RestoreDatabase ;
+  al:legal-concept dpv:DataBackupProtocols ;
+  al:obligation    ob:gdpr-art32-1-c ;
+  al:strength      al:Partial ;
+  al:rationale     "Article 32(1)(c) asks for the ability to restore availability and access. Restoring the database that holds the personal data is that ability; whether it happens in a timely manner is not something the diagram states."@en ;
+  dct:source       "GDPR Article 32(1)(c)"@en ;
+  rdfs:seeAlso     <https://eur-lex.europa.eu/eli/reg/2016/679/art_32/oj> ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-network-vulnerability-assessment-gdpr-32-1-d a al:Mapping ;
+  al:d3fend-class  d3f:NetworkVulnerabilityAssessment ;
+  al:legal-concept dpv:PenetrationTestingMethods ;
+  al:obligation    ob:gdpr-art32-1-d ;
+  al:strength      al:Partial ;
+  al:rationale     "Regular assessment of the measures' effectiveness is what (d) requires; this technique tests the network measures specifically."@en ;
+  dct:source       "GDPR Article 32(1)(d)"@en ;
+  rdfs:seeAlso     <https://eur-lex.europa.eu/eli/reg/2016/679/art_32/oj> ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+al:map-auth-event-thresholding-nis2-21-2-b a al:Mapping ;
+  al:d3fend-class  d3f:AuthenticationEventThresholding ;
+  al:legal-concept dpv:ActivityMonitoring ;
+  al:obligation    ob:nis2-art21-2-b ;
+  al:strength      al:Supporting ;
+  al:rationale     "Incident handling in (b) presupposes detection. Thresholding authentication events is one detection input, not a handling process."@en ;
+  dct:source       "NIS2 Article 21(2)(b)"@en ;
+  rdfs:seeAlso     <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
+  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+
+# Interop courtesy, derived from the mappings above rather than asserted
+# independently: a one-hop skos:relatedMatch, so a query that has not been told
+# about al:Mapping can still get from a D3FEND class to DPV's name for it. Never
+# closeMatch or exactMatch — these are not the same concept, only related ones.
+d3f:Multi-factorAuthentication skos:relatedMatch dpv:MultiFactorAuthentication .
+d3f:MessageEncryption          skos:relatedMatch dpv:EncryptionInTransfer .
+d3f:EncryptedTunnels           skos:relatedMatch dpv:EncryptionInTransfer .
+d3f:DiskEncryption             skos:relatedMatch dpv:EncryptionAtRest .
+d3f:FileEncryption             skos:relatedMatch dpv:EncryptionAtRest .
+d3f:StrongPasswordPolicy       skos:relatedMatch dpv:PasswordAuthentication .
+d3f:UserAccountPermissions     skos:relatedMatch dpv:AccessControlMethod .
+d3f:AssetInventory             skos:relatedMatch dpv:AssetManagementProcedures .
+d3f:CredentialRotation         skos:relatedMatch dpv:IdentityManagementMethod .
+d3f:SystemVulnerabilityAssessment  skos:relatedMatch dpv:VulnerabilityTestingMethods .
+d3f:NetworkVulnerabilityAssessment skos:relatedMatch dpv:PenetrationTestingMethods .
+d3f:RestoreDiskImage           skos:relatedMatch dpv:DisasterRecoveryProcedures .
+d3f:RestoreDatabase            skos:relatedMatch dpv:DataBackupProtocols .
+d3f:AuthenticationEventThresholding skos:relatedMatch dpv:ActivityMonitoring .
