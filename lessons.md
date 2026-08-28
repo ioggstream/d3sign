@@ -1,5 +1,38 @@
 # Lessons
 
+## 2026-08-28 — an empty default graph makes a correct query return nothing
+
+Task: a generic `SELECT * WHERE { ?s ?p ?o }` had to see every graph.
+
+What worked:
+
+- Reading the loader before the query path. Every write goes to a named graph
+  (`to_graph_name` for knowledge bases, the graph name inside the N-Quads for
+  document quads), so the default graph the engine queries by default is empty
+  and always was. The symptom was zero rows; the cause was one missing option.
+- `use_default_graph_as_union` on `store.query()`, one flag, no rewriting of the
+  user's text. Rewriting a query to add `GRAPH ?g` would have changed what the
+  user asked.
+- Withholding the flag when the query says `FROM`. Stripping comments, literals
+  and IRIs with a *single* alternation regex rather than successive replaces:
+  one scan takes whichever construct opens first and consumes it whole, so a
+  `#` inside a literal and a quote inside a comment both behave.
+- Checking the whole suite before and reasoning about which failures were mine.
+  Three tests fail at HEAD (`link-kind`, `graph-visibility`, and a
+  `legal-queries` fixture whose turtle slice loses its `rdfs:` prefix
+  declaration); none touch the query path.
+
+What did not:
+
+- `node` is not on the host, so nothing could be verified without
+  `docker compose exec dev`. Planning assumed oxigraph might reject `FROM`
+  combined with the union flag; the tests showed the question never arises,
+  because the flag is withheld exactly then.
+
+Rule: when a store keeps everything in named graphs, the default graph is a
+design decision, not a default. Say so in the engine, or every query silently
+answers "no findings".
+
 ## 2026-08-14 — a blank node stringified into the UI
 
 Task: the legal projection must not track blank nodes; dereference them instead.
@@ -1054,6 +1087,40 @@ Worth remembering:
 - The host has no `node` at all (`app/node_modules` came from a container), so
   the build could not be verified locally — worth checking before planning a
   local verification step.
+
+## 2026-08-28 — per-branch Pages previews, and why deploy-pages cannot do it
+
+Task: publish PR previews at `ioggstream.github.io/d3sign/<branch>/`.
+
+- `actions/deploy-pages` replaces the **whole** site with one artifact; a Pages
+  site has exactly one deployment. Subpath previews are structurally impossible
+  with it — they require the branch source (`gh-pages`) instead, which is a
+  repo-settings change, not just a workflow change.
+- Publishing main to the root while keeping preview directories needs a record
+  of what to spare. A `.previews` manifest at the branch root is enough: wipe
+  every top-level entry except `.git`, the markers, and the listed dirs.
+- **`set -euo pipefail` + `grep` in a pipeline is a trap.** `find … | grep -vxF … | xargs rm` aborts the job whenever grep drops every line — which is the
+  normal case on the first deploy and whenever only previews exist. Wrap it:
+  `| { grep -vxF -- "$keep" || true; } |`. Caught only by actually running the
+  script; the dry run and zizmor both said fine.
+- Fork pull requests get a read-only token, so any gh-pages push job needs
+  `github.event.pull_request.head.repo.full_name == github.repository`.
+  `pull_request_target` would "fix" it by running fork code with a write token —
+  do not.
+- yamlfmt (`max_line_length: 60`) mangles a folded `>-` `if:` block, splitting
+  `!=` and `==` onto their own lines. A single-line `if: ${{ … }}` wraps far
+  more readably. Both are semantically identical; only one is reviewable.
+
+Testing without pushing:
+
+- `act` validated all four gates (`push` main, PR synchronize, PR closed, fork
+  PR) via `-n` with hand-written `-e` payloads. Note act pads job labels
+  (`[pages/build  ]`), so a `\[pages/build\]` grep silently matches nothing — it
+  looked like the job was skipped when it had run fine.
+- For the shell logic, parsing the `run:` blocks straight out of the workflow
+  YAML and executing them against a local bare repo (substituting only the push
+  URL) tested the real code end to end: first deploy, two previews, main
+  redeploy, close, close-again.
 
 Last 24h · these are independent characteristics of your usage, not a breakdown
 68% of your usage came from subagent-heavy sessions

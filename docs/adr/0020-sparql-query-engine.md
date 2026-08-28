@@ -60,6 +60,29 @@ exposed `getQuads`, `getSubjectQuads` and
   that the one place data and view diverge) — queries
   follow the pane. A query narrows with `GRAPH ?g`.
 
+- [x] A pattern outside any `GRAPH` block matches
+  the **union of every loaded graph**. Nothing is
+  ever written to the default graph — knowledge
+  bases load with `to_graph_name`, document quads
+  carry their own graph name — so without the union
+  a generic `SELECT * WHERE { ?s ?p ?o }` returns
+  zero rows. That reads as "no findings", the same
+  silent failure as an unloaded knowledge base.
+
+- [x] The union is **off when the query declares
+  its own dataset** with `FROM` or `FROM NAMED`.
+  Overriding a dataset the user wrote out would
+  change the meaning of their query, for the same
+  reason no implicit `LIMIT` is injected.
+
+- [x] The union is **always on and has no control
+  of its own**. The empty default graph is an
+  artifact of how the store is loaded, not a choice
+  the user made, and SPARQL already offers the
+  explicit controls: `GRAPH ?g` to scope a pattern,
+  `FROM` to override the dataset. A switch left off
+  would bring back the zero-row result.
+
 - [x] Knowledge bases get their own **Sources** chip
   rather than a row in the Graphs chip. The Graphs
   checkbox means *draw this*; this one means *make
@@ -142,6 +165,9 @@ Pros:
   `app/scripts/build-d3fend-*.py` reproducible for the
   first time; they took a path that was not in the
   repo.
+- A generic query is answerable at all, and the
+  canned queries and the `GRAPH ?g` idiom are
+  unchanged by the union.
 - A further knowledge base is a file in
   `app/public/kg/`, an entry in `knowledgeBases.js`
   and some `.rq` files. No engine, worker or UI change.
@@ -174,6 +200,24 @@ Cons:
 - Two prefix sets to keep straight, and the reason is
   a quirk of n3's Writer rather than anything about
   RDF.
+- A property path outside a `GRAPH` block now walks
+  across graph boundaries, so `rdfs:subClassOf*`
+  can chain a document triple onto an ontology one.
+  That is usually what was wanted, but it is no
+  longer true that a path stays inside one graph.
+- Outside `GRAPH ?g` there is no `?g` to filter on,
+  so a bare pattern cannot tell a document triple
+  from an ontology one. Telling them apart still
+  needs a `GRAPH` block and the
+  `FILTER(!STRSTARTS(STR(?g), STR(K:)))` idiom.
+- The dataset no longer matches a plain SPARQL
+  endpoint. A bare query that works here returns
+  nothing against a store holding the same data in
+  named graphs with no union.
+- The union sees only the knowledge bases already
+  ticked in the Sources chip. A bare query names no
+  `K:` graph, so the auto-load has nothing to
+  trigger on.
 
 ## DONTREADME
 
@@ -186,6 +230,15 @@ before trusting them.
   (`createQueryEngine(oxigraph)`); the worker is
   `queryWorker.js`; the main-thread façade is
   `queryClient.js`.
+- The union is one option on `store.query()`:
+  `use_default_graph_as_union`, available since
+  oxigraph 0.4. `declaresDataset()` in
+  [queryEngine.js](../../app/src/query/queryEngine.js)
+  withholds it when the query text says `FROM`,
+  after stripping comments, literals and IRIs so
+  the word is not matched inside one. `countGraph`
+  and the materialization update name their graph
+  explicitly and are unaffected.
 - `app/test/query-engine.test.js` runs real SPARQL
   under node against a ~10-triple fixture ontology, not
   the 3.6 MB file.
