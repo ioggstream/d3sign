@@ -349,6 +349,34 @@ Plan
 4%
 d3fend-expert
 
+## 2026-08-28 — the results table had no exit, and the clipboard helper was trapped in main.js
+
+"A button to copy SPARQL results as a table" is two questions. The format one has
+a plain answer: TSV. Excel, Sheets and LibreOffice all turn tab-separated
+clipboard text into real cells, and TSV needs no quoting rules, while a markdown
+pipe table pastes into a spreadsheet as one blob. The one real hazard is a
+literal holding a tab or a newline — on paste it would become an extra cell or an
+extra row, so `resultTsv` flattens those to a space. Copy what is *shown* (short
+CURIEs, quoted literals) so the clipboard matches the screen, and copy only the
+rows `ROW_CAP` kept, which is what the warning above the table already promises.
+
+The second question was where the button could live. `copyToClipboard` and
+`wireCopyButton` were private to [main.js](app/src/main.js), but the results
+table is built inside [resultsView.js](app/src/query/resultsView.js), which
+`main.js` does not wire per element. Rather than thread a callback through
+`renderQueryResults`, the two helpers moved to
+[clipboard.js](app/src/clipboard.js) unchanged. A helper that three panes use is
+not a detail of the module that happened to need it first.
+
+Note for the next button: the `copied` / `copy-failed` feedback styles are
+attached to `.copy-button`, not to the newer `.btn` primitive, so a button that
+wants the "Copied!" flash must still carry the old class name.
+
+Environment: `node` is not on the host PATH here; the suite runs in the
+`node:24-alpine` image over the mounted `app/` directory. Three failures in
+`filter-panel`, `legal-queries` and `link-kind` predate this change and touch
+none of its files.
+
 ## 2026-08-08 — Ctrl+Space can be unavailable on Linux due to IME/global shortcut capture
 
 When completion is wired correctly in CodeMirror but Ctrl+Space does nothing,
