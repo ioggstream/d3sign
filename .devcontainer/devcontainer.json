@@ -1,6 +1,8 @@
 {
   "name": "d3sign",
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-24-bookworm",
+  // mcr.microsoft.com/devcontainers/javascript-node:4-24-bookworm
+  // The previous :1-24-bookworm tag is no longer published.
+  "image": "mcr.microsoft.com/devcontainers/javascript-node@sha256:df5c21fdbb9cfa3ee2aae7f05499af7acf073597d250d07476df2d8515c4b853",
   "customizations": {
     "vscode": {
       "extensions": [

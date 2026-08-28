@@ -1018,6 +1018,43 @@ are trying to inspect: observe with a MutationObserver installed beforehand, or 
 `style.top` — CodeMirror parks a tooltip it decides to hide at `-10000px`, which is
 a different failure from a tooltip that was never created.
 
+## 2026-08-28 — first CI: build + GitHub Pages deploy, zizmor-clean
+
+Task: add a workflow that builds `app/` and publishes it to GitHub Pages, with
+zizmor passing and remote images pinned by sha256.
+
+Worth remembering:
+
+- The tracked [app/.npmrc](app/.npmrc) interpolates
+  `//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}`. npm aborts with *"Failed
+  to replace env in config"* when that variable is unset — so every `npm ci` /
+  `npm test` step needs `GITHUB_TOKEN: ${{ github.token }}` in its `env:`, even
+  though no `@ioggstream/*` package is currently a dependency.
+- `actions/configure-pages` needs `pages: read` on the job; the starter
+  workflows hide this by granting `pages: write` repo-wide at the top level.
+  Its `base_path` output is `"/<repo>"` for a project page and `""` for a user
+  page — the `process.env.VITE_BASE || './'` fallback in
+  [app/vite.config.js](app/vite.config.js) already handles both.
+- Do **not** set `cache: npm` on `actions/setup-node` in a workflow that
+  publishes: zizmor's `cache-poisoning` audit flags it. `npm ci` is cheap here.
+- zizmor needs `permissions: {}` at the top level plus per-job least privilege
+  (`excessive-permissions`), `persist-credentials: false` on checkout
+  (`artipacked`), and full-commit-SHA `uses:` pins (`unpinned-uses`). Values
+  reach `run:` through `env:`, never `${{ }}` inline (`template-injection`).
+- `mcr.microsoft.com/devcontainers/javascript-node:1-24-bookworm` in
+  [.devcontainer/devcontainer.json](.devcontainer/devcontainer.json) was
+  **unpullable** — the `1-*` variant no longer publishes node 24. Pinning by
+  digest is what surfaced the dead tag; the live equivalent is `4-24-bookworm`.
+- Pin to the *manifest list* digest (`docker buildx imagetools inspect <ref>`,
+  the top-level `Digest:`), not a per-platform one, or the image stops being
+  multi-arch. For MCR, a plain
+  `curl -D- .../v2/<repo>/manifests/<tag>` with the OCI-index `Accept` header
+  returns `docker-content-digest`; its `tags/list` endpoint is also the quickest
+  way to check a tag still exists.
+- The host has no `node` at all (`app/node_modules` came from a container), so
+  the build could not be verified locally — worth checking before planning a
+  local verification step.
+
 Last 24h · these are independent characteristics of your usage, not a breakdown
 68% of your usage came from subagent-heavy sessions
 Each subagent runs its own requests. Be deliberate about spawning them — and consider configuring a cheaper model for simpler subagents.
