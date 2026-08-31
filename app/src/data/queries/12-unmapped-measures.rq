@@ -8,11 +8,11 @@
 # This query finds the raw material for that edit: real controls in the design that
 # the alignment has no opinion about yet.
 SELECT DISTINCT ?node ?label ?class WHERE {
+  { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
   GRAPH ?g {
     ?node a ?class .
     OPTIONAL { ?node rdfs:label ?label }
   }
-  FILTER(!STRSTARTS(STR(?g), STR(K:)))
   GRAPH K:d3fend { ?class rdfs:subClassOf* d3f:DefensiveTechnique }
 
   FILTER NOT EXISTS {

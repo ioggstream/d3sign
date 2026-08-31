@@ -9,8 +9,8 @@
 # d3f:DigitalArtifact. That transitive step is what the precomputed projection
 # structurally cannot do, and the reason for querying the ontology at all.
 SELECT DISTINCT ?measure ?measureLabel ?verb ?appliesTo ?d3fendId WHERE {
+  { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
   GRAPH ?g { ?this a ?class }
-  FILTER(!STRSTARTS(STR(?g), STR(K:)))
 
   GRAPH K:d3fend {
     ?class rdfs:subClassOf* ?appliesTo .

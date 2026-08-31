@@ -9,8 +9,8 @@
 # holds. Without rdfs:subClassOf* this returns only what happens to have been mapped
 # at precisely the class the diagram used.
 SELECT DISTINCT ?citation ?obLabel ?strength ?rationale ?definition WHERE {
+  { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
   GRAPH ?g { ?this a ?class }
-  FILTER(!STRSTARTS(STR(?g), STR(K:)))
 
   GRAPH K:d3fend { ?class rdfs:subClassOf* ?mapped }
 

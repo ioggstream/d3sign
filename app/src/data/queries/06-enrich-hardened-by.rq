@@ -11,10 +11,10 @@
 # than nodes: the drawing gains the relations that were only implicit in D3FEND.
 CONSTRUCT { ?artifact d3f:hardened-by ?measure }
 WHERE {
+  { SELECT DISTINCT ?ag WHERE { GRAPH ?ag {} FILTER(!STRSTARTS(STR(?ag), STR(K:))) } }
   GRAPH ?ag { ?artifact a ?artifactClass }
-  FILTER(!STRSTARTS(STR(?ag), STR(K:)))
+  { SELECT DISTINCT ?mg WHERE { GRAPH ?mg {} FILTER(!STRSTARTS(STR(?mg), STR(K:))) } }
   GRAPH ?mg { ?measure a ?measureClass }
-  FILTER(!STRSTARTS(STR(?mg), STR(K:)))
   FILTER(?artifact != ?measure)
 
   GRAPH K:d3fend {
