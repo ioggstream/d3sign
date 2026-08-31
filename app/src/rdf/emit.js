@@ -24,6 +24,14 @@ export const PREFIXES = {
   rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
   G: 'urn:d3fend-graph:',
   E: 'urn:d3fend-graph:enrichment:',
+  // Minted D3FEND neighbourhoods (rdf/neighbourGraph.js). `G:` is a proper prefix
+  // of this one, which looks fragile and is not: `curieForGraphName` sorts by
+  // longest base first, and n3's Writer builds one backtracking alternation of
+  // every namespace, so `urn:d3fend-graph:nbr:db` fails as `G:` + `nbr:db` (a ":"
+  // is not a legal local name) and retries as `N:` + `db`. What it will *not* do
+  // is abbreviate a local name outside [_a-zA-Z0-9][-_a-zA-Z0-9]* — which is why
+  // neighbourGraph.js joins with "-" and rewrites the "." of an ATT&CK id.
+  N: 'urn:d3fend-graph:nbr:',
   // Writable by a diagram — see TYPING_PREFIXES.
   dpv: 'https://w3id.org/dpv#',
   pd: 'https://w3id.org/dpv/pd#',

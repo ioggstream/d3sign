@@ -17,13 +17,15 @@ import { displayIdOf } from './rdf/graphModel.js';
  * origin — an enrichment resource, an IRI hand-written in the TriG pane, or a
  * d3f: class.
  *
- * `PREFIXES.E` starts with `PREFIXES.G`, and `displayIdOf` strips whichever it
- * matches first, so enrichment has to be excluded before the graph-local test
- * or `enrichment:foo` gets looked up as if someone had typed it.
+ * `PREFIXES.E` and `PREFIXES.N` both start with `PREFIXES.G`, and `displayIdOf`
+ * strips whichever it matches first, so they have to be excluded before the
+ * graph-local test or `enrichment:foo` — or a minted `nbr:db-Database` — gets
+ * looked up as if someone had typed it.
  */
 export function mermaidIdOf(iri) {
   if (typeof iri !== 'string') return null;
-  if (!iri.startsWith(PREFIXES.G) || iri.startsWith(PREFIXES.E)) return null;
+  if (!iri.startsWith(PREFIXES.G)) return null;
+  if (iri.startsWith(PREFIXES.E) || iri.startsWith(PREFIXES.N)) return null;
   return displayIdOf(iri);
 }
 

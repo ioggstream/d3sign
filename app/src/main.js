@@ -35,6 +35,7 @@ import { applyPanelFontSize, closeNodePanel, renderNodePanel } from './viz/nodeP
 import { renderEdgePanel } from './viz/edgePanel.js';
 import { renderSelectionBox } from './viz/selectionBox.js';
 import { loadEnrichmentTurtle, ENRICHMENT_GRAPH } from './rdf/enrichment.js';
+import { mergeQuads, neighbourGraphName, neighbourQuads, sanitizeGraphId } from './rdf/neighbourGraph.js';
 import { parseTrigText } from './rdf/parseTrig.js';
 import { createColumnLayout } from './layout/columns.js';
 import { wireCopyButton } from './clipboard.js';
@@ -291,15 +292,72 @@ function goToEdgeMermaidSource(data) {
 }
 
 /**
- * What the info panel may do to the diagram. Empty for a node the diagram did
+ * The graph id the last mint used, so the prompt offers it again.
+ *
+ * Adding a second node to the neighbourhood you just built is the common case and
+ * defaulting to the node's own id would make the user retype the shared name
+ * every time. Session-scoped on purpose: it is a convenience, not a setting.
+ */
+let lastNeighbourGraphId = null;
+
+/**
+ * Mints a node's D3FEND neighbourhood into a named graph the user names, and
+ * reports where it went — or null if nothing was added.
+ *
+ * Several nodes can share one graph, which is why the id is prompted for and why
+ * the quads are *merged*: the instances are keyed by graph and class
+ * (rdf/neighbourGraph.js), so a class two nodes both neighbour is one resource
+ * with two links, and re-minting the same node adds nothing.
+ *
+ * The graph is deliberately kept out of `knownGraphNames`: that set drives the
+ * stale sweep in `handleTextChange`, which would delete it on the next keystroke
+ * in the mermaid pane. The enrichment graph is the precedent for a contribution
+ * that outlives an edit; the Graphs panel's "✕" is how this one goes away.
+ */
+async function mintNeighbourGraph(nodeData, localName) {
+  const suggested = lastNeighbourGraphId ?? sanitizeGraphId(mermaidIdOf(nodeData.id) || localName);
+  const answer = window.prompt(`Add the neighbours of ${localName} to which graph?`, suggested);
+  if (answer === null) return null;
+
+  const graphId = sanitizeGraphId(answer);
+  lastNeighbourGraphId = graphId;
+  const graphName = neighbourGraphName(graphId);
+  const existing = graphContributions.get(graphName);
+  const { quads, added } = mergeQuads(existing?.quads, neighbourQuads(nodeData.id, localName, graphId));
+  if (!quads.length) return null;
+
+  const label = curieForGraphName(graphName);
+  graphContributions.set(graphName, {
+    name: graphName,
+    label,
+    description: `D3FEND neighbourhood (${quads.length} triples)`,
+    // Not a kind of its own: the Graphs panel groups everything that is not
+    // enrichment with the diagrams, and 'query' already means "added by the user,
+    // removable" there.
+    kind: 'query',
+    quads,
+  });
+  visibleGraphs.add(graphName);
+  await applyGraphVisibility();
+
+  const where = turtleDirty ? `${label} — the TriG pane is edited, press Regenerate to see it` : label;
+  return added ? `${added} new in ${where}` : `already in ${where}`;
+}
+
+/**
+ * What the info panel may do. `onAddRelation` is absent for a node the diagram did
  * not write — a d3f: class, an enrichment resource, an IRI typed in the TriG
  * pane — which is what keeps the "+" off rows there is nothing to attach to
  * (docs/adr/0018-add-defensive-measure.md).
+ *
+ * `onMintNeighbours` is not gated the same way: it writes RDF and never mermaid,
+ * so a node with no mermaid origin is exactly where it earns its keep.
  */
 function nodePanelActions(nodeData) {
+  const actions = { onMintNeighbours: (localName) => mintNeighbourGraph(nodeData, localName) };
   const id = mermaidIdOf(nodeData.id);
-  if (!id || !editorPane.hasSource(id)) return {};
-  return { onAddRelation: (rel) => editorPane.addRelation(id, rel) };
+  if (!id || !editorPane.hasSource(id)) return actions;
+  return { ...actions, onAddRelation: (rel) => editorPane.addRelation(id, rel) };
 }
 
 /**
@@ -559,9 +617,27 @@ function renderGraphsPanel() {
         applyGraphVisibility();
       },
       query: graphQuery,
+      onDelete: removeGraphContribution,
     },
   );
   graphsChip.setCount(visibleGraphs.size, graphContributions.size);
+}
+
+/**
+ * Drops a user-added graph from the document for good — the counterpart of
+ * `addConstructAsGraph` and `mintNeighbourGraph`.
+ *
+ * `store.replaceGraph` has to be called here rather than left to
+ * `applyGraphVisibility`: that loop walks the contributions that still exist, so
+ * a graph removed from the map would keep its quads in the store forever.
+ */
+async function removeGraphContribution(graphName) {
+  if (!graphContributions.delete(graphName)) return;
+  visibleGraphs.delete(graphName);
+  knownGraphNames.delete(graphName);
+  store.replaceGraph(graphName, []);
+  saveVisibleGraphs(visibleGraphs, knownGraphNames);
+  await applyGraphVisibility();
 }
 
 /**

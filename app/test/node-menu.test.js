@@ -209,6 +209,14 @@ describe('mermaidIdOf', () => {
     expect(mermaidIdOf(`${G}enrichment:dev-pk`)).toBe(null);
   });
 
+  it('rejects minted neighbourhood instances, whose prefix extends it too', () => {
+    // Nobody typed `nbr:db-Database` in the source, so it must not be looked up
+    // there — the same trap enrichment falls into, and the reason `N:` cannot be
+    // tested with a bare startsWith(G).
+    expect(mermaidIdOf(`${G}nbr:db-Database`)).toBe(null);
+    expect(mermaidIdOf(`${G}nbr:db`)).toBe(null);
+  });
+
   it('rejects IRIs from outside the diagram', () => {
     expect(mermaidIdOf('http://d3fend.mitre.org/ontologies/d3fend.owl#Host')).toBe(null);
     expect(mermaidIdOf(undefined)).toBe(null);

@@ -1,5 +1,6 @@
 import { PREFIXES } from '../rdf/emit.js';
 import { ADDED_MARKER } from '../editor/insertMeasure.js';
+import { neighbourClasses } from '../rdf/neighbourGraph.js';
 import { shortLabel } from '../rdf/graphModel.js';
 import { termOf } from '../editor/vocabularies.js';
 import d3fendMetadata from '../data/d3fend-metadata.json';
@@ -185,6 +186,65 @@ function renderRelationSection(title, relations, host, onAdd) {
 }
 
 /**
+ * What the "mint neighbours" button is about to do, as a sentence — including the
+ * reason it is disabled, which is otherwise indistinguishable from a broken button.
+ *
+ * Exported for the tests, like `addButtonTitle`: it is the part that is not DOM.
+ */
+export function mintButtonTitle(localName, count) {
+  if (!count) {
+    return (
+      `${resolveLabel(localName)} (${localName}) has no neighbours in its own D3FEND branch. ` +
+      'Defensive measures live in another branch — use the "+" on a Defense row for those.'
+    );
+  }
+  return (
+    `Add ${count} instance${count === 1 ? '' : 's'} — one per D3FEND class neighbouring ` +
+    `${localName} in the same branch — to a named graph you pick, each linked to this node by ` +
+    'the property the ontology states between their classes. Naming a graph another node ' +
+    'already used adds to it instead of duplicating what is there. The diagram source is not ' +
+    'touched; remove the graph again from the Graphs panel.'
+  );
+}
+
+/**
+ * The button that mints a node's neighbourhood into a named graph.
+ *
+ * One button per D3FEND class of the node, not one per relation row: the whole
+ * point is getting the neighbourhood in a single move. Like `renderAddButton` it
+ * reports in place rather than re-rendering, which would close every "Show more"
+ * the user had opened — but unlike it, the button stays live afterwards. A node
+ * can belong to more than one neighbourhood graph, so "already done" is not a
+ * state this button has.
+ */
+function renderMintButton(localName, host, onMint) {
+  const count = neighbourClasses(localName).length;
+  const idle = count ? `Add ${count} neighbours to a graph` : 'No neighbours in this branch';
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'node-panel-mint';
+  button.textContent = idle;
+  button.title = mintButtonTitle(localName, count);
+  button.disabled = !count;
+
+  const status = document.createElement('span');
+  status.className = 'node-panel-mint-status';
+
+  button.addEventListener('click', async () => {
+    button.disabled = true;
+    // Whatever the outcome, the button goes back to being pressable: the next
+    // click is a legitimate "and also add it to that other graph".
+    const outcome = await onMint(localName);
+    button.disabled = false;
+    status.textContent = outcome ? `✓ ${outcome}` : '';
+  });
+
+  host.appendChild(button);
+  host.appendChild(status);
+}
+
+/**
  * Splits a class's relations into the panel's three sections.
  *
  * `defense` is only what the metadata build tagged against a
@@ -318,13 +378,22 @@ export function applyPanelFontSize(host, size) {
  * it did. The panel is handed the callback rather than the editor: the view is not allowed
  * to know mermaid exists (docs/adr/0014-graph-view-from-rdf-only.md), so the
  * shell is what connects the two (docs/adr/0018-add-defensive-measure.md).
+ *
+ * `actions.onMintNeighbours(localName)` — when given — puts one button per D3FEND
+ * class below its relation rows, minting that class's same-branch neighbourhood
+ * into a named graph. It resolves to a sentence saying what happened, or a falsy
+ * value when nothing was added (the user cancelled, or there was nothing new).
+ * Unlike `onAddRelation` it does not touch the diagram source, so it is offered
+ * for nodes that were never written in mermaid.
  */
 export function renderNodePanel(host, nodeData, store, actions = {}) {
   renderPanelFrame(host, nodeData.label?.split('\n')[0] || nodeData.id);
 
   const quads = store.getSubjectQuads(nodeData.id);
   const classNames = d3fClassLocalNames(quads);
-  const metadataEntries = classNames.map((name) => d3fendMetadata[name]).filter(Boolean);
+  const metadataEntries = classNames
+    .map((localName) => ({ localName, entry: d3fendMetadata[localName] }))
+    .filter(({ entry }) => entry);
   const qnames = typeQnames(quads);
 
   // A type in a vocabulary d3fend-metadata.json does not cover gets its definition
@@ -365,7 +434,7 @@ export function renderNodePanel(host, nodeData, store, actions = {}) {
     host.appendChild(section);
   }
 
-  for (const entry of metadataEntries) {
+  for (const { localName, entry } of metadataEntries) {
     const section = document.createElement('div');
     section.className = 'node-panel-d3fend';
 
@@ -398,6 +467,10 @@ export function renderNodePanel(host, nodeData, store, actions = {}) {
     renderRelationSection('Attack', attack, section, actions.onAddRelation);
     renderRelationSection('Defense', defense, section, actions.onAddRelation);
     renderRelationSection('Relations', related, section, actions.onAddRelation);
+
+    // Below the rows, because it is about all of them at once. Offered even when
+    // the node is absent from the mermaid source — nothing here writes mermaid.
+    if (actions.onMintNeighbours) renderMintButton(localName, section, actions.onMintNeighbours);
 
     host.appendChild(section);
   }

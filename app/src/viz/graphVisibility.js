@@ -37,6 +37,19 @@ export function graphMatchesQuery(entry, query) {
 }
 
 /**
+ * Whether a graph can be removed from the document, as opposed to merely hidden.
+ *
+ * Only what the user added: a CONSTRUCT result, a minted neighbourhood
+ * (`kind: 'query'`), or a graph typed into the TriG pane (`'manual'`). A diagram
+ * graph is regenerated from the mermaid source on the next keystroke, so deleting
+ * it would be undone before the user saw it; enrichment is reloaded the same way.
+ * Those two have the checkbox and nothing else.
+ */
+export function isRemovableGraph(entry) {
+  return entry.kind === 'query' || entry.kind === 'manual';
+}
+
+/**
  * Renders a checkbox per known named graph (one per diagram, plus enrichment),
  * letting the user toggle each graph's contribution to the merged view independently.
  * The panel is titled by its filter chip, so it renders no heading of its own.
@@ -44,8 +57,17 @@ export function graphMatchesQuery(entry, query) {
  * so a bulk change costs one re-render rather than one per graph.
  * `query` narrows the list to the matching graphs, which is what the Alt+T
  * keyboard filter renders through.
+ * `onDelete(name)` — when given — puts a "✕" on the graphs the user added, which
+ * is the only way an added graph leaves the document short of editing the TriG
+ * pane by hand.
  */
-export function renderGraphPanel(host, contributions, visibleGraphs, onToggle, { bulkHost, onSetAll, query } = {}) {
+export function renderGraphPanel(
+  host,
+  contributions,
+  visibleGraphs,
+  onToggle,
+  { bulkHost, onSetAll, query, onDelete } = {},
+) {
   host.innerHTML = '';
 
   if (bulkHost && onSetAll) {
@@ -76,6 +98,17 @@ export function renderGraphPanel(host, contributions, visibleGraphs, onToggle, {
     label.textContent = ` ${entry.label} `;
     label.prepend(checkbox);
     item.appendChild(label);
+
+    if (onDelete && isRemovableGraph(entry)) {
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'graph-visibility-remove';
+      remove.textContent = '✕';
+      remove.title = `Remove ${entry.label} from the document — its triples go from the TriG pane, the drawing and query scope. Unticking the box only hides it.`;
+      remove.addEventListener('click', () => onDelete(entry.name));
+      item.appendChild(remove);
+    }
+
     list.appendChild(item);
   };
 
