@@ -39,8 +39,7 @@ hand-written queries; uneven gains.
 
 17 sites in 13 `app/src/data/queries/*.rq`: each
 `FILTER(!STRSTARTS(STR(?g), STR(K:)))` became a
-preceding `{ SELECT DISTINCT ?g WHERE { GRAPH ?g {}
-FILTER(...) } }`. Variables `?g` (12), `?dg` (2),
+preceding `{ SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(...) } }`. Variables `?g` (12), `?dg` (2),
 `?tg`, `?ag`, `?mg`; `00` and `04` need it inside
 `FILTER NOT EXISTS`; `07` has none. `FROM NAMED` is
 unusable: `declaresDataset()` in
