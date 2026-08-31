@@ -112,6 +112,28 @@ function variableOrder(sparql, rows) {
   return [...seen];
 }
 
+/**
+ * Comments, literals and IRIs, in the order a scan meets them.
+ *
+ * One alternation is what makes this safe: the regex engine takes whichever
+ * construct opens first and consumes it whole, so a `#` inside a literal is
+ * eaten by the literal and a quote inside a comment is eaten by the comment.
+ * Two successive replaces would get both cases wrong.
+ */
+const QUERY_NOISE = /"""[\s\S]*?"""|'''[\s\S]*?'''|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|<[^<>"{}|^`\\\s]*>|#[^\n]*/g;
+
+/**
+ * True when the query writes out its own dataset with FROM or FROM NAMED.
+ *
+ * Such a query gets no union default graph: it said which graphs it wants, and
+ * silently widening that would change what it means — the same reason no
+ * implicit LIMIT is injected. The noise is stripped first so the word FROM
+ * inside a literal, a comment or an IRI does not count.
+ */
+function declaresDataset(sparql) {
+  return /\bFROM\b/i.test(sparql.replace(QUERY_NOISE, ' '));
+}
+
 function loadInto(oxigraph, store, text, format, graphName) {
   const options = { format };
   if (graphName) options.to_graph_name = oxigraph.namedNode(graphName);
@@ -229,12 +251,18 @@ export function createQueryEngine(oxigraph) {
     /**
      * Runs a query and flattens whatever came back.
      *
+     * A pattern outside any GRAPH block matches the union of every loaded graph.
+     * Nothing is ever written to the default graph — knowledge bases load with
+     * `to_graph_name`, document quads carry their own graph name — so without
+     * `use_default_graph_as_union` a plain `SELECT * WHERE { ?s ?p ?o }` returns
+     * zero rows, which reads as "no findings".
+     *
      * `truncated` is the honest signal that the cap bit: the alternative is a
      * table that looks like a complete answer and is not.
      */
     query(sparql, { maxRows = MAX_ROWS } = {}) {
       const started = now();
-      const raw = store.query(sparql);
+      const raw = store.query(sparql, declaresDataset(sparql) ? {} : { use_default_graph_as_union: true });
       const ms = now() - started;
 
       if (typeof raw === 'boolean') return { kind: 'ask', boolean: raw, ms };

@@ -152,7 +152,9 @@ describe('createQueryEngine', () => {
     expect(built.quads.length).toBe(3);
     expect(built.quads[0].predicate.value).toContain('hardened-by');
 
-    expect(run('CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o . FILTER(false) }')).toMatchObject({
+    // Empty because nothing states that predicate — not because the pattern is
+    // outside a GRAPH block, which now matches the union of every loaded graph.
+    expect(run('CONSTRUCT { ?s ?p ?o } WHERE { ?s d3f:no-such-predicate ?o }')).toMatchObject({
       kind: 'construct',
       quads: [],
     });
@@ -213,5 +215,68 @@ describe('createQueryEngine', () => {
 
   it('reports a syntax error with a position', () => {
     expect(() => engine.query('SELECT ?s WHERE { ?s ?p')).toThrow();
+  });
+});
+
+/**
+ * The union default graph.
+ *
+ * Every triple this app loads lands in a named graph, so without the union a
+ * query written the way SPARQL is usually taught returns zero rows — which reads
+ * as "no findings" rather than as a mistake.
+ */
+describe('a pattern outside any GRAPH block', () => {
+  const countOf = (result) => Number(result.rows[0].n.value);
+
+  it('sees the document and the knowledge base at once', () => {
+    const all = countOf(run('SELECT (COUNT(*) AS ?n) WHERE { ?s ?p ?o }'));
+    const doc = countOf(run(`SELECT (COUNT(*) AS ?n) WHERE { GRAPH <${DOC}> { ?s ?p ?o } }`));
+    const kg = countOf(run(`SELECT (COUNT(*) AS ?n) WHERE { GRAPH <${KG}> { ?s ?p ?o } }`));
+    expect(doc).toBeGreaterThan(0);
+    expect(kg).toBeGreaterThan(0);
+    expect(all).toBe(doc + kg);
+  });
+
+  it('answers ASK and CONSTRUCT the same way', () => {
+    expect(run('ASK { ?s a d3f:Password }').boolean).toBe(true);
+    const built = run('CONSTRUCT { ?s a d3f:Password } WHERE { ?s a d3f:Password }');
+    expect(built.quads).toHaveLength(1);
+  });
+
+  it('walks a property path across the graph boundary', () => {
+    const result = run(`
+      SELECT ?measure WHERE {
+        ?node a ?class .
+        ?class rdfs:subClassOf* ?super .
+        ?measure d3f:hardens ?super
+      }
+    `);
+    // pw-store is a Password in the document; the chain to Credential and on to
+    // its measures lives in the ontology graph.
+    const measures = [...new Set(result.rows.map((r) => r.measure.value.split('#')[1]))].sort();
+    expect(measures).toEqual(['CredentialRotation', 'CredentialScrubbing', 'MultiFactorAuthentication']);
+  });
+
+  it('still binds ?g inside a GRAPH block, so the canned queries are untouched', () => {
+    const result = run('SELECT DISTINCT ?g WHERE { GRAPH ?g { ?s ?p ?o } }');
+    expect(result.rows.map((r) => r.g.value).sort()).toEqual([KG, DOC].sort());
+  });
+});
+
+describe('a query that declares its own dataset', () => {
+  it('keeps the graphs its FROM names and nothing else', () => {
+    const scoped = run(`SELECT ?s FROM <${DOC}> WHERE { ?s a ?class }`);
+    expect(scoped.rows.map((r) => r.s.value).sort()).toEqual([
+      'urn:d3fend-graph:host-1',
+      'urn:d3fend-graph:pw-store',
+    ]);
+  });
+
+  it('is not fooled by the word FROM inside a literal or a comment', () => {
+    // Both of these are generic queries: the union stays on.
+    const inLiteral = run('SELECT (COUNT(*) AS ?n) WHERE { ?s ?p ?o FILTER(STR(?o) != "FROM <x>") }');
+    const inComment = run('# not FROM anywhere\nSELECT (COUNT(*) AS ?n) WHERE { ?s ?p ?o }');
+    expect(Number(inLiteral.rows[0].n.value)).toBeGreaterThan(0);
+    expect(Number(inComment.rows[0].n.value)).toBeGreaterThan(0);
   });
 });

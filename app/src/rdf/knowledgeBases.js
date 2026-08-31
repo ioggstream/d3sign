@@ -19,10 +19,14 @@
  * (docs/adr/0025-legal-knowledge-bases.md):
  *
  *   - A hierarchy never crosses a named graph. A SPARQL property path is evaluated
- *     inside one GRAPH binding, so `skos:broader+` over a vocabulary split across
- *     two graphs stops at the boundary and returns a shorter, plausible-looking
- *     answer. Everything a path has to walk ships in one graph; links *between*
- *     graphs are one hop only.
+ *     inside one GRAPH binding, so `skos:broader+` written inside a `GRAPH ?g`
+ *     block over a vocabulary split across two graphs stops at the boundary and
+ *     returns a shorter, plausible-looking answer. Outside any GRAPH block the
+ *     path runs over the union of every loaded graph and does cross, but a
+ *     canned query cannot rely on that: it is the queries that need `?g` to tell
+ *     document triples from ontology ones that name a graph, and those are
+ *     exactly the ones a split would break. Everything a path has to walk ships
+ *     in one graph; links *between* graphs are one hop only.
  *   - Prefixes live in query/queryPrefixes.js, not on the entry. `prefixes` here is
  *     merged only when the base is loaded, which would make a query parse or fail
  *     depending on which checkboxes are ticked. It stays as an extension point for
