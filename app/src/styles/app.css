@@ -219,13 +219,13 @@ body {
 
 /* Overlays. One recipe for every surface that floats over the chrome, so two of
    them on screen together read as the same material. */
-.filter-popover, .graph-context-menu, .node-panel {
+.filter-popover, .graph-context-menu, .graph-node-tooltip, .node-panel {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
   border-radius: var(--r-md);
   color: var(--c-text);
 }
-.filter-popover, .graph-context-menu { box-shadow: var(--e-menu); }
+.filter-popover, .graph-context-menu, .graph-node-tooltip { box-shadow: var(--e-menu); }
 .node-panel { box-shadow: var(--e-modal); }
 
 /* One ring everywhere, including on the elements that had no focus style at all —
@@ -462,7 +462,7 @@ main#app-grid {
    Code surfaces: the mermaid editor, the TriG pane, the SPARQL editor
    --------------------------------------------------------------------------- */
 
-#editor-host, #turtle-host, #mermaid-host, #cy-host { flex: 1; min-height: 0; overflow: auto; }
+#editor-host, #turtle-host, #mermaid-host { flex: 1; min-height: 0; overflow: auto; }
 /* Dark on purpose, and bounded like one deliberate object: the host carries the
    editor's own background so its chrome (the search panel, the empty space below
    the last line) does not sit on a white card. */
@@ -548,7 +548,18 @@ main#app-grid {
    --------------------------------------------------------------------------- */
 
 #graph-pane { position: relative; }
+/* Sized like the editor hosts beside it, but `hidden` where they are `auto`, and
+   that difference is load-bearing. graphPane.js watches this element with a
+   ResizeObserver and answers with `cy.resize()`, which sizes cytoscape's canvases
+   to the container's *client* box. With `overflow: auto` the two chase each other:
+   content overflows, a scrollbar appears, the client box shrinks, the canvases
+   shrink to match, the scrollbar goes away, the client box grows — the graph
+   flickers, and only stops once the pane is large enough that nothing overflows.
+   A graph canvas has nothing to scroll anyway; panning is cytoscape's job. */
 #cy-host {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
   border: 1px solid var(--c-border-subtle);
   border-radius: var(--r-md);
   background: var(--c-canvas);
@@ -588,6 +599,26 @@ main#app-grid {
   z-index: 10;
 }
 .edge-flash-error.visible { opacity: 1; }
+
+/* What the node is not saying: with `Labels: Name only` the id and the rdf:type
+   move here. Positioned by graphPane.js, `pointer-events: none` so it never takes
+   the hover from the node that opened it, and above the flash toast but below the
+   context menu — a right-click menu must never open behind a tooltip.
+
+   Deliberately sets no `display`: an author `display` outranks the UA rule for
+   `[hidden]` (see `.pane[hidden]` above), and this box lives inside the cytoscape
+   container, where one that cannot hide changes the client size `cy.resize()`
+   measures — with the pane's ResizeObserver watching, the graph then flickers. */
+.graph-node-tooltip {
+  position: absolute;
+  z-index: 15;
+  padding: var(--s-2) var(--s-3);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.graph-node-tooltip-term { color: var(--c-text-faint); }
 
 /* Right-click menu over the graph canvas: folding a container lives here, so it
    needs no hit box on the node itself. Positioned by graphPane.js. */

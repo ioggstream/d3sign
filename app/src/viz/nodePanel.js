@@ -387,7 +387,11 @@ export function applyPanelFontSize(host, size) {
  * for nodes that were never written in mermaid.
  */
 export function renderNodePanel(host, nodeData, store, actions = {}) {
-  renderPanelFrame(host, nodeData.label?.split('\n')[0] || nodeData.id);
+  // `displayId`, not the label's first line: that line is the id only while the
+  // whole stack is drawn, and in `name` mode it is the rdfs:label instead. The IRI
+  // in `id` is the last resort rather than the first fallback — a raw urn: or
+  // http: in the title tells the reader nothing.
+  renderPanelFrame(host, nodeData.displayId || nodeData.label?.split('\n')[0] || nodeData.id);
 
   const quads = store.getSubjectQuads(nodeData.id);
   const classNames = d3fClassLocalNames(quads);

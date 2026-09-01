@@ -13,6 +13,7 @@ import {
   containerIconSize,
   containerLabelOffsetX,
   containerSideGutter,
+  drawnLabel,
 } from './graphPrefs.js';
 
 /**
@@ -106,7 +107,10 @@ export function buildStyle(prefs, iconSet = null) {
     {
       selector: 'node',
       style: {
-        label: 'data(label)',
+        // Composed rather than `data(label)`: how much of a node's identity is
+        // drawn is a preference, and `drawnLabel` is the one place that decides —
+        // the container band and ELK's padding measure the same call's output.
+        label: (ele) => drawnLabel(ele.data(), prefs),
         'background-color': (ele) => nodeColor(ele),
         color: '#212529',
         width: prefs.nodeSize,

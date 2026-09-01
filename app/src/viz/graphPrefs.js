@@ -27,8 +27,19 @@ export const PREF_RANGES = {
 /** A string rather than a boolean, so a third mode stays cheap to add. */
 export const NODE_STYLES = ['color', 'icon'];
 
+/**
+ * How much of a node's identity is drawn on it: the whole stack, or only the name
+ * it goes by. A string for the same reason as `NODE_STYLES` — "the id alone" is an
+ * obvious third mode.
+ */
+export const LABEL_DETAILS = ['full', 'name'];
+
 export const DEFAULT_PREFS = {
   nodeStyle: 'color',
+  // Defaults to the whole stack — id, rdfs:label, rdf:type — because that is what
+  // the drawing has always said. `name` draws the label alone and moves the id and
+  // the type to the hover tooltip.
+  labelDetail: 'full',
   nodeSpacing: 60,
   nodeSize: 30,
   fontSize: 10,
@@ -64,6 +75,7 @@ export function normalizePrefs(prefs) {
     merged[key] = clamp(merged[key], range, DEFAULT_PREFS[key]);
   }
   if (!NODE_STYLES.includes(merged.nodeStyle)) merged.nodeStyle = DEFAULT_PREFS.nodeStyle;
+  if (!LABEL_DETAILS.includes(merged.labelDetail)) merged.labelDetail = DEFAULT_PREFS.labelDetail;
   merged.edgeLabels = Boolean(merged.edgeLabels);
   // A payload written before this key existed loads as false, which is also the
   // default — so unlike the filters, where an absent entry means "hidden", there is
@@ -128,6 +140,26 @@ export function savePrefs(prefs) {
 
 /** Gap between the container's top-left corner and whatever it draws there. */
 export const CONTAINER_INSET = 8;
+
+/**
+ * The text actually drawn on a node, from the parts viz/toCytoscape.js emits.
+ *
+ * In `full` mode it is the stacked id / rdfs:label / rdf:type the drawing has
+ * always shown. In `name` mode it is the name the node goes by — its `rdfs:label`,
+ * or its id when it has none — and the rest moves to the hover tooltip. The fold
+ * marker stays in both: it reports what the *drawing* is hiding rather than what
+ * the RDF says, and it is the only place a fold's size is shown
+ * (docs/adr/0012-fold-container-nodes.md).
+ *
+ * The single source for three callers that have to agree: the `label` property in
+ * graphStyle.js, the container band in graphPane.js, and ELK's reserved padding in
+ * layouts.js. Sizing a container's band from different text than the style draws
+ * would leave its box and the room reserved around it disagreeing.
+ */
+export function drawnLabel(data, prefs) {
+  if (prefs.labelDetail !== 'name') return data.label ?? '';
+  return [data.name || data.displayId, data.foldNote].filter(Boolean).join('\n');
+}
 
 /**
  * The gutter a container keeps on every side before the preference adds to it.

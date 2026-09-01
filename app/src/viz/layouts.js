@@ -22,6 +22,7 @@ import {
   containerLabelBand,
   containerLabelBandFor,
   containerSideGutter,
+  drawnLabel,
   estimatedLabelLines,
 } from './graphPrefs.js';
 
@@ -79,7 +80,12 @@ function elkSpacing(prefs) {
 function elkNodeOptions(prefs) {
   return (node) =>
     node.isParent()
-      ? { 'elk.padding': elkPaddingFor(prefs, estimatedLabelLines(node.data('label'), prefs.fontSize)) }
+      ? {
+          'elk.padding': elkPaddingFor(
+            prefs,
+            estimatedLabelLines(drawnLabel(node.data(), prefs), prefs.fontSize),
+          ),
+        }
       : undefined;
 }
 

@@ -25,6 +25,40 @@ const NODE_STYLE_OPTIONS = [
   { value: 'icon', label: 'Icons', hint: 'D3FEND icons, tinted by branch; colours where no icon exists' },
 ];
 
+const LABEL_DETAIL_OPTIONS = [
+  { value: 'full', label: 'Full', hint: 'The id, the rdfs:label and the rdf:type, stacked' },
+  {
+    value: 'name',
+    label: 'Name only',
+    hint: 'Just the rdfs:label, or the id when there is none; the rest on hover',
+  },
+];
+
+/**
+ * A `<fieldset>` of radios for one enum preference. `name` is shared across the
+ * group's inputs, which is what gives the browser roving-focus arrow keys — so it
+ * has to be distinct per group.
+ */
+function radioGroup({ legend: legendText, name, options, selected, onPick }) {
+  const group = document.createElement('fieldset');
+  group.className = 'prefs-group';
+  const legend = document.createElement('legend');
+  legend.textContent = legendText;
+  group.appendChild(legend);
+  for (const option of options) {
+    const label = document.createElement('label');
+    const radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.name = name;
+    radio.checked = selected === option.value;
+    radio.addEventListener('change', () => onPick(option.value));
+    label.append(radio, ` ${option.label}`);
+    label.title = option.hint;
+    group.appendChild(label);
+  }
+  return group;
+}
+
 function addRow(list, className, control) {
   const item = document.createElement('li');
   item.className = className;
@@ -66,24 +100,29 @@ export function renderPrefsPanel(host, prefs, onChange, { bulkHost } = {}) {
   const list = document.createElement('ul');
   list.className = 'filter-list prefs-panel';
 
-  const styleGroup = document.createElement('fieldset');
-  styleGroup.className = 'prefs-group';
-  const legend = document.createElement('legend');
-  legend.textContent = 'Nodes';
-  styleGroup.appendChild(legend);
-  for (const option of NODE_STYLE_OPTIONS) {
-    const label = document.createElement('label');
-    const radio = document.createElement('input');
-    radio.type = 'radio';
-    // Shared name, so the browser gives the pair roving-focus arrow keys.
-    radio.name = 'prefs-node-style';
-    radio.checked = prefs.nodeStyle === option.value;
-    radio.addEventListener('change', () => emit({ nodeStyle: option.value }));
-    label.append(radio, ` ${option.label}`);
-    label.title = option.hint;
-    styleGroup.appendChild(label);
-  }
-  addRow(list, 'prefs-row', styleGroup);
+  addRow(
+    list,
+    'prefs-row',
+    radioGroup({
+      legend: 'Nodes',
+      name: 'prefs-node-style',
+      options: NODE_STYLE_OPTIONS,
+      selected: prefs.nodeStyle,
+      onPick: (nodeStyle) => emit({ nodeStyle }),
+    }),
+  );
+
+  addRow(
+    list,
+    'prefs-row',
+    radioGroup({
+      legend: 'Labels',
+      name: 'prefs-label-detail',
+      options: LABEL_DETAIL_OPTIONS,
+      selected: prefs.labelDetail,
+      onPick: (labelDetail) => emit({ labelDetail }),
+    }),
+  );
 
   for (const { key, label, hint } of SLIDERS) {
     const [min, max] = PREF_RANGES[key];
