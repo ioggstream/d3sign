@@ -23,7 +23,8 @@ SELECT ?artifact ?label ?class WHERE {
     }
     # Any d3f: verb from a defensive technique counts: the real set is 25+ and
     # open-ended, so enumerating it would silently miss measures.
-    FILTER(STRSTARTS(STR(?verb), STR(d3f:)))
+    ?verb rdfs:subPropertyOf* d3f:d3fend-object-property .
+
     GRAPH K:d3fend { ?measureClass rdfs:subClassOf* d3f:DefensiveTechnique }
   }
 }
