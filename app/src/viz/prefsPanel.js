@@ -11,6 +11,11 @@ const SLIDERS = [
   { key: 'nodeSpacing', label: 'Node spacing', hint: 'Room the layout leaves between nodes' },
   { key: 'nodeSize', label: 'Node size', hint: 'Diameter of a node, and of its icon' },
   { key: 'fontSize', label: 'Label size', hint: 'Node and link label text size' },
+  {
+    key: 'containerPadding',
+    label: 'Container padding',
+    hint: 'Extra room inside a container, beyond what its own label needs',
+  },
   { key: 'panelFontSize', label: 'Panel text size', hint: 'Text size of the node and link info panels' },
   { key: 'editorFontSize', label: 'Editor text size', hint: 'Text size of the source, TriG and SPARQL editors' },
 ];
