@@ -21,6 +21,7 @@ WHERE {
     ?measureClass rdfs:subClassOf* d3f:DefensiveTechnique .
     ?artifactClass rdfs:subClassOf* ?super .
     ?measureClass ?verb ?super .
-    FILTER(STRSTARTS(STR(?verb), STR(d3f:)))
+    ?verb rdfs:subPropertyOf* d3f:d3fend-object-property .
+
   }
 }

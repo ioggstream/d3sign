@@ -12,10 +12,9 @@ SELECT DISTINCT ?artifact ?label ?attack ?attackLabel ?attackId WHERE {
   GRAPH K:d3fend {
     ?class rdfs:subClassOf* ?super .
     ?attack ?verb ?super .
-    # An ATT&CK id is what makes a class offensive in D3FEND; the defensive branch
-    # carries d3f:d3fend-id instead.
     ?attack d3f:attack-id ?attackId .
-    FILTER(STRSTARTS(STR(?verb), STR(d3f:)))
+    ?verb rdfs:subPropertyOf* d3f:d3fend-object-property .
+
     OPTIONAL { ?attack rdfs:label ?attackLabel }
   }
 }

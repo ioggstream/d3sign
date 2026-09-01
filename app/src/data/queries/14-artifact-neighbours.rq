@@ -1,18 +1,21 @@
 # title: Artifacts neighbours
 # about: Neighbours of a selected artifact.
 # needs: d3fend
+# scope: selection
 
-SELECT DISTINCT * WHERE {
+SELECT DISTINCT
+  ?neighbor ?rel1 ?class ?rel2
+WHERE {
   { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
   GRAPH ?g { ?this a ?class . }
 
   {
-    ?artifact rdfs:subClassOf* d3f:DigitalArtifact .
-    { ?artifact ?rel1 ?class .
+    ?neighbor rdfs:subClassOf* d3f:DigitalArtifact .
+    { ?neighbor ?rel1 ?class .
       ?rel1 rdfs:subPropertyOf* d3f:d3fend-object-property .
     }
     UNION
-    { ?class ?rel2 ?artifact .
+    { ?class ?rel2 ?neighbor .
     ?rel2 rdfs:subPropertyOf* d3f:d3fend-object-property .
     }
   }
