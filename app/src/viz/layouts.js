@@ -17,22 +17,37 @@
  * arguments, so this module stays testable without a browser.
  */
 
-import { DEFAULT_PREFS, containerLabelBand } from './graphPrefs.js';
+import {
+  DEFAULT_PREFS,
+  containerLabelBand,
+  containerLabelBandFor,
+  containerSideGutter,
+  estimatedLabelLines,
+} from './graphPrefs.js';
 
 /** The spacing the sliders are calibrated against; ratios below are relative to it. */
 const BASELINE_SPACING = DEFAULT_PREFS.nodeSpacing;
 
 /**
- * The gutter a container reserves, as ELK's `ElkPadding` string.
+ * The gutter one container reserves, as ELK's `ElkPadding` string.
  *
- * The same number on all four sides, because that is what cytoscape renders:
- * its compound `padding` is a single value (`padding-left` and friends are
- * aliases of it), so any side where ELK reserves less than cytoscape draws is a
- * side where a neighbour is laid out inside the container's box.
+ * Unlike cytoscape, ELK really does take four numbers, and it has to be given the
+ * four cytoscape draws or a neighbour is laid out inside the container's box. What
+ * cytoscape draws is the side gutter on every side, plus — on top only — the label
+ * band, which reaches the drawing as extra node height rather than as padding
+ * (see the geometry note in graphPrefs.js).
  */
+export function elkPaddingFor(prefs, lines) {
+  const side = containerSideGutter(prefs);
+  const top = side + containerLabelBandFor(prefs, lines);
+  return `[top=${top},left=${side},bottom=${side},right=${side}]`;
+}
+
+/** The widest gutter any container can need, for the root graph's own margin. */
 export function elkPadding(prefs) {
-  const band = containerLabelBand(prefs);
-  return `[top=${band},left=${band},bottom=${band},right=${band}]`;
+  const side = containerSideGutter(prefs);
+  const top = side + containerLabelBand(prefs);
+  return `[top=${top},left=${side},bottom=${side},right=${side}]`;
 }
 
 function elkSpacing(prefs) {
@@ -45,21 +60,27 @@ function elkSpacing(prefs) {
     // spacing — not nodeNode — that keeps an unrelated node away from a
     // container that shares no edge with it.
     'elk.spacing.componentComponent': spacing,
+    // The root graph's own margin, not any container's: those are set per node
+    // below. The worst case costs nothing here.
     'elk.padding': elkPadding(prefs),
   };
 }
 
 /**
- * Per-node ELK options: the same padding again, on every container.
+ * Per-node ELK options: each container's own padding, matching what the
+ * stylesheet draws around it.
  *
- * cytoscape-elk sets the options object on the root graph only, and ELK
- * documents inheritance for `hierarchyHandling` alone — so without this a nested
- * container falls back to ELK's default padding of 12 while cytoscape draws a
- * gutter of `containerLabelBand`, and its children's box overflows it.
+ * cytoscape-elk sets the options object on the root graph only, and ELK documents
+ * inheritance for `hierarchyHandling` alone — so without this a nested container
+ * falls back to ELK's default padding of 12 while cytoscape draws a much larger
+ * gutter, and its children's box overflows it. It is doubly needed now that the
+ * gutter differs per container: there is no one value the root could carry.
  */
 function elkNodeOptions(prefs) {
-  const padding = elkPadding(prefs);
-  return (node) => (node.isParent() ? { 'elk.padding': padding } : undefined);
+  return (node) =>
+    node.isParent()
+      ? { 'elk.padding': elkPaddingFor(prefs, estimatedLabelLines(node.data('label'), prefs.fontSize)) }
+      : undefined;
 }
 
 function elkLayout(algorithm, extra = () => ({})) {
