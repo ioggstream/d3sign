@@ -407,18 +407,28 @@ export function toCytoscapeElements(model, filterState, viewOptions = {}) {
     if (collapsedPayloads.has(iri)) continue;
 
     const folded = foldRoots.has(iri);
-    const lines = [node.id];
-    if (node.label && node.label !== node.id) lines.push(node.label);
-    if (node.rdfType) lines.push(node.rdfType);
+    // The label goes out in parts as well as stacked, because *how much of it is
+    // drawn* is a view preference: `drawnLabel` in viz/graphPrefs.js composes one
+    // from the other, and the hover tooltip shows whatever it left off. The stacked
+    // `label` stays the whole thing, so anything that wants a node's identity
+    // rather than its drawing still has it.
+    const name = node.label && node.label !== node.id ? node.label : null;
     // What the fold is standing in for, so the user can tell whether unfolding is
     // worth it without doing it. Only on a folded node: an open container has
     // nothing to report, its contents are right there.
-    if (folded) {
-      const hidden = hiddenByFold.get(iri) ?? 0;
-      lines.push(`▸ ${hidden} node${hidden === 1 ? '' : 's'}`);
-    }
+    const hidden = hiddenByFold.get(iri) ?? 0;
+    const foldNote = folded ? `▸ ${hidden} node${hidden === 1 ? '' : 's'}` : null;
+    const lines = [node.id, name, node.rdfType, foldNote].filter(Boolean);
 
-    const data = { id: iri, label: lines.join('\n'), coreCategory: node.coreCategory };
+    const data = {
+      id: iri,
+      label: lines.join('\n'),
+      displayId: node.id,
+      coreCategory: node.coreCategory,
+    };
+    if (name) data.name = name;
+    if (node.rdfType) data.rdfType = node.rdfType;
+    if (foldNote) data.foldNote = foldNote;
     // The D3FEND local name of the node's first class, which is what the icon
     // set is keyed on. Resolving it to an icon is the stylesheet's job
     // (viz/graphStyle.js) — this module stays a pure view of the RDF.

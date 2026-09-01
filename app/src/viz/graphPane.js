@@ -3,7 +3,12 @@ import elk from 'cytoscape-elk';
 import { toCytoscapeElements } from './toCytoscape.js';
 import { DEFAULT_LAYOUT_ID, layoutOptions, normalizeSteps, rotatePoint } from './layouts.js';
 import { buildStyle } from './graphStyle.js';
-import { DEFAULT_PREFS, containerLabelBandFor, estimatedLabelLines } from './graphPrefs.js';
+import {
+  DEFAULT_PREFS,
+  containerLabelBandFor,
+  drawnLabel,
+  estimatedLabelLines,
+} from './graphPrefs.js';
 import { separateSiblings, siblingLevels } from './separateSiblings.js';
 import { loadIconSet } from './icons.js';
 import { edgeMenuItems, nodeMenuItems } from './nodeMenu.js';
@@ -12,7 +17,15 @@ import { directionalFlow } from './pathFocus.js';
 cytoscape.use(elk);
 
 /** Preferences that feed the layout, so changing them costs a re-run and not just a restyle. */
-const LAYOUT_AFFECTING = ['nodeSpacing', 'nodeSize', 'fontSize', 'nodeStyle', 'containerPadding'];
+const LAYOUT_AFFECTING = [
+  'nodeSpacing',
+  'nodeSize',
+  'fontSize',
+  'nodeStyle',
+  'containerPadding',
+  // Two fewer lines on every node is two fewer lines of room a container needs.
+  'labelDetail',
+];
 const PATH_FOCUS_DIRECTIONS = new Set(['outgoing', 'incoming']);
 const PATH_FOCUS_DIM_CLASS = 'path-focus-dim';
 const PATH_FOCUS_NODE_CLASS = 'path-focus-node';
@@ -33,6 +46,9 @@ const SEPARATION_GAP = 8;
  * click a user considers deliberate is treated as one.
  */
 const DOUBLE_CLICK_MS = 500;
+
+/** How far below and right of the pointer the hover tooltip sits, so it clears the cursor. */
+const TOOLTIP_OFFSET = 12;
 
 function flashEdgeError(host, message) {
   let toast = host.querySelector('.edge-flash-error');
@@ -179,6 +195,61 @@ function createContextMenu(host) {
   return { open, close };
 }
 
+/**
+ * The identity of the node under the pointer, for when the drawing is holding it
+ * back — `labelDetail: 'name'` draws the name alone and this is where the id and
+ * the rdf:type go (docs/adr/0015-graph-visualization-preferences.md).
+ *
+ * Like the flash toast and unlike the context menu, it is `pointer-events: none`.
+ * Not decoration: cytoscape reads an event anywhere inside its container as a
+ * canvas event, so an interactive child has to stop propagation to stay usable
+ * (see `createContextMenu` above). A tooltip has nothing to click, so letting the
+ * pointer through is both simpler and correct — it can never take the hover from
+ * the node that opened it.
+ *
+ * Its CSS must not set `display`, only `[hidden]`-compatible properties: an author
+ * `display` outranks the UA rule for `[hidden]`, and a tooltip that cannot hide is
+ * a permanent box inside the cytoscape container, changing the client size that
+ * `cy.resize()` measures. The same trap `.pane[hidden]` documents in app.css.
+ */
+function createNodeTooltip(host) {
+  const tip = document.createElement('div');
+  tip.className = 'graph-node-tooltip';
+  tip.hidden = true;
+  host.appendChild(tip);
+
+  function hide() {
+    tip.hidden = true;
+    tip.replaceChildren();
+  }
+
+  /** Shows one row per `[term, value]` at `position` in the host; no rows, no tooltip. */
+  function show(position, rows) {
+    if (!rows.length) return hide();
+    tip.replaceChildren();
+    for (const [term, value] of rows) {
+      const row = document.createElement('div');
+      const name = document.createElement('span');
+      name.className = 'graph-node-tooltip-term';
+      name.textContent = `${term} `;
+      row.append(name, document.createTextNode(value));
+      tip.appendChild(row);
+    }
+
+    // Measured only once visible — a hidden element has no size — then pulled back
+    // inside the host, the same clamp the context menu does and for the same reason.
+    tip.hidden = false;
+    const bounds = host.getBoundingClientRect();
+    const box = tip.getBoundingClientRect();
+    const x = Math.min(position.x + TOOLTIP_OFFSET, bounds.width - box.width);
+    const y = Math.min(position.y + TOOLTIP_OFFSET, bounds.height - box.height);
+    tip.style.left = `${Math.max(0, x)}px`;
+    tip.style.top = `${Math.max(0, y)}px`;
+  }
+
+  return { show, hide };
+}
+
 export function createGraphPane(host, {
   onShowInfo,
   onShowEdgeInfo,
@@ -296,7 +367,10 @@ export function createGraphPane(host, {
     if (containers.empty()) return;
     const depthOf = (node) => node.ancestors().length;
     for (const node of containers.sort((a, b) => depthOf(b) - depthOf(a)).toArray()) {
-      const band = containerLabelBandFor(prefs, estimatedLabelLines(node.data('label'), prefs.fontSize));
+      const band = containerLabelBandFor(
+        prefs,
+        estimatedLabelLines(drawnLabel(node.data(), prefs), prefs.fontSize),
+      );
       const children = node.children().boundingBox({
         includeLabels: true,
         includeOverlays: false,
@@ -338,6 +412,7 @@ export function createGraphPane(host, {
   // shortcuts are taught, so an action reachable by key must appear here too
   // (viz/nodeMenu.js).
   const contextMenu = createContextMenu(host);
+  const nodeTooltip = createNodeTooltip(host);
   function clearPathFocusClasses() {
     cy.batch(() => {
       cy.nodes().removeClass(`${PATH_FOCUS_DIM_CLASS} ${PATH_FOCUS_NODE_CLASS}`);
@@ -438,11 +513,33 @@ export function createGraphPane(host, {
   // Anything else dismisses it: any left-click, wherever it lands, a right-click
   // on the background, and panning or zooming, which would leave the menu
   // pointing at a node that has moved out from under it.
-  cy.on('tap', () => contextMenu.close());
+  // The hover tooltip, which only has something to say when the drawing is holding
+  // something back. In `full` mode the node already shows its id and its type, and
+  // repeating them on every hover would be noise.
+  cy.on('mouseover', 'node', (evt) => {
+    if (prefs.labelDetail !== 'name') return;
+    const data = evt.target.data();
+    const rows = [
+      ['id', data.displayId],
+      ['type', data.rdfType],
+    ].filter(([, value]) => value);
+    nodeTooltip.show(evt.renderedPosition, rows);
+  });
+  cy.on('mouseout', 'node', () => nodeTooltip.hide());
+
+  cy.on('tap', () => {
+    contextMenu.close();
+    nodeTooltip.hide();
+  });
   cy.on('cxttap', (evt) => {
     if (evt.target === cy) contextMenu.close();
   });
-  cy.on('pan zoom', () => contextMenu.close());
+  // The tooltip goes too: `mouseout` does not fire when the node moves out from
+  // under a stationary pointer.
+  cy.on('pan zoom', () => {
+    contextMenu.close();
+    nodeTooltip.hide();
+  });
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') contextMenu.close();
   });

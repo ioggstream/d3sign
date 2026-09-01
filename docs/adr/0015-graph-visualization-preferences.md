@@ -36,8 +36,8 @@ hardcoded ELK spacing block. Two consequences showed up in use:
   count, so its count span collapses instead of paying
   for the gap.
 - [x] The preferences are node style (colours /
-  icons), node spacing, node size, label size, link
-  labels and panel text size. The last one sizes the
+  icons), label detail, node spacing, node size, label
+  size, link labels and panel text size. The last one sizes the
   info panel ([ADR 0008](0008-show-node.md)) and is
   deliberately *not* the label-size slider: the panel
   is HTML in a modal and the labels are cytoscape
@@ -48,6 +48,31 @@ hardcoded ELK spacing block. Two consequences showed up in use:
   defaults are declared in one place, which the loader
   clamps against, so a hand-edited value cannot
   produce an unusable view.
+- [x] Label detail has two settings. *Full* stacks the
+  id, the `rdfs:label` and the `rdf:type`, which is what
+  the drawing has always said. *Name only* draws the
+  name a node goes by — its `rdfs:label`, or its id when
+  it has none — and moves the id and the `rdf:type` to a
+  hover tooltip. Hover rather than nothing: the id is
+  what the info panel ([ADR 0008](0008-show-node.md)),
+  go-to-source and every filter are keyed on, so it has
+  to stay reachable without a double click. The fold
+  marker stays on the node in both settings — it reports
+  what the *drawing* is hiding rather than what the RDF
+  says, and it is the only place a fold's size is shown
+  ([ADR 0012](0012-fold-container-nodes.md)).
+  *Full* is the default: the setting changes what a
+  reader can identify at a glance, so it is opted into.
+- [x] The label is emitted from RDF in parts and
+  composed for drawing in one function, rather than
+  built once in the view model. What is drawn has to be
+  the same text three places measure — the stylesheet's
+  `label`, a container's label band, and the padding ELK
+  reserves for it — and a container whose band was sized
+  from different text than the style draws would not
+  match the room kept clear around it. Composing at draw
+  time also makes the setting a restyle rather than a
+  rebuild of the element set.
 - [x] Layout spacing is derived, not fixed: each
   layout's options are a pure function of the
   preferences, mapping one node-spacing slider onto
@@ -137,7 +162,15 @@ Cons:
   D3FEND class the app knows, so nothing can resolve
   to them.
 - Node spacing, node size and label size all feed the layout, so moving those
-  sliders re-runs it and discards manually dragged positions.
+  sliders re-runs it and discards manually dragged positions. Label detail joins
+  them: fewer lines per node is less room a container needs.
+- In *Name only*, two nodes carrying the same
+  `rdfs:label` are indistinguishable until one of them
+  is hovered — the drawing no longer shows the one
+  thing that is unique.
+- The tooltip is a hover affordance, so on a touch
+  device the id and the `rdf:type` are reachable only
+  through the info panel.
 
 ## DONTREADME
 
@@ -145,6 +178,30 @@ Notes for LLM agents. They describe the code as it
 is, not the decision, and go stale: check the code
 before trusting them.
 
+- `drawnLabel(data, prefs)` in
+  [graphPrefs.js](../../app/src/viz/graphPrefs.js) is
+  the single source for the drawn text, called by
+  `graphStyle.js`'s `label` mapper, `applyContainerBands`
+  in `graphPane.js` and `elkNodeOptions` in
+  `layouts.js`. `toCytoscape.js` emits the parts —
+  `displayId`, `name`, `rdfType`, `foldNote` — and keeps
+  `data.label` as the full stack, which is what to read
+  when you want a node's identity rather than its
+  drawing. `labelDetail` must stay in `LAYOUT_AFFECTING`
+  (`graphPane.js`), and `LABEL_DETAILS` is coerced in
+  `normalizePrefs` beside `NODE_STYLES` — not in
+  `PREF_RANGES`, which `clamp` would mangle.
+- The tooltip is `createNodeTooltip` in `graphPane.js`,
+  a child of the cytoscape container like the context
+  menu. Its CSS must not set `display`: an author
+  `display` outranks the UA rule for `[hidden]`, and a
+  tooltip that cannot hide changes the container's client
+  size, which `cy.resize()` measures — with the pane's
+  ResizeObserver watching, the graph flickers. `.pane[hidden]`
+  in `app.css` documents the same trap.
+- `nodePanel.js` titles the info panel from `displayId`;
+  it used to take the label's first line, which is the
+  id only while the whole stack is drawn.
 - The chip is the shared
   [filterChip.js](../../app/src/viz/filterChip.js).
   Ranges, defaults and clamping are in
