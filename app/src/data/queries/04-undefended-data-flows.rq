@@ -4,9 +4,20 @@
 
 SELECT ?source ?verb ?target ?targetLabel WHERE {
   { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
-  VALUES ?verb { d3f:reads d3f:writes d3f:accesses d3f:modifies d3f:transfers }
   GRAPH ?g {
-    ?source ?verb ?target .
+
+    # Direct data flows...
+    {
+      VALUES ?verb { d3f:reads d3f:writes d3f:accesses d3f:modifies d3f:transfers d3f:executed-by d3f:produces}
+
+      ?source ?verb ?target .
+    }
+    UNION
+    # ...and indirect data flows via execution.
+    {
+      VALUES ?verb { d3f:executes d3f:receives d3f:accessed-by }
+      ?target ?verb ?source .
+    }
     OPTIONAL { ?target rdfs:label ?targetLabel }
   }
 
@@ -21,8 +32,14 @@ SELECT ?source ?verb ?target ?targetLabel WHERE {
       ?measure a ?measureClass .
       ?measure ?mverb ?target .
     }
-    FILTER(STRSTARTS(STR(?mverb), STR(d3f:)))
-    GRAPH K:d3fend { ?measureClass rdfs:subClassOf* d3f:DefensiveTechnique }
+    # Both hierarchies are walked inside K:d3fend: the document graph holds no
+    # rdfs:subPropertyOf triple, so `?mverb rdfs:subPropertyOf*` written inside
+    # `GRAPH ?dg` matches nothing and the whole NOT EXISTS body goes empty —
+    # which reads as "nothing is defended".
+    GRAPH K:d3fend {
+      ?mverb rdfs:subPropertyOf* d3f:d3fend-object-property .
+      ?measureClass rdfs:subClassOf* d3f:DefensiveTechnique .
+    }
   }
 }
 ORDER BY ?targetLabel ?source

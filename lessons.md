@@ -1,5 +1,30 @@
 # Lessons
 
+## 2026-09-01 — a hierarchy walk moved inside the wrong GRAPH block empties a NOT EXISTS
+
+Task: `04-undefended-data-flows.rq` reported every artifact as undefended,
+including `G:query`, which `d3f:DatabaseQueryStringAnalysis d3f:analyzes`.
+
+Cause: `?mverb rdfs:subPropertyOf* d3f:d3fend-object-property` had been moved
+inside the `GRAPH ?dg { … }` block of the `FILTER NOT EXISTS`. The document
+graph holds no `rdfs:subPropertyOf` triple — the hierarchy is in `K:d3fend` —
+so the pattern matched nothing, the whole `NOT EXISTS` body went empty, and the
+filter passed everything.
+
+Lesson: a `NOT EXISTS` that becomes unsatisfiable fails *silently and
+inverted*: instead of losing rows it keeps all of them, and the output still
+looks like a finding list. Every hierarchy path belongs in the `GRAPH` block
+that actually holds the hierarchy — `K:d3fend`, named explicitly — never in a
+document graph and never left to the union default graph, which only works
+because `use_default_graph_as_union` happens to be on.
+
+Also: the query file on disk had changed since the first read of it in the
+session. Re-read before diagnosing — same lesson as 2026-08-11.
+
+Verification: pyoxigraph, real `d3fend.ttl.gz` loaded into `K:d3fend` with the
+engine's restriction materialization, the diagram loaded as TriG. Broken
+variant: 4 rows; fixed: 3, `G:query` dropped.
+
 ## 2026-08-31 — a FILTER on a graph name is a scan, not a lookup
 
 Task: `GRAPH ?g { ?this a ?class }` followed by

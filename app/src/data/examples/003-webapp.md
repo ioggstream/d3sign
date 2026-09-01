@@ -16,10 +16,8 @@ u((User d3f:User))
 
 subgraph client[client d3f:Network]
 b[Browser d3f:Browser]
-request[Web Resource Access d3f:WebResourceAccess]
 end
 u -->|d3f:uses| b
-b -->|d3f:produces| request
 ```
 
 The API is in the provider network
@@ -33,10 +31,12 @@ title: Front-end
 graph
 
 subgraph provider[provide d3f:Network]
+request[Web Resource Access d3f:WebResourceAccess]
 a[Web Application d3f:WebApplication]
 api[Web API Resource d3f:WebAPIResource]
 end
 
+b -->|d3f:produces| request
 request -->|d3f:accesses| api
 a -->|d3f:manages| api
 ```
@@ -55,4 +55,21 @@ end
 
 a -->|d3f:produces| query
 db -->|d3f:executes| query
+```
+
+Defensive techniques can be applied to the web application, the web API, and the database service.
+
+```mermaid
+---
+id: defenses
+title: Defensive techniques
+---
+graph
+
+subgraph provider[provider d3f:Network]
+  request-validation[d3f:WebSessionActivityAnalysis Web Session Activity Analysis]
+  query-sanitization[d3f:DatabaseQueryStringAnalysis Database Query String Analysis]
+end
+query-sanitization -->|d3f:analyzes| query
+request-validation -->|d3f:analyzes| request
 ```

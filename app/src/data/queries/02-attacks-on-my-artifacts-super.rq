@@ -1,8 +1,10 @@
-# title: Attacks that target what I drew
-# about: Offensive techniques D3FEND records against the classes of artifacts in the document, with their ATT&CK ids.
+# title: All attacks, via superclasses
+# about: Offensive techniques via ancestors.
 # needs: d3fend
 
-SELECT DISTINCT ?artifact ?label ?attack ?attackLabel ?attackId WHERE {
+SELECT DISTINCT
+  ?artifact ?label ?attack ?attackLabel ?attackId
+WHERE {
   { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
   GRAPH ?g {
     ?artifact a ?class .
@@ -12,10 +14,11 @@ SELECT DISTINCT ?artifact ?label ?attack ?attackLabel ?attackId WHERE {
   GRAPH K:d3fend {
     ?class rdfs:subClassOf* ?super .
     ?attack ?verb ?super .
-    ?attack d3f:attack-id ?attackId .
+    ?attack d3f:attack-id ?attackId ;
+            rdfs:subClassOf* d3f:OffensiveTechnique ;
+            rdfs:label ?attackLabel .
     ?verb rdfs:subPropertyOf* d3f:d3fend-object-property .
 
-    OPTIONAL { ?attack rdfs:label ?attackLabel }
   }
 }
 ORDER BY ?attackId ?label

@@ -1,10 +1,7 @@
 # title: Everything the document says about the selected node
-# about: Every triple with the selected node on either side, and which graph asserts it. Select a node in the graph first.
+# about: Every triple with the selected node on either side, and which graph asserts it.
 # scope: selection
 
-# No `needs:` — this one answers from the document alone, so it works before any
-# knowledge base is loaded. Useful as the first thing to run when a node in the
-# drawing is not what you expected.
 SELECT ?graph ?subject ?predicate ?object WHERE {
   GRAPH ?graph {
     { ?this ?predicate ?object . BIND(?this AS ?subject) }
