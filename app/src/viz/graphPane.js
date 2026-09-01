@@ -3,7 +3,7 @@ import elk from 'cytoscape-elk';
 import { toCytoscapeElements } from './toCytoscape.js';
 import { DEFAULT_LAYOUT_ID, layoutOptions, normalizeSteps, rotatePoint } from './layouts.js';
 import { buildStyle } from './graphStyle.js';
-import { DEFAULT_PREFS } from './graphPrefs.js';
+import { DEFAULT_PREFS, containerLabelBandFor, estimatedLabelLines } from './graphPrefs.js';
 import { separateSiblings, siblingLevels } from './separateSiblings.js';
 import { loadIconSet } from './icons.js';
 import { edgeMenuItems, nodeMenuItems } from './nodeMenu.js';
@@ -12,7 +12,7 @@ import { directionalFlow } from './pathFocus.js';
 cytoscape.use(elk);
 
 /** Preferences that feed the layout, so changing them costs a re-run and not just a restyle. */
-const LAYOUT_AFFECTING = ['nodeSpacing', 'nodeSize', 'fontSize', 'nodeStyle'];
+const LAYOUT_AFFECTING = ['nodeSpacing', 'nodeSize', 'fontSize', 'nodeStyle', 'containerPadding'];
 const PATH_FOCUS_DIRECTIONS = new Set(['outgoing', 'incoming']);
 const PATH_FOCUS_DIM_CLASS = 'path-focus-dim';
 const PATH_FOCUS_NODE_CLASS = 'path-focus-node';
@@ -220,7 +220,14 @@ export function createGraphPane(host, {
     if (!set) return;
     iconSet = set;
     cy.style(buildStyle(prefs, iconSet));
+    // A container's icon is taller than one line of label, so the band a container
+    // needs can change the moment the icons land.
+    applyContainerBands();
   });
+
+  // Dragging a child changes the children's bounding box, and the band is measured
+  // from it — without this the container keeps the height it had before the drag.
+  cy.on('dragfree', 'node', () => applyContainerBands());
 
   /**
    * Rotates the drawing by `steps` quarter turns around its bounding-box centre.
@@ -260,11 +267,53 @@ export function createGraphPane(host, {
     }
   }
 
+  /**
+   * Gives every container the band its own label needs, above its children.
+   *
+   * The band cannot live in the stylesheet. Cytoscape's compound `padding` is one
+   * number for all four sides — `padding-top` and friends are aliases of it — so
+   * putting the band there charges the same room to the left, the right and the
+   * bottom, where nothing is drawn. The band is extra node *height* instead:
+   * `min-height` with `min-height-bias-top: 100%` (set in graphStyle.js) makes
+   * `updateCompoundBounds` put the whole surplus above the children.
+   *
+   * And `min-height` cannot be a style mapper either, because it is the children's
+   * measured height plus the band, and a mapper is evaluated when the stylesheet is
+   * applied and then cached — it would freeze at the geometry of that moment. So it
+   * is maintained here, after anything that moves a child or changes the band.
+   *
+   * Innermost containers first: an outer container measures its children, and one
+   * of those children may be a container whose own height is about to change. The
+   * measurement matches what `updateCompoundBounds` does — labels in, overlays out,
+   * cache off — so the number this writes is the one cytoscape will compare against.
+   *
+   * Deliberately not batched, for the reason `separateOverlaps` gives: compound
+   * bounds are not recomputed while batching, so each container would measure the
+   * boxes from before the level below it moved.
+   */
+  function applyContainerBands() {
+    const containers = cy.nodes().filter((node) => node.isParent());
+    if (containers.empty()) return;
+    const depthOf = (node) => node.ancestors().length;
+    for (const node of containers.sort((a, b) => depthOf(b) - depthOf(a)).toArray()) {
+      const band = containerLabelBandFor(prefs, estimatedLabelLines(node.data('label'), prefs.fontSize));
+      const children = node.children().boundingBox({
+        includeLabels: true,
+        includeOverlays: false,
+        useCache: false,
+      });
+      node.style('min-height', children.h + band);
+    }
+  }
+
   /** Runs the current layout, re-applying the pending rotation once it settles. */
   function runLayout() {
     const layout = cy.layout(layoutOptions(layoutId, prefs));
     layout.one('layoutstop', () => {
       rotateBy(rotationSteps);
+      // Before separating: the band is part of a container's box, so overlaps have
+      // to be judged against the box that will actually be drawn.
+      applyContainerBands();
       // After the rotation, which turns the node boxes but not the labels inside
       // them — a drawing with no overlaps can gain some on a quarter turn.
       separateOverlaps();
@@ -485,7 +534,12 @@ export function createGraphPane(host, {
       prefs = next;
       cy.style(buildStyle(prefs, iconSet));
       if (needsLayout) runLayout();
-      else cy.fit(undefined, 20);
+      else {
+        // Not every restyle changes the band, but a stylesheet swap re-applies
+        // `min-height` from the sheet, so the bypass has to be written back.
+        applyContainerBands();
+        cy.fit(undefined, 20);
+      }
     },
     /** Turns the drawing by `steps` quarter turns clockwise (negative = counter-clockwise). */
     rotate(steps) {

@@ -11,8 +11,8 @@ import {
   CONTAINER_INSET,
   CONTAINER_LABEL_MAX_WIDTH,
   containerIconSize,
-  containerLabelBand,
   containerLabelOffsetX,
+  containerSideGutter,
 } from './graphPrefs.js';
 
 /**
@@ -97,7 +97,10 @@ function iconFor(iconSet, element) {
 export function buildStyle(prefs, iconSet = null) {
   const iconMode = prefs.nodeStyle === 'icon';
   const containerIcon = containerIconSize(prefs);
-  const containerBand = containerLabelBand(prefs);
+  // A container's gutter on all four sides. The label band is *not* in here: it is
+  // extra node height above the children, applied as a `min-height` bypass by
+  // graphPane.js's `applyContainerBands` (see the geometry note in graphPrefs.js).
+  const sideGutter = containerSideGutter(prefs);
 
   const style = [
     {
@@ -156,7 +159,11 @@ export function buildStyle(prefs, iconSet = null) {
   //
   // The label therefore starts at (containerLabelOffsetX, CONTAINER_INSET) from the
   // container's top-left corner.
-  const fromOuterEdge = (offset) => offset - 2 * containerBand;
+  //
+  // The padding walked back through is the side gutter, not the label band: the
+  // band is node *height*, so the `-inside` anchor already sits at the top of it
+  // and only the gutter separates that from the border.
+  const fromOuterEdge = (offset) => offset - 2 * sideGutter;
 
   style.push({
     selector: 'node[isContainer]',
@@ -186,9 +193,14 @@ export function buildStyle(prefs, iconSet = null) {
       // A single number, not a CSS-style shorthand: cytoscape's `padding` is one
       // `sizeMaybePercent`, so `'42px 20px 20px 20px'` failed to parse and the
       // property silently fell back to its default of 0 — containers hugged their
-      // children exactly, the band the label sits in was never rendered, and every
-      // gap ELK had reserved for it was given away.
-      padding: containerBand,
+      // children exactly and every gap ELK had reserved was given away.
+      padding: sideGutter,
+      // Where the label band comes from. `min-height` itself is a per-container
+      // bypass written by graphPane.js, since it depends on the children's
+      // measured height; these two say that whatever surplus it asks for goes
+      // above the children rather than being split around them.
+      'min-height-bias-top': '100%',
+      'min-height-bias-bottom': '0%',
     },
   });
 
