@@ -31,9 +31,9 @@ title: Front-end
 graph
 
 subgraph server [server d3f:Network]
-request[Web Resource Access d3f:WebResourceAccess]
+request[request/response d3f:WebResourceAccess]
 a[Web Application d3f:WebApplication]
-api[Web API Resource d3f:WebAPIResource]
+api[API d3f:WebAPIResource]
 end
 
 b -->|d3f:produces| request
