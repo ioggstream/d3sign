@@ -1,10 +1,12 @@
-# title: Artifacts neighbours
-# about: Neighbours of a selected artifact.
+# title: Artifacts neighbours (CONSTRUCT)
+# about: Neighbours of a selected artifact, as the actual D3FEND relations between its class and the neighbouring artifact classes. Add the result as a graph to see it drawn.
 # needs: d3fend
 # scope: selection
 
-SELECT DISTINCT
-  ?neighbor ?rel1 ?class ?rel2
+CONSTRUCT {
+  ?neighbor ?rel1 ?class .
+  ?class    ?rel2 ?neighbor .
+}
 WHERE {
   { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
   GRAPH ?g { ?this a ?class . }

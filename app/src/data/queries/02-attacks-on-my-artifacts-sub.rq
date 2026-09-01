@@ -1,0 +1,24 @@
+# title: All attacks, via subclasses
+# about: Offensive techniques via descendants.
+# needs: d3fend
+
+SELECT DISTINCT
+  ?artifact ?label ?attack ?attackLabel ?attackId
+WHERE {
+  { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
+  GRAPH ?g {
+    ?artifact a ?class .
+    OPTIONAL { ?artifact rdfs:label ?label }
+  }
+
+  GRAPH K:d3fend {
+    ?sub rdfs:subClassOf* ?class .
+    ?attack ?verb ?sub .
+    ?attack d3f:attack-id ?attackId ;
+            rdfs:subClassOf* d3f:OffensiveTechnique ;
+            rdfs:label ?attackLabel .
+    ?verb rdfs:subPropertyOf* d3f:d3fend-object-property .
+
+  }
+}
+ORDER BY ?attackId ?label
