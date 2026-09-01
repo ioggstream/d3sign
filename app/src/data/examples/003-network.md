@@ -52,3 +52,31 @@ h2_eth1 <-->|d3f:connected-to| prod
 prod <-->|d3f:connected-to| router <-->|d3f:connected-to| edge-net
 
 ```
+
+Home
+
+```mermaid
+---
+id: home
+title: Home network
+---
+graph
+
+subgraph ap[Access Point d3f:WirelessRouter]
+  ap-antenna[d3f:WirelessLink]
+  www-link[d3f:WiredLink]
+end
+
+subgraph mobile[d3f:TabletComputer]
+  mobile-antenna[d3f:WirelessLink]
+end
+
+subgraph home[d3f:LocalAreaNetwork]
+  ap
+  mobile
+end
+
+ap-antenna -->|d3f:connected-to| mobile-antenna
+
+www-link -->|d3f:connected-to| edge-net
+```
