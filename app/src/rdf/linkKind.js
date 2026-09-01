@@ -30,6 +30,7 @@ const DATA_FLOW_PREDICATES = new Set([
 const CONTROL_FLOW_PREDICATES = new Set([
   'd3f:controls',
   'd3f:runs',
+  'd3f:queries',
   'd3f:may-run',
   'd3f:initiates',
   'd3f:initiated-by',
