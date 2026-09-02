@@ -13,6 +13,7 @@ import {
   containerIconSize,
   containerLabelOffsetX,
   containerSideGutter,
+  drawnEdgeLabel,
   drawnLabel,
 } from './graphPrefs.js';
 
@@ -304,7 +305,12 @@ export function buildStyle(prefs, iconSet = null) {
     style: {
       // Dropping the mapping rather than blanking it: cytoscape then skips the
       // label pass entirely, which is what makes a dense graph readable.
-      ...(prefs.edgeLabels ? { label: 'data(label)' } : {}),
+      ...(prefs.edgeLabels ? { label: (ele) => drawnEdgeLabel(ele.data(), prefs) } : {}),
+      // Cytoscape ignores newlines unless the text wraps, and `drawnEdgeLabel`
+      // breaks a long predicate name at its hyphens. Harmless in `full` mode: with
+      // no newline in the label and the default 9999px `text-max-width`, there is
+      // nothing to wrap on.
+      'text-wrap': 'wrap',
       color: '#212529',
       'curve-style': 'bezier',
       'target-arrow-shape': 'triangle',

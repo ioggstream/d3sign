@@ -63,6 +63,19 @@ hardcoded ELK spacing block. Two consequences showed up in use:
   ([ADR 0012](0012-fold-container-nodes.md)).
   *Full* is the default: the setting changes what a
   reader can identify at a glance, so it is opted into.
+- [x] *Name only* abbreviates link labels too: the
+  `d3f:` prefix is dropped and a name longer than ten
+  characters is broken at its hyphens. Only `d3f:` goes
+  — every other prefix is doing work, since a `dpv:` and
+  a `d3f:` term can share a local name and in a diagram
+  mixing the two the prefix is the only thing telling
+  them apart. D3FEND is the vocabulary this editor is
+  for, so its prefix is the one that says nothing. The
+  hyphen break is because a link label is drawn rotated
+  along its edge, where `may-authenticate-with` laid end
+  to end crosses half the drawing. The `×N` of a folded
+  group is set aside and put back, being part of the
+  fold rather than of the predicate.
 - [x] The label is emitted from RDF in parts and
   composed for drawing in one function, rather than
   built once in the view model. What is drawn has to be
@@ -178,6 +191,10 @@ Notes for LLM agents. They describe the code as it
 is, not the decision, and go stale: check the code
 before trusting them.
 
+- `drawnEdgeLabel(data, prefs)` is the link-label twin,
+  used only by the edge rule in `graphStyle.js`. The
+  edge rule also sets `text-wrap: 'wrap'`, without which
+  cytoscape ignores the newlines it inserts.
 - `drawnLabel(data, prefs)` in
   [graphPrefs.js](../../app/src/viz/graphPrefs.js) is
   the single source for the drawn text, called by
