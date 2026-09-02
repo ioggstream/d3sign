@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <title>Design &amp; D3FEND</title>
-  <script type="module" crossorigin src="/d3sign/assets/index-BY0iOM2L.js"></script>
-  <link rel="stylesheet" crossorigin href="/d3sign/assets/index-DHjLME6d.css">
+  <script type="module" crossorigin src="/d3sign/assets/index-BJiZpHDm.js"></script>
+  <link rel="stylesheet" crossorigin href="/d3sign/assets/index-BbUuU07D.css">
 </head>
 <body>
   <!-- The workbench is this element, not <body>: libraries append their working
@@ -33,6 +33,12 @@
               title="Load an example diagram"></select>
       <button type="button" id="reset-layout-button" class="copy-button"
               title="Put every view back in the column it ships in">Reset layout</button>
+      <!-- Session, not query: these act on everything this browser is holding
+           for you (docs/adr/0021-sparql-query-pane.md). -->
+      <button type="button" id="dump-session-button" class="copy-button"
+              title="Download every saved query and document as one markdown file">Dump session</button>
+      <button type="button" id="destroy-session-button" class="copy-button"
+              title="Delete every saved query and document from this browser">Destroy session</button>
     </div>
     <div id="lint-message" class="lint-message" role="status" hidden></div>
   </header>
@@ -138,7 +144,12 @@
           <h2>SPARQL</h2>
           <div id="query-filter-chips" class="filter-chips"></div>
           <select id="query-select" title="Load a query from the library"></select>
+          <select id="saved-query-select" title="Reopen a query saved in this browser"></select>
           <div class="query-tools">
+            <button type="button" id="save-query-button" class="copy-button"
+                    title="Save this query in the browser (Ctrl+S)">Save <span class="tab-key">Ctrl+S</span></button>
+            <button type="button" id="toggle-saved-button" class="icon-button" aria-expanded="false"
+                    title="Show the queries saved in this browser">▤</button>
             <button type="button" id="run-query-button" class="copy-button btn--primary"
                     title="Run the query (Ctrl+Enter)">▶ Run <span class="tab-key">Ctrl+Enter</span></button>
             <button type="button" id="cancel-query-button" class="icon-button" hidden
@@ -147,6 +158,10 @@
                     title="Copy the query text to the clipboard, without the prefix preamble">Copy</button>
           </div>
         </div>
+        <!-- A plain block above the grid, not a third grid row: the pane's row
+             gutter divides the editor from the results and must keep doing
+             exactly that (docs/adr/0021-sparql-query-pane.md). -->
+        <div id="saved-queries" class="saved-queries" hidden></div>
         <div id="query-grid">
           <div id="query-host"></div>
           <div class="gutter gutter-row" id="gutter-query-row"></div>
