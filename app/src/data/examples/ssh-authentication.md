@@ -1,3 +1,12 @@
+# SSH Authentication
+
+This example illustrates the SSH authentication process for a developer accessing a GitHub repository.
+
+The developer uses a private key protected by multi-factor authentication (MFA),
+to authenticate with GitHub's SSH service.
+
+The diagram also shows the relationship between the developer's local environment, GitHub's access control settings, and the repository's access control configurations - accessed via the Github Web UI using a password login + MFA.
+
 ```mermaid
 ---
 title: SSH Authentication

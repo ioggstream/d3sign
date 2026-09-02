@@ -43,6 +43,5 @@ subgraph local["local workstation d3f:LaptopComputer"]
   linter -->|d3f:analyzes| worktree
   repo -.->|d3f:initiates| hook-push
 
-  d3f:d3fend-tactical-verb-property
 end
 ```

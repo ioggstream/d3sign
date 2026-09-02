@@ -15,8 +15,8 @@ CONSTRUCT {
   ?obligation rdfs:label ?citation .
 }
 WHERE {
+  { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
   GRAPH ?g { ?node a ?measureClass }
-  FILTER(!STRSTARTS(STR(?g), STR(K:)))
 
   GRAPH K:d3fend { ?measureClass rdfs:subClassOf* ?mapped }
   GRAPH K:regulation {

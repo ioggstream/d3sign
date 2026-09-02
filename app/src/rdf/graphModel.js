@@ -36,13 +36,20 @@ export const CONTAINMENT_PREDICATES = new Set([PREFIXES.d3f + 'contains']);
 const CORE_CATEGORY_PRIORITY = ['Agent', 'Goal', 'Plan', 'Artifact'];
 
 /**
- * The vocabulary namespaces, i.e. PREFIXES minus this app's own two. Splitting them
+ * This app's own namespaces, as opposed to the vocabularies: the document
+ * (`G:`), the enrichment graphs (`E:`) and the minted neighbourhoods (`N:`).
+ * Longest first, because both of the others start with `G:` — see `displayIdOf`.
+ */
+const LOCAL_BASES = [PREFIXES.E, PREFIXES.N, PREFIXES.G];
+
+/**
+ * The vocabulary namespaces, i.e. PREFIXES minus this app's own. Splitting them
  * out keeps `shortLabel` from turning `urn:d3fend-graph:host` into `G:host`: a
  * graph-local resource is named by the bare id the diagram gave it (see
  * `displayIdOf`), and the properties table prints it the same way.
  */
 const VOCABULARY_PREFIXES = Object.fromEntries(
-  Object.entries(PREFIXES).filter(([prefix]) => prefix !== 'G' && prefix !== 'E'),
+  Object.entries(PREFIXES).filter(([, base]) => !LOCAL_BASES.includes(base)),
 );
 
 /**
@@ -65,7 +72,7 @@ export function shortLabel(iri) {
  * a CURIE for everything else.
  */
 export function displayIdOf(iri) {
-  for (const base of [PREFIXES.E, PREFIXES.G]) {
+  for (const base of LOCAL_BASES) {
     if (iri.startsWith(base)) return iri.slice(base.length);
   }
   return shortLabel(iri);

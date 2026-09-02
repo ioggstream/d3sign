@@ -27,8 +27,8 @@ SELECT ?citation ?obligation ?label WHERE {
     # mapping is deliberately made against the most general class its reasoning
     # holds for.
     GRAPH K:d3fend { ?class rdfs:subClassOf* ?mapped }
+    { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
     GRAPH ?g { ?node a ?class }
-    FILTER(!STRSTARTS(STR(?g), STR(K:)))
   }
 }
 ORDER BY ?citation

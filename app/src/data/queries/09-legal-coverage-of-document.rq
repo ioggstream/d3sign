@@ -10,11 +10,11 @@
 # is not a fact about the drawing, and a row that says `supporting` with a reason
 # attached is honest in a way a green tick is not.
 SELECT ?citation ?obLabel ?node ?nodeLabel ?strength ?conceptLabel ?rationale WHERE {
+  { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
   GRAPH ?g {
     ?node a ?measureClass .
     OPTIONAL { ?node rdfs:label ?nodeLabel }
   }
-  FILTER(!STRSTARTS(STR(?g), STR(K:)))
 
   GRAPH K:d3fend { ?measureClass rdfs:subClassOf* ?mapped }
 

@@ -15,8 +15,8 @@ SELECT ?tactic ?tacticLabel (COUNT(DISTINCT ?measure) AS ?measures) WHERE {
       ?measureClass rdfs:subClassOf* d3f:DefensiveTechnique .
       ?measureClass d3f:enables ?tactic .
     }
+    { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
     GRAPH ?g { ?measure a ?measureClass }
-    FILTER(!STRSTARTS(STR(?g), STR(K:)))
   }
 }
 GROUP BY ?tactic ?tacticLabel

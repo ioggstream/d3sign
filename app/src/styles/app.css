@@ -716,6 +716,21 @@ main#app-grid {
   padding: 0 !important;
 }
 .graph-visibility-divider:hover { background: none; }
+/* Destructive, and next to a checkbox that only hides — so it stays faint until
+   the row is hovered, and only turns red once the pointer is on the button. */
+.graph-visibility-remove {
+  margin-left: auto;
+  border: none;
+  background: none;
+  padding: 0 var(--s-2);
+  line-height: 1;
+  color: var(--c-text-faint);
+  cursor: pointer;
+  opacity: 0;
+}
+.filter-list li:hover .graph-visibility-remove,
+.graph-visibility-remove:focus-visible { opacity: 1; }
+.graph-visibility-remove:hover { color: var(--c-err-ink); }
 
 /* The View chip's popover: one row per preference, values right-aligned so the
    sliders line up whatever their readout says. */
@@ -936,6 +951,33 @@ main#app-grid {
 }
 .node-panel-chip-add { font-size: 1.06em; line-height: 1; padding: 0 2px; }
 .node-panel-chip-add:disabled { color: var(--c-ok-ink); cursor: default; }
+/* Not a chip button: it acts on the whole section above it, so it reads as a
+   block-level action rather than as one more row control. */
+.node-panel-mint {
+  font: inherit;
+  font-size: .875em;
+  display: block;
+  margin-top: var(--s-4);
+  padding: var(--s-1) var(--s-4);
+  border: 1px solid var(--c-accent-edge);
+  border-radius: var(--r-sm);
+  background: var(--c-accent-wash);
+  color: var(--c-accent-ink);
+  cursor: pointer;
+}
+.node-panel-mint:hover:not(:disabled) { border-color: var(--c-accent); }
+.node-panel-mint-status {
+  display: block;
+  margin-top: var(--s-1);
+  font-size: .875em;
+  color: var(--c-ok-ink);
+}
+.node-panel-mint:disabled {
+  border-color: var(--c-border);
+  background: var(--c-surface-sunken);
+  color: var(--c-text-faint);
+  cursor: default;
+}
 .node-panel-props { width: 100%; border-collapse: collapse; font-size: 0.875em; }
 .node-panel-props td { border-top: 1px solid var(--c-border-subtle); padding: var(--s-1) var(--s-2); word-break: break-word; vertical-align: top; }
 .node-panel-props td:first-child { color: var(--c-text-muted); font-family: var(--font-mono); white-space: nowrap; }

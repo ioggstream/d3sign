@@ -6,21 +6,21 @@
 # what they are not keeps the query working when a diagram is renamed or a
 # second knowledge base is loaded.
 SELECT ?artifact ?label ?class WHERE {
+  { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
   GRAPH ?g {
     ?artifact a ?class .
     OPTIONAL { ?artifact rdfs:label ?label }
   }
-  FILTER(!STRSTARTS(STR(?g), STR(K:)))
 
   # ?class is an artifact according to D3FEND, not according to the diagram.
   GRAPH K:d3fend { ?class rdfs:subClassOf* d3f:Artifact }
 
   FILTER NOT EXISTS {
+    { SELECT DISTINCT ?dg WHERE { GRAPH ?dg {} FILTER(!STRSTARTS(STR(?dg), STR(K:))) } }
     GRAPH ?dg {
       ?measure a ?measureClass .
       ?measure ?verb ?artifact .
     }
-    FILTER(!STRSTARTS(STR(?dg), STR(K:)))
     # Any d3f: verb from a defensive technique counts: the real set is 25+ and
     # open-ended, so enumerating it would silently miss measures.
     FILTER(STRSTARTS(STR(?verb), STR(d3f:)))

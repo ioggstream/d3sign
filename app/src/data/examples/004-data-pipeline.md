@@ -42,6 +42,9 @@ title: Pipeline sequence
 ---
 graph LR
 
-p0 -->|d3f:precedes| p1 -->|d3f:precedes| p2
+p0[d3f:Process]
+p1[d3f:Process]
+p2[d3f:Process]
 
+p0 -->|d3f:precedes| p1 -->|d3f:precedes| p2
 ```

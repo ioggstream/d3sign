@@ -5,8 +5,8 @@
 # Only answerable once the ontology is queryable: d3fend-completions.json can offer
 # the right names but cannot tell you that a name you already typed is wrong.
 SELECT DISTINCT ?class ?usedBy WHERE {
+  { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
   GRAPH ?g { ?usedBy a ?class }
-  FILTER(!STRSTARTS(STR(?g), STR(K:)))
   FILTER(STRSTARTS(STR(?class), STR(d3f:)))
 
   # Absent as a subject entirely — a class D3FEND knows always says something

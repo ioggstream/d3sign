@@ -1,5 +1,49 @@
 # Lessons
 
+## 2026-08-31 — a FILTER on a graph name is a scan, not a lookup
+
+Task: `GRAPH ?g { ?this a ?class }` followed by
+`FILTER(!STRSTARTS(STR(?g), STR(K:)))` was slow in every shipped query.
+
+What worked:
+
+- Naming the real cost. A FILTER cannot be pushed into an index, so an unbound
+  `?g` means matching the pattern in every graph, K:d3fend's 130k triples
+  included, and discarding almost all of it. `LIMIT` does not rescue it.
+- `GRAPH ?g {}` as the enumerator. The empty group matches once per named graph,
+  so a subquery binds `?g` from a handful of graph *names* and the block that
+  follows is an indexed lookup. Vanilla SPARQL, no engine change.
+- Putting the subquery in the scope that owns the variable. Eight of the 17
+  sites are inside `FILTER NOT EXISTS` or `OPTIONAL`, where the graph variable
+  is local. The trailing `VALUES` trick `bindSelection()` uses for `?this` binds
+  only at the top level; hoisting `?dg` out of the `NOT EXISTS` in `00` and `04`
+  would silently change "no measure in *any* document graph" into "no measure in
+  *this* graph".
+- Checking the variable names before designing anything. 12 sites use `?g`, but
+  5 use `?dg`, `?tg`, `?ag`, `?mg`. Any scheme keyed on `?g` would have missed
+  them.
+- Reading the KB before claiming the filter was only about speed. `zcat d3fend.ttl.gz | grep -oE '\ba (d3f:[A-Za-z0-9_-]+)'` shows ~1000 individuals —
+  299 `d3f:CCIControl`, 9 `d3f:DocumentFile`. Without the graph restriction the
+  ontology's own `d3f:DocumentFile` instances get reported as the user's
+  undefended artifacts. That killed the idea of binding `?class` instead.
+
+What did not:
+
+- Proposing an engine-side rewrite first. It covers hand-written queries, but it
+  makes the `.rq` say one thing and the engine run another, and the user wanted
+  the pattern visible in the query text. Ask which layer before designing for
+  one.
+- `FROM NAMED`, the idiomatic way to restrict a dataset. `declaresDataset()`
+  turns off `use_default_graph_as_union` the moment `FROM` appears, so it would
+  have broken every pattern outside a `GRAPH` block — the exact failure the
+  2026-08-28 lesson above is about.
+- Guessing at ADR length and shape. `0001-use-adr.md` says no code, no file
+  names and no implementation detail outside `## DONTREADME`, and Consequences
+  as Pros/Cons. Read it before writing, not after two rejections.
+- `node` is still not on the host, so nothing here is verified. Six of the 13
+  files are covered by `legal-queries.test.js`, which runs the `.rq` verbatim;
+  `00`-`06` need the SPARQL pane.
+
 ## 2026-08-28 — an empty default graph makes a correct query return nothing
 
 Task: a generic `SELECT * WHERE { ?s ?p ?o }` had to see every graph.

@@ -3,11 +3,11 @@
 # needs: d3fend
 
 SELECT DISTINCT ?artifact ?label ?attack ?attackLabel ?attackId WHERE {
+  { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
   GRAPH ?g {
     ?artifact a ?class .
     OPTIONAL { ?artifact rdfs:label ?label }
   }
-  FILTER(!STRSTARTS(STR(?g), STR(K:)))
 
   GRAPH K:d3fend {
     ?class rdfs:subClassOf* ?super .

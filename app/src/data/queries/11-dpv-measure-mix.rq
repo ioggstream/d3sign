@@ -23,8 +23,8 @@ SELECT ?family ?familyLabel (COUNT(DISTINCT ?node) AS ?nodes) WHERE {
     GRAPH K:legal { ?concept (skos:broader|rdfs:subClassOf)* ?family }
     GRAPH K:regulation { ?mapping al:legal-concept ?concept ; al:d3fend-class ?mapped }
     GRAPH K:d3fend { ?class rdfs:subClassOf* ?mapped }
+    { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
     GRAPH ?g { ?node a ?class }
-    FILTER(!STRSTARTS(STR(?g), STR(K:)))
   }
 }
 GROUP BY ?family ?familyLabel
