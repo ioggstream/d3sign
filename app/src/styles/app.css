@@ -956,7 +956,33 @@ main#app-grid {
   min-height: 0;
 }
 #query-host { min-height: 0; }
-#query-select { max-width: 18rem; }
+#query-select, #saved-query-select { max-width: 18rem; }
+
+/* The saved-query list sits above the grid, not inside it: the row gutter
+   divides the editor from the results and must keep meaning only that. Capped
+   and scrolling, so a full library cannot squeeze the editor to nothing. */
+.saved-queries {
+  flex: 0 0 auto;
+  max-height: 11rem;
+  overflow-y: auto;
+  padding: var(--s-2) var(--s-3);
+  border-top: 1px solid var(--c-border);
+  border-bottom: 1px solid var(--c-border);
+  background: var(--c-surface-sunken);
+}
+/* Rows are the Files pane's rows; only the container differs. */
+.saved-list { list-style: none; padding: 0; margin: 0; font-size: var(--fs-md); }
+.saved-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding: var(--s-1) var(--s-2);
+  border-left: 2px solid transparent;
+  border-radius: var(--r-sm);
+}
+.saved-list li:hover { background: var(--c-surface); }
+.saved-list li.is-current { background: var(--c-accent-wash); border-left-color: var(--c-accent); }
+.saved-list li.is-current .file-name { font-weight: 600; color: var(--c-accent-ink); }
 
 .query-results { min-height: 0; overflow: auto; font-size: var(--fs-sm); }
 .query-empty, .query-warning { color: var(--c-text-faint); font-style: italic; margin: var(--s-2) 0; }

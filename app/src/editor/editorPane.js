@@ -334,16 +334,23 @@ export function createTurtlePane(host, initialText, onChange) {
  * The binding goes in `extensions` rather than `keyBindings` so it outranks the
  * shared Mod-Enter, which flushes a debounce this pane does not have.
  *
+ * `onSave` rides in the same array, on Mod-s. `preventDefault` is what stops the
+ * browser's Save-page dialog, and the extension's precedence is what stops the
+ * key reaching it at all while the SPARQL editor has focus.
+ *
  * It keeps the d3f: completions: the class names are the same ones the mermaid
  * pane completes, and they are exactly what is hard to type from memory. The node
  * completions are left out — they read the mermaid document symbols, which say
  * nothing about a query.
  */
-export function createSparqlPane(host, initialText, onRun) {
+export function createSparqlPane(host, initialText, onRun, onSave) {
   return createTextEditor(host, initialText, () => {}, {
     debounceMs: 0,
     extensions: [
-      keymap.of([{ key: 'Mod-Enter', run: () => (onRun(), true) }]),
+      keymap.of([
+        { key: 'Mod-Enter', run: () => (onRun(), true) },
+        { key: 'Mod-s', preventDefault: true, run: () => (onSave?.(), true) },
+      ]),
       autocompletion({ override: [d3fendCompletionSource], activateOnTyping: false }),
       completionPanel,
       d3fendHover,

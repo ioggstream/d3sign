@@ -51,9 +51,17 @@ import {
   saveAs,
   saveOver,
   setWorkingContent,
+  sortedFiles,
   uniqueName,
 } from './files/fileStore.js';
-import { flushStore, loadStore, onStorageError, saveStore, saveWorking } from './files/filesPersist.js';
+import {
+  clearStore,
+  flushStore,
+  loadStore,
+  onStorageError,
+  saveStore,
+  saveWorking,
+} from './files/filesPersist.js';
 import { renderFilesPane } from './files/filesPane.js';
 import { downloadText, pickTextFile } from './files/fileTransfer.js';
 import { makeResizableGutter } from './layout/resizer.js';
@@ -67,6 +75,24 @@ import {
   usesThis,
 } from './query/resultModel.js';
 import { QUERY_LIBRARY, queryByFileName } from './query/queryLibrary.js';
+import {
+  deleteQuery,
+  queryById,
+  renameQuery,
+  saveQueryAs,
+  saveQueryOver,
+  sortedQueries,
+  uniqueName as uniqueQueryName,
+} from './query/queryStore.js';
+import {
+  clearQueries,
+  flushQueries,
+  loadQueries,
+  onQueryStorageError,
+  saveQueries,
+} from './query/queryPersist.js';
+import { renderSavedQueries, renderSavedSelect } from './query/savedQueriesView.js';
+import { buildSessionDump, dumpFileName } from './query/sessionDump.js';
 import { quadsFromFlat } from './query/flatQuads.js';
 import { renderQueryResults, renderQueryPlaceholder, renderQueryStatus } from './query/resultsView.js';
 import { renderSourcesPanel } from './query/sourcesPanel.js';
@@ -116,6 +142,12 @@ const querySelect = document.getElementById('query-select');
 const runQueryButton = document.getElementById('run-query-button');
 const cancelQueryButton = document.getElementById('cancel-query-button');
 const copyQueryButton = document.getElementById('copy-query-button');
+const savedQuerySelect = document.getElementById('saved-query-select');
+const saveQueryButton = document.getElementById('save-query-button');
+const toggleSavedButton = document.getElementById('toggle-saved-button');
+const savedQueriesHost = document.getElementById('saved-queries');
+const dumpSessionButton = document.getElementById('dump-session-button');
+const destroySessionButton = document.getElementById('destroy-session-button');
 
 // Typing narrows the list; Enter flips the visibility of everything still listed,
 // so a graph can be shown or hidden without touching the mouse (Alt+T opens it).
@@ -805,7 +837,7 @@ SELECT ?node ?class WHERE {
 LIMIT 50
 `;
 
-const queryPane = createSparqlPane(queryHost, DEFAULT_QUERY, () => void runQuery());
+const queryPane = createSparqlPane(queryHost, DEFAULT_QUERY, () => void runQuery(), () => saveCurrentQuery());
 
 for (const entry of QUERY_LIBRARY) {
   const option = document.createElement('option');
@@ -826,12 +858,150 @@ querySelect.addEventListener('change', () => {
   const entry = queryByFileName(querySelect.value);
   if (!entry) return;
   queryPane.setText(entry.sparql, { silent: true });
+  // A library entry is not one of the user's saved queries, so a Save that
+  // follows must ask for a name rather than overwrite whatever was open.
+  setCurrentQuery(null, entry.title);
   if (entry.needsSelection && selection?.kind !== 'node') {
     renderQueryStatus(queryStatusHost, `${entry.title} — select a node in the graph first, then Run.`);
   } else {
     renderQueryStatus(queryStatusHost, `${entry.title} — Ctrl+Enter to run.`);
   }
 });
+
+// ---------------------------------------------------------------------------
+// Saved queries (docs/adr/0021-sparql-query-pane.md)
+// ---------------------------------------------------------------------------
+
+let queryStoreState = loadQueries();
+onQueryStorageError((reason) => {
+  showLint(
+    reason === 'quota'
+      ? 'Browser storage is full — saved queries are no longer being stored.'
+      : 'Browser storage is unavailable — queries cannot be saved.',
+  );
+});
+
+/** The saved query the editor text came from, if it came from one. */
+let currentQueryId = null;
+/** What to seed the name prompt with when the text came from somewhere named. */
+let suggestedQueryName = '';
+
+function setCurrentQuery(id, suggestion = '') {
+  currentQueryId = id;
+  if (suggestion) suggestedQueryName = suggestion;
+  renderSavedQueryList();
+}
+
+/**
+ * Whether the editor has diverged from the saved query it was opened from.
+ *
+ * Computed here, on render, rather than tracked: this pane deliberately has no
+ * `onChange` — typing must cost nothing — so there is no event to keep a flag
+ * up to date with. The list is re-rendered on every interaction that could
+ * change the answer, which is when it is looked at anyway.
+ */
+function isQueryDirty() {
+  const saved = currentQueryId ? queryById(queryStoreState, currentQueryId) : null;
+  return saved ? queryPane.getText() !== saved.sparql : false;
+}
+
+function renderSavedQueryList() {
+  renderSavedSelect(savedQuerySelect, queryStoreState, currentQueryId);
+  renderSavedQueries(
+    savedQueriesHost,
+    queryStoreState,
+    { currentId: currentQueryId, dirty: isQueryDirty() },
+    {
+      onOpen: openSavedQuery,
+      onOverwrite: (id) => applyQueryResult(saveQueryOver(queryStoreState, id, queryPane.getText())),
+      onRename: (id) => {
+        const query = queryById(queryStoreState, id);
+        if (!query) return;
+        const name = window.prompt('Rename the query to:', query.name);
+        if (name === null) return;
+        applyQueryResult(renameQuery(queryStoreState, id, name));
+      },
+      onDelete: (id) => {
+        const query = queryById(queryStoreState, id);
+        if (!query) return;
+        if (!window.confirm(`Delete ${query.name}? This cannot be undone.`)) return;
+        // The editor keeps the text; it just stops having a query behind it.
+        if (currentQueryId === id) currentQueryId = null;
+        applyQueryResult(deleteQuery(queryStoreState, id));
+      },
+    },
+  );
+}
+
+/**
+ * Applies a queryStore result: `{error}` is reported and changes nothing, so a
+ * refusal can never leave the list showing queries the storage does not hold.
+ */
+function applyQueryResult(result) {
+  if (!result || result.error) {
+    if (result?.error) renderQueryStatus(queryStatusHost, result.error, { kind: 'error' });
+    return null;
+  }
+  queryStoreState = result.store;
+  saveQueries(queryStoreState);
+  if (result.query) currentQueryId = result.query.id;
+  renderSavedQueryList();
+  return result;
+}
+
+function openSavedQuery(id) {
+  const query = queryById(queryStoreState, id);
+  if (!query) return;
+  queryPane.setText(query.sparql, { silent: true });
+  // The library box goes back to its placeholder: the editor no longer holds
+  // the library entry it names.
+  querySelect.value = '';
+  setCurrentQuery(query.id, query.name);
+  renderQueryStatus(queryStatusHost, `${query.name} — Ctrl+Enter to run.`);
+}
+
+/**
+ * Save, from the button or Ctrl+S.
+ *
+ * With a saved query open it overwrites in place, which is what makes refining
+ * one cheap; otherwise it asks for a name. Nothing is written by typing — a
+ * half-written query is not a question worth keeping.
+ */
+function saveCurrentQuery() {
+  const sparql = queryPane.getText();
+  if (!sparql.trim()) {
+    renderQueryStatus(queryStatusHost, 'There is nothing to save.', { kind: 'error' });
+    return;
+  }
+
+  const open = currentQueryId ? queryById(queryStoreState, currentQueryId) : null;
+  if (open) {
+    const saved = applyQueryResult(saveQueryOver(queryStoreState, open.id, sparql));
+    if (saved) renderQueryStatus(queryStatusHost, `Saved ${saved.query.name}.`);
+    return;
+  }
+
+  const suggested = uniqueQueryName(queryStoreState, suggestedQueryName || 'untitled query');
+  const name = window.prompt('Save this query as:', suggested);
+  if (name === null) return;
+  const saved = applyQueryResult(saveQueryAs(queryStoreState, name, sparql));
+  if (saved) renderQueryStatus(queryStatusHost, `Saved ${saved.query.name}.`);
+}
+
+savedQuerySelect.addEventListener('change', () => {
+  if (savedQuerySelect.value) openSavedQuery(savedQuerySelect.value);
+});
+saveQueryButton.addEventListener('click', () => saveCurrentQuery());
+toggleSavedButton.addEventListener('click', () => {
+  const open = savedQueriesHost.hidden;
+  savedQueriesHost.hidden = !open;
+  toggleSavedButton.setAttribute('aria-expanded', String(open));
+  // Rendered on open rather than kept live: `dirty` is a text comparison, and
+  // there is no point making it while the list is not on screen.
+  if (open) renderSavedQueryList();
+});
+window.addEventListener('beforeunload', () => flushQueries());
+renderSavedQueryList();
 
 /** Which document graphs the engine last held, so a deleted one gets cleared too. */
 let syncedGraphNames = new Set();
@@ -989,6 +1159,7 @@ function queryNode(iri) {
   if (entry) {
     queryPane.setText(entry.sparql, { silent: true });
     querySelect.value = entry.fileName;
+    setCurrentQuery(null, entry.title);
   }
   renderQueryStatus(
     queryStatusHost,
@@ -1101,6 +1272,45 @@ renderFiles();
 
 document.getElementById('turtle-hide-button').addEventListener('click', () => dock.cycleView('trig'));
 document.getElementById('reset-layout-button').addEventListener('click', () => dock.reset());
+
+// ---------------------------------------------------------------------------
+// The session: dump it, or destroy it (docs/adr/0021-sparql-query-pane.md)
+// ---------------------------------------------------------------------------
+
+dumpSessionButton.addEventListener('click', () => {
+  const now = Date.now();
+  downloadText(
+    dumpFileName(now),
+    buildSessionDump({
+      queries: sortedQueries(queryStoreState),
+      files: sortedFiles(fileStoreState),
+      now,
+    }),
+  );
+});
+
+destroySessionButton.addEventListener('click', () => {
+  const queries = queryStoreState.queries.length;
+  const files = fileStoreState.files.length;
+  if (!queries && !files) {
+    showLint('Nothing is saved in this browser.');
+    return;
+  }
+  const confirmed = window.confirm(
+    `Delete ${queries} saved ${queries === 1 ? 'query' : 'queries'} and ` +
+      `${files} ${files === 1 ? 'document' : 'documents'} from this browser? ` +
+      'This cannot be undone — "Dump session" downloads them first.',
+  );
+  if (!confirmed) return;
+
+  // Cleared synchronously, then reloaded: both stores debounce their writes, and
+  // a reload is the only way to be sure no pending timer resurrects what was
+  // just destroyed. The layout, the filters and the graph preferences are left
+  // alone — those are settings, not the work being cleared.
+  clearQueries();
+  clearStore(fileStoreState);
+  location.reload();
+});
 
 // Keyed on `code`, not `key`: with Alt held some layouts report a composed
 // character ('µ' for Alt+M) instead of the letter. Derived from the registry so
