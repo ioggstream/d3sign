@@ -161,6 +161,40 @@ export function drawnLabel(data, prefs) {
   return [data.name || data.displayId, data.foldNote].filter(Boolean).join('\n');
 }
 
+/** Past this many characters a predicate name is broken at its hyphens. */
+const EDGE_LABEL_WRAP_CHARS = 10;
+
+/**
+ * The text drawn on a link, which in `name` mode is the predicate's local name
+ * rather than its CURIE.
+ *
+ * Only `d3f:` is dropped. Every other prefix is doing work — a `dpv:` and a `d3f:`
+ * term can share a local name, and in a diagram mixing the two the prefix is the
+ * only thing telling them apart. D3FEND is the vocabulary this editor is for, so
+ * its prefix is the one that says nothing.
+ *
+ * A long name is then broken at its hyphens, because a link label is drawn rotated
+ * along the edge and `may-authenticate-with` laid end to end crosses half the
+ * drawing. The break keeps the hyphen on the first line, the way hyphenation does.
+ *
+ * Like `drawnLabel`, this composes at draw time and leaves `data.label` alone: the
+ * edge panel reads the drawn label to report what the link says
+ * (`edgePanelSummary` in edgePanel.js) and `data.predicate` is what every action
+ * acts on, so neither may see an abbreviation.
+ */
+export function drawnEdgeLabel(data, prefs) {
+  const label = data.label ?? '';
+  if (prefs.labelDetail !== 'name') return label;
+  // The ×N of a folded group belongs to the fold, not to the predicate: set aside
+  // so it is neither stripped of a prefix nor broken across lines.
+  const counted = /^(.*?)( ×\d+)$/.exec(label);
+  const head = counted ? counted[1] : label;
+  const count = counted ? counted[2] : '';
+  const bare = head.startsWith('d3f:') ? head.slice('d3f:'.length) : head;
+  const wrapped = bare.length > EDGE_LABEL_WRAP_CHARS ? bare.replaceAll('-', '-\n') : bare;
+  return wrapped + count;
+}
+
 /**
  * The gutter a container keeps on every side before the preference adds to it.
  * The label does not live here — it lives in the band above the children — so
