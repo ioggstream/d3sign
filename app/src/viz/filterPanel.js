@@ -26,7 +26,15 @@ export function loadFilterState(diagramId, allPredicates) {
     const knownWhenSaved = new Set(saved.kinds ?? saved.visibleKinds);
     for (const kind of LINK_KINDS) if (!knownWhenSaved.has(kind)) visibleKinds.add(kind);
   }
+  // Same rule for the node kinds, which grew an 'events' bucket after payloads
+  // listing five had already been written: `nodeKinds` is the vocabulary of the
+  // payload, and anything missing from it is new rather than de-selected. A
+  // payload predating that field falls back to its own visibleNodeKinds.
   const visibleNodeKinds = new Set(saved?.visibleNodeKinds ?? NODE_KINDS);
+  if (saved?.visibleNodeKinds) {
+    const knownWhenSaved = new Set(saved.nodeKinds ?? saved.visibleNodeKinds);
+    for (const kind of NODE_KINDS) if (!knownWhenSaved.has(kind)) visibleNodeKinds.add(kind);
+  }
   // Folded containers, by IRI. An IRI left over from another example simply
   // matches no node, so nothing has to prune the set when the document changes.
   const foldedNodes = new Set(saved?.foldedNodes ?? []);
@@ -41,6 +49,8 @@ export function saveFilterState(diagramId, filterState) {
     // The kind vocabulary this payload knew about — see loadFilterState.
     kinds: [...LINK_KINDS],
     visibleNodeKinds: [...filterState.visibleNodeKinds],
+    // Likewise for the node-kind vocabulary.
+    nodeKinds: [...NODE_KINDS],
     foldedNodes: [...filterState.foldedNodes],
   };
   localStorage.setItem(storageKey(diagramId), JSON.stringify(payload));
@@ -172,7 +182,7 @@ export function toggleMatchingLinkKinds(diagramId, filterState, query, onFilterC
 }
 
 /**
- * Renders the node-kind filter (Artifacts / Actors / Tactical / Other) into
+ * Renders the node-kind filter (Artifacts / Actors / Tactical / Events / … ) into
  * `host`. Buckets come from nodeKind.js and group the same D3FENDCore branches
  * the node colours are keyed on.
  */

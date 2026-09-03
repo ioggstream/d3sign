@@ -6,7 +6,8 @@ import {
 } from './editor/editorPane.js';
 import { mermaidIdOf, writtenTriplesOf } from './goToSource.js';
 import { parseDocument } from './parser/document.js';
-import { emitQuads, curieForGraphName } from './rdf/emit.js';
+import { emitQuads, curieForGraphName, PREFIXES } from './rdf/emit.js';
+import { alternativesBetween } from './editor/d3fendRestrictions.js';
 import { GraphStore } from './rdf/store.js';
 import { buildGraphModel, modelPredicates } from './rdf/graphModel.js';
 import { toTurtle } from './rdf/serialize.js';
@@ -70,7 +71,9 @@ import { createQueryClient } from './query/queryClient.js';
 import { queryPrefixes, preambleLineCount, withPreamble } from './query/queryPrefixes.js';
 import {
   adjustErrorPosition,
+  bindClassPair,
   bindSelection,
+  PAIR_PLACEHOLDERS,
   referencedSources,
   resultTable,
   usesThis,
@@ -369,13 +372,48 @@ function nodePanelActions(nodeData) {
  * editor would hide the very line it just jumped to.
  */
 function edgePanelActions(edgeData) {
-  if (!canGoToEdgeMermaidSource(edgeData)) return {};
-  return {
-    onGoToSource: () => {
-      closeNodePanel(nodePanelHost);
-      goToEdgeMermaidSource(edgeData);
-    },
+  const actions = { onQueryAlternatives: () => queryEdgeAlternatives(edgeData) };
+  // The mermaid jump is the one that has to be earned: a derived or collapsed
+  // edge has no single line to jump to. The query is about the two classes, not
+  // about how the link was written, so it is offered either way.
+  if (!canGoToEdgeMermaidSource(edgeData)) return actions;
+  actions.onGoToSource = () => {
+    closeNodePanel(nodePanelHost);
+    goToEdgeMermaidSource(edgeData);
   };
+  return actions;
+}
+
+/**
+ * A drawn node's first `d3f:` class, as a bare local name.
+ *
+ * The bare name is what data/d3fend-metadata.json is keyed by, and the first
+ * class is what `rdfType` already picks for the drawing — a node with both a
+ * D3FEND and a DPV type (ADR 0028) is looked up under its D3FEND one, and one
+ * with no D3FEND type at all is not a question this can answer.
+ */
+function d3fClassOfNode(iri) {
+  const types = currentModel.nodes.get(iri)?.types ?? [];
+  const d3f = types.find((type) => type.startsWith(PREFIXES.d3f));
+  return d3f ? d3f.slice(PREFIXES.d3f.length) : null;
+}
+
+/**
+ * The other predicates that could connect a drawn edge's two ends.
+ *
+ * Computed here rather than in the panel because `edgePanelSummary` is a pure
+ * function of the cytoscape data and the view is not allowed to reach into the
+ * RDF layer (ADR 0014) — the classes come from the model, which only the shell
+ * holds. Empty for a collapsed artifact path, whose arrow names no predicate and
+ * stands for two triples with two different ones
+ * (docs/adr/0026-collapse-artifact-mediated-paths.md).
+ */
+function edgeAlternatives(edgeData) {
+  if (edgeData?.collapsed) return [];
+  const source = d3fClassOfNode(edgeData?.source);
+  const target = d3fClassOfNode(edgeData?.target);
+  if (!source || !target) return [];
+  return alternativesBetween(source, target);
 }
 
 /**
@@ -402,7 +440,10 @@ const graphPane = createGraphPane(cyHost, {
   // Edges answer the same gesture as nodes, now that a tap on one only selects
   // (docs/adr/0019-select-and-swap-edges.md). Same host, so only one panel can be
   // open and `isGraphShortcutContext` keeps guarding on the one `.open`.
-  onShowEdgeInfo: (edgeData) => renderEdgePanel(nodePanelHost, edgeData, edgePanelActions(edgeData)),
+  onShowEdgeInfo: (edgeData) =>
+    renderEdgePanel(nodePanelHost, edgeData, edgePanelActions(edgeData), {
+      alternatives: edgeAlternatives(edgeData),
+    }),
   onSelectionChange: (next) => {
     selection = next;
     renderSelectionBox(selectionBoxHost, next);
@@ -939,6 +980,15 @@ querySelect.addEventListener('change', () => {
   setCurrentQuery(null, entry.title);
   if (entry.needsSelection && selection?.kind !== 'node') {
     renderQueryStatus(queryStatusHost, `${entry.title} — select a node in the graph first, then Run.`);
+  } else if (entry.scope === 'pair') {
+    // Picked from the library its two classes are still placeholders, so it
+    // would return nothing — and an empty result reads as "no findings"
+    // (docs/adr/0020-sparql-query-engine.md). Say where the real pair comes from.
+    renderQueryStatus(
+      queryStatusHost,
+      `${entry.title} — replace ${PAIR_PLACEHOLDERS.source} and ${PAIR_PLACEHOLDERS.target}, ` +
+        "or open it from an edge's info panel to have them filled in.",
+    );
   } else {
     renderQueryStatus(queryStatusHost, `${entry.title} — Ctrl+Enter to run.`);
   }
@@ -1240,6 +1290,35 @@ function queryNode(iri) {
   renderQueryStatus(
     queryStatusHost,
     `${curieForGraphName(iri)} is bound to ?this — Ctrl+Enter to run.`,
+  );
+}
+
+const ALTERNATIVES_QUERY = '15-alternative-links-between.rq';
+
+/**
+ * Opens the pane on the two classes an edge connects, from its info panel.
+ *
+ * The pair is written into the text rather than bound, so the query the user
+ * reads is the query that runs and is theirs to widen — which is the point of
+ * the button: the panel shows only the tiers that constrain both ends, and
+ * relaxing that is a two-line edit the comment in the file spells out.
+ */
+function queryEdgeAlternatives(edgeData) {
+  const source = d3fClassOfNode(edgeData?.source);
+  const target = d3fClassOfNode(edgeData?.target);
+  const entry = queryByFileName(ALTERNATIVES_QUERY);
+  closeNodePanel(nodePanelHost);
+  dock.revealView('query');
+  if (!entry || !source || !target) {
+    renderQueryStatus(queryStatusHost, 'Both ends of the link need a d3f: class.', { kind: 'error' });
+    return;
+  }
+  queryPane.setText(bindClassPair(entry.sparql, { source, target }), { silent: true });
+  querySelect.value = entry.fileName;
+  setCurrentQuery(null, entry.title);
+  renderQueryStatus(
+    queryStatusHost,
+    `d3f:${source} → d3f:${target} — Ctrl+Enter to run.`,
   );
 }
 

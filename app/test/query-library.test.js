@@ -56,6 +56,20 @@ describe('the canned query library', () => {
     }
   });
 
+  it('leaves a pair-scoped query parseable with its placeholders in', () => {
+    // A pair-scoped query is opened from an edge's info panel, which substitutes
+    // the two classes. Picked from the library instead it runs unsubstituted, so
+    // the placeholders have to be legal prefixed names rather than variables -
+    // binding them through VALUES is what defeats oxigraph's planner.
+    for (const query of queries.filter((q) => q.scope === 'pair')) {
+      expect(query.sparql, query.name).toContain('d3f:SourceClass');
+      expect(query.sparql, query.name).toContain('d3f:TargetClass');
+      expect(query.sparql, query.name).not.toMatch(/\bVALUES\b/);
+      // A pair has no selected node, so the picker must not ask for one.
+      expect(query.needsSelection, query.name).toBe(false);
+    }
+  });
+
   it('has at least one selection-scoped query and one CONSTRUCT', () => {
     expect(queries.some((q) => q.needsSelection)).toBe(true);
     expect(queries.some((q) => /\bCONSTRUCT\b/.test(q.sparql))).toBe(true);

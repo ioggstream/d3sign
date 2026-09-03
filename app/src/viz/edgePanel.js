@@ -36,7 +36,7 @@ import { renderDefinition, renderPanelFrame } from './nodePanel.js';
  * labels the ontology does not always define (`d3f:read-by` is not a D3FEND
  * property), so looking one up would just find nothing.
  */
-export function edgePanelSummary(data = {}) {
+export function edgePanelSummary(data = {}, { alternatives = [] } = {}) {
   const written = data.predicate || '';
   // The ×N count belongs to the fold, not to the predicate, and is reported
   // separately below.
@@ -68,6 +68,12 @@ export function edgePanelSummary(data = {}) {
     // second arrowhead and nothing else.
     bidirectional: Boolean(data.bidirectional),
     standsFor: [],
+    // The other predicates D3FEND licenses between these two classes, computed
+    // by the shell and handed in — resolving them needs the model's rdf:type,
+    // which the view has no access to (ADR 0014). The row whose predicate is the
+    // one on screen is marked rather than dropped: it is the axiom that licenses
+    // what is drawn, which is the first thing the section has to say.
+    alternatives: alternatives.map((row) => ({ ...row, current: row.predicate === written })),
   };
 
   // A collapsed path is the one derived edge that knows its own triples exactly:
@@ -136,6 +142,108 @@ function appendRelationRow(host, { source, predicate, target }) {
 }
 
 /**
+ * What a candidate row says about itself beyond the axiom, in order.
+ *
+ * Each badge is only ever present when it is true of the row: an exact match is
+ * the unremarkable case, most predicates have no declared inverse, and the
+ * predicate already drawn is one row out of several. `written the other way` is
+ * here rather than in the arrow because the arrow runs along the axiom, which is
+ * stated in one direction whichever way the drawn edge would go.
+ *
+ * Pure, and exported for the tests: the row itself is DOM, and this is the part
+ * of it worth asserting on.
+ */
+export function alternativeBadges(row = {}) {
+  const badges = [];
+  if (row.current) badges.push('as drawn');
+  if (row.direction === 'in') badges.push('written the other way');
+  if (row.tier === 'narrower') badges.push('narrower');
+  if (!row.inverse) badges.push('no inverse');
+  return badges;
+}
+
+/**
+ * One candidate, drawn as the axiom it comes from: `via —predicate→ filler`.
+ *
+ * The axiom rather than the predicate alone, because the predicate alone is not
+ * unique: `d3f:accesses` is stated on `d3f:NetworkResourceAccess` twice, once
+ * with `d3f:NetworkResource` at the far end and once with `d3f:Resource`, and
+ * two rows reading `d3f:accesses` with nothing to tell them apart are worse than
+ * one. It is also the same three-part shape `appendRelationRow` uses below.
+ */
+function appendAlternativeRow(host, row) {
+  const li = document.createElement('li');
+  li.className = 'node-panel-chip-row';
+
+  const via = document.createElement('span');
+  via.className = 'node-panel-chip';
+  via.textContent = row.via;
+  li.appendChild(via);
+
+  const predicate = document.createElement('span');
+  predicate.className = 'node-panel-chip-predicate';
+  // Unconditional, because the two chips either side of it are the axiom's own
+  // ends, in the order the axiom states them. Which way the *drawn* edge would
+  // then run is a different fact, and it is a badge below.
+  predicate.textContent = `→ ${row.predicate}`;
+  predicate.title =
+    `D3FEND states ${row.predicate} on d3f:${row.via}, with d3f:${row.filler} at the other end` +
+    (row.inverse ? `. Its inverse is ${row.inverse}.` : '');
+  li.appendChild(predicate);
+
+  const filler = document.createElement('span');
+  filler.className = 'node-panel-chip';
+  filler.textContent = row.filler;
+  li.appendChild(filler);
+
+  for (const badge of alternativeBadges(row)) appendBadge(li, badge);
+
+  host.appendChild(li);
+}
+
+/**
+ * The alternatives section: which other predicates could carry this link.
+ *
+ * Read-only. Applying one means rewriting a single link's predicate in the
+ * mermaid source, and the direction swap next to it is still per-predicate and
+ * global (docs/adr/0019-select-and-swap-edges.md), so offering a per-edge write
+ * here would put two different scopes one click apart. `Go to mermaid source`
+ * below is how a reader acts on what this says.
+ */
+function renderAlternatives(summary, host, actions) {
+  const heading = document.createElement('h4');
+  heading.textContent = `Alternative predicates (${summary.alternatives.length})`;
+  host.appendChild(heading);
+
+  if (!summary.alternatives.length) {
+    const note = document.createElement('p');
+    // An empty list is a finding, not a missing section: D3FEND constrains both
+    // ends, so "nothing licenses this pair" is what it usually means, and an
+    // absent section would read as "not checked".
+    note.textContent =
+      'D3FEND states no relation between these two classes, in either direction. ' +
+      'The query below relaxes that to one end at a time.';
+    host.appendChild(note);
+  } else {
+    const list = document.createElement('ul');
+    list.className = 'node-panel-chip-list';
+    for (const row of summary.alternatives) appendAlternativeRow(list, row);
+    host.appendChild(list);
+  }
+
+  if (!actions.onQueryAlternatives) return;
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'node-panel-more';
+  button.textContent = 'Query these in SPARQL';
+  button.title =
+    'Open the SPARQL pane on this pair. Deleting the two tier branches widens it to ' +
+    'every predicate licensed on one end, with the other end unconstrained.';
+  button.addEventListener('click', () => actions.onQueryAlternatives());
+  host.appendChild(button);
+}
+
+/**
  * Renders the edge info modal into `host` (the shared `<dialog>`).
  *
  * `actions.onGoToSource` — when given — puts a "Go to mermaid source" button at the
@@ -143,8 +251,8 @@ function appendRelationRow(host, { source, predicate, target }) {
  * callback rather than the editor, because the view is not allowed to know mermaid
  * exists (docs/adr/0014-graph-view-from-rdf-only.md); the shell connects the two.
  */
-export function renderEdgePanel(host, edgeData, actions = {}) {
-  const summary = edgePanelSummary(edgeData);
+export function renderEdgePanel(host, edgeData, actions = {}, options = {}) {
+  const summary = edgePanelSummary(edgeData, options);
 
   renderPanelFrame(host, summary.drawn);
 
@@ -205,6 +313,11 @@ export function renderEdgePanel(host, edgeData, actions = {}) {
     }
     host.appendChild(folded);
   }
+
+  // Not for a collapsed artifact path: its arrow names no predicate of its own,
+  // so there is nothing for a candidate to be an alternative *to*, and the two
+  // legs it stands for are listed above with their own predicates.
+  if (!summary.collapsed) renderAlternatives(summary, host, actions);
 
   if (actions.onGoToSource) {
     const button = document.createElement('button');

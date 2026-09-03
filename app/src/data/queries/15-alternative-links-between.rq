@@ -1,0 +1,85 @@
+# title: Predicates that could link two classes
+# about: Every D3FEND predicate licensed between two classes, including the ones stated on their superclasses. Opened from an edge's info panel, which substitutes the two classes; on its own it runs against the placeholders below.
+# needs: d3fend
+# scope: pair
+
+# Two branches, because a predicate stated on the *target* pointing back at the
+# source is the same arrow written the other way round: d3f:WebServerApplication
+# -> d3f:Process is licensed by d3f:instructs going out and d3f:instructed-by
+# coming in, and only the ontology knows which one the author meant.
+#
+# ?via is the class the axiom is actually stated on, which is the whole point:
+# D3FEND states almost nothing on a leaf class.
+#
+# The restrictions are already flattened into direct triples when the knowledge
+# base loads (MATERIALIZE_RESTRICTIONS in src/query/queryEngine.js), so this does
+# not walk owl:Restriction. Reading the materialized triples also covers more:
+# 4319 candidate relations across the ontology against 1787 for the restrictions
+# alone, because D3FEND states many relations only as direct triples.
+#
+# TO WIDEN THIS: in either branch, delete the inner block that binds ?match and
+# keep `?via ?property ?filler`. That drops the constraint on the far end and
+# returns every predicate licensed on the near one — up to 108 rows for
+# d3f:SystemInitScript, which is why it is not the default. The ?tier column
+# comes back empty for those rows, since nothing bound ?match.
+
+# One row per axiom, not per branch. A property whose two ends are the same class
+# is found by both walks - d3f:may-contain on d3f:File -> d3f:File - and two rows
+# saying the same thing with opposite arrows is not two alternatives. MIN picks
+# "1-out" over "2-in" and "1-exact" over "2-narrower", which is why the literals
+# are numbered.
+SELECT ?property ?via ?filler
+       (MIN(?branch) AS ?direction)
+       (MIN(?match) AS ?tier)
+       (MIN(?inverseOf) AS ?inverse)
+WHERE {
+  GRAPH K:d3fend {
+    {
+      d3f:SourceClass rdfs:subClassOf* ?via .
+      ?via ?property ?filler .
+      BIND("1-out" AS ?branch)
+      {
+        { d3f:TargetClass rdfs:subClassOf* ?filler . BIND("1-exact" AS ?match) }
+        UNION
+        { ?filler rdfs:subClassOf+ d3f:TargetClass . BIND("2-narrower" AS ?match) }
+      }
+    }
+    UNION
+    {
+      d3f:TargetClass rdfs:subClassOf* ?via .
+      ?via ?property ?filler .
+      BIND("2-in" AS ?branch)
+      {
+        { d3f:SourceClass rdfs:subClassOf* ?filler . BIND("1-exact" AS ?match) }
+        UNION
+        { ?filler rdfs:subClassOf+ d3f:SourceClass . BIND("2-narrower" AS ?match) }
+      }
+    }
+
+    # Without this, `?via ?property ?filler` also matches rdfs:label,
+    # rdfs:subClassOf and every annotation on the class.
+    ?property rdfs:subPropertyOf* d3f:d3fend-object-property .
+
+    # Object properties that carry metadata rather than a link you would draw:
+    # d3f:enables is technique -> tactic and feeds the kill-chain badges, and the
+    # rest annotate. The same list is METADATA_PREDICATES in
+    # app/scripts/build-d3fend-metadata.py, which keeps them out of the panel.
+    FILTER(?property NOT IN (
+      d3f:enables, d3f:weakness-of, d3f:kb-reference, d3f:kb-article,
+      d3f:seeAlso, d3f:synonym, d3f:altLabel, d3f:display-order
+    ))
+
+    # Strictly below the root. d3f:D3FENDCore as a filler matches every class
+    # there is, so it is an "alternative" between any two nodes and says nothing;
+    # it is also the reason the panel's projection drops d3f:dependent and
+    # d3f:provider, whose only filler it is.
+    ?filler rdfs:subClassOf+ d3f:D3FENDCore .
+
+    # Null for most of them. D3FEND declares an inverse for only some of its
+    # properties, and that is what decides whether `s` can swap the link once it
+    # is written (docs/adr/0019-select-and-swap-edges.md).
+    OPTIONAL { ?property owl:inverseOf|^owl:inverseOf ?inverseOf }
+  }
+}
+GROUP BY ?property ?via ?filler
+ORDER BY ?direction ?tier ?property

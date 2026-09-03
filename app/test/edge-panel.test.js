@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { edgePanelSummary } from '../src/viz/edgePanel.js';
+import { alternativeBadges, edgePanelSummary } from '../src/viz/edgePanel.js';
 
 const G = 'urn:d3fend-graph:';
 
@@ -171,6 +171,89 @@ describe('edgePanelSummary', () => {
       definition: null,
       derived: false,
       standsFor: [],
+      alternatives: [],
+    });
+  });
+
+  describe('alternative predicates', () => {
+    const candidate = (over = {}) => ({
+      direction: 'out',
+      tier: 'exact',
+      predicate: 'd3f:instructs',
+      via: 'Software',
+      filler: 'Process',
+      inverse: null,
+      ...over,
+    });
+
+    it('is empty when the shell hands it nothing, not undefined', () => {
+      // The panel opens on an edge whose ends carry no d3f: class at all, and a
+      // missing list must render as "none licensed" rather than throw.
+      expect(edgePanelSummary(edge()).alternatives).toEqual([]);
+    });
+
+    it('marks the candidate that is the predicate already drawn', () => {
+      const summary = edgePanelSummary(edge({ predicate: 'd3f:instructs' }), {
+        alternatives: [candidate(), candidate({ predicate: 'd3f:contains', filler: 'ExecutableFile' })],
+      });
+      expect(summary.alternatives.map((row) => [row.predicate, row.current])).toEqual([
+        ['d3f:instructs', true],
+        ['d3f:contains', false],
+      ]);
+    });
+
+    it('marks against the written predicate, not the drawn one', () => {
+      // A flipped edge draws its inverse name, which is not what the ontology
+      // states and not what a candidate row can equal.
+      const summary = edgePanelSummary(edge({ predicate: 'd3f:instructs', label: 'd3f:instructed-by' }), {
+        alternatives: [candidate()],
+      });
+      expect(summary.flipped).toBe(true);
+      expect(summary.alternatives[0].current).toBe(true);
+    });
+
+    it('keeps the rest of the row untouched, so the panel can print it', () => {
+      const summary = edgePanelSummary(edge(), {
+        alternatives: [candidate({ direction: 'in', tier: 'narrower', inverse: 'd3f:instructed-by' })],
+      });
+      expect(summary.alternatives[0]).toMatchObject({
+        direction: 'in',
+        tier: 'narrower',
+        via: 'Software',
+        filler: 'Process',
+        inverse: 'd3f:instructed-by',
+      });
+    });
+
+    describe('badges', () => {
+      it('says which way round the axiom is written, since the arrow does not', () => {
+        // The row's two chips are the axiom's own ends, so the arrow between them
+        // always points along it. An `in` candidate is the same relation stated
+        // from the other end, and this is what says so.
+        expect(alternativeBadges(candidate({ direction: 'in', inverse: 'd3f:instructs' }))).toEqual([
+          'written the other way',
+        ]);
+        expect(alternativeBadges(candidate({ inverse: 'd3f:instructed-by' }))).toEqual([]);
+      });
+
+      it('marks the predicate already drawn', () => {
+        expect(alternativeBadges(candidate({ current: true, inverse: 'd3f:x' }))).toEqual(['as drawn']);
+      });
+
+      it('says a filler below the drawn class is narrower', () => {
+        expect(alternativeBadges(candidate({ tier: 'narrower', inverse: 'd3f:x' }))).toEqual(['narrower']);
+      });
+
+      it('says when nothing could swap the link, which is most predicates', () => {
+        expect(alternativeBadges(candidate())).toEqual(['no inverse']);
+      });
+
+      it('stacks them in one order, and survives an empty row', () => {
+        expect(
+          alternativeBadges(candidate({ current: true, direction: 'in', tier: 'narrower' })),
+        ).toEqual(['as drawn', 'written the other way', 'narrower', 'no inverse']);
+        expect(alternativeBadges()).toEqual(['no inverse']);
+      });
     });
   });
 });

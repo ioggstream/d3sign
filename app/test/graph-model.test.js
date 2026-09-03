@@ -103,6 +103,15 @@ describe('buildGraphModel — from turtle only', () => {
     expect(dataOf('decoy').offensive).toBeUndefined();
   });
 
+  it('resolves the Event branch to its own category and bucket', () => {
+    const events = buildGraphModel(
+      storeFromTurtle('G:login a d3f:AuthenticationEvent .'),
+    );
+    const login = events.nodes.get('urn:d3fend-graph:login');
+    expect(login.coreCategory).toBe('Event');
+    expect(login.nodeKind).toBe('events');
+  });
+
   it('turns d3f:contains into containment, not into an edge', () => {
     expect(model.containment.get('urn:d3fend-graph:net')).toEqual([
       'urn:d3fend-graph:client',

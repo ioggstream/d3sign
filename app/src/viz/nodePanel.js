@@ -3,6 +3,7 @@ import { ADDED_MARKER } from '../editor/insertMeasure.js';
 import { neighbourClasses } from '../rdf/neighbourGraph.js';
 import { shortLabel } from '../rdf/graphModel.js';
 import { termOf } from '../editor/vocabularies.js';
+import { relationsFor } from '../editor/d3fendRestrictions.js';
 import d3fendMetadata from '../data/d3fend-metadata.json';
 import alignment from '../data/alignment.json';
 
@@ -119,7 +120,11 @@ export function addButtonTitle(rel) {
     rel.direction === 'in'
       ? `link it to this node as "${other} ${rel.predicate} this"`
       : `link it to this node as "this ${rel.predicate} ${other}"`;
-  return `Add ${other} to the mermaid diagram and ${link}. The lines go below this node's declaration, under a "${ADDED_MARKER}" comment.`;
+  // Where the relation is stated, when it is not stated here. The row is
+  // otherwise indistinguishable from one D3FEND puts on this class directly,
+  // and "because it is Software" is the answer to why it is on screen at all.
+  const inherited = rel.via ? ` D3FEND states it on d3f:${rel.via}, above this class.` : '';
+  return `Add ${other} to the mermaid diagram and ${link}.${inherited} The lines go below this node's declaration, under a "${ADDED_MARKER}" comment.`;
 }
 
 /**
@@ -142,25 +147,33 @@ function renderAddButton(rel, onAdd) {
   return button;
 }
 
+/**
+ * One relation, drawn as the triple it is: subject, predicate, object.
+ *
+ * The arrow is unconditional. The two chips already swap on `direction`, so a
+ * glyph that also swapped was the same fact encoded twice — and the two
+ * disagreed, leaving an outgoing row reading `this ← d3f:filters NetworkTraffic`,
+ * which says the partner acts on this node.
+ *
+ * Nothing here names the ancestor an inherited relation comes from. It qualifies
+ * the *subject* — `via` is the class `this` stands for, not a property of the
+ * link — so it is stated once, in the group's heading
+ * (docs/adr/0030-inherited-relations-and-alternative-properties.md).
+ */
 function renderRelationChip(rel, host, onAdd) {
   const li = document.createElement('li');
   li.className = 'node-panel-chip-row';
 
-  const arrow = rel.direction === 'in' ? '→' : '←';
+  const thisChip = () =>
+    Object.assign(document.createElement('span'), { className: 'node-panel-chip', textContent: 'this' });
 
-  const sourceChip =
-    rel.direction === 'in'
-      ? makeChip(rel.targetLocalName, 'node-panel-chip')
-      : Object.assign(document.createElement('span'), { className: 'node-panel-chip', textContent: 'this' });
+  const sourceChip = rel.direction === 'in' ? makeChip(rel.targetLocalName, 'node-panel-chip') : thisChip();
 
   const predicate = document.createElement('span');
   predicate.className = 'node-panel-chip-predicate';
-  predicate.textContent = `${arrow} ${rel.predicate}`;
+  predicate.textContent = `→ ${rel.predicate}`;
 
-  const targetChip =
-    rel.direction === 'in'
-      ? Object.assign(document.createElement('span'), { className: 'node-panel-chip', textContent: 'this' })
-      : makeChip(rel.targetLocalName, 'node-panel-chip');
+  const targetChip = rel.direction === 'in' ? thisChip() : makeChip(rel.targetLocalName, 'node-panel-chip');
 
   // The button leads the row rather than trailing it: rows wrap, and a trailing
   // control ends up on a line of its own, away from the relation it acts on.
@@ -171,18 +184,68 @@ function renderRelationChip(rel, host, onAdd) {
   host.appendChild(li);
 }
 
+/** A `<ul>` of relation rows. */
+function relationList(relations, onAdd) {
+  const list = document.createElement('ul');
+  list.className = 'node-panel-chip-list';
+  for (const rel of relations) {
+    renderRelationChip(rel, list, onAdd);
+  }
+  return list;
+}
+
+/**
+ * One ancestor's relations, folded behind a toggle that names and counts them.
+ *
+ * Collapsed by default, but never silent about what it holds: 1201 D3FEND
+ * classes state no relation of their own, so a fold that hid the count would put
+ * those panels back to looking empty, which is the bug ADR 0030 fixed. The
+ * heading is the disclosure.
+ *
+ * `hidden` on the list, toggled in place — the same idiom `renderDefinition`
+ * uses, and it has to act in place because `renderNodePanel` rebuilds the whole
+ * modal and would close every other fold the reader had opened.
+ */
+function renderInheritedGroup({ via, rows }, host, onAdd) {
+  const list = relationList(rows, onAdd);
+  list.hidden = true;
+
+  const toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.className = 'node-panel-more';
+  toggle.setAttribute('aria-expanded', 'false');
+  const label = (expanded) => `${expanded ? '▾' : '▸'} as ${resolveLabel(via)} (${rows.length})`;
+  toggle.textContent = label(false);
+  toggle.title =
+    `D3FEND states these on d3f:${via}, a superclass of this node, so they hold of it ` +
+    'without being stated on it.';
+  toggle.addEventListener('click', () => {
+    const expanded = list.hidden;
+    list.hidden = !expanded;
+    toggle.setAttribute('aria-expanded', String(expanded));
+    toggle.textContent = label(expanded);
+  });
+
+  const line = document.createElement('p');
+  line.className = 'node-panel-inherited-toggle';
+  line.appendChild(toggle);
+  host.appendChild(line);
+  host.appendChild(list);
+}
+
+/**
+ * One of the panel's three relation sections: what the class states, then what
+ * each superclass states, folded.
+ */
 function renderRelationSection(title, relations, host, onAdd) {
   if (!relations.length) return;
   const heading = document.createElement('h4');
   heading.textContent = title;
   host.appendChild(heading);
 
-  const list = document.createElement('ul');
-  list.className = 'node-panel-chip-list';
-  for (const rel of relations) {
-    renderRelationChip(rel, list, onAdd);
-  }
-  host.appendChild(list);
+  const { own, inherited } = groupByAncestor(relations);
+  if (own.length) host.appendChild(relationList(own, onAdd));
+  for (const group of inherited) renderInheritedGroup(group, host, onAdd);
 }
 
 /**
@@ -262,6 +325,40 @@ export function groupRelations(relations = []) {
     attack: relations.filter((r) => r.kind === 'attack'),
     defense: relations.filter((r) => r.kind === 'defense'),
     related: relations.filter((r) => r.kind !== 'attack' && r.kind !== 'defense'),
+  };
+}
+
+/**
+ * Separates what the class states itself from what it inherits, and buckets the
+ * inherited rows by the ancestor that states them.
+ *
+ * `via` is the ancestor `this` stands for in the row
+ * (editor/d3fendRestrictions.js), so a bucket answers "what is true of this node
+ * *as* a d3f:Firewall" — which is why the ancestor is named once per bucket
+ * rather than repeated on every row.
+ *
+ * Input order is preserved throughout: `relationsFor` returns nearest ancestor
+ * first, so the buckets come out most-specific first and rows keep their order
+ * inside one. A Map does that for free; an object keyed by class name would not
+ * be safe to rely on for a name like `constructor`.
+ *
+ * Pure, and exported for the tests, like `groupRelations` above.
+ */
+export function groupByAncestor(relations = []) {
+  const own = [];
+  const buckets = new Map();
+  for (const rel of relations) {
+    if (!rel.via) {
+      own.push(rel);
+      continue;
+    }
+    const bucket = buckets.get(rel.via);
+    if (bucket) bucket.push(rel);
+    else buckets.set(rel.via, [rel]);
+  }
+  return {
+    own,
+    inherited: [...buckets].map(([via, rows]) => ({ via, rows })),
   };
 }
 
@@ -467,7 +564,13 @@ export function renderNodePanel(host, nodeData, store, actions = {}) {
     // Every row is addable, not just the defensive ones: an attack the node is
     // subject to and a restriction it already satisfies are both things a threat
     // model draws, and refusing them only means typing the same two lines by hand.
-    const { attack, defense, related } = groupRelations(entry.relations);
+    //
+    // `relationsFor` rather than `entry.relations`: D3FEND states almost nothing
+    // on a leaf class, so the file's own rows leave 2160 of its 3655 classes with
+    // an empty panel — `d3f:WebServerApplication` among them, though
+    // `d3f:Software` above it states four relations
+    // (docs/adr/0030-inherited-relations-and-alternative-properties.md).
+    const { attack, defense, related } = groupRelations(relationsFor(localName));
     renderRelationSection('Attack', attack, section, actions.onAddRelation);
     renderRelationSection('Defense', defense, section, actions.onAddRelation);
     renderRelationSection('Relations', related, section, actions.onAddRelation);
