@@ -12,10 +12,12 @@ globalThis.localStorage = {
 let loadFilterState;
 let saveFilterState;
 let LINK_KINDS;
+let NODE_KINDS;
 
 beforeAll(async () => {
   ({ loadFilterState, saveFilterState } = await import('../src/viz/filterPanel.js'));
   ({ LINK_KINDS } = await import('../src/rdf/linkKind.js'));
+  ({ NODE_KINDS } = await import('../src/rdf/nodeKind.js'));
 });
 
 beforeEach(() => stored.clear());
@@ -55,5 +57,36 @@ describe('loadFilterState — visibleKinds', () => {
     saveFilterState(DIAGRAM, state);
 
     expect(loadFilterState(DIAGRAM, []).visibleKinds.has('connectivity')).toBe(false);
+  });
+});
+
+describe('loadFilterState — visibleNodeKinds', () => {
+  it('shows every node kind when nothing is saved', () => {
+    const { visibleNodeKinds } = loadFilterState(DIAGRAM, []);
+    expect([...visibleNodeKinds].sort()).toEqual([...NODE_KINDS].sort());
+  });
+
+  it('shows a node kind added after the payload was written', () => {
+    // A pre-Events payload: the bucket is absent because it did not exist yet.
+    stored.set(
+      KEY,
+      JSON.stringify({ visibleNodeKinds: ['artifacts', 'actors', 'tactical', 'legal', 'other'] }),
+    );
+
+    const { visibleNodeKinds } = loadFilterState(DIAGRAM, []);
+    expect(visibleNodeKinds.has('events')).toBe(true);
+  });
+
+  it('keeps a node kind the user explicitly hid', () => {
+    stored.set(
+      KEY,
+      JSON.stringify({
+        visibleNodeKinds: NODE_KINDS.filter((k) => k !== 'events'),
+        nodeKinds: [...NODE_KINDS],
+      }),
+    );
+
+    const { visibleNodeKinds } = loadFilterState(DIAGRAM, []);
+    expect(visibleNodeKinds.has('events')).toBe(false);
   });
 });

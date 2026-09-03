@@ -89,6 +89,30 @@ export function bindSelection(sparql, iri) {
   return `${sparql.trimEnd()}\nVALUES (?this) { (<${iri}>) }`;
 }
 
+/** The placeholder class names 15-alternative-links-between.rq is written against. */
+export const PAIR_PLACEHOLDERS = { source: 'd3f:SourceClass', target: 'd3f:TargetClass' };
+
+/**
+ * Substitutes a query's two placeholder classes with real ones.
+ *
+ * Substitution rather than a trailing `VALUES` clause, which is how `?this` is
+ * bound and would be the obvious thing to reuse. It cannot be reused: a variable
+ * inside `rdfs:subClassOf*` defeats oxigraph's planner, and the same query that
+ * answers instantly with the classes written in ran for over two minutes without
+ * finishing when they arrived through `VALUES`. The placeholders are prefixed
+ * names rather than variables for that reason, and the query stays valid SPARQL
+ * with them left in — it simply matches nothing, since no such class exists.
+ *
+ * Bare local names, not IRIs: `d3f:` is already declared in the preamble
+ * (query/queryPrefixes.js), and the panel has the class as a local name anyway.
+ */
+export function bindClassPair(sparql, { source, target } = {}) {
+  if (!source || !target) return sparql;
+  return sparql
+    .replaceAll(PAIR_PLACEHOLDERS.source, `d3f:${source}`)
+    .replaceAll(PAIR_PLACEHOLDERS.target, `d3f:${target}`);
+}
+
 /**
  * Shifts an engine's line number back onto the user's text.
  *
