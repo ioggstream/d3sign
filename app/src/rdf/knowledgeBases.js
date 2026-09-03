@@ -64,6 +64,22 @@ export const KNOWLEDGE_BASES = [
       'Produce it with: gzip -9 -c /path/to/d3fend.ttl > app/public/kg/d3fend.ttl.gz',
   },
   {
+    id: 'capec',
+    label: 'CAPEC attack patterns',
+    description: 'MITRE CAPEC OWL ontology: classes, hierarchy, and technique/artifact relations',
+    graph: kgGraphName('capec'),
+    url: 'kg/d3fend-capec.ttl.gz',
+    tripleHint: 400,
+  },
+  {
+    id: 'owasp',
+    label: 'OWASP TOP 10',
+    description: 'OWASP TOP 10 2023',
+    graph: kgGraphName('owasp'),
+    url: 'kg/owasp-top10-api-2023.src.ttl.gz',
+    tripleHint: 50,
+  },
+  {
     id: 'legal',
     label: 'EU legal vocabularies (DPV)',
     description:

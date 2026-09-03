@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { addButtonTitle, groupRelations } from '../src/viz/nodePanel.js';
+import { addButtonTitle, groupByAncestor, groupRelations } from '../src/viz/nodePanel.js';
 import { ADDED_MARKER } from '../src/editor/insertMeasure.js';
+import { relationsFor } from '../src/editor/d3fendRestrictions.js';
 import d3fendMetadata from '../src/data/d3fend-metadata.json';
 
 const relation = (over = {}) => ({
@@ -38,12 +39,84 @@ describe('groupRelations', () => {
   });
 });
 
+describe('groupByAncestor', () => {
+  it('separates what the class states from what it inherits', () => {
+    const { own, inherited } = groupByAncestor([
+      relation({ targetLocalName: 'Own' }),
+      relation({ targetLocalName: 'Borrowed', via: 'Software' }),
+    ]);
+    expect(own.map((r) => r.targetLocalName)).toEqual(['Own']);
+    expect(inherited).toEqual([
+      { via: 'Software', rows: [expect.objectContaining({ targetLocalName: 'Borrowed' })] },
+    ]);
+  });
+
+  it('buckets by ancestor, keeping first-seen order', () => {
+    // relationsFor returns nearest ancestor first, so the buckets come out
+    // most-specific first without this having to sort anything.
+    const { inherited } = groupByAncestor([
+      relation({ targetLocalName: 'A', via: 'Firewall' }),
+      relation({ targetLocalName: 'B', via: 'ComputerPlatform' }),
+      relation({ targetLocalName: 'C', via: 'Firewall' }),
+    ]);
+    expect(inherited.map((g) => g.via)).toEqual(['Firewall', 'ComputerPlatform']);
+    expect(inherited[0].rows.map((r) => r.targetLocalName)).toEqual(['A', 'C']);
+  });
+
+  it('is empty on both sides for a class with nothing', () => {
+    expect(groupByAncestor()).toEqual({ own: [], inherited: [] });
+  });
+
+  it('yields no groups when every relation is the class own', () => {
+    expect(groupByAncestor([relation(), relation({ targetLocalName: 'Other' })]).inherited).toEqual([]);
+  });
+
+  it('yields no own rows when everything is inherited', () => {
+    expect(groupByAncestor([relation({ via: 'Software' })]).own).toEqual([]);
+  });
+
+  it('survives an ancestor named like an Object property', () => {
+    // A Map, not an object literal: `constructor` as a bucket key would
+    // otherwise find Object.prototype's and append to it.
+    const { inherited } = groupByAncestor([relation({ via: 'constructor' })]);
+    expect(inherited).toHaveLength(1);
+    expect(inherited[0].via).toBe('constructor');
+  });
+
+  it('splits d3f:WebApplicationFirewall the way the panel shows it', () => {
+    // The reported case: a class that states nothing itself, so every row it
+    // shows is inherited. Five of its nine ancestors state something, nearest
+    // first - d3f:ApplicationLayerFirewall, d3f:ComputerNetworkNode,
+    // d3f:DigitalInformationBearer and d3f:D3FENDCore state nothing, so they
+    // contribute no group rather than an empty one.
+    expect(d3fendMetadata.WebApplicationFirewall.relations).toEqual([]);
+    const { own, inherited } = groupByAncestor(relationsFor('WebApplicationFirewall'));
+    expect(own).toEqual([]);
+    expect(inherited.map((g) => [g.via, g.rows.length])).toEqual([
+      ['Firewall', 2],
+      ['ComputerPlatform', 6],
+      ['NetworkNode', 5],
+      ['DigitalArtifact', 3],
+      ['Artifact', 2],
+    ]);
+    expect(inherited.reduce((n, g) => n + g.rows.length, 0)).toBe(18);
+    expect(inherited[0].rows.map((r) => r.predicate)).toEqual(['d3f:filters', 'd3f:disables']);
+  });
+});
+
 describe('addButtonTitle', () => {
   it('names both ends, the predicate and where the lines go', () => {
     const title = addButtonTitle(relation({ predicate: 'd3f:has-account', targetLocalName: 'UserAccount' }));
     expect(title).toContain('User Account (UserAccount)');
     expect(title).toContain('this d3f:has-account User Account (UserAccount)');
     expect(title).toContain(ADDED_MARKER);
+  });
+
+  it('says where an inherited relation is stated, and says nothing when it is the class own', () => {
+    // The row is otherwise indistinguishable from one D3FEND puts on this class
+    // directly, and most rows on a leaf class are inherited.
+    expect(addButtonTitle(relation({ via: 'Software' }))).toContain('D3FEND states it on d3f:Software');
+    expect(addButtonTitle(relation())).not.toContain('D3FEND states it on');
   });
 
   it('reads an incoming relation from the other end', () => {

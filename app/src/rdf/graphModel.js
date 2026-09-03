@@ -33,7 +33,7 @@ const RDFS_LABEL = PREFIXES.rdfs + 'label';
  */
 export const CONTAINMENT_PREDICATES = new Set([PREFIXES.d3f + 'contains']);
 
-const CORE_CATEGORY_PRIORITY = ['Agent', 'Goal', 'Plan', 'Artifact'];
+const CORE_CATEGORY_PRIORITY = ['Agent', 'Goal', 'Plan', 'Artifact', 'Event'];
 
 /**
  * This app's own namespaces, as opposed to the vocabularies: the document
@@ -102,11 +102,14 @@ const CATEGORY_BY_DPV_FAMILY = {
 
 /**
  * Highest-priority category among a node's classes: a D3FENDCore top-level branch
- * (Agent > Goal > Plan > Artifact) per d3fend-categories.json, or the category a
- * DPV family maps to per legal-categories.json.
+ * (Agent > Goal > Plan > Artifact > Event) per d3fend-categories.json, or the category
+ * a DPV family maps to per legal-categories.json.
+ *
+ * Event comes last only for tidiness: no class in d3fend-categories.json reaches both
+ * the Event branch and another one, so its rank never decides anything today.
  *
  * Null for a node whose classes fall outside both tables (e.g. d3f:Vulnerability,
- * d3f:Event, an unprojected DPV term) — those keep the default node style.
+ * d3f:Weakness, an unprojected DPV term) — those keep the default node style.
  *
  * D3FEND wins on a node carrying both, since a `d3f:` class says more about how to
  * draw a box than `dpv:PersonalData` does; the DPV type still shows in the panel and

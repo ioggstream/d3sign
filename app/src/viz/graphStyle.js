@@ -21,7 +21,7 @@ import {
  * Node category → colour. The single source for both the plain node fill and the
  * icon tint, so the two rendering modes read as the same taxonomy.
  *
- * The first four are D3FENDCore branches. The rest are the DPV families that have no
+ * The first five are D3FENDCore branches. The rest are the DPV families that have no
  * D3FEND counterpart (`coreCategoryOf` in rdf/graphModel.js folds DPV's Entity and
  * Data onto Agent and Artifact instead of giving them a second colour). They are
  * deliberately a cooler, lower-chroma set than the D3FEND four: a legal concept is
@@ -32,6 +32,7 @@ export const CATEGORY_COLORS = {
   Artifact: '#4c6ef5',
   Plan: '#2f9e44',
   Goal: '#ae3ec9',
+  Event: '#f59f00',
   Measure: '#0c8599',
   LegalBasis: '#5f3dc4',
   Purpose: '#9c6644',

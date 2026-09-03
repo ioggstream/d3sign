@@ -18,6 +18,11 @@ subgraph client[client d3f:Network]
 b[Browser d3f:Browser]
 end
 u -->|d3f:uses| b
+b -->|d3f:produces| request
+request[request/response d3f:WebResourceAccess]
+
+traffic[d3f:NetworkTraffic]
+traffic -->|d3f:contains| request
 ```
 
 The API is in the server  network
@@ -31,12 +36,10 @@ title: Front-end
 graph
 
 subgraph server [server d3f:Network]
-request[request/response d3f:WebResourceAccess]
 a[Web Application d3f:WebApplication]
 api[API d3f:WebAPIResource]
 end
 
-b -->|d3f:produces| request
 %% request -->|d3f:accesses| api
 a -->|d3f:manages| api
 ```
@@ -77,9 +80,10 @@ u -->|d3f:uses| account
 
 %% Techniques
 subgraph server [server  d3f:Network]
-  request-validation[d3f:WebSessionActivityAnalysis Web Session Activity Analysis]
   query-sanitization[d3f:DatabaseQueryStringAnalysis Database Query String Analysis]
 end
+
+request-validation[d3f:WebSessionActivityAnalysis Web Session Activity Analysis]
 
 query-sanitization -->|d3f:analyzes| query
 request-validation -->|d3f:analyzes| request

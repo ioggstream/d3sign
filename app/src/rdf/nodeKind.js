@@ -3,7 +3,7 @@
  * to the link kinds in linkKind.js.
  *
  * These group the categories that graphModel.js's `coreCategoryOf` already resolves
- * (and colours by) — the four D3FENDCore branches, plus the DPV families that have no
+ * (and colours by) — the five D3FENDCore branches, plus the DPV families that have no
  * D3FEND counterpart — so a node's bucket agrees with its *category*: a node typed both
  * Agent and Artifact is an Actor in both, and a `dpv:DataController` is an Actor
  * because DPV's Entity family folds onto Agent.
@@ -19,12 +19,13 @@
  */
 
 /** All node kinds a node can be classified into. */
-export const NODE_KINDS = ['artifacts', 'actors', 'tactical', 'legal', 'other'];
+export const NODE_KINDS = ['artifacts', 'actors', 'tactical', 'events', 'legal', 'other'];
 
 export const NODE_KIND_LABELS = {
   artifacts: 'Artifacts',
   actors: 'Actors',
   tactical: 'Tactical',
+  events: 'Events',
   legal: 'Legal',
   other: 'Other',
 };
@@ -42,6 +43,7 @@ const KIND_BY_CORE_CATEGORY = {
   Artifact: 'artifacts',
   Plan: 'tactical',
   Goal: 'tactical',
+  Event: 'events',
   Measure: 'legal',
   LegalBasis: 'legal',
   Purpose: 'legal',
@@ -50,7 +52,7 @@ const KIND_BY_CORE_CATEGORY = {
 
 /**
  * Maps a resolved category to its bucket. Everything outside the recognised ones —
- * the D3FEND branches Event, Weakness, Sensor, Group, Link, Log, PhysicalLocation,
+ * the D3FEND branches Weakness, Sensor, Group, Link, Log, PhysicalLocation,
  * Time, Vulnerability and Condition, classes missing from d3fend-categories.json,
  * DPV terms missing from legal-categories.json (which is every one of them until
  * build-legal-metadata.py has been run), and nodes with no class at all — is 'other'.

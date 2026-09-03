@@ -964,6 +964,10 @@ main#app-grid {
   font-size: 0.875em;
   margin: 0 0 var(--s-2);
 }
+/* The "as <superclass>" fold over a group of inherited relations. Tighter than
+   `.node-panel p`, because the list it discloses sits directly beneath it and a
+   paragraph's bottom margin reads as a gap between the two. */
+.node-panel-inherited-toggle { margin: var(--s-1) 0 0; }
 .node-panel-chip-list { list-style: none; padding: 0; margin: 0; }
 .node-panel-chip-row { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-1) 0; flex-wrap: wrap; }
 .node-panel-chip {
