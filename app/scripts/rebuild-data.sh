@@ -45,7 +45,7 @@ KG="$APP_DIR/public/kg"
 
 # ---------------------------------------------------------------------------
 # The D3FEND release. The single number this whole build hangs off; see the header.
-D3FEND_VERSION="1.4.0"
+D3FEND_VERSION="1.6.0"
 # `{version}` is substituted. MITRE keeps every release at this path, so the
 # download is reproducible — unlike /ontologies/d3fend.ttl, which is whatever is
 # current.

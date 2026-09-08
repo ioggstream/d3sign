@@ -15,8 +15,8 @@ Three jobs, one per flag:
              owl:versionInfo and binds `d3f:` to the D3FEND namespace. This is
              the gate: it runs before any generator, so a mismatch costs a
              message rather than a half-rebuilt src/data/.
-  --write-config  project the ontology header into app/config/d3fend.json, which
-             app/src/main.js imports to label the header.
+  --write-config  project the ontology's own stanza into app/config/d3fend.json,
+             which app/src/main.js imports to label the header.
 
 Usage:
     python3 app/scripts/build-d3fend-kg.py --version 1.4.0 --verify
@@ -45,16 +45,14 @@ D3FEND_NS = f"{ONTOLOGY_IRI}#"
 # preamble in app/src/query/queryPrefixes.js all write D3FEND terms as `d3f:Term`.
 D3FEND_PREFIX = "d3f"
 
-# The ontology stanza is the first one in the document, after the @prefix block.
-HEADER_LINES = 60
-
 # Where the header's version chip points. Not derived from the release: MITRE
 # publishes one ontology page, not one per version.
 HOMEPAGE = "https://d3fend.mitre.org/resources/ontology/"
 
-
-def read_header(text_lines):
-    return "".join(line for _, line in zip(range(HEADER_LINES), text_lines))
+# The line that opens the ontology's own stanza. Its position is not a contract:
+# D3FEND 1.4.0 put it right after the @prefix block, 1.6.0 sorts it in among the
+# terms, ~22k lines down — which is why the whole document is scanned for it.
+ONTOLOGY_SUBJECT = f"<{ONTOLOGY_IRI}>"
 
 
 def open_ttl(path):
@@ -63,28 +61,53 @@ def open_ttl(path):
     return opener(path, "rt", encoding="utf-8")
 
 
-def prefix_for_d3fend(text):
-    """The prefix label the document binds to the D3FEND namespace, or None."""
-    found = re.search(rf"@prefix\s+([A-Za-z][\w.-]*):\s*<{re.escape(D3FEND_NS)}>", text)
-    return found.group(1) if found else None
+def read_facts(lines):
+    """(prefix block, ontology stanza) from a turtle line iterator.
 
-
-def version_in(text):
-    """owl:versionInfo of the ontology stanza.
-
-    Read as text rather than parsed: rdflib needs ~20 s to reach one literal
-    through 130k triples. Only the prologue is searched, so the sole
-    `owl:versionInfo` in the window is the ontology's own — the term is also
-    *described* further down, as the subject of a property declaration.
+    Read as text rather than parsed: rdflib needs ~20 s to reach two literals
+    through 130k triples. Returning the stanza on its own is what makes the text
+    match safe — `owl:versionInfo` also appears elsewhere in the document, as the
+    subject of an annotation-property declaration.
     """
-    if f"<{ONTOLOGY_IRI}> a owl:Ontology" not in text:
-        return None
-    found = re.search(r'owl:versionInfo\s+"([^"]+)"', text)
+    prefixes = []
+    stanza = []
+    for line in lines:
+        if not stanza:
+            if line.startswith("@prefix"):
+                prefixes.append(line)
+            if not line.startswith(ONTOLOGY_SUBJECT):
+                continue
+        stanza.append(line)
+        # The stanza ends at the ` .` closing it. D3FEND's definitions are full of
+        # sentences, so a period only counts outside an open triple-quoted literal.
+        if re.search(r"(?:^|\s)\.\s*$", line) and "".join(stanza).count('"""') % 2 == 0:
+            break
+    return "".join(prefixes), "".join(stanza)
+
+
+def read_facts_from(path):
+    with open_ttl(path) as handle:
+        return read_facts(handle)
+
+
+def prefix_for_d3fend(prefixes):
+    """The prefix label the document binds to the D3FEND namespace, or None."""
+    found = re.search(rf"@prefix\s+([A-Za-z][\w.-]*):\s*<{re.escape(D3FEND_NS)}>", prefixes)
     return found.group(1) if found else None
 
 
-def release_date_in(text):
-    found = re.search(r'd3f:release-date\s+"([^"T]+)', text)
+def version_in(stanza):
+    """owl:versionInfo of the ontology stanza."""
+    if "owl:Ontology" not in stanza:
+        return None
+    found = re.search(r'owl:versionInfo\s+"([^"]+)"', stanza)
+    return found.group(1) if found else None
+
+
+def release_date_in(stanza):
+    # Any prefix, not just `d3f:`: the release date is read before the normalizing
+    # pass has necessarily run.
+    found = re.search(r'[\w.-]*:release-date\s+"([^"T]+)', stanza)
     return found.group(1) if found else None
 
 
@@ -122,14 +145,14 @@ def fetch(version, url_template, output):
     except urllib.error.URLError as error:
         sys.exit(f"cannot download {url}: {error}")
 
-    header = read_header(turtle.splitlines(keepends=True))
-    found_version = version_in(header)
+    prefixes, stanza = read_facts(turtle.splitlines(keepends=True))
+    found_version = version_in(stanza)
     if found_version != version:
         sys.exit(
             f"{url} declares owl:versionInfo {found_version!r}, not {version!r}. "
             "Fix D3FEND_VERSION or D3FEND_URL in rebuild-data.sh."
         )
-    found_prefix = prefix_for_d3fend(header)
+    found_prefix = prefix_for_d3fend(prefixes)
     if found_prefix != D3FEND_PREFIX:
         turtle = normalize_prefix(turtle, found_prefix)
 
@@ -144,10 +167,9 @@ def fetch(version, url_template, output):
 def verify(version, path):
     if not path.is_file():
         sys.exit(f"missing {path} — rerun with --fetch-d3fend")
-    with open_ttl(path) as handle:
-        header = read_header(handle)
+    prefixes, stanza = read_facts_from(path)
 
-    found_version = version_in(header)
+    found_version = version_in(stanza)
     if found_version is None:
         sys.exit(f"{path}: no <{ONTOLOGY_IRI}> a owl:Ontology with an owl:versionInfo")
     if found_version != version:
@@ -156,7 +178,7 @@ def verify(version, path):
             "Rerun with --fetch-d3fend to download the configured release."
         )
 
-    found_prefix = prefix_for_d3fend(header)
+    found_prefix = prefix_for_d3fend(prefixes)
     if found_prefix != D3FEND_PREFIX:
         sys.exit(
             f"{path} binds the D3FEND namespace to `{found_prefix}:`, not `{D3FEND_PREFIX}:`. "
@@ -167,13 +189,12 @@ def verify(version, path):
 
 def write_config(version, path):
     """app/config/d3fend.json — generated, read by app/src/main.js."""
-    with open_ttl(path) as handle:
-        header = read_header(handle)
+    _prefixes, stanza = read_facts_from(path)
     record = {
         "_generated": "app/scripts/rebuild-data.sh — do not edit; bump D3FEND_VERSION there",
         "homepage": HOMEPAGE,
         "ontologyIRI": ONTOLOGY_IRI,
-        "releaseDate": release_date_in(header),
+        "releaseDate": release_date_in(stanza),
         "version": version,
     }
     # Sorted keys and a trailing newline: the file is committed, so a rebuild

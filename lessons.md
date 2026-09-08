@@ -1293,6 +1293,20 @@ configuration variable, with a release bump rebuilding everything.
   60-line window plus a regex replaces a 20-second parse of 130k triples — and
   the window is what keeps the match off the *declaration* of `owl:versionInfo`
   further down the document.
+- `regulation.ttl` had its graph-metadata stanza *above* the `@prefix` block, so
+  the whole file was invalid turtle — `dct:` unbound. It broke
+  `build-legal-metadata.py` and, silently, the `K:regulation` Source in the app.
+  A hand-authored file is the one place nothing checks the syntax; parse it once
+  after editing.
+- **The position of the ontology stanza is not a contract.** 1.4.0 puts
+  `<…/d3fend.owl> a owl:Ontology` right after the `@prefix` block; 1.6.0 sorts it
+  in among the terms, ~22 000 lines down. A 60-line window read the version as
+  absent, the gate failed, and the run exited before a single generator — the
+  reported symptom was "the data files are not rebuilt". The reader now scans for
+  the stanza and stops at it, which is still ~0.07 s.
+- Narrowing the *text* the regex sees, rather than the number of lines read, is
+  what keeps `owl:versionInfo` from matching its own annotation-property
+  declaration.
 - Normalizing a prefix cannot be textual. `ex:Term` in a triple and the same
   string inside one of D3FEND's definition literals are indistinguishable to a
   regex, and those definitions quote CURIEs — so the `d3f:` rebinding reparses
@@ -1332,3 +1346,33 @@ Task: implement ADR 0031 — architecture templates — in the parser, emitter a
   works if the test treats it as *output*: feed the first two blocks, compare
   quads with the third. Tracing that by hand found the block was wrong — the
   rewrite keeps the whole block, so the call-site edge belongs in it.
+
+## 2026-09-08 — folding reset the view, and the fix was one node, not the viewport
+
+Folding re-runs the layout, and `runLayout`'s `layoutstop` ended in
+`cy.fit(undefined, 20)`, so every fold threw away the reader's zoom and sent them
+back to the whole drawing — worse the deeper they were zoomed in.
+
+- Restoring the old `pan`/`zoom` verbatim is the obvious fix and the wrong one: a
+  re-layout moves every node, so the same viewport frames a different part of the
+  graph. What survives a re-layout is a *node*, not a rectangle. Anchor on the one
+  node the user is demonstrably looking at — the one they just folded — and the
+  drawing changes around a fixed point.
+- The arithmetic is cytoscape's own `rendered = position * zoom + pan`, inverted
+  for pan. Pulling it into `viz/viewAnchor.js` made the only interesting part
+  testable without building a `cy` instance, which no test here does.
+- Capture *before* `cy.elements().remove()` and restore at the very end of
+  `layoutstop`: `rotateBy`, `applyContainerBands` and `separateOverlaps` all move
+  nodes after the layout settles, so anchoring any earlier lands off by whatever
+  they nudged.
+- `cy.viewport({zoom, pan})` in one call, not `cy.zoom()` then `cy.pan()` — two
+  calls draw two frames and the zoom alone first moves the view about the wrong
+  point.
+- The anchor has to survive the render, and it need not: folding an ancestor
+  swallows the node. Keeping `cy.fit` as the fallback means the feature degrades
+  to today's behaviour instead of leaving the viewport on empty space.
+- Plumbing it as a one-shot `pendingViewAnchor` in `main.js`, consumed and cleared
+  by the next `renderGraph()`, kept `update()`'s default (fit) intact for every
+  other caller. The context menu and the `f` shortcut both go through one
+  `foldNode()`, because a shortcut that refits when the menu does not reads as a
+  bug in the shortcut.
