@@ -476,7 +476,7 @@ const graphPane = createGraphPane(cyHost, {
   onQuery: (iri) => queryNode(iri),
   // Folding is view state, so it goes through the same filter path as everything
   // else in this header: the store is untouched and the TriG never moves.
-  onFoldToggle: (iri) => toggleFold(UNION_FILTER_KEY, filterState, iri, onFilterChange),
+  onFoldToggle: (iri) => foldNode(iri),
 
   // Named rather than inline, because the `g` shortcut asks the same two questions
   // of the selected element and must not answer them differently.
@@ -493,6 +493,10 @@ let currentModel = { nodes: new Map(), edges: [], containment: new Map(), parent
 // applyGraphVisibility before the diagram's predicates are known) already has the
 // complete shape, including visibleKinds and visibleNodeKinds.
 let filterState = loadFilterState(UNION_FILTER_KEY, []);
+// The node the next render should keep still, set by a fold and consumed by the
+// very next renderGraph() (see graphPane.update's anchorNode). A one-shot rather
+// than lasting state: only the render a fold causes should skip the refit.
+let pendingViewAnchor = null;
 let enrichmentLoaded = false;
 let diagrams = [];
 let selectedHash = null;
@@ -503,6 +507,19 @@ let allPredicates = [];
 // Set once the TriG pane has been hand-edited: from then on mermaid edits still
 // drive the graph, but they stop rewriting the pane behind the user's back.
 let turtleDirty = false;
+
+/**
+ * Folds or unfolds a node, keeping the view on it.
+ *
+ * Named rather than inline because the context menu and the `f` shortcut both
+ * fold, and a fold that refits from one of them and not the other would read as a
+ * bug in the shortcut. `toggleFold` renders synchronously, so the anchor set here
+ * is always the one that render reads.
+ */
+function foldNode(iri) {
+  pendingViewAnchor = iri;
+  toggleFold(UNION_FILTER_KEY, filterState, iri, onFilterChange);
+}
 
 /** Every filter panel reports here, and renderGraph() is where the chip counts come from. */
 function onFilterChange(nextState) {
@@ -526,7 +543,11 @@ function renderLinksPanel() {
  * the Nodes/Links chip counts from what the render actually produced.
  */
 function renderGraph() {
-  const stats = graphPane.update(currentModel, filterState);
+  // Read and cleared before the render, so a render that throws cannot leave the
+  // anchor behind for whatever renders next.
+  const anchorNode = pendingViewAnchor;
+  pendingViewAnchor = null;
+  const stats = graphPane.update(currentModel, filterState, { anchorNode });
   if (pathFocus && !graphPane.hasPathFocus()) pathFocus = null;
   nodesChip.setCount(stats.nodesShown, stats.nodesTotal);
   linksChip.setCount(stats.edgesShown, stats.edgesTotal);
@@ -1571,9 +1592,7 @@ function isGraphShortcutContext(event) {
  */
 const GRAPH_SHORTCUTS = {
   f: () => {
-    if (selection?.kind === 'node' && selection.foldable) {
-      toggleFold(UNION_FILTER_KEY, filterState, selection.id, onFilterChange);
-    }
+    if (selection?.kind === 'node' && selection.foldable) foldNode(selection.id);
   },
   g: () => {
     if (!selection) return;

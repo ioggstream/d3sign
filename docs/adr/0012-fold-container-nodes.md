@@ -148,3 +148,16 @@ before trusting them.
   the filter state and
   `d3fend-graph:view-prefs`
   ([ADR 0015](0015-graph-visualization-preferences.md)).
+- A fold re-runs the layout, which moves every node,
+  so the view is anchored on the folded node — same
+  zoom, same pixel — instead of refitting the whole
+  drawing. Folding is a local reading action: the
+  reader is already looking at that node, and refitting
+  would send them back to the whole graph. The
+  arithmetic is `anchoredViewport` in
+  `viz/viewAnchor.js`; `graphPane.update` takes the
+  node as `anchorNode` and falls back to fitting when
+  it does not survive the render (folding an ancestor
+  swallows it). Every other rebuild — filter changes,
+  layout switch, rotate, pref restyle — still fits;
+  widening this is a separate decision.

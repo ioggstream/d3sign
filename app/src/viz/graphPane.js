@@ -13,6 +13,7 @@ import { separateSiblings, siblingLevels } from './separateSiblings.js';
 import { loadIconSet } from './icons.js';
 import { edgeMenuItems, nodeMenuItems } from './nodeMenu.js';
 import { directionalFlow } from './pathFocus.js';
+import { anchoredViewport } from './viewAnchor.js';
 
 cytoscape.use(elk);
 
@@ -380,8 +381,48 @@ export function createGraphPane(host, {
     }
   }
 
-  /** Runs the current layout, re-applying the pending rotation once it settles. */
-  function runLayout() {
+  /**
+   * Where a node is drawn right now, for `restoreAnchor` to put it back after the
+   * layout has moved it. Null when there is nothing to anchor on, which is the
+   * caller's cue to frame the whole drawing instead.
+   *
+   * Has to be read before the elements are replaced: afterwards the old node is
+   * gone and its rendered position with it.
+   */
+  function captureAnchor(iri) {
+    if (!iri) return null;
+    const node = cy.getElementById(iri);
+    if (node.empty()) return null;
+    return { id: iri, rendered: { ...node.renderedPosition() }, zoom: cy.zoom() };
+  }
+
+  /**
+   * Puts the anchored node back under the pixel it was drawn at, keeping the zoom.
+   *
+   * False when there is no anchor, or when the node did not survive the render —
+   * folding an ancestor swallows it — so the caller can fall back to fitting
+   * rather than leaving the viewport pointing at empty space. One `viewport` call
+   * rather than `zoom` then `pan`: two calls draw two frames, and the zoom alone
+   * would first move the view about the wrong point.
+   */
+  function restoreAnchor(anchor) {
+    if (!anchor) return false;
+    const node = cy.getElementById(anchor.id);
+    if (node.empty()) return false;
+    cy.viewport(anchoredViewport(anchor.rendered, anchor.zoom, node.position()));
+    return true;
+  }
+
+  /**
+   * Runs the current layout, re-applying the pending rotation once it settles.
+   *
+   * With an `anchor` (from `captureAnchor`) the view stays where the reader left
+   * it instead of being refitted. Both happen at the end of `layoutstop`, after
+   * the rotation, the bands and the overlap separation: those passes move nodes,
+   * so anchoring any earlier would leave the node off by however far it was then
+   * nudged.
+   */
+  function runLayout(anchor = null) {
     const layout = cy.layout(layoutOptions(layoutId, prefs));
     layout.one('layoutstop', () => {
       rotateBy(rotationSteps);
@@ -391,7 +432,7 @@ export function createGraphPane(host, {
       // After the rotation, which turns the node boxes but not the labels inside
       // them — a drawing with no overlaps can gain some on a quarter turn.
       separateOverlaps();
-      cy.fit(undefined, 20);
+      if (!restoreAnchor(anchor)) cy.fit(undefined, 20);
     });
     layout.run();
   }
@@ -583,8 +624,14 @@ export function createGraphPane(host, {
     /**
      * Redraws the graph from an RDF-derived model (see rdf/graphModel.js) and
      * returns the render's `{ nodesShown, nodesTotal, edgesShown, edgesTotal }`.
+     *
+     * `anchorNode` is the IRI of a node to keep still: the drawing is re-laid out
+     * around it rather than refitted, so a fold — a local action on a node the
+     * reader is already looking at — does not throw away their zoom and send them
+     * back to the whole graph. Without it the render frames everything, which is
+     * the right answer when the whole drawing has changed.
      */
-    update(model, filterState) {
+    update(model, filterState, { anchorNode } = {}) {
       // The one preference the *element set* depends on, so it is read here rather
       // than in setPrefs, which only restyles and relayouts
       // (docs/adr/0026-collapse-artifact-mediated-paths.md).
@@ -604,6 +651,7 @@ export function createGraphPane(host, {
       // answer for them.
       const selectedIds = cy.$('node:selected').map((node) => node.id());
       const selectedEdges = cy.$('edge:selected').map((edge) => edge.data());
+      const anchor = captureAnchor(anchorNode);
       cy.elements().remove();
       cy.add(elements);
       for (const id of selectedIds) cy.getElementById(id).select();
@@ -611,9 +659,9 @@ export function createGraphPane(host, {
       // Fired even when the selection is unchanged: the node's own `folded` flag
       // has just been rewritten, so the shell's copy is stale either way.
       reportSelection();
-        applyPathFocus();
+      applyPathFocus();
 
-      runLayout();
+      runLayout(anchor);
       return stats;
     },
     /** Switches layout algorithm (an id from LAYOUTS) and re-runs it. */
