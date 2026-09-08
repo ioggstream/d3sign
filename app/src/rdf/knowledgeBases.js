@@ -109,7 +109,7 @@ export const KNOWLEDGE_BASES = [
     // to be reviewable in a diff. The worker sniffs the gzip magic number rather than
     // trusting the extension, so both load (query/queryWorker.js).
     url: 'kg/regulation.ttl',
-    tripleHint: 338,
+    tripleHint: 717,
   },
 ];
 

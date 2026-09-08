@@ -155,6 +155,9 @@
   "AgglomerativeClustering": [
     "Plan"
   ],
+  "AircraftComputer": [
+    "Artifact"
+  ],
   "AlethicLogic": [
     "Plan"
   ],
@@ -367,6 +370,9 @@
   ],
   "Autoencoding": [
     "Plan"
+  ],
+  "AutomotiveElectronicControlUnit": [
+    "Artifact"
   ],
   "AutoregressiveModel": [
     "Plan"
@@ -3606,6 +3612,9 @@
   "ControlFlowPolicy": [
     "Artifact"
   ],
+  "ControlServer": [
+    "Artifact"
+  ],
   "ConvolutionalNeuralNetwork": [
     "Plan"
   ],
@@ -3868,6 +3877,9 @@
     "Artifact"
   ],
   "DefenseEvasionTechnique": [
+    "Plan"
+  ],
+  "DefenseImpairmentTechnique": [
     "Plan"
   ],
   "DefensiveAction": [
@@ -4480,6 +4492,9 @@
     "Artifact"
   ],
   "FlashMemory": [
+    "Artifact"
+  ],
+  "FlightSoftware": [
     "Artifact"
   ],
   "Forecasting": [
@@ -5698,7 +5713,7 @@
   "NetworkSensor": [
     "Sensor"
   ],
-  "NetworkService": [
+  "NetworkServiceApplicationProcess": [
     "Artifact"
   ],
   "NetworkSession": [
@@ -6222,9 +6237,6 @@
     "Artifact"
   ],
   "OfficeApplicationFile": [
-    "Artifact"
-  ],
-  "OnboardComputer": [
     "Artifact"
   ],
   "One-timePassword": [
@@ -6841,10 +6853,10 @@
   "ReadMemory": [
     "Artifact"
   ],
-  "Real-timeOperatingSystem": [
+  "Real-timeClock": [
     "Artifact"
   ],
-  "RealtimeClock": [
+  "Real-timeOperatingSystem": [
     "Artifact"
   ],
   "Receiver": [
@@ -7355,10 +7367,10 @@
   "Software-definedRadioWaveformApplication": [
     "Artifact"
   ],
-  "Software-definedRadioWaveformConfigurationEvent": [
+  "Software-definedRadioWaveformApplicationConfigurationEvent": [
     "Event"
   ],
-  "Software-definedRadioWaveformLoadEvent": [
+  "Software-definedRadioWaveformApplicationLoadEvent": [
     "Event"
   ],
   "SoftwareArtifactServer": [
@@ -7421,6 +7433,9 @@
   "Spacecraft": [
     "Artifact"
   ],
+  "SpacecraftComputer": [
+    "Artifact"
+  ],
   "SpacecraftSafeMode": [
     "Artifact"
   ],
@@ -7461,6 +7476,9 @@
     "Artifact"
   ],
   "StatisticalMethod": [
+    "Plan"
+  ],
+  "StealthTechnique": [
     "Plan"
   ],
   "Step": [
@@ -7845,6 +7863,9 @@
     "Plan"
   ],
   "T1027.017": [
+    "Plan"
+  ],
+  "T1027.018": [
     "Plan"
   ],
   "T1028": [
@@ -10151,6 +10172,72 @@
   "T1681": [
     "Plan"
   ],
+  "T1682": [
+    "Plan"
+  ],
+  "T1683": [
+    "Plan"
+  ],
+  "T1683.001": [
+    "Plan"
+  ],
+  "T1683.002": [
+    "Plan"
+  ],
+  "T1684": [
+    "Plan"
+  ],
+  "T1684.001": [
+    "Plan"
+  ],
+  "T1684.002": [
+    "Plan"
+  ],
+  "T1685": [
+    "Plan"
+  ],
+  "T1685.001": [
+    "Plan"
+  ],
+  "T1685.002": [
+    "Plan"
+  ],
+  "T1685.003": [
+    "Plan"
+  ],
+  "T1685.004": [
+    "Plan"
+  ],
+  "T1685.005": [
+    "Plan"
+  ],
+  "T1685.006": [
+    "Plan"
+  ],
+  "T1686": [
+    "Plan"
+  ],
+  "T1686.001": [
+    "Plan"
+  ],
+  "T1686.002": [
+    "Plan"
+  ],
+  "T1686.003": [
+    "Plan"
+  ],
+  "T1687": [
+    "Plan"
+  ],
+  "T1688": [
+    "Plan"
+  ],
+  "T1689": [
+    "Plan"
+  ],
+  "T1690": [
+    "Plan"
+  ],
   "TA0001": [
     "Goal"
   ],
@@ -10265,6 +10352,9 @@
   "TA0111": [
     "Goal"
   ],
+  "TA0112": [
+    "Goal"
+  ],
   "TCPEvent": [
     "Event"
   ],
@@ -10285,9 +10375,6 @@
   ],
   "Technique": [
     "Plan"
-  ],
-  "Telecommand": [
-    "Artifact"
   ],
   "TemporalDifferenceLearning": [
     "Plan"
@@ -10613,7 +10700,16 @@
   "Vehicle": [
     "Artifact"
   ],
+  "VehicleComputer": [
+    "Artifact"
+  ],
+  "VehicleControlSoftware": [
+    "Artifact"
+  ],
   "VehicleOperatingMode": [
+    "Artifact"
+  ],
+  "VehicleSoftware": [
     "Artifact"
   ],
   "Vendor": [
@@ -10952,6 +11048,9 @@
   ],
   "WirelessAttacker": [
     "Agent"
+  ],
+  "WirelessCommand": [
+    "Artifact"
   ],
   "WirelessLink": [
     "Link"
