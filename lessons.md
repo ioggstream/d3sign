@@ -1191,6 +1191,45 @@ Testing without pushing:
   URL) tested the real code end to end: first deploy, two previews, main
   redeploy, close, close-again.
 
+## 2026-09-08 — a subgraph cannot mean "these are the members"
+
+Task: finish the ADR 0031 draft on architecture templates (design only, no code).
+
+- The draft referenced templates as `G:HostTemplate`. `G:` is bound to
+  `urn:d3fend-graph:`, which is also the base `nodeIri()` mints — so that CURIE
+  is simultaneously a named graph, a node and a class. Prefix reuse here has to
+  be checked against `PREFIXES` *and* against `nodeIri`, not just the prefix table.
+- **The draft's own expected TriG contradicted the emitter.** It wrapped every
+  member in `subgraph host[d3f:Host]` to say "these belong to the host", and the
+  containment loop in `emitQuads` writes `d3f:contains` from a tagged subgraph to
+  every tagged child. So the example silently asserted that a host contains its
+  hostname, domain name and addresses — while the very next line said the
+  hostname `d3f:identifies` it. Grouping and containment are different claims,
+  and mermaid nesting only expresses the second.
+- Fallout: template membership has to be provenance in the editor's own
+  namespace, and rendering an instance as one collapsible box then needs a second
+  parentage source. That widens ADR 0016's Context but not its invariant —
+  `separateSiblings.js` is geometry over boxes and never asks what made the
+  parent. `parentOf` being a first-parent-wins tree is what forces containment to
+  be given priority explicitly.
+- Also wrong in the draft: `bond0` and `host` were both top-level subgraphs, so
+  "the outermost subgraph is the root" does not decide. The root has to be
+  declared in frontmatter.
+- The corrected example still needed care: a node's parent is the subgraph that
+  *first mentions* it (`!node.parent` guards in `parser/index.js`). Declaring
+  `eth0` at top level and then listing it inside `bond0` leaves it parentless, so
+  `bond0` would contain nothing.
+- On parameters, RDF's monotonicity does the design work. Adding to a generated
+  member is free because generated ids are ordinary document ids; replacing needs
+  a defaults rule for single-valued predicates; removing needs negation, so it is
+  refused and variants become separate templates. Counted repetition is refused
+  for a concrete reason — it invents ids nobody wrote, so nothing can override
+  them afterwards.
+- Value binding, if it ever lands, needs no new syntax: `parseAttrs` already
+  accepts arbitrary `key: value` pairs in a mermaid `@{…}` block on every shape
+  form, and the emitter drops them. Unverified: whether mermaid's renderer
+  tolerates unknown keys there.
+
 Last 24h · these are independent characteristics of your usage, not a breakdown
 68% of your usage came from subagent-heavy sessions
 Each subagent runs its own requests. Be deliberate about spawning them — and consider configuring a cheaper model for simpler subagents.
