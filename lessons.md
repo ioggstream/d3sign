@@ -1229,6 +1229,31 @@ Task: finish the ADR 0031 draft on architecture templates (design only, no code)
   accepts arbitrary `key: value` pairs in a mermaid `@{…}` block on every shape
   form, and the emitter drops them. Unverified: whether mermaid's renderer
   tolerates unknown keys there.
+- **A testcase section cannot span two mermaid blocks.**
+  `parseTestcaseSections` in `rdf-emit.test.js` hardcodes `testcases.md` and
+  takes only the *first* fence per `## section`. `merge-diagrams-with-same-id`
+  already documents a second block that its snapshot does not assert, so it
+  looked like multi-block cases were supported. Any case needing two diagrams —
+  a template plus its instantiation — needs the harness to drive `parseDocument`
+  over the file instead.
+- Adding a prefix to the corpus is checkable before writing any code: no
+  `T:`-shaped class token exists in the 13 example files, and `kind:`/`root:` are
+  unused frontmatter keys (`config:` is the precedent for a key the parser
+  ignores). So the 14 existing snapshots must stay byte-identical when templates
+  land — that is the regression test.
+- **Bookkeeping written into a diagram's own graph is visible.** In
+  `buildGraphModel`, a quad that is not `rdf:type` and is not intercepted by
+  `CONTAINMENT_PREDICATES` becomes a drawn edge and an entry in the Links
+  filter. So the template-membership predicate has to be registered as
+  containment is, or an instance draws one link per member — precisely the
+  drawing the collapsible box was meant to replace. The set's own comment says
+  it: *structure, so they are never also drawn as an edge.*
+- The mirror of that: a literal that is not `rdfs:label` is invisible to the
+  view. It killed a `ds:memberId` triple that had been specified per member per
+  instance — nothing read it, and the member name is recoverable from
+  `ds:partOf` plus the generated local name. Derivable provenance is not
+  provenance worth storing; the question to ask of any bookkeeping triple is
+  which consumer reads it.
 
 Last 24h · these are independent characteristics of your usage, not a breakdown
 68% of your usage came from subagent-heavy sessions
@@ -1250,3 +1275,60 @@ Explore
 Plan
 4%
 d3fend-expert
+
+## 2026-09-08 — the header states the D3FEND release, and one variable drives it
+
+Task: show the D3FEND ontology version on the home page, taken from a
+configuration variable, with a release bump rebuilding everything.
+
+- **The version and the data have to come from the same step or they drift.**
+  First cut generated `d3fend-version.json` *from* the committed ontology, which
+  reads whatever happens to be on disk. Inverting it — `D3FEND_VERSION` in
+  `rebuild-data.sh`, gate the ontology against it, then generate — makes the
+  header a claim the build has already checked.
+- The gate runs before any generator. A mismatch then costs a message; after the
+  generators it would cost a `src/data/` built from one release with a header
+  advertising another.
+- Reading `owl:versionInfo` does not need rdflib. It is in the first stanza, so a
+  60-line window plus a regex replaces a 20-second parse of 130k triples — and
+  the window is what keeps the match off the *declaration* of `owl:versionInfo`
+  further down the document.
+- Normalizing a prefix cannot be textual. `ex:Term` in a triple and the same
+  string inside one of D3FEND's definition literals are indistinguishable to a
+  regex, and those definitions quote CURIEs — so the `d3f:` rebinding reparses
+  and reserializes, and only when upstream renames the prefix.
+- A missing or stale ontology is the one input the script can produce itself, so
+  it does not belong in the required-inputs check that exits first.
+
+## 2026-09-08 — implementing templates: expansion as a source rewrite
+
+Task: implement ADR 0031 — architecture templates — in the parser, emitter and view.
+
+- **Rewriting the source beats transforming the AST.** Expansion replaces the
+  line that declares an instance with the mermaid it stands for, then re-parses.
+  Everything downstream — emitter, `taggedIds`, containment, the preview, the
+  symbol index — needed no template awareness at all. The AST→AST alternative
+  would have left the preview showing one box and the graph showing many nodes.
+- The expanded ast has to *replace* the original, warnings included. Re-parsing
+  reproduces every complaint the original made except those about the replaced
+  lines — and drops the one that was wrong: a block whose only node is a template
+  reference has no class annotations until it is expanded.
+- `:::styleClass` was free syntax: mermaid renders it and `tokenizeLine` already
+  stripped it, so `:::shared` cost one extra return value. `%-` would have cost a
+  parser change *and* broken the preview, since mermaid rejects `%` in an id.
+- **Two provenance predicates, two different view problems.** `ds:partOf` is
+  stated from the member's side, so it is inverse containment — feeding it to
+  `CONTAINMENT_PREDICATES` unchanged would have made the member the parent.
+  `ds:instantiates` points at a *block*, so drawing it would put a template in
+  the graph as a resource; it needed skipping outright.
+- Membership is applied in a second pass, after the quad loop. "First parent
+  wins" plus "containment beats membership" is only true if containment is seen
+  first, and `store.getQuads()` order is not a contract.
+- `serialize.js` already solved the prefix-churn problem: `usedPrefixes` narrows
+  PREFIXES to those actually in the quads, so adding `T:` and `ds:` left all 14
+  existing snapshots byte-identical. Worth checking before assuming a new prefix
+  is expensive.
+- Writing the expected expansion into the fixture as a third mermaid block only
+  works if the test treats it as *output*: feed the first two blocks, compare
+  quads with the third. Tracing that by hand found the block was wrong — the
+  rewrite keeps the whole block, so the call-site edge belongs in it.

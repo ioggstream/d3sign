@@ -26,6 +26,11 @@
         </svg>
       </span>
       <h1>Design <span class="brand-amp">&amp;</span> D3FEND</h1>
+      <!-- Which D3FEND the whole app is built from — the ontology in
+           app/public/kg/ and every projection under app/src/data/. Filled by
+           main.js from app/config/d3fend.json, which rebuild-data.sh generates, so
+           a release bump is one variable there and no edit here. -->
+      <a id="d3fend-version" class="brand-version" target="_blank" rel="noreferrer noopener"></a>
     </div>
     <div class="header-tools">
       <select id="example-select" aria-label="Load an example diagram"

@@ -41,6 +41,30 @@ export const PREFIXES = {
   // drawn named graph (docs/adr/0021-sparql-query-pane.md).
   ob: 'urn:d3fend-graph:obl:',
   al: 'urn:d3fend-graph:align:',
+  // Architecture templates and the provenance of what they generate
+  // (docs/adr/0031-architecture-templates.md). `T:` names a template, which is a
+  // block of the document rather than a resource in it, so it sits under the
+  // document base like the other minted namespaces. `ds:` does not: its terms are
+  // predicates this editor invents, a vocabulary and not a namespace of graphs.
+  T: 'urn:d3fend-graph:template:',
+  ds: 'urn:d3sign:',
+};
+
+/**
+ * The prefix a node label uses to reference an architecture template —
+ * `ws-1[Web Server 1 T:HostTemplate]`.
+ *
+ * Deliberately *not* in TYPING_PREFIXES: a template is not a class, and the
+ * instance is typed by the template root instead. It is also deliberately not
+ * `G:`, whose base is the one `nodeIri` mints, so `G:HostTemplate` would name a
+ * named graph, a node and a template at once.
+ */
+export const TEMPLATE_PREFIX = 'T';
+
+/** `ds:` terms. `partOf` is per member; `instantiates` is per instance root. */
+export const PROVENANCE = {
+  instantiates: PREFIXES.ds + 'instantiates',
+  partOf: PREFIXES.ds + 'partOf',
 };
 
 /**
@@ -151,8 +175,16 @@ export function inversePredicateOf(predicate) {
  * IRI, so a class attached to an id in any diagram types the same resource here
  * too — which is what lets a subgraph re-opened without a title (db-replica.md)
  * still count as tagged. Omitting it falls back to this AST alone.
+ *
+ * `provenance` carries what template expansion knows and mermaid cannot say: an
+ * edge label needs a prefix in TYPING_PREFIXES and mermaid's only grouping device
+ * is `subgraph`, which means `d3f:contains`, so writing membership into the
+ * expanded source would either make `ds:` hand-writable or assert containment
+ * that is not true (docs/adr/0031-architecture-templates.md). It is
+ * `{ instances: [{ id, templateId }], members: [{ id, instanceId }] }`, and the
+ * quads land in this diagram's graph like every other.
  */
-export function emitQuads(ast, diagramId, { taggedIds = null } = {}) {
+export function emitQuads(ast, diagramId, { taggedIds = null, provenance = null } = {}) {
   const quads = [];
   const graph = namedNode(`urn:d3fend-graph:${diagramId}`);
 
@@ -255,6 +287,31 @@ export function emitQuads(ast, diagramId, { taggedIds = null } = {}) {
     const object = namedNode(nodeIri(edge.to));
     const predicate = namedNode(expandCurie(predicateCurie));
     quads.push(quad(subject, predicate, object, graph));
+  }
+
+  // Template provenance. One statement per member, and one per instance root:
+  // which member a resource was is *not* recorded, because the identifier scheme
+  // already says it (`ws-1-nic` is `nic` of `ws-1`), and recording it would cost
+  // a triple per member per instance for an answer nothing reads.
+  for (const instance of provenance?.instances || []) {
+    quads.push(
+      quad(
+        namedNode(nodeIri(instance.id)),
+        namedNode(PROVENANCE.instantiates),
+        namedNode(PREFIXES.T + instance.templateId),
+        graph,
+      ),
+    );
+  }
+  for (const member of provenance?.members || []) {
+    quads.push(
+      quad(
+        namedNode(nodeIri(member.id)),
+        namedNode(PROVENANCE.partOf),
+        namedNode(nodeIri(member.instanceId)),
+        graph,
+      ),
+    );
   }
 
   return { quads, graphName: graph.value };

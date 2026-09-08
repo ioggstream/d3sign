@@ -1,4 +1,4 @@
-import { TYPING_PREFIXES } from '../rdf/emit.js';
+import { TYPING_PREFIXES, TEMPLATE_PREFIX } from '../rdf/emit.js';
 
 /**
  * A class token in any vocabulary a diagram may write — `d3f:Password`,
@@ -30,18 +30,36 @@ const CLASS_TOKEN_RE = new RegExp(
 );
 
 /**
- * Extracts class tokens and the remaining free-text label from a chunk of text
- * (a node's shape content, a subgraph title, or a label attr).
+ * A template reference — `T:HostTemplate`
+ * (docs/adr/0031-architecture-templates.md).
+ *
+ * Read here rather than by CLASS_TOKEN_RE because it is not a class: it names a
+ * block of the document, and the instance takes its types from that block's root.
+ * The local name is the frontmatter `id:` of a template block, so it is an
+ * identifier, with none of the dotted-ATT&CK-name handling classes need.
+ */
+const TEMPLATE_TOKEN_RE = new RegExp(`(?<![\\w:])${TEMPLATE_PREFIX}:([A-Za-z][\\w-]*)`, 'g');
+
+/**
+ * Extracts class tokens, template references and the remaining free-text label
+ * from a chunk of text (a node's shape content, a subgraph title, or a label
+ * attr).
+ *
+ * Both token kinds are stripped out of the label, which is what makes them
+ * writable inline: `ws-1[Web Server 1 T:HostTemplate]` is labelled
+ * "Web Server 1".
  */
 export function extractLabelTokens(text) {
-  if (!text) return { classes: [], label: '' };
+  if (!text) return { classes: [], templates: [], label: '' };
   const classes = [...text.matchAll(CLASS_TOKEN_RE)].map((m) => m[0]);
+  const templates = [...text.matchAll(TEMPLATE_TOKEN_RE)].map((m) => m[1]);
   const label = text
     .replace(CLASS_TOKEN_RE, '')
+    .replace(TEMPLATE_TOKEN_RE, '')
     .replace(/<br\s*\/?>/gi, ' ')
     .replace(/\s+/g, ' ')
     .trim();
-  return { classes, label };
+  return { classes, templates, label };
 }
 
 function stripQuotes(s) {

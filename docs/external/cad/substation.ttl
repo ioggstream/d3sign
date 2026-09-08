@@ -1,0 +1,134 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix d3f: <http://d3fend.mitre.org/ontologies/d3fend.owl#>.
+@prefix cad: <http://d3fend.mitre.org/ontologies/cad/instances#>.
+
+cad:0_028442699444303665
+    a d3f:OffensiveTechnique;
+    d3f:disables cad:0_6992353237074344;
+    rdfs:label "Activate Firmware Update Mode".
+cad:0_05431992610055314
+    a cad:Thing;
+    d3f:connects cad:0_21052726872495142;
+    rdfs:label "Measurment Transformer".
+cad:0_1049220165302246
+    a d3f:PhysicalLinkMapping;
+    d3f:maps cad:0_6090923785537531;
+    rdfs:label "Physical Link Mapping".
+cad:0_1559078779921489
+    a d3f:OperatingModeRestriction;
+    d3f:restricts cad:0_6992353237074344;
+    rdfs:label "Operating Mode Restriction".
+cad:0_21052726872495142
+    a d3f:OTSensor;
+    d3f:connects cad:0_5735079697674146;
+    rdfs:comment "multiple - collect CT, VT, and transducers";
+    rdfs:label "OT Sensor".
+cad:0_2975690029900344
+    a d3f:OperatingModeMonitoring;
+    d3f:monitors cad:0_6992353237074344;
+    rdfs:label "Operating Mode Monitoring".
+cad:0_345620707009187
+    a d3f:OperationsCenterComputer;
+    d3f:connects cad:0_3870643268328996, cad:0_4281140693717974;
+    rdfs:label "Operations Center Computer".
+cad:0_35930836433150437
+    a d3f:InputDevice;
+    d3f:communicates-with cad:0_6992353237074344;
+    d3f:connects cad:0_5735079697674146;
+    rdfs:label "Human Machine Interface".
+cad:0_3870643268328996
+    a d3f:OTController;
+    d3f:communicates-with cad:0_6090923785537531, cad:0_9856919832192849;
+    d3f:connects cad:0_5735079697674146;
+    rdfs:label "Real-Time Automation Controller";
+    skos:example "SEL-3505/3505-3".
+cad:0_419132346481628
+    a d3f:T1210;
+    d3f:accesses cad:0_6090923785537531;
+    rdfs:label "Exploitation of Remote Services".
+cad:0_42735089725433306
+    a d3f:T1110.001;
+    d3f:addressed-by cad:0_7398206533936382;
+    rdfs:label "Password Guessing".
+cad:0_4281140693717974
+    a d3f:Router;
+    d3f:connects
+    cad:0_540062118493139, cad:0_6090923785537531, cad:0_726443660276066;
+    rdfs:label " Router".
+cad:0_4316726841776902
+    a cad:Thing;
+    d3f:connects cad:0_4910600526599429;
+    rdfs:label "Current Transformer".
+cad:0_4526924532650082
+    a d3f:OTEngineeringWorkstation;
+    d3f:communicates-with cad:0_6992353237074344;
+    d3f:connects cad:0_588505915343033;
+    rdfs:label "OT Engineering Workstation".
+cad:0_4910600526599429
+    a d3f:OTSensor;
+    d3f:connects cad:0_5735079697674146;
+    rdfs:comment "multiple - collect CT, VT, and transducers";
+    rdfs:label "OT Sensor".
+cad:0_540062118493139 a d3f:Server; rdfs:label "Central Control Server".
+
+cad:0_5735079697674146
+    a d3f:Switch;
+    d3f:connects cad:0_588505915343033;
+    rdfs:label "Process Bus Switch".
+cad:0_5773984567296112
+    a d3f:IntranetNetwork;
+    d3f:contains cad:0_4281140693717974;
+    rdfs:label "Substation Network".
+cad:0_588505915343033
+    a d3f:Switch;
+    d3f:connects cad:0_4281140693717974;
+    rdfs:label "Process Bus Switch".
+cad:0_6090923785537531 a d3f:Server; rdfs:label "SCADA Server".
+
+cad:0_6673922588635459
+    a d3f:T1083;
+    d3f:identifies cad:0_4526924532650082;
+    rdfs:label "File and Directory Discovery".
+cad:0_6992353237074344
+    a d3f:OTController;
+    d3f:communicates-with cad:0_9856919832192849;
+    d3f:connects cad:0_5735079697674146, cad:0_588505915343033;
+    rdfs:label "Intelligent Electronic Device (control)".
+cad:0_7118915181366299
+    a cad:Thing;
+    d3f:contains
+        cad:0_05431992610055314, cad:0_4316726841776902, cad:0_7258549713054366,
+        cad:0_7337635219313066, cad:0_9451928659672413;
+    rdfs:label " Power Substation".
+cad:0_7258549713054366
+a cad:Thing; d3f:connects cad:0_4910600526599429; rdfs:label "Main Transformer".
+cad:0_726443660276066
+    a d3f:Server;
+    rdfs:label "Emergency Management System / Distribution Management System".
+cad:0_7337635219313066
+a cad:Thing; d3f:connects cad:0_21052726872495142; rdfs:label "Circuit Breaker".
+cad:0_7398206533936382
+    a d3f:OTController;
+    d3f:communicates-with cad:0_9856919832192849;
+    d3f:connects cad:0_5735079697674146, cad:0_588505915343033;
+    rdfs:label "Intelligent Electronic Device (protection)".
+cad:0_8616433093197757
+    a d3f:LogicalLinkMapping;
+    d3f:maps cad:0_6090923785537531;
+    rdfs:label "Logical Link Mapping".
+cad:0_8839122386948919
+    a d3f:ChangeDefaultPassword;
+    d3f:hardens cad:0_7398206533936382;
+    rdfs:label "Change Default Password".
+cad:0_9451928659672413
+a cad:Thing; d3f:connects cad:0_21052726872495142; rdfs:label "Disconnector".
+cad:0_9756575434125915
+    a d3f:SystemTimeApplication;
+    d3f:connects cad:0_4281140693717974;
+    rdfs:label "GPS Clock".
+cad:0_9856919832192849
+    a d3f:OTController;
+    d3f:connects cad:0_5735079697674146;
+    d3f:monitors cad:0_6992353237074344, cad:0_7398206533936382;
+    rdfs:label "Remote Terminal Unit".

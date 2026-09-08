@@ -1,0 +1,344 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix d3f: <http://d3fend.mitre.org/ontologies/d3fend.owl#>.
+@prefix cad: <http://d3fend.mitre.org/ontologies/cad/instances#>.
+
+cad:0_008234871876515837 a cad:Note.
+
+cad:0_014376767352874631
+    a d3f:DefensiveTechnique;
+    d3f:implemented-by cad:0_8603599632094742;
+    rdfs:label "Unidirectional Network Isolation".
+cad:0_019573190891967185 a d3f:OperatingMode; rdfs:label "Operating Mode".
+
+cad:0_024711527482739304
+    a d3f:OffensiveTechnique;
+    cad:definition
+        "Adversaries may leverage external remote services as a point of initial access into your network. These services allow users to connect to internal network resources from external locations. Examples are VPNs, Citrix, and other access mechanisms. Remote service gateways often manage connections and credential authentication for these services.";
+    rdfs:label "External Remote Services (ICS)".
+cad:0_026199867876300575 a cad:Note.
+
+cad:0_029601487803444293 a cad:Note.
+
+cad:0_031005821603550476 a cad:Note.
+
+cad:0_03716902261520394 a cad:Note.
+
+cad:0_05705392839697809 a cad:Note.
+
+cad:0_06989484139863167
+    a d3f:DefensiveTechnique;
+    cad:definition "Enabling the log capability";
+    d3f:records cad:0_16634982808826104;
+    rdfs:label "Platform Log Collection";
+    rdfs:subClassOf cad:0_6838822685733229 .
+cad:0_08230518208082183
+a d3f:DefensiveTechnique; rdfs:label "Disable Remote Access".
+cad:0_09618390410713129
+    a d3f:Artifact;
+    rdfs:label "DCS Controller";
+    rdfs:subClassOf cad:0_8914984049920378 .
+cad:0_10240514896573805
+a d3f:OffensiveTechnique; rdfs:label "Execution through API".
+cad:0_12566241770627673
+    a d3f:OTModeSwitch;
+    d3f:controls cad:0_019573190891967185;
+    rdfs:label "OT Mode Switch".
+cad:0_14893364656459562
+    a d3f:InboundTrafficFiltering;
+    d3f:implemented-by cad:0_5961669008539066;
+    rdfs:label "Inbound Traffic Filtering".
+cad:0_16634982808826104 a d3f:LogFile; rdfs:label "Log File".
+
+cad:0_1881410178509455
+    a d3f:NetworkTrafficSignatureAnalysis;
+    rdfs:label "Network Traffic Signature Analysis".
+cad:0_1908808533158577 a cad:Note.
+
+cad:0_21702657653160573 a d3f:RemoteSession; rdfs:label "Remote Session".
+
+cad:0_25559116775055957 a cad:Note.
+
+cad:0_2665263374847948 a d3f:Artifact; rdfs:label "OT Engineering Workstation".
+
+cad:0_2668545611138101
+    a d3f:Artifact;
+    d3f:contains cad:0_09618390410713129;
+    rdfs:label "DCS";
+    rdfs:subClassOf cad:0_771533909751885 .
+cad:0_2772497989427791 a cad:Note.
+
+cad:0_27796914666416794 a cad:Note.
+
+cad:0_3109657006977534
+    a d3f:OperatingModeRestriction;
+    d3f:restricts cad:0_019573190891967185;
+    rdfs:label "Operating Mode Restriction".
+cad:0_33707778069957517
+    a d3f:OffensiveTechnique;
+    cad:definition
+        "Adversaries may use scripting languages to execute arbitrary code in the form of a pre-written script or in the form of user-supplied code to an interpreter. Scripting languages are programming languages that differ from compiled languages, in that scripting languages use an interpreter, instead of a compiler. These interpreters read and compile part of the source code just before it is executed, as opposed to compilers, which compile each and every line of code to an executable file. Scripting allows software developers to run their code on any system where the interpreter exists. This way, they can distribute one package, instead of precompiling executables for many different systems. Scripting languages, such as Python, have their interpreters shipped as a default with many Linux distributions.";
+    rdfs:label "Scripting (ICS)".
+cad:0_34794066092166775 a cad:Note.
+
+cad:0_35765617957409157 a d3f:OTController; rdfs:label "OT Controller".
+
+cad:0_36014544148358973 a cad:Note.
+
+cad:0_37221872813141577 a cad:Note.
+
+cad:0_38472572653564374 a d3f:MemoryBlock; rdfs:label "Memory Block".
+
+cad:0_39487716268271933
+    a d3f:OTEngineeringWorkstation;
+    d3f:communicates-with cad:0_8795512952195874;
+    d3f:may-create cad:0_21702657653160573;
+    d3f:produces cad:0_9626414110606717;
+    rdfs:label "OT Engineering Workstation".
+cad:0_42821848179349764 a cad:Note.
+
+cad:0_44950453835229565 a d3f:Vulnerability; rdfs:label "Misconfigured Firewall".
+
+cad:0_4772581145261726 a d3f:OTControlProgram; rdfs:label "OT Control Program".
+
+cad:0_48771295991608943
+    a d3f:DefensiveTechnique;
+    d3f:detects cad:0_5326148638491734;
+    rdfs:label "OT Control Program Modification Detection".
+cad:0_5018215418762046 a cad:Note.
+
+cad:0_5204101381332011 a cad:Note.
+
+cad:0_5257733112873312
+    a d3f:OperatingModeMonitoring;
+    d3f:monitors cad:0_019573190891967185;
+    rdfs:label "Operating Mode Monitoring".
+cad:0_5326148638491734
+    a d3f:OTModifyControlProgramCommand;
+    rdfs:label "OT Modify Control Program Command".
+cad:0_5342803697414016
+    a d3f:RemoteTerminalSessionDetection;
+    rdfs:label "Remote Terminal Session Detection".
+cad:0_5369801767180621
+    a d3f:OffensiveTechnique;
+    cad:definition
+        "Adversaries may perform a program download to transfer a user program to a controller.";
+    d3f:modifies cad:0_4772581145261726;
+    rdfs:label "Program Download (ICS)".
+cad:0_551219902981997 a cad:Note.
+
+cad:0_5655399028037439
+a d3f:OffensiveTechnique; rdfs:label "Indicator Removal on Host".
+cad:0_5703915313578527 a cad:Note.
+
+cad:0_5712047553369496 a d3f:NetworkSensor; rdfs:label "Network Sensor".
+
+cad:0_5961669008539066 a d3f:Firewall; rdfs:label "Firewall".
+
+cad:0_6070017280475495
+    a cad:Note;
+    rdfs:comment
+        """Connection doesn't exist.
+Should.""";
+    rdfs:label "".
+cad:0_643901553685857
+    a d3f:OffensiveTechnique;
+    cad:definition
+        "Adversaries may use masquerading to disguise a malicious application or executable as another file, to avoid operator and engineer suspicion. Possible disguises of these masquerading files can include commonly found programs, expected vendor executables and configuration files, and other commonplace application and naming conventions. By impersonating expected and vendor-relevant files and applications, operators and engineers may not notice the presence of the underlying malicious content and possibly end up running those masquerading as legitimate functions.";
+    rdfs:label "Masquerading (ICS)".
+cad:0_6461444370365803
+a d3f:AgentAuthentication; rdfs:label "Agent Authentication ".
+cad:0_6704801379104223
+    a d3f:OffensiveTechnique;
+    d3f:modifies cad:0_4772581145261726;
+    rdfs:label "Modify Control Logic".
+cad:0_6838822685733229 a d3f:PlatformMonitoring; rdfs:label "Platform Monitoring ".
+
+cad:0_726662271780896 a d3f:OffensiveTechnique; rdfs:label "System Firmware".
+
+cad:0_7310782822574767 a cad:Note.
+
+cad:0_7436880775838094 a cad:Note.
+
+cad:0_771533909751885 a d3f:Network; rdfs:label "Network".
+
+cad:0_7997354176013474
+a d3f:OffensiveTechnique; rdfs:label "Execution through API".
+cad:0_8204820624374922 a cad:Note.
+
+cad:0_8314390355247377 a cad:Note.
+
+cad:0_838628125520036 a cad:Note.
+
+cad:0_8603599632094742 a d3f:PhysicalDataDiode; rdfs:label "Physical Data Diode".
+
+cad:0_8795512952195874
+    a d3f:OTController;
+    cad:definition "SIL-certified controller that performs safety functions.";
+    d3f:contains cad:0_4772581145261726;
+    rdfs:label "SIS";
+    rdfs:subClassOf cad:0_35765617957409157 .
+cad:0_8889334759909877 a cad:Note.
+
+cad:0_8914984049920378 a d3f:OTController; rdfs:label "OT Controller".
+
+cad:0_9163222877224884 a d3f:OffensiveTechnique; rdfs:label "Commonly Used Port".
+
+cad:0_9269564940888144
+a d3f:OffensiveTechnique; rdfs:label "Exploitation for Evasion".
+cad:0_9335296594530447 a cad:Note.
+
+cad:0_9626414110606717 a d3f:OTNetworkTraffic; rdfs:label "OT Network Traffic".
+
+cad:definition a owl:AnnotationProperty; rdfs:label "definition".
+
+
+
+########################################################################
+# Diagnostics for CAD->Save As Turtle...                               #
+########################################################################
+#
+# Object property messages:
+#
+# Edge ID: xy-edge-0.1958477703040915__0.024711527482739304source-0.39487716268271933target
+# [WARN]: Unknown property undefined
+# {
+#   "d3f_property": "undefined",
+#   "label": "undefined"
+# }
+#
+# Edge ID: xy-edge-0.4334341317830558__0.5342803697414016source-0.39487716268271933target
+# [WARN]: Unknown property undefined
+# {
+#   "d3f_property": "undefined",
+#   "label": "undefined"
+# }
+#
+# Edge ID: xy-edge-0.7300258701666371__0.1881410178509455source-0.39487716268271933target
+# [WARN]: Unknown property undefined
+# {
+#   "d3f_property": "undefined",
+#   "label": "undefined"
+# }
+#
+# Edge ID: xy-edge-0.14723318780200745__0.643901553685857source-0.39487716268271933target
+# [WARN]: Unknown property undefined
+# {
+#   "d3f_property": "undefined",
+#   "label": "undefined"
+# }
+#
+# Edge ID: xy-edge-0.9313482411350147__0.33707778069957517source-0.39487716268271933target
+# [WARN]: Unknown property undefined
+# {
+#   "d3f_property": "undefined",
+#   "label": "undefined"
+# }
+#
+# Edge ID: xy-edge-0.34378500578777305__0.44950453835229565source-0.5961669008539066target
+# [WARN]: Unknown property undefined
+# {
+#   "d3f_property": "undefined",
+#   "label": "undefined"
+# }
+#
+# Edge ID: xy-edge-0.5937716300818756__0.2665263374847948source-0.09618390410713129target
+# [WARN]: Unknown property undefined
+# {
+#   "d3f_property": "undefined",
+#   "label": "undefined"
+# }
+#
+# Edge ID: xy-edge-0.3865802961141047__0.5961669008539066source-0.2665263374847948target
+# [WARN]: Unknown property undefined
+# {
+#   "d3f_property": "undefined",
+#   "label": "undefined"
+# }
+#
+# Edge ID: xy-edge-0.06094588706490345__0.5712047553369496source-0.9626414110606717target
+# [WARN]: Unknown property undefined
+# {
+#   "d3f_property": "undefined",
+#   "label": "undefined"
+# }
+#
+# Edge ID: xy-edge-0.7392279797410628__0.38472572653564374source-0.16634982808826104target
+# [WARN]: Unknown property undefined
+# {
+#   "d3f_property": "undefined",
+#   "label": "undefined"
+# }
+#
+# Edge ID: xy-edge-0.5915047392445405__0.5326148638491734source-0.5712047553369496target
+# [WARN]: Unknown property undefined
+# {
+#   "d3f_property": "undefined",
+#   "label": "undefined"
+# }
+#
+# Edge ID: xy-edge-0.6684564200924402__0.08230518208082183source-0.14893364656459562target
+# [WARN]: Unknown property undefined
+# {
+#   "d3f_property": "undefined",
+#   "label": "undefined"
+# }
+#
+# Edge ID: xy-edge-0.4661184948029682__0.8603599632094742source-0.39487716268271933target
+# [WARN]: Unknown property undefined
+# {
+#   "d3f_property": "undefined",
+#   "label": "undefined",
+#   "auto_created": true
+# }
+#
+# Edge ID: xy-edge-0.20108472588403903__0.8603599632094742source-0.5961669008539066target
+# [WARN]: Unknown property undefined
+# {
+#   "d3f_property": "undefined",
+#   "label": "undefined",
+#   "auto_created": true
+# }
+#
+# Edge ID: xy-edge-0.40710797814184674__0.5342803697414016source-0.21702657653160573target
+# [WARN]: Unknown property undefined
+# {
+#   "d3f_property": "undefined",
+#   "label": "undefined",
+#   "auto_created": true
+# }
+#
+# Edge ID: xy-edge-0.36332297217724174__0.8795512952195874source-0.38472572653564374target
+# [WARN]: Unknown property has parameter
+# {
+#   "d3f_property": "has parameter",
+#   "label": "has parameter"
+# }
+#
+# Edge ID: xy-edge-0.4818521367005152__0.8795512952195874source-0.019573190891967185target
+# [WARN]: Unknown property has parameter
+# {
+#   "d3f_property": "has parameter",
+#   "label": "has parameter"
+# }
+#
+# Edge ID: xy-edge-0.1266479971642811__0.7997354176013474source-0.4772581145261726target
+# [WARN]: Unknown property undefined
+# {
+#   "d3f_property": "undefined",
+#   "label": "undefined",
+#   "auto_created": true
+# }
+#
+# Edge ID: xy-edge-0.8536914358154917__0.6461444370365803source-0.4772581145261726target
+# [WARN]: Unknown property protects
+# {
+#   "d3f_property": "protects",
+#   "label": "protects"
+# }
+
+#
+# Data/Annotation property messages:
+# Node: 0.5961669008539066 type: artifact-node has  = 
+# [WARN]: Empty name or value in user_properties
+
