@@ -15,7 +15,7 @@
  *   - a containment predicate     → a compound (container) parent/child relation
  *   - anything else with an IRI/blank object → an edge
  */
-import { PREFIXES, curieWith, inversePredicateOf } from './emit.js';
+import { PREFIXES, PROVENANCE, curieWith, inversePredicateOf } from './emit.js';
 import { artifactFlowRoleOf } from './artifactFlow.js';
 import { classifyPredicate } from './linkKind.js';
 import { classifyNodeCategory } from './nodeKind.js';
@@ -32,6 +32,29 @@ const RDFS_LABEL = PREFIXES.rdfs + 'label';
  * so they are never also drawn as an edge.
  */
 export const CONTAINMENT_PREDICATES = new Set([PREFIXES.d3f + 'contains']);
+
+/**
+ * Predicates that group a resource into the instance it belongs to, stated from
+ * the member's side (`ws-1-nic ds:partOf ws-1`) rather than the container's.
+ *
+ * Read as structure for the same reason containment is: an instance of an
+ * architecture template is drawn as one collapsible box
+ * (docs/adr/0031-architecture-templates.md), and a membership statement left to
+ * the edge branch below would instead draw one link per member plus an entry in
+ * the Links filter — the drawing the box exists to replace. Kept apart from
+ * CONTAINMENT_PREDICATES because the direction is the other way round, which is
+ * also why containment is tested first: where both could place a member,
+ * containment is the ontological claim and wins the parent.
+ */
+export const MEMBERSHIP_PREDICATES = new Set([PROVENANCE.partOf]);
+
+/**
+ * Provenance that is bookkeeping about the document rather than a fact in it:
+ * `ws-1 ds:instantiates T:HostTemplate` names a *block*, so drawing it would put
+ * a template in the graph as though it were a resource. Skipped outright — no
+ * node for the object, no edge.
+ */
+const HIDDEN_PREDICATES = new Set([PROVENANCE.instantiates]);
 
 const CORE_CATEGORY_PRIORITY = ['Agent', 'Goal', 'Plan', 'Artifact', 'Event'];
 
@@ -170,6 +193,7 @@ export function buildGraphModel(store) {
   const edges = [];
   const containment = new Map();
   const parentOf = new Map();
+  const memberships = [];
 
   const nodeFor = (iri) => {
     let node = nodes.get(iri);
@@ -195,6 +219,19 @@ export function buildGraphModel(store) {
 
     if (predicate === RDF_TYPE) {
       subject.types.push(quad.object.value);
+      continue;
+    }
+
+    if (HIDDEN_PREDICATES.has(predicate)) continue;
+
+    if (MEMBERSHIP_PREDICATES.has(predicate)) {
+      // Held back rather than applied here: containment has to win the parent
+      // wherever both could place a member, and the quads arrive in whatever
+      // order the store returns them.
+      nodeFor(quad.object.value);
+      if (quad.object.value !== subject.iri) {
+        memberships.push({ container: quad.object.value, child: subject.iri });
+      }
       continue;
     }
 
@@ -225,6 +262,16 @@ export function buildGraphModel(store) {
       // viz/toCytoscape.js free of imports from this layer (ADR 0014).
       flowRole: artifactFlowRoleOf(curie),
     });
+  }
+
+  // Membership groups only what containment has not already placed, so an
+  // instance's own container structure survives being grouped into the instance.
+  for (const { container, child } of memberships) {
+    if (parentOf.has(child)) continue;
+    const children = containment.get(container) || [];
+    if (!children.includes(child)) children.push(child);
+    containment.set(container, children);
+    parentOf.set(child, container);
   }
 
   // Classes are only complete once every quad has been seen.

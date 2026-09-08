@@ -1,5 +1,6 @@
 import { StateField } from '@codemirror/state';
 import { parseDocument } from '../parser/document.js';
+import { expandDocument } from '../parser/templates.js';
 
 /**
  * Every node and subgraph id declared anywhere in the markdown document, as
@@ -11,6 +12,11 @@ import { parseDocument } from '../parser/document.js';
  * never claims a node is untagged when the graph treats it as tagged.
  * `diagrams` lists the titles that declare it, for the completion tooltip.
  *
+ * Templates are expanded first, so the ids an instance generates are known here
+ * too (docs/adr/0031-architecture-templates.md). That is what makes overriding a
+ * member practical: typing `ws-1-` completes the members of that instance, which
+ * is the only way to discover ids nobody wrote by hand.
+ *
  * Read-only: this reuses the parser, it does not feed it. Nothing here reaches
  * the RDF store or the renderers.
  */
@@ -19,7 +25,7 @@ export function collectSymbols(text) {
 
   let diagrams;
   try {
-    ({ diagrams } = parseDocument(text));
+    ({ diagrams } = expandDocument(parseDocument(text).diagrams));
   } catch {
     // Half-typed diagrams are the normal state of an editor; an index that
     // throws would take the whole pane down with it.

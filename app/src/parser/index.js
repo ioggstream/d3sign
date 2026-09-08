@@ -11,16 +11,29 @@ export function extractMermaidBlock(markdown) {
   return match ? match[1] : markdown;
 }
 
+/** The style class that marks a template member as shared rather than cloned. */
+const SHARED_STYLE_CLASS = 'shared';
+
 function getOrCreateNode(nodes, id) {
   if (!nodes.has(id)) {
-    nodes.set(id, { id, classes: [], label: '', icon: undefined, shape: undefined, parent: undefined });
+    nodes.set(id, {
+      id,
+      classes: [],
+      templates: [],
+      label: '',
+      icon: undefined,
+      shape: undefined,
+      parent: undefined,
+      shared: false,
+    });
   }
   return nodes.get(id);
 }
 
 function applyShape(node, shapeContent, attrs) {
-  const { classes, label } = extractLabelTokens(shapeContent);
+  const { classes, templates, label } = extractLabelTokens(shapeContent);
   if (classes.length) node.classes = [...new Set([...node.classes, ...classes])];
+  if (templates.length) node.templates = [...new Set([...node.templates, ...templates])];
   if (label) node.label = label;
   if (attrs.icon) node.icon = attrs.icon;
   if (attrs.shape) node.shape = attrs.shape;
@@ -41,10 +54,19 @@ export function parseDiagram(source) {
   const stack = [];
   const warnings = [];
 
-  for (const { type, line } of lines) {
+  for (const { type, line, styleClasses } of lines) {
+    const isShared = !!styleClasses?.includes(SHARED_STYLE_CLASS);
     if (type === 'subgraph-open') {
       const parsed = parseSubgraphOpen(line);
-      const { classes, label } = extractLabelTokens(parsed.title);
+      const { classes, templates, label } = extractLabelTokens(parsed.title);
+      // A subgraph is a container, and a template reference replaces the node
+      // that carries it — there is nothing coherent to do with both at once.
+      if (templates.length) {
+        warnings.push(
+          `Ignored template reference "T:${templates[0]}" on subgraph "${parsed.id}": ` +
+            'a template is instantiated by a node, not by a container.',
+        );
+      }
       // Re-opening a subgraph adds to it rather than replacing it: `subgraph dc-1`
       // with no title must not wipe the classes a titled declaration gave it.
       const existing = subgraphs.get(parsed.id);
@@ -53,6 +75,7 @@ export function parseDiagram(source) {
         classes: [...new Set([...(existing?.classes || []), ...classes])],
         label: label || (existing?.label ?? parsed.id),
         parent: existing?.parent ?? stack[stack.length - 1],
+        shared: existing?.shared || isShared,
       });
       stack.push(parsed.id);
       continue;
@@ -87,6 +110,20 @@ export function parseDiagram(source) {
         }
         if (e.fromAttrs) applyShape(fromNode, e.fromAttrs.shapeContent, e.fromAttrs.attrs);
         if (e.toAttrs) applyShape(toNode, e.toAttrs.shapeContent, e.toAttrs.attrs);
+        // Expansion rewrites the *line* that declares the instance, so a
+        // reference tucked into an edge endpoint has no line of its own to
+        // replace. Declare the instance on its own line and wire it afterwards.
+        // Read from the inline declaration, not from the node: an id declared
+        // earlier on its own line and merely wired up here is already expanded.
+        for (const inline of [e.fromAttrs, e.toAttrs]) {
+          const referenced = inline ? extractLabelTokens(inline.shapeContent).templates : [];
+          if (referenced.length) {
+            warnings.push(
+              `Template reference "T:${referenced[0]}" declared inside "${line}" is not ` +
+                'expanded: declare the node on its own line, then draw the edge.',
+            );
+          }
+        }
 
         // An unprefixed label is not a predicate. `|accesses|` used to be expanded to
         // `d3f:accesses`, which read as a convenience and was a trap: the same rule
@@ -118,7 +155,15 @@ export function parseDiagram(source) {
     }
     const node = getOrCreateNode(nodes, parsed.id);
     if (stack.length && !node.parent) node.parent = stack[stack.length - 1];
+    if (isShared) node.shared = true;
     applyShape(node, parsed.shapeContent, parsed.attrs);
+    if (node.templates.length > 1) {
+      warnings.push(
+        `Node "${parsed.id}" references more than one template ` +
+          `(${node.templates.map((t) => `T:${t}`).join(', ')}): only "T:${node.templates[0]}" ` +
+          'is instantiated — one node is one instance.',
+      );
+    }
   }
 
   // The supported convention embeds class tokens in node/subgraph labels — `d3f:` and,

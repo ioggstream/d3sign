@@ -31,6 +31,11 @@ without leaving the SPA.
   set-content API — no new editor surface.
 - [x] Derive each option's label from the diagram's `title:` frontmatter,
   falling back to the filename when absent.
+- [x] The picker lists examples only. The test cases
+  live in the same directory, because the test suite
+  reads them from there, but they are specifications
+  of the supported syntax rather than diagrams to
+  open, and are excluded by name.
 - [x] The standalone HTML export flow stays at repo
   root, unaffected.
 
@@ -49,6 +54,11 @@ Cons:
   picked up by the app. The standalone export flow
   keeps its own copies at repo root, so the two are
   not automatically kept in sync.
+- One directory now holds two kinds of file, told
+  apart by a filename convention. A test case named
+  outside that convention silently becomes an
+  example, and an example named inside it silently
+  disappears from the picker.
 
 ## DONTREADME
 
@@ -59,6 +69,13 @@ before trusting them.
 - Examples are `app/src/data/examples/*.md`, loaded
   with `import.meta.glob(..., { query: '?raw' })` —
   the same pattern as the enrichment Turtle.
+- The exclusion is a negative pattern in that same
+  glob call in `main.js`:
+  `'!./data/examples/testcase*.md'`. Vite resolves
+  negations itself, so nothing is filtered at
+  runtime and the excluded files are not bundled.
+  `rdf-emit.test.js` reads them with `readFileSync`
+  from the same directory and is unaffected.
 - The picker is a `<select>` in the header driving the
   editor's `setText`.
 - The hardcoded initial diagram used to be a string

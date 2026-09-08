@@ -1,0 +1,145 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix d3f: <http://d3fend.mitre.org/ontologies/d3fend.owl#>.
+@prefix cad: <http://d3fend.mitre.org/ontologies/cad/instances#>.
+
+cad:-copy0_22788410168728868
+    a cad:Note;
+    rdfs:comment
+        """The Purdue Enterprise Reference Architecture (PERA), or "Purdue Model", is a reference architecture for enterprise control.  
+It was developed by an industry consortium led by Purdue University and outlines several hierarchical levels of control starting
+at the physical process (level 0) and rising up to the enterprise level (level 5).  Levels 0-3 represent the core operational 
+technology domain (OT) parts of the architecture, whereas levels 4-5 are general purpose information technology (IT). The 
+scope of time and space increase as the levels increase, with the nearest and most time-critical functions occurring at lower levels.
+
+Since its initial definition and standardization in ISA-95, it has been interpreted and extended many times, but the basic 
+hierarchical model is useful as an organizing principle. Here we include two frequently recommended DMZ layers.
+
+In some cases, the original level names have been updated and the Purdue Model names are in brackets.""";
+    rdfs:label "Purdue Model (Simple)".
+cad:0_025398286071286136 a d3f:OTNetwork; rdfs:label "OT Network".
+
+cad:0_0352092767724147 a d3f:PhysicalDataDiode; rdfs:label "Physical Data Diode".
+
+cad:0_03652547372282411
+a d3f:OTEngineeringSoftware; rdfs:label "OT Engineering Software".
+cad:0_04921347356311678
+a d3f:OTEngineeringWorkstation; rdfs:label "OT Engineering Workstation".
+cad:0_056062900915826774
+a d3f:OTHumanMachineInterface; rdfs:label "OT Human Machine Interface".
+cad:0_08819613352163758
+    a cad:Thing;
+    cad:description
+        """This additional layer isolates the OT network from the IT network. Sometimes referred to as "Level 3.5" in "extended" versions of the Purdue Model. May contain intermediate systems and services shared between business and control networks.""";
+    rdfs:label "<Extension>".
+cad:0_09830822087163016
+    a cad:Thing;
+    cad:description
+        "This level includes devices that are closest to the physical process while still providing the ability to make changes or decisions. Devices at this level are able to be programmed and communicate to other parts of the network.";
+    rdfs:label "Purdue Level 1".
+cad:0_1395063423680214 a d3f:PrintServer; rdfs:label "Print Server".
+
+cad:0_14650639767401574 a d3f:OTLogicVariable; rdfs:label "OT Logic Variable".
+
+cad:0_1478985638112147
+    a cad:Thing;
+    cad:description
+        "This level is for corporate wide strategic planning and analytics managing OT process. Planning time frame can vary from months to years.";
+    rdfs:label "Purdue Level 5".
+cad:0_17528638105064676 a d3f:OTControlProgram; rdfs:label "OT Control Program".
+
+cad:0_18811336493888242 a d3f:OTNetworkTraffic; rdfs:label "OT Network Traffic".
+
+cad:0_2041655930870836
+    a cad:Thing;
+    cad:description
+        "Business logistics systems for production scheduling and management at the plant-level. Incorporates production, material use, delivery, shipping, and inventory systems. Planning time frame varies from shifts to months.";
+    rdfs:label "Purdue Level 4".
+cad:0_2600794462691758 a d3f:Server; rdfs:label "Warehouse Management System".
+
+cad:0_26951754618859536
+a d3f:NetworkTimeServer; rdfs:label "Site Network Time Server".
+cad:0_275405024019729 a d3f:Firewall; rdfs:label "Firewall".
+
+cad:0_3011013657690188
+a d3f:SystemPlatformVariable; rdfs:label "System Platform Variable".
+cad:0_30278703451911604
+    a cad:Thing;
+    cad:description
+        "This level includes devices that are directly interacting with the physical environment and process. These include sensors, actuators, and other similar devices. Communication is through physical connection and devices are frequently mechanical in operation.";
+    rdfs:label "Purdue Level 0".
+cad:0_3254418386645255 a d3f:LocalAreaNetwork; rdfs:label "Site LAN".
+
+cad:0_41495921662881574 a d3f:WideAreaNetwork; rdfs:label "Corporate WAN".
+
+cad:0_4491580850840713 a d3f:MailServer; rdfs:label "Mail Server".
+
+cad:0_4596140359379218 a d3f:LocalAreaNetwork; rdfs:label "Local HMI LAN".
+
+cad:0_5078959748688546
+    a cad:Thing;
+    cad:description
+        "This level includes the devices, interfaces, and supporting equipment that provide local view and control to the processes of a specific area.";
+    rdfs:label "Purdue Level 2".
+cad:0_5313974547620377
+    a cad:Thing;
+    cad:description
+        "This additional layer isolates the IT network from the Internet. May contain proxy servers and public facing applications.";
+    rdfs:label "<Extension>".
+cad:0_5377617919949669
+    a cad:Thing;
+    cad:description
+        "This level includes the outside edge of your control network. At this level, you may be aggregating several control networks together for higher level supervisory actions and trends.";
+    rdfs:label "Purdue Level 3".
+cad:0_5483393367179966 a d3f:WebServer; rdfs:label "Web Server".
+
+cad:0_581320082948837 a d3f:Server; rdfs:label "CRM Server".
+
+cad:0_6063637574318077
+a d3f:WebApplicationServer; rdfs:label "Web Application Server".
+cad:0_6944080271945806 a d3f:Firewall; rdfs:label "Firewall".
+
+cad:0_7297415673014146 a d3f:InternetNetwork; rdfs:label "Internet".
+
+cad:0_7626788743508938 a d3f:OTProtocolMessage; rdfs:label "OT Protocol Message".
+
+cad:0_7815455415154633 a d3f:OTActuator; rdfs:label "OT Actuator".
+
+cad:0_8363705212700359
+a d3f:LocalAreaNetwork; rdfs:label "Control Center / Processing LAN".
+cad:0_8517497331732594 a d3f:OTIOModule; rdfs:label "OT I/O Module".
+
+cad:0_8826848312833149 a d3f:OTSensor; rdfs:label "OT Sensor".
+
+cad:0_9111104705760165 a d3f:FileServer; rdfs:label "Patch Server".
+
+cad:0_9243404905786591
+a d3f:OTControlLogicProcess; rdfs:label "OT Control Logic Process".
+cad:0_9279855251490443 a d3f:OTController; rdfs:label "OT Controller".
+
+cad:0_9319492723407933 a d3f:Server; rdfs:label "ERP Server".
+
+cad:0_9425089146386566 a d3f:OTProcessDataHistorian; rdfs:label "Data Historian".
+
+cad:0_946137119530498 a d3f:DNSServer; rdfs:label "Enterprise DNS Server".
+
+cad:0_9508311211137807
+a d3f:Server; rdfs:label "Computerized Maintenance Management System".
+cad:description a owl:AnnotationProperty; rdfs:label "Description".
+
+
+
+########################################################################
+# Diagnostics for CAD->Save As Turtle...                               #
+########################################################################
+#
+# Object property messages:
+#
+# Edge ID: xy-edge-0.0305896538224798__0.18811336493888242source-0.025398286071286136target
+# [WARN]: Unknown property undefined
+# {
+#   "d3f_property": "undefined",
+#   "label": "undefined",
+#   "auto_created": true
+# }
+
