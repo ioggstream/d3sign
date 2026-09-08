@@ -14,7 +14,8 @@ provided by <https://github.com/ioggstream/vscode-d3fend-language>.
 
 Alternatives:
 
-- use vscode-d3fend-language extension for completion suggestions, but this would require switching the editor to Monaco, which is the editor used in VSCode and supports the Language Server Protocol (LSP)
+- use vscode-d3fend-language extension requires switching the editor to Monaco,
+  which is the editor used in VSCode and supports the Language Server Protocol (LSP)
 
 - use a custom completion provider.
 
