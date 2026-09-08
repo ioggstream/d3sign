@@ -225,19 +225,53 @@ bash app/scripts/rebuild-data.sh
 ```
 
 That runs offline against the committed knowledge bases and is idempotent — a
-second run leaves `git diff` empty. Two flags:
+second run leaves `git diff` empty. Three flags:
 
+- `--fetch-d3fend` redownloads the D3FEND release named by `D3FEND_VERSION` (see
+  below) before rebuilding.
 - `--fetch-dpv <tag>` also refetches DPV from `w3c/dpv` and rebuilds
   `legal.ttl.gz`. Pass a tag; the default `master` is mutable, so two builds a
   week apart can differ while claiming the same provenance, and the script warns.
   `build-legal-kg.py --source-dir` reads a local checkout instead.
-- `--d3fend <path>` builds the D3FEND projections from a newer `d3fend.ttl`
-  rather than the committed gzip.
+- `--d3fend <path>` builds the D3FEND projections from a `d3fend.ttl` on disk
+  rather than the committed gzip. It still has to be the configured release.
 
 The projections exist because completion, hover, node colour and the node panel
 all run synchronously on a keystroke or a click, and cannot wait for the query
 worker to fetch and parse 30 000 triples
 ([docs/adr/0020-sparql-query-engine.md](docs/adr/0020-sparql-query-engine.md)).
+
+### Upgrading D3FEND
+
+`D3FEND_VERSION` at the top of
+[app/scripts/rebuild-data.sh](app/scripts/rebuild-data.sh) is the only place the
+release is written down. It is what the app header shows, and what every
+projection is built from. Upgrading is one edit and one run:
+
+```sh
+# bump D3FEND_VERSION in app/scripts/rebuild-data.sh, then
+bash app/scripts/rebuild-data.sh --fetch-d3fend
+```
+
+In that order, and the order is the point: the release is downloaded and checked
+first, so nothing under `app/src/data/` is written from a different ontology than
+the one the header will claim. The step
+
+- refuses the download if it declares a different `owl:versionInfo`;
+- rebinds the D3FEND namespace to the `d3f:` prefix if upstream ever renames it —
+  the diagram syntax, the projections and
+  [queryPrefixes.js](app/src/query/queryPrefixes.js) all write `d3f:Term`, so the
+  ontology has to agree;
+- rewrites [app/config/d3fend.json](app/config/d3fend.json), the generated file
+  [main.js](app/src/main.js) imports to label the header. Nothing hard-codes a
+  version in the page.
+
+A plain `rebuild-data.sh` also fetches, without the flag, when the committed
+gzip is not the configured release — that is the case a version bump creates, and
+refusing it would only mean typing the flag.
+
+Then commit `app/public/kg/d3fend.ttl.gz`, `app/config/d3fend.json` and
+`app/src/data/` together: they are one release.
 
 ## Limitations
 

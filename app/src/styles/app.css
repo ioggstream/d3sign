@@ -296,6 +296,30 @@ header h1 {
   white-space: nowrap;
 }
 .brand-amp { color: var(--c-accent); font-weight: 500; padding: 0 0.05em; }
+/* The ontology release, next to the name because it qualifies it: this is Design
+   & D3FEND *1.4.0*, and every completion, colour and query answer in the app comes
+   from that release. Reads as provenance, not as a control — hence the wash pill
+   rather than a button, and no colour of its own. */
+.brand-version {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--c-text-muted);
+  text-decoration: none;
+  padding: var(--s-1) var(--s-2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  background: var(--c-bg);
+  white-space: nowrap;
+}
+.brand-version:hover {
+  color: var(--c-accent-ink);
+  border-color: var(--c-accent-edge);
+  background: var(--c-accent-wash);
+}
+/* Nothing to show before main.js has read the config, and an empty pill is worse
+   than none. */
+.brand-version:empty { display: none; }
 
 .header-tools { display: flex; align-items: center; gap: var(--s-4); margin-left: auto; }
 

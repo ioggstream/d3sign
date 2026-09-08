@@ -1,0 +1,355 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix d3f: <http://d3fend.mitre.org/ontologies/d3fend.owl#>.
+@prefix cad: <http://d3fend.mitre.org/ontologies/cad/instances#>.
+
+cad:-copy0_08869592290416894
+    a d3f:CWE-122;
+    cad:explanation
+        "Vulnerability in the EVerest open-source EV charging firmware stack could allow attackers to gain access to the CAN bus and compromise critical vehicle components.";
+    cad:reference "https://nvd.nist.gov/vuln/detail/CVE-2024-37310";
+    rdfs:label "CVE-2024-37310".
+cad:-copy0_21326833517519672
+    a d3f:BusNetwork;
+    d3f:communicates-with
+        cad:-copy0_45784725017830086, cad:0_3911644187862563,
+        cad:0_9530533368170849;
+    d3f:may-have-weakness cad:-copy0_08869592290416894;
+    rdfs:label "Control Area Network Bus".
+cad:-copy0_41541573516809494
+    a d3f:OffensiveTechnique;
+    cad:automotive-threat-matrix
+    "https://atm.automotiveisac.com/technique/ATM-TA0002/ATM-T0012";
+    cad:explanation
+        "The vehicle may be targeted for exploitation through its interface to cellular networks or other radio interfaces.";
+    d3f:accesses cad:0_1954403613438176, cad:0_6716152259710007;
+    rdfs:label "Exploit via Radio Interface".
+cad:-copy0_45784725017830086 a d3f:OTActuator; rdfs:label "Brake Actuators".
+
+cad:0_04967619561394265
+    a d3f:OffensiveTechnique;
+    cad:automotive-threat-matrix
+    "https://atm.automotiveisac.com/technique/ATM-TA0001/ATM-T0003";
+    cad:explanation
+        "If network traffic between the vehicle and a remote server or mobile device is not securely protected, then an attacker positioned on the network may be able to manipulate network communication without being detected.";
+    d3f:accesses cad:9-copy0_5123504522259745;
+    rdfs:label "Manipulate Communications via V2X Spoofing".
+cad:0_07391409009586081
+    a d3f:ApplicationConfigurationHardening;
+    d3f:may-harden cad:9-copy0_5123504522259745;
+    rdfs:label "Application Configuration Hardening".
+cad:0_12546238807261156
+    a d3f:OTActuator;
+    d3f:may-have-weakness cad:0_8213185857095181;
+    rdfs:label "Motor Control System".
+cad:0_13172239788972018
+    a d3f:Agent;
+    cad:cyber-attack "Attacker gets access remotely";
+    rdfs:label "Malicious Cyber Actor".
+cad:0_13417669623233963 a d3f:EmbeddedComputer; rdfs:label "EV Wifi Unit".
+
+cad:0_1380760912749459
+    a d3f:CWE-693;
+    cad:explanation
+        "TCUs in BMW vehicles allowed for potential remote attack via cellular network.";
+    cad:reference
+        "https://www.cve.org/CVERecord?id=CVE-2018-9311",
+        "https://www.cve.org/CVERecord?id=CVE-2018-9318";
+    rdfs:label "CVE-2018-9311 and CVE-2018-9318".
+cad:0_1437038704220922
+    a d3f:T1189;
+    cad:automotive-threat-matrix
+    "https://atm.automotiveisac.com/technique/ATM-TA0002/ATM-T0011";
+    cad:explanation
+        "A browser compromise is when an adversary gains access to a system through a user visiting a website over the normal course of browsing. With this technique, the user's web browser is targeted for exploitation.";
+    d3f:accesses cad:9-copy0_5123504522259745;
+    rdfs:label "Browser Compromise".
+cad:0_14984051569038104
+    a d3f:System;
+    d3f:contains cad:0_9033519497763046;
+    d3f:may-have-weakness cad:0_4151059274766771;
+    rdfs:label "Battery Management System".
+cad:0_17207633030061686
+    a d3f:IOPortRestriction;
+    d3f:filters cad:9-copy0_5123504522259745;
+    rdfs:label "IO Port Restriction".
+cad:0_1954403613438176
+    a d3f:EmbeddedComputer;
+    d3f:communicates-with cad:0_3374447194150739;
+    d3f:may-have-weakness cad:0_1380760912749459;
+    rdfs:label "Telematic Control Unit".
+cad:0_23655297472490677
+    a cad:Note;
+    rdfs:comment
+        """A MCA establishes connection to EV through cellular network. 
+
+
+The MCA then exploits zero-day vulnerabilities in the TCU by sending 
+crafted telematic messages. 
+
+The MCA then obtains root privileges to the TCU. 
+
+
+After the TCU has been compromised the Attacker can now take control 
+of the EV remotely and send messages to the ECU from the CAN Bus 
+affecting the control of Electric Control Unit in the EV.""";
+    rdfs:label "Attack on Telematic Control Unit";
+    rdfs:subClassOf cad:0_23655297472490677 .
+cad:0_29250936296383634
+    a d3f:System;
+    d3f:contains cad:0_3200521320722364, cad:0_7632923934902052;
+    rdfs:label "Electric Vehicle Braking System".
+cad:0_3005360572090855
+    a d3f:NetworkTrafficFiltering;
+    d3f:filters cad:0_13417669623233963, cad:9-copy0_5123504522259745;
+    rdfs:label "Network Traffic Filtering ".
+cad:0_3200521320722364
+    a d3f:System;
+    d3f:contains
+        cad:-copy0_45784725017830086, cad:0_3911644187862563,
+        cad:0_6716152259710007, cad:0_9530533368170849;
+    rdfs:label "Regenerative Braking System".
+cad:0_3374447194150739
+    a cad:Thing;
+    d3f:contains
+        cad:0_13417669623233963, cad:0_1954403613438176,
+        cad:0_29250936296383634, cad:0_8568915646297394,
+        cad:9-copy0_5123504522259745;
+    d3f:may-contain cad:0_33922529179584937;
+    rdfs:label "Electric Vehical".
+cad:0_33922529179584937 a d3f:ClientApplication; rdfs:label "Dealer Application".
+
+cad:0_34037720301591146
+    a d3f:CWE-345;
+    cad:explanation
+        "Affects eCharge cloud infrastructure and allows remote unauthenticated users to execute arbitrary commands.";
+    cad:reference "https://nvd.nist.gov/vuln/detail/CVE-2024-11666";
+    d3f:may-have-weakness cad:0_13417669623233963;
+    rdfs:label "CVE-2024-11666".
+cad:0_361911753278084
+    a d3f:Condition;
+    d3f:controls
+    cad:0_12546238807261156, cad:0_14984051569038104, cad:0_29250936296383634;
+    rdfs:label "Control over various Systems in EV".
+cad:0_36403953547361834
+    a d3f:CWE-306;
+    cad:explanation
+        "Unprotected privileged mode access through UDS session in the Blind Spot Detection Sensor ECU firmware in Nissan Altima (2022) allows attackers to trigger denial-of-service (DoS) by unauthorized access to the ECU's programming session.";
+    cad:reference "https://nvd.nist.gov/vuln/detail/CVE-2024-6347";
+    rdfs:label "CVE-2024-6347".
+cad:0_3911644187862563
+    a d3f:OTController;
+    d3f:controls
+        cad:-copy0_45784725017830086, cad:0_12546238807261156,
+        cad:0_14984051569038104;
+    d3f:may-have-weakness cad:0_36403953547361834;
+    d3f:monitors cad:0_9530533368170849;
+    d3f:powered-by cad:0_9033519497763046;
+    rdfs:label "Electronic Control Unit".
+cad:0_4151059274766771
+    a d3f:CWE-306;
+    cad:explanation
+        "A vulnerability in the Combined Charging System (CCS), a communication protocol used by EVs and EVSE, can allow for unauthorized control of the charging process and compromise the integrity of the charging session.";
+    cad:reference "https://nvd.nist.gov/vuln/detail/CVE-2022-0878";
+    rdfs:label "CVE-2022-0878".
+cad:0_4771584435847497
+    a d3f:CWE-770;
+    cad:explanation
+        "By sending a specific reset UDS request via OBDII port of Skoda vehicles, it is possible to cause vehicle engine shutdown and denial of service of other vehicle components even when the vehicle is moving at a high speed. No safety critical functions affected.";
+    cad:reference "https://nvd.nist.gov/vuln/detail/CVE-2023-28899";
+    rdfs:label "CVE-2023-28899".
+cad:0_4780250245000993
+    a d3f:RemoteTerminalSessionDetection;
+    d3f:analyzes cad:-copy0_21326833517519672;
+    rdfs:label "Remote Terminal Session Detection".
+cad:0_4905204295267137
+    a d3f:PhysicalEnclosureHardening;
+    d3f:hardens cad:0_7632923934902052;
+    rdfs:label "Physical Enclosure Hardening".
+cad:0_6204476854000327
+    a cad:Note;
+    rdfs:comment
+        """A Malicious Cyber Actor (MCA) exploits vulnerabilities in the software 
+of EV Systems that are not updated. 
+
+
+The MCA could also access the CAN BUS physically by connecting to 
+the OBD-II port or accessing the wiring harness.
+
+
+After they get access to the system, they impair the defenses of the EV 
+to avoid being noticed by the car user 
+
+
+The MCA then send messages to the ECU from the CAN BUS allowing 
+the attacker to turn on or off critical systems in the EV.""";
+    rdfs:label "Initial Access".
+cad:0_6454775412057336
+    a d3f:SoftwareUpdate;
+    d3f:updates cad:9-copy0_5123504522259745;
+    rdfs:label "Software Update".
+cad:0_6513990614871756
+    a d3f:MessageAuthentication;
+    d3f:authenticates cad:-copy0_21326833517519672;
+    rdfs:label "Message Authentication".
+cad:0_6666834988202524
+    a d3f:OffensiveTechnique;
+    cad:automotive-threat-matrix
+    "https://atm.automotiveisac.com/technique/ATM-TA0002/ATM-T0016";
+    cad:explanation
+        "The adversary can make physical modifications to the vehicle’s ECUs, wiring harnesses, and can replace ECUs.";
+    d3f:accesses cad:0_7632923934902052;
+    rdfs:label "Physical Modification via Wiring Harness".
+cad:0_6716152259710007
+    a d3f:OTSensor;
+    d3f:communicates-with cad:9-copy0_5123504522259745;
+    rdfs:label "Tire Pressure Sensor".
+cad:0_7211758737270249
+    a d3f:CWE-754;
+    cad:explanation
+        "A lack of exception handling in the Volkswagen Discover Media Infotainment System Software Version 0876 allows attackers to cause a Denial of Service (DoS) via supplying crafted media files when connecting a device to the vehicle's USB plug and play feature.";
+    cad:reference "https://nvd.nist.gov/vuln/detail/CVE-2023-34733";
+    rdfs:label "CVE-2023-34733".
+cad:0_7398530475152683
+    a d3f:Event;
+    d3f:precedes cad:0_7406532076134535;
+    rdfs:label
+        """Physical Attacker chooses to attack via USB port, OBD-II port, or by accessing wiring harness
+
+""".
+cad:0_7406532076134535
+    a d3f:OffensiveTechnique;
+    cad:automotive-threat-matrix
+    "https://atm.automotiveisac.com/technique/ATM-TA0013/ATM-T0071";
+    cad:explanation
+        "The adversary may try to send unintended messages on the in-vehicle network.";
+    d3f:causes cad:0_361911753278084;
+    d3f:spoofs cad:-copy0_21326833517519672;
+    rdfs:label "Unintended Vehicle Network Message".
+cad:0_7632923934902052
+    a d3f:ComputerEnclosure;
+    d3f:accesses cad:-copy0_21326833517519672;
+    rdfs:label "Wiring Harness".
+cad:0_7883626680992106
+    a d3f:T1091;
+    cad:automotive-threat-matrix
+    "https://atm.automotiveisac.com/technique/ATM-TA0002/ATM-T0013";
+    cad:explanation
+        "Adversaries may gain initial access to an automotive environment by copying malware to removable media and taking advantage of Autorun features or automatic parsing of file (e.g., MP3s) when the device is inserted into a system and executes.";
+    d3f:accesses cad:9-copy0_5123504522259745;
+    rdfs:label "Exploit via Removable Media".
+cad:0_8198620144444049
+    a d3f:T1003;
+    cad:automotive-threat-matrix
+    "https://atm.automotiveisac.com/technique/ATM-TA0007/ATM-T0039";
+    cad:explanation
+        "Adversaries may attempt to dump credentials to obtain account login and credential material, normally in the form of a hash or a clear text password, from the operating system and software.";
+    d3f:accesses cad:0_3911644187862563;
+    rdfs:label "ECU Credential Dumping".
+cad:0_8213185857095181
+    a d3f:CWE-20;
+    cad:explanation
+        "An unauthenticated remote attacker can modify configurations to perform a remote code execution, gain root rights or perform an DoS due to improper input validation.";
+    cad:reference
+        "https://nvd.nist.gov/vuln/detail/cve-2024-25994",
+        "https://nvd.nist.gov/vuln/detail/cve-2024-25995";
+    rdfs:label "CVE-2024-25994 and CVE-2024-25995".
+cad:0_8397910388201522
+    a d3f:OffensiveTechnique;
+    cad:automotive-threat-matrix
+    "https://atm.automotiveisac.com/technique/ATM-TA0002/ATM-T0010";
+    cad:explanation
+        "Adversaries may take use aftermarket, customer, or dealer equipment as an initial OBD-II accessories, such as insurance dongles and fleet management dongles, may introduce a wireless ingress points to the vehicle through its OBD-II port.";
+    d3f:accesses cad:0_8568915646297394;
+    rdfs:label
+    "Exploit Aftermarket, Customer, or Dealer Equipment via OBD-II port".
+cad:0_8474464097778707
+    a d3f:NetworkTrafficFiltering;
+    d3f:filters cad:0_1954403613438176;
+    rdfs:label "Network Traffic Filtering ".
+cad:0_8568915646297394
+    a d3f:IOModule;
+    d3f:accesses cad:-copy0_21326833517519672;
+    d3f:may-have-weakness cad:0_4771584435847497;
+    rdfs:label "OBD-II Port".
+cad:0_9031305412328421
+    a d3f:OffensiveTechnique;
+    cad:automotive-threat-matrix
+    "https://atm.automotiveisac.com/technique/ATM-TA0001/ATM-T0009";
+    cad:explanation
+        "An adversary could set up unauthorized Wi-Fi access points or compromise existing access points and, if the device connects to them, carry out network-based attacks such as eavesdropping on or modifying network communication.";
+    d3f:accesses cad:0_13417669623233963;
+    rdfs:label "Rogue Wi-Fi Access Point".
+cad:0_9033519497763046 a d3f:OTPowerSupply; rdfs:label "Battery Pack".
+
+cad:0_935467451659802
+    a d3f:Agent;
+    cad:physical-attack "Attacker has physical access to the EV";
+    rdfs:label "Malicious Cyber Actor".
+cad:0_9530533368170849 a d3f:OTSensor; rdfs:label "Brake Pedal Sensor".
+
+cad:0_9832547772870073
+    a d3f:PhysicalLocking;
+    d3f:restricts cad:0_3374447194150739;
+    rdfs:label "Physical Locking".
+cad:1-copy0_8603627012310211
+    a d3f:T1021;
+    cad:automotive-threat-matrix
+    "https://atm.automotiveisac.com/technique/ATM-TA0009/ATM-T0053";
+    cad:explanation
+        "Adversaries may attempt to log into a service specifically designed to accept remote connections. The adversary may then perform actions as the logged-on user.";
+    d3f:accesses cad:-copy0_21326833517519672;
+    d3f:precedes cad:0_04967619561394265, cad:0_7406532076134535;
+    rdfs:label "Exploitation via Remote Services".
+cad:9-copy0_5123504522259745
+    a d3f:EmbeddedComputer;
+    d3f:communicates-with cad:-copy0_21326833517519672, cad:0_13417669623233963;
+    d3f:may-have-weakness cad:0_7211758737270249;
+    rdfs:label "Media Control Unit".
+cad:automotive-threat-matrix
+a owl:AnnotationProperty; rdfs:label "Automotive Threat Matrix".
+cad:cyber-attack a owl:AnnotationProperty; rdfs:label "Cyber Attack".
+
+cad:explanation a owl:AnnotationProperty; rdfs:label "Explanation".
+
+cad:physical-attack a owl:AnnotationProperty; rdfs:label "Physical Attack".
+
+cad:reference a owl:AnnotationProperty; rdfs:label "Reference".
+
+
+
+########################################################################
+# Diagnostics for CAD->Save As Turtle...                               #
+########################################################################
+#
+# Object property messages:
+#
+# Edge ID: xy-edge__0.12546238807261156source-0.9033519497763046target
+# [WARN]: Unknown property charges
+# {
+#   "label": "charges",
+#   "d3f_property": "charges",
+#   "d3f_class_label": "charges"
+# }
+#
+# Edge ID: xy-edge-0.0602176813125157__0.23655297472490677source-0.23655297472490677target
+# [WARN]: Unknown property undefined
+# {
+#   "d3f_property": "undefined",
+#   "label": "undefined"
+# }
+#
+# Edge ID: xy-edge-0.6141094379861092__0.13172239788972018source-1-copy0.8603627012310211target
+# [WARN]: Unknown property agent-in
+# {
+#   "d3f_property": "agent-in",
+#   "label": "agent-in"
+# }
+#
+# Edge ID: xy-edge-0.005320303369113377__0.935467451659802source-0.7398530475152683target
+# [WARN]: Unknown property agent-in
+# {
+#   "d3f_property": "agent-in",
+#   "label": "agent-in"
+# }
+
