@@ -14,6 +14,12 @@ contains. Nodes were being drawn inside containers that did not contain them, an
 container labels over unrelated neighbours, which makes the drawing say something
 the RDF does not.
 
+[ADR 0031](0031-architecture-templates.md) widens what the box may claim: a compound
+node may also group the members of an instantiated template, which is provenance and
+not containment. The invariant below is unaffected — a grouping box is a compound node
+like any other, and the separation pass is geometry over boxes that does not ask what
+made the parent.
+
 No layout can be asked to prevent this. A compound node
 has no position of its own — it is filtered out of the
 positions a layout returns and its box is derived from
