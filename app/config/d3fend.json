@@ -2,6 +2,6 @@
   "_generated": "app/scripts/rebuild-data.sh — do not edit; bump D3FEND_VERSION there",
   "homepage": "https://d3fend.mitre.org/resources/ontology/",
   "ontologyIRI": "http://d3fend.mitre.org/ontologies/d3fend.owl",
-  "releaseDate": "2026-03-31",
-  "version": "1.4.0"
+  "releaseDate": "2026-08-31",
+  "version": "1.6.0"
 }

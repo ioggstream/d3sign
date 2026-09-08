@@ -22,20 +22,6 @@
 #
 # Loaded into urn:d3fend-graph:kg:regulation, i.e. K:regulation in a query.
 
-# ===========================================================================
-# Graph metadata: versions of upstream vocabularies and mapping date
-# ===========================================================================
-# This graph is a snapshot of mappings constructed on specific versions.
-# Both DPV and D3FEND evolve; this metadata pins the baseline.
-
-<urn:d3fend-graph:kg:regulation>
-  dct:description "Mapping of legal obligations (NIS2 Directive, GDPR) to D3FEND defensive techniques, with DPV alignment"@en ;
-  dct:created "2026-09-07"^^xsd:date ;
-  dct:modified "2026-09-07"^^xsd:date ;
-  <urn:d3fend-graph:meta:dpv-version> "2.3" ;
-  <urn:d3fend-graph:meta:d3fend-commit> "TODO: add D3FEND version or commit hash" ;
-  rdfs:comment "DPV 2.3: https://w3id.org/dpv. If upstream versions change, re-evaluate all skos:relatedMatch and al:legal-concept links."@en .
-
 @prefix ob:   <urn:d3fend-graph:obl:> .
 @prefix al:   <urn:d3fend-graph:align:> .
 @prefix d3f:  <http://d3fend.mitre.org/ontologies/d3fend.owl#> .
@@ -46,6 +32,24 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# ===========================================================================
+# Graph metadata: versions of upstream vocabularies and mapping date
+# ===========================================================================
+# This graph is a snapshot of mappings constructed on specific versions.
+# Both DPV and D3FEND evolve; this metadata pins the baseline.
+#
+# Below the @prefix block, not above it: turtle requires a prefix to be declared
+# before it is used, so this stanza on top made the whole file unparseable —
+# rdflib stopped at `dct:` and the legal projections could not be built.
+
+<urn:d3fend-graph:kg:regulation>
+  dct:description "Mapping of legal obligations (NIS2 Directive, GDPR) to D3FEND defensive techniques, with DPV alignment"@en ;
+  dct:created "2026-09-07"^^xsd:date ;
+  dct:modified "2026-09-07"^^xsd:date ;
+  <urn:d3fend-graph:meta:dpv-version> "2.3" ;
+  <urn:d3fend-graph:meta:d3fend-commit> "TODO: add D3FEND version or commit hash" ;
+  rdfs:comment "DPV 2.3: https://w3id.org/dpv. If upstream versions change, re-evaluate all skos:relatedMatch and al:legal-concept links."@en .
 
 # ===========================================================================
 # The vocabulary this file uses
