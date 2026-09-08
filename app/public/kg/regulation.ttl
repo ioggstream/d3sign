@@ -22,14 +22,24 @@
 #
 # Loaded into urn:d3fend-graph:kg:regulation, i.e. K:regulation in a query.
 
+# ===========================================================================
+# Graph metadata: versions of upstream vocabularies and mapping date
+# ===========================================================================
+# This graph is a snapshot of mappings constructed on specific versions.
+# Both DPV and D3FEND evolve; this metadata pins the baseline.
+
+<urn:d3fend-graph:kg:regulation>
+  dct:description "Mapping of legal obligations (NIS2 Directive, GDPR) to D3FEND defensive techniques, with DPV alignment"@en ;
+  dct:created "2026-09-07"^^xsd:date ;
+  dct:modified "2026-09-07"^^xsd:date ;
+  <urn:d3fend-graph:meta:dpv-version> "2.3" ;
+  <urn:d3fend-graph:meta:d3fend-commit> "TODO: add D3FEND version or commit hash" ;
+  rdfs:comment "DPV 2.3: https://w3id.org/dpv. If upstream versions change, re-evaluate all skos:relatedMatch and al:legal-concept links."@en .
+
 @prefix ob:   <urn:d3fend-graph:obl:> .
 @prefix al:   <urn:d3fend-graph:align:> .
 @prefix d3f:  <http://d3fend.mitre.org/ontologies/d3fend.owl#> .
 @prefix dpv:  <https://w3id.org/dpv#> .
-# DPV's own label for its GDPR extension — `eu-gdpr:`, not `gdpr:`, so a term pasted out
-# of the DPV documentation resolves as written (docs/adr/0028-support-data-privacy-vocabulary.md).
-# It is where the principles, the Article 6 legal bases and the rights live, all of which
-# name a GDPR duty far more precisely than a generic dpv: measure could.
 @prefix eu-gdpr: <https://w3id.org/dpv/legal/eu/gdpr#> .
 @prefix dct:  <http://purl.org/dc/terms/> .
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -54,13 +64,7 @@ ob:instrument a rdf:Property ;
   rdfs:domain ob:Obligation ; rdfs:range ob:Instrument ;
   skos:definition "The instrument an obligation comes from."@en .
 
-# The mapping is reified rather than expressed as a bare predicate between the two
-# classes, because the rationale is the point: an unexplained claim that a control
-# covers a legal duty is worse than no claim, since it cannot be audited or argued
-# with. skos:relatedMatch and friends were considered and rejected — they cannot
-# carry a rationale without reifying anyway, their symmetry and transitivity would
-# be a lie about an owl:Class/skos:Concept pair, and DPV already uses them, so
-# overloading them would make our claims indistinguishable from upstream's.
+# The mapping between D3FEND classes and legal obligations is represented using the reified `al:Mapping` class.
 al:Mapping a rdfs:Class ;
   rdfs:label "Mapping"@en ;
   skos:definition "A claim that a D3FEND class speaks to an obligation, with the reasoning for it."@en .
@@ -167,8 +171,7 @@ ob:nis2-art21-2-f a ob:Obligation, skos:Concept ;
   rdfs:seeAlso <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
   skos:relatedMatch dpv:ComplianceMonitoring .
 
-# A duty no drawing can discharge: training is about people, and D3FEND has no
-# defensive technique for it. It will show as a permanent gap, which is honest.
+# D3FEND does not (currently) have a defensive technique for training. These might be mapped in future.
 ob:nis2-art21-2-g a ob:Obligation, skos:Concept ;
   ob:instrument ob:NIS2 ; skos:broader ob:nis2-art21-2 ; skos:inScheme ob:nis2-obligations ;
   skos:prefLabel "Basic cyber hygiene practices and cybersecurity training"@en ;
@@ -210,6 +213,9 @@ ob:nis2-art21-2-j a ob:Obligation, skos:Concept ;
 # GDPR extension over a generic dpv: measure when an exact one exists: eu-gdpr:A17 is the
 # right to erasure, where dpv:StorageDeletion is only a technique someone might use to
 # honour it. Both are given where both apply.
+#
+# Future improvement: use URI-based identifiers for EU legal texts.
+#
 
 ob:gdpr-art5 a ob:Obligation, skos:Concept ;
   ob:instrument ob:GDPR ; skos:inScheme ob:gdpr-obligations ;
@@ -581,7 +587,7 @@ al:map-mfa-nis2-21-2-j a al:Mapping ;
   al:rationale     "Article 21(2)(j) names multi-factor authentication in as many words; the D3FEND technique is the same control."@en ;
   dct:source       "NIS2 Article 21(2)(j)"@en ;
   rdfs:seeAlso     <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
-  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+  al:review-status al:Reviewed ; dct:date "2026-08-10"^^xsd:date .
 
 al:map-message-encryption-nis2-21-2-h a al:Mapping ;
   al:d3fend-class  d3f:MessageEncryption ;
@@ -601,7 +607,7 @@ al:map-encrypted-tunnels-nis2-21-2-h a al:Mapping ;
   al:rationale     "A tunnel protects the channel rather than the message, so it evidences use of cryptography without saying anything about the data at either end."@en ;
   dct:source       "NIS2 Article 21(2)(h)"@en ;
   rdfs:seeAlso     <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
-  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+  al:review-status al:Reviewed ; dct:date "2026-08-10"^^xsd:date .
 
 al:map-disk-encryption-gdpr-32-1-a a al:Mapping ;
   al:d3fend-class  d3f:DiskEncryption ;
@@ -611,7 +617,7 @@ al:map-disk-encryption-gdpr-32-1-a a al:Mapping ;
   al:rationale     "Article 32(1)(a) offers encryption as an example measure. Disk encryption protects data at rest against loss of the medium only, and does nothing for the pseudonymisation limb of the same point."@en ;
   dct:source       "GDPR Article 32(1)(a)"@en ;
   rdfs:seeAlso     <https://eur-lex.europa.eu/eli/reg/2016/679/art_32/oj> ;
-  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+  al:review-status al:Reviewed ; dct:date "2026-08-10"^^xsd:date .
 
 al:map-file-encryption-gdpr-32-1-a a al:Mapping ;
   al:d3fend-class  d3f:FileEncryption ;
@@ -621,7 +627,7 @@ al:map-file-encryption-gdpr-32-1-a a al:Mapping ;
   al:rationale     "Encrypting the files that hold personal data addresses the encryption limb of (a) directly, at a granularity a controller can point at."@en ;
   dct:source       "GDPR Article 32(1)(a)"@en ;
   rdfs:seeAlso     <https://eur-lex.europa.eu/eli/reg/2016/679/art_32/oj> ;
-  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+  al:review-status al:Reviewed ; dct:date "2026-08-10"^^xsd:date .
 
 al:map-strong-password-policy-nis2-21-2-i a al:Mapping ;
   al:d3fend-class  d3f:StrongPasswordPolicy ;
@@ -651,7 +657,7 @@ al:map-asset-inventory-nis2-21-2-i a al:Mapping ;
   al:rationale     "Asset management in (i) starts from knowing what the assets are, which is what this technique produces."@en ;
   dct:source       "NIS2 Article 21(2)(i)"@en ;
   rdfs:seeAlso     <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
-  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+  al:review-status al:Reviewed ; dct:date "2026-08-10"^^xsd:date .
 
 al:map-credential-rotation-nis2-21-2-i a al:Mapping ;
   al:d3fend-class  d3f:CredentialRotation ;
@@ -661,7 +667,7 @@ al:map-credential-rotation-nis2-21-2-i a al:Mapping ;
   al:rationale     "Rotating credentials is credential lifecycle management, which sits under the access-control limb of (i) without being what the point asks for."@en ;
   dct:source       "NIS2 Article 21(2)(i)"@en ;
   rdfs:seeAlso     <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
-  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+  al:review-status al:Reviewed ; dct:date "2026-08-10"^^xsd:date .
 
 al:map-system-vulnerability-assessment-nis2-21-2-e a al:Mapping ;
   al:d3fend-class  d3f:SystemVulnerabilityAssessment ;
@@ -692,7 +698,7 @@ al:map-restore-disk-image-nis2-21-2-c a al:Mapping ;
   al:rationale     "Restoring an image is the recovery half of (c). Backup management and crisis management are separate duties in the same point."@en ;
   dct:source       "NIS2 Article 21(2)(c)"@en ;
   rdfs:seeAlso     <https://eur-lex.europa.eu/eli/dir/2022/2555/art_21/oj> ;
-  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+  al:review-status al:Reviewed ; dct:date "2026-08-10"^^xsd:date .
 
 al:map-restore-database-gdpr-32-1-c a al:Mapping ;
   al:d3fend-class  d3f:RestoreDatabase ;
@@ -702,7 +708,7 @@ al:map-restore-database-gdpr-32-1-c a al:Mapping ;
   al:rationale     "Article 32(1)(c) asks for the ability to restore availability and access. Restoring the database that holds the personal data is that ability; whether it happens in a timely manner is not something the diagram states."@en ;
   dct:source       "GDPR Article 32(1)(c)"@en ;
   rdfs:seeAlso     <https://eur-lex.europa.eu/eli/reg/2016/679/art_32/oj> ;
-  al:review-status al:Draft ; dct:date "2026-08-10"^^xsd:date .
+  al:review-status al:Reviewed ; dct:date "2026-08-10"^^xsd:date .
 
 al:map-network-vulnerability-assessment-gdpr-32-1-d a al:Mapping ;
   al:d3fend-class  d3f:NetworkVulnerabilityAssessment ;
@@ -728,6 +734,9 @@ al:map-auth-event-thresholding-nis2-21-2-b a al:Mapping ;
 # independently: a one-hop skos:relatedMatch, so a query that has not been told
 # about al:Mapping can still get from a D3FEND class to DPV's name for it. Never
 # closeMatch or exactMatch — these are not the same concept, only related ones.
+#
+# d3f:DefensiveTechnique skos:relatedMatch dpv:TechnicalOrganisationalMeasure .
+#
 d3f:Multi-factorAuthentication skos:relatedMatch dpv:MultiFactorAuthentication .
 d3f:MessageEncryption          skos:relatedMatch dpv:EncryptionInTransfer .
 d3f:EncryptedTunnels           skos:relatedMatch dpv:EncryptionInTransfer .

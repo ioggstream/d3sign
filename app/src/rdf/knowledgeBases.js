@@ -69,15 +69,15 @@ export const KNOWLEDGE_BASES = [
     description: 'MITRE CAPEC OWL ontology: classes, hierarchy, and technique/artifact relations',
     graph: kgGraphName('capec'),
     url: 'kg/d3fend-capec.ttl.gz',
-    tripleHint: 400,
+    tripleHint: 6000,
   },
   {
     id: 'owasp',
     label: 'OWASP TOP 10',
     description: 'OWASP TOP 10 2023',
     graph: kgGraphName('owasp'),
-    url: 'kg/owasp-top10-api-2023.src.ttl.gz',
-    tripleHint: 50,
+    url: 'kg/owasp-cwe.ttl.gz',
+    tripleHint: 320,
   },
   {
     id: 'legal',
