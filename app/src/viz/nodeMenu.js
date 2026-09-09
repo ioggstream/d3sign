@@ -33,6 +33,8 @@ export function nodeMenuItems(
     onShowInfo,
     onShowOutgoingFlow,
     onShowIncomingFlow,
+    onStepOutgoingFlow,
+    onStepIncomingFlow,
     onQuery,
   } = {},
 ) {
@@ -55,11 +57,15 @@ export function nodeMenuItems(
       onSelect: () => onGoToSource(data.id),
     });
   }
+  // The descriptions say "dim" rather than "hide": nothing leaves the drawing,
+  // which is what keeps the rest of the graph readable as context
+  // (docs/adr/00032-improve-flow-discovery.md).
   if (onShowOutgoingFlow) {
     items.push({
       label: 'Show outgoing flow',
       hint: '>',
-      description: 'Hide everything the drawing does not reach by following links out of this node',
+      description:
+        'Dim everything the drawing does not reach by following links out of this node, the near hops brighter than the far ones',
       onSelect: () => onShowOutgoingFlow(data.id),
     });
   }
@@ -67,8 +73,25 @@ export function nodeMenuItems(
     items.push({
       label: 'Show incoming flow',
       hint: '<',
-      description: 'Hide everything that does not reach this node by following links into it',
+      description:
+        'Dim everything that does not reach this node by following links into it, the near hops brighter than the far ones',
       onSelect: () => onShowIncomingFlow(data.id),
+    });
+  }
+  if (onStepOutgoingFlow) {
+    items.push({
+      label: 'Step outgoing flow',
+      hint: '.',
+      description: 'The same flow one hop at a time: each use reaches one link further out',
+      onSelect: () => onStepOutgoingFlow(data.id),
+    });
+  }
+  if (onStepIncomingFlow) {
+    items.push({
+      label: 'Step incoming flow',
+      hint: ',',
+      description: 'The same flow one hop at a time: each use reaches one link further in',
+      onSelect: () => onStepIncomingFlow(data.id),
     });
   }
   // Before `Show info`, which is the terminal action: this one leaves the tab.
