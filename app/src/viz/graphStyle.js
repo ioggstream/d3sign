@@ -327,11 +327,17 @@ export function buildStyle(prefs, iconSet = null) {
 
   // While directional flow focus is active, non-matching nodes are dimmed rather
   // than hidden so the graph stays legible as context.
+  //
+  // Dimmed hard. Everything the walk reaches is at full opacity, so this is the
+  // only side of that contrast there is to set, and at 0.45 there was not enough
+  // of one: on a diagram whose components have both inbound and outbound
+  // relations the unreached set is a minority of the drawing, and a faint
+  // majority is what makes the flow stand out of it.
   style.push({
     selector: 'node.path-focus-dim',
     style: {
-      opacity: 0.45,
-      'text-opacity': 0.6,
+      opacity: 0.2,
+      'text-opacity': 0.3,
     },
   });
 
@@ -458,8 +464,8 @@ export function buildStyle(prefs, iconSet = null) {
   style.push({
     selector: 'edge.path-focus-dim',
     style: {
-      opacity: 0.15,
-      'text-opacity': 0.2,
+      opacity: 0.08,
+      'text-opacity': 0.1,
     },
   });
 
