@@ -2,7 +2,12 @@ import cytoscape from 'cytoscape';
 import elk from 'cytoscape-elk';
 import { toCytoscapeElements } from './toCytoscape.js';
 import { DEFAULT_LAYOUT_ID, layoutOptions, normalizeSteps, rotatePoint } from './layouts.js';
-import { buildStyle } from './graphStyle.js';
+import {
+  PATH_FOCUS_DEPTH_CLASSES,
+  buildStyle,
+  pathFocusDepthBand,
+  pathFocusDepthClass,
+} from './graphStyle.js';
 import {
   DEFAULT_PREFS,
   containerLabelBandFor,
@@ -31,6 +36,7 @@ const PATH_FOCUS_DIRECTIONS = new Set(['outgoing', 'incoming']);
 const PATH_FOCUS_DIM_CLASS = 'path-focus-dim';
 const PATH_FOCUS_NODE_CLASS = 'path-focus-node';
 const PATH_FOCUS_EDGE_CLASS = 'path-focus-edge';
+const PATH_FOCUS_DEPTH_CLASS_LIST = PATH_FOCUS_DEPTH_CLASSES.join(' ');
 
 /**
  * Least gap the separation pass leaves between two sibling boxes.
@@ -256,6 +262,8 @@ export function createGraphPane(host, {
   onShowEdgeInfo,
   onShowOutgoingFlow,
   onShowIncomingFlow,
+  onStepOutgoingFlow,
+  onStepIncomingFlow,
   onSelectionChange,
   onFoldToggle,
   onGoToSource,
@@ -456,8 +464,12 @@ export function createGraphPane(host, {
   const nodeTooltip = createNodeTooltip(host);
   function clearPathFocusClasses() {
     cy.batch(() => {
-      cy.nodes().removeClass(`${PATH_FOCUS_DIM_CLASS} ${PATH_FOCUS_NODE_CLASS}`);
-      cy.edges().removeClass(`${PATH_FOCUS_DIM_CLASS} ${PATH_FOCUS_EDGE_CLASS}`);
+      cy.nodes().removeClass(
+        `${PATH_FOCUS_DIM_CLASS} ${PATH_FOCUS_NODE_CLASS} ${PATH_FOCUS_DEPTH_CLASS_LIST}`,
+      );
+      cy.edges().removeClass(
+        `${PATH_FOCUS_DIM_CLASS} ${PATH_FOCUS_EDGE_CLASS} ${PATH_FOCUS_DEPTH_CLASS_LIST}`,
+      );
     });
   }
 
@@ -467,7 +479,7 @@ export function createGraphPane(host, {
       return;
     }
 
-    const { nodeId, direction } = pathFocus;
+    const { nodeId, direction, maxDepth } = pathFocus;
     if (!PATH_FOCUS_DIRECTIONS.has(direction)) {
       pathFocus = null;
       clearPathFocusClasses();
@@ -488,17 +500,35 @@ export function createGraphPane(host, {
       // way, so the flow can be followed along it in either direction.
       bidirectional: edge.data('bidirectional'),
     }));
-    const focused = directionalFlow(cy.nodes().map((node) => node.id()), edges, nodeId, direction);
+    const focused = directionalFlow(
+      cy.nodes().map((node) => node.id()),
+      edges,
+      nodeId,
+      direction,
+      { maxDepth },
+    );
+    // What the shell needs to tell "extended by a hop" from "that is the whole
+    // flow": the walk knows, and reachability alone does not say.
+    pathFocus.truncated = focused.truncated;
 
     cy.batch(() => {
-      cy.nodes().addClass(PATH_FOCUS_DIM_CLASS).removeClass(PATH_FOCUS_NODE_CLASS);
-      cy.edges().addClass(PATH_FOCUS_DIM_CLASS).removeClass(PATH_FOCUS_EDGE_CLASS);
+      cy.nodes()
+        .addClass(PATH_FOCUS_DIM_CLASS)
+        .removeClass(`${PATH_FOCUS_NODE_CLASS} ${PATH_FOCUS_DEPTH_CLASS_LIST}`);
+      cy.edges()
+        .addClass(PATH_FOCUS_DIM_CLASS)
+        .removeClass(`${PATH_FOCUS_EDGE_CLASS} ${PATH_FOCUS_DEPTH_CLASS_LIST}`);
 
+      const band = (depth) => (depth ? pathFocusDepthClass(pathFocusDepthBand(depth)) : '');
       for (const id of focused.nodeIds) {
-        cy.getElementById(id).removeClass(PATH_FOCUS_DIM_CLASS).addClass(PATH_FOCUS_NODE_CLASS);
+        cy.getElementById(id)
+          .removeClass(PATH_FOCUS_DIM_CLASS)
+          .addClass(`${PATH_FOCUS_NODE_CLASS} ${band(focused.depths.get(id))}`.trim());
       }
       for (const id of focused.edgeIds) {
-        cy.getElementById(id).removeClass(PATH_FOCUS_DIM_CLASS).addClass(PATH_FOCUS_EDGE_CLASS);
+        cy.getElementById(id)
+          .removeClass(PATH_FOCUS_DIM_CLASS)
+          .addClass(`${PATH_FOCUS_EDGE_CLASS} ${band(focused.edgeDepths.get(id))}`.trim());
       }
     });
   }
@@ -521,6 +551,8 @@ export function createGraphPane(host, {
       onShowInfo,
       onShowOutgoingFlow,
       onShowIncomingFlow,
+      onStepOutgoingFlow,
+      onStepIncomingFlow,
       onQuery,
     });
   const edgeItems = (data) =>
@@ -735,9 +767,14 @@ export function createGraphPane(host, {
     flashError(message) {
       flashEdgeError(host, message);
     },
-      setPathFocus(nodeId, direction) {
+      /**
+       * `maxDepth` bounds the walk in hops, and defaults to unbounded so that
+       * `>` / `<` keep showing the whole flow. `applyPathFocus` re-runs the walk
+       * after every redraw, so the bound is state rather than a one-off result.
+       */
+      setPathFocus(nodeId, direction, maxDepth = Infinity) {
         if (!PATH_FOCUS_DIRECTIONS.has(direction)) return false;
-        pathFocus = { nodeId, direction };
+        pathFocus = { nodeId, direction, maxDepth, truncated: false };
         applyPathFocus();
         return Boolean(pathFocus);
       },
@@ -747,6 +784,17 @@ export function createGraphPane(host, {
       },
       hasPathFocus() {
         return Boolean(pathFocus);
+      },
+      /**
+       * The focus as it stands, or null. `truncated` is what the stepped walk
+       * dispatches on: extending a focus that already reaches everything would
+       * redraw nothing, so the shell has to say so instead
+       * (docs/adr/00032-improve-flow-discovery.md).
+       */
+      pathFocusReach() {
+        if (!pathFocus) return null;
+        const { nodeId, direction, maxDepth, truncated } = pathFocus;
+        return { nodeId, direction, maxDepth, truncated };
       },
   };
 }

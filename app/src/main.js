@@ -265,10 +265,39 @@ function renderSourcesChip() {
 let selection = null;
 let pathFocus = null;
 
-function setPathFocus(direction, nodeId = selection?.id) {
+function setPathFocus(direction, nodeId = selection?.id, maxDepth = Infinity) {
   if (!nodeId) return;
-  const active = graphPane.setPathFocus(nodeId, direction);
-  pathFocus = active ? { nodeId, direction } : null;
+  const active = graphPane.setPathFocus(nodeId, direction, maxDepth);
+  pathFocus = active ? { nodeId, direction, maxDepth } : null;
+}
+
+/**
+ * Extends a bounded flow focus by one hop, or starts one at a single hop.
+ *
+ * The whole walk at once is what `>` / `<` do, and on a graph whose components
+ * have both inbound and outbound relations that is nearly the entire diagram
+ * (docs/adr/00032-improve-flow-discovery.md). Stepping is the other reading of
+ * the same walk: one hop per press, so the order of the hops is shown rather
+ * than reassembled by eye.
+ *
+ * Restarts from one hop whenever the selection or the direction changed, since
+ * the bound belongs to a walk and not to the pane. The toast is the whole answer
+ * at the end of the flow — nothing is redrawn, so nothing else would say why,
+ * which is the reason `s` has one too.
+ */
+function stepPathFocus(direction, nodeId = selection?.id) {
+  if (!nodeId) return;
+  const reach = graphPane.pathFocusReach();
+  // An unbounded focus on the same node — `>` pressed first — is not a step to
+  // extend but a walk to start over from one hop, which is the only way stepping
+  // in after `>` shows anything the reader did not already have.
+  const stepped =
+    reach?.nodeId === nodeId && reach.direction === direction && Number.isFinite(reach.maxDepth);
+  if (stepped && !reach.truncated) {
+    graphPane.flashError(`no ${direction} link beyond ${reach.maxDepth} hop(s) from here`);
+    return;
+  }
+  setPathFocus(direction, nodeId, stepped ? reach.maxDepth + 1 : 1);
 }
 
 function clearPathFocus() {
@@ -472,6 +501,8 @@ const graphPane = createGraphPane(cyHost, {
   },
   onShowOutgoingFlow: (nodeId) => setPathFocus('outgoing', nodeId),
   onShowIncomingFlow: (nodeId) => setPathFocus('incoming', nodeId),
+  onStepOutgoingFlow: (nodeId) => stepPathFocus('outgoing', nodeId),
+  onStepIncomingFlow: (nodeId) => stepPathFocus('incoming', nodeId),
   onSwapDirection: swapPredicateDirection,
   onQuery: (iri) => queryNode(iri),
   // Folding is view state, so it goes through the same filter path as everything
@@ -1627,6 +1658,17 @@ const GRAPH_SHORTCUTS = {
   '<': () => {
     if (selection?.kind !== 'node') return;
     setPathFocus('incoming');
+  },
+  // The stepped walk, on the unshifted keys of the same two caps: same flow, one
+  // hop per press. Separate keys rather than a mode on `>` / `<`, so what those
+  // reach is exactly what they reached before.
+  '.': () => {
+    if (selection?.kind !== 'node') return;
+    stepPathFocus('outgoing');
+  },
+  ',': () => {
+    if (selection?.kind !== 'node') return;
+    stepPathFocus('incoming');
   },
 };
 

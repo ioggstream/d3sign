@@ -70,6 +70,69 @@ const PATH_FOCUS_NODE_COLOR = '#0b7285';
 const PATH_FOCUS_EDGE_COLOR = '#0c8599';
 
 /**
+ * How far along a directional flow focus an element sits, banded. The walk
+ * reports a hop count (viz/pathFocus.js); everything past the last band shares
+ * it, because the point is telling near from far and not counting to nine.
+ *
+ * Said in the *highlight* — the teal border a focused node gets, the teal halo a
+ * focused edge gets — and not in the element. Everything the walk reaches stays at
+ * full opacity: the reader is tracing a flow through a diagram they still have to
+ * read, and fading the far end of it fades the very nodes the walk was run to
+ * find. So `a → b → c → d` reads as a strong highlight, a lighter one, a lighter
+ * one again, with all four nodes equally legible underneath.
+ *
+ * Both alpha *and* width taper. Alpha alone was invisible on a real diagram: a
+ * teal border at 0.45 next to one at 1 is a difference nobody notices while
+ * following an arrow, whereas a halo that visibly narrows is read as distance.
+ *
+ * Band 0 is the node the focus started from: no class, so it keeps the
+ * `path-focus-node` border at full strength, and it is also the selection.
+ */
+
+/**
+ * `[band, node opacity, border opacity, border width]`, nearest band first.
+ *
+ * The node's own opacity tapers by a few percent per hop and no more. The far end
+ * of a flow is still on the flow, and it is the node the walk was run to find, so
+ * it has to stay as readable as the near end — the distance is said in the border,
+ * which is the part of a focused node that exists to say things about the focus.
+ * The floor here is nowhere near `node.path-focus-dim`, which is what "not on this
+ * flow at all" looks like.
+ */
+const PATH_FOCUS_NODE_DEPTH = [
+  [1, 1, 1, 3],
+  [2, 0.97, 0.8, 2.5],
+  [3, 0.94, 0.55, 2],
+  [4, 0.9, 0.35, 1.5],
+  [5, 0.86, 0.2, 1],
+];
+
+/** `[band, overlay opacity, overlay padding]`, nearest band first. */
+const PATH_FOCUS_EDGE_DEPTH = [
+  [1, 0.45, 6],
+  [2, 0.3, 4.5],
+  [3, 0.18, 3],
+  [4, 0.1, 2],
+  [5, 0.05, 1.5],
+];
+
+/** The class saying which band an element is in. Shared with viz/graphPane.js, which sets it. */
+export function pathFocusDepthClass(band) {
+  return `path-focus-depth-${band}`;
+}
+
+/** Every depth class there is, so the pane can clear them without knowing the bands. */
+export const PATH_FOCUS_DEPTH_CLASSES = PATH_FOCUS_NODE_DEPTH.map(([band]) =>
+  pathFocusDepthClass(band),
+);
+
+/** The band a hop count falls in: everything deeper than the last band shares it. */
+export function pathFocusDepthBand(depth) {
+  const last = PATH_FOCUS_NODE_DEPTH[PATH_FOCUS_NODE_DEPTH.length - 1][0];
+  return Math.min(Math.max(depth, 1), last);
+}
+
+/**
  * How far a folded node's ghost copy sits behind it. Small on purpose: cytoscape
  * folds the offset into the node's bounding box, so it is width the layout and
  * `fit` have to give away.
@@ -283,6 +346,20 @@ export function buildStyle(prefs, iconSet = null) {
     },
   });
 
+  // How far along the flow, said in the node's opacity and in its border's
+  // strength. The reachable set alone is two-tone — reachable or not — which leaves
+  // the order of the hops to be reassembled by eye
+  // (docs/adr/00032-improve-flow-discovery.md).
+  //
+  // After `path-focus-node`, which sets all three of these at full strength:
+  // cytoscape takes each property from the last rule that sets it.
+  for (const [band, opacity, borderOpacity, borderWidth] of PATH_FOCUS_NODE_DEPTH) {
+    style.push({
+      selector: `node.${pathFocusDepthClass(band)}`,
+      style: { opacity, 'border-opacity': borderOpacity, 'border-width': borderWidth },
+    });
+  }
+
   // Selection, last of the node rules so it wins.
   //
   // Cytoscape keeps its own default stylesheet and appends ours, and its default
@@ -396,6 +473,18 @@ export function buildStyle(prefs, iconSet = null) {
       'overlay-padding': 3,
     },
   });
+
+  // The same banding as the nodes, in the halo the edge says focus with. This is
+  // the one that matters: the reader follows the arrows, so it is the arrows whose
+  // highlight has to say how far along they are. The line, its colour and its dash
+  // pattern are untouched — `tactical-verb`, `derived` and `collapsed` all say what
+  // they say there.
+  for (const [band, overlayOpacity, overlayPadding] of PATH_FOCUS_EDGE_DEPTH) {
+    style.push({
+      selector: `edge.${pathFocusDepthClass(band)}`,
+      style: { 'overlay-opacity': overlayOpacity, 'overlay-padding': overlayPadding },
+    });
+  }
 
   // Selection, last of the edge rules so it wins — same reason as the node one.
   //
