@@ -473,6 +473,12 @@ a o--o|d3f:connected-to| b
 %% THEN the style is dropped, the triple is not
 a -.->|d3f:adds| d
 
+%% WHEN the arrow is thick, alone or chained after a thin one
+%% THEN thickness is style, and each arrow is still an edge of its own
+%% (a thick arrow used to leave the whole tail as one bogus node id, silently)
+b ==>|d3f:runs| c
+a -->|d3f:runs| c ==>|d3f:modifies| d
+
 %% WHEN the label has no vocabulary prefix
 %% THEN nothing is emitted and the banner names the label
 %% (it used to be expanded to d3f:causes, which cannot tell a shorthand for a real
@@ -505,6 +511,9 @@ G:edge-forms {
     G:a d3f:connected-to G:b .
     G:b d3f:connected-to G:a .
     G:a d3f:adds G:d .
+    G:b d3f:runs G:c .
+    G:a d3f:runs G:c .
+    G:c d3f:modifies G:d .
 }
 ```
 

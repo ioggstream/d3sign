@@ -9,17 +9,20 @@ import { isBackArrow, isBidirectional } from '../src/parser/linkGrammar.js';
 // from `backArrowSpans`, which is a pure function of the line.
 
 describe('isBackArrow / isBidirectional', () => {
-  it.each(['<--', 'o--', 'x--', '<-.-', '<---'])('reads `%s` as a back arrow', (link) => {
+  it.each(['<--', 'o--', 'x--', '<-.-', '<---', '<==', 'o=='])('reads `%s` as a back arrow', (link) => {
     expect(isBackArrow(link)).toBe(true);
     expect(isBidirectional(link)).toBe(false);
   });
 
-  it.each(['-->', '--o', '--x', '-.->', '---'])('reads `%s` as a forward link', (link) => {
-    expect(isBackArrow(link)).toBe(false);
-    expect(isBidirectional(link)).toBe(false);
-  });
+  it.each(['-->', '--o', '--x', '-.->', '---', '==>', '==o', '==='])(
+    'reads `%s` as a forward link',
+    (link) => {
+      expect(isBackArrow(link)).toBe(false);
+      expect(isBidirectional(link)).toBe(false);
+    },
+  );
 
-  it.each(['<-->', 'o--o', 'x--x', 'o--x', '<-.->'])('reads `%s` as bidirectional', (link) => {
+  it.each(['<-->', 'o--o', 'x--x', 'o--x', '<-.->', '<==>', 'o==o'])('reads `%s` as bidirectional', (link) => {
     expect(isBackArrow(link)).toBe(false);
     expect(isBidirectional(link)).toBe(true);
   });
@@ -62,12 +65,18 @@ describe('backArrowSpans', () => {
 });
 
 describe('looksLikeEdgeLine', () => {
-  it.each(['a -->|p| b', 'a --o|p| b', 'a --x|p| b', 'a -.->|p| b', 'a <--|p| b', 'a o-- b'])(
-    'classifies `%s` as an edge line',
-    (line) => {
-      expect(looksLikeEdgeLine(line)).toBe(true);
-    },
-  );
+  it.each([
+    'a -->|p| b',
+    'a --o|p| b',
+    'a --x|p| b',
+    'a -.->|p| b',
+    'a <--|p| b',
+    'a o-- b',
+    'a ==>|p| b',
+    'a -->|p| b ==>|q| c',
+  ])('classifies `%s` as an edge line', (line) => {
+    expect(looksLikeEdgeLine(line)).toBe(true);
+  });
 
   it.each(['a[Host d3f:Host]', 'subgraph net[d3f:Network]', 'dc-1-net'])(
     'leaves `%s` to the node parser',

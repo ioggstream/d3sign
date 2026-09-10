@@ -397,7 +397,11 @@ export function buildStyle(prefs, iconSet = null) {
       'text-wrap': 'wrap',
       color: '#212529',
       'curve-style': 'bezier',
-      'target-arrow-shape': 'triangle',
+      // An open head, which is what a link that neither reads nor changes its
+      // ends is left with (docs/adr/0033-link-terminators-by-effect.md): it
+      // states a direction and claims nothing about either end. Topology,
+      // control flow and the tactical verbs all draw this.
+      'target-arrow-shape': 'vee',
       width: 1.5,
       'font-size': Math.max(6, prefs.fontSize - 2),
       'line-color': '#adb5bd',
@@ -418,6 +422,61 @@ export function buildStyle(prefs, iconSet = null) {
   // coloured by the kind rules below exactly as a one-way one is.
   style.push({
     selector: 'edge[bidirectional]',
+    style: {
+      'source-arrow-shape': 'vee',
+    },
+  });
+
+  // What the link does to the artifact on each of its ends — a second axis over
+  // the link kinds, since a writing relation can be a data flow (`d3f:writes`)
+  // or a tactical verb (`d3f:deletes`) and the buckets cannot say which
+  // (docs/adr/0033-link-terminators-by-effect.md).
+  //
+  // Arrow *shape* is what says it, because it is the one channel an edge was not
+  // already spending: the base rule set one constant head and the rule above set
+  // the second. So a writing link keeps its kind's colour, its fold's dashes and
+  // its focus halo, and says this as well.
+  //
+  // Three silhouettes, one per state, rather than three variations on one:
+  //   - `circle` — the end is read or consumed. Not an arrow at all, which is
+  //     the point: nothing about it changes.
+  //   - `triangle` — the end is written, added to or modified. Solid and
+  //     pointed, and the heaviest of the three, because it is the one a reader
+  //     is usually looking for.
+  //   - `vee` — the base rule's, for a link that does neither.
+  //
+  // The shape sits on the end it is true of, so an inverse predicate marks the
+  // *source*: `A d3f:accessed-by B` reads A, and drawing a circle at B would say
+  // the opposite of the triple. A shape at one end with a `vee` at the other is
+  // therefore a one-way link whose near end is affected — told from a two-way
+  // link, which carries the same shape at both ends.
+  //
+  // Pushed after the two rules above so these win the shapes they set, and
+  // before the colour rules below, which they have nothing to do with. The
+  // source rules must follow `edge[bidirectional]` for the same reason.
+  style.push({
+    selector: 'edge[targetEffect="reading"]',
+    style: {
+      'target-arrow-shape': 'circle',
+    },
+  });
+
+  style.push({
+    selector: 'edge[targetEffect="writing"]',
+    style: {
+      'target-arrow-shape': 'triangle',
+    },
+  });
+
+  style.push({
+    selector: 'edge[sourceEffect="reading"]',
+    style: {
+      'source-arrow-shape': 'circle',
+    },
+  });
+
+  style.push({
+    selector: 'edge[sourceEffect="writing"]',
     style: {
       'source-arrow-shape': 'triangle',
     },
@@ -496,10 +555,11 @@ export function buildStyle(prefs, iconSet = null) {
   //
   // Said with an overlay (a translucent halo drawn behind the line) rather than by
   // recolouring it, which is the edge's version of the node keeping its background:
-  // here three properties are already spoken for, and all three have to survive
+  // here four properties are already spoken for, and all four have to survive
   // being selected. `line-color` carries the link kind (tactical-verb green, ADR 7),
-  // `line-style` says the link is derived from a fold, and `width` says how many
-  // child links it stands for (ADR 12).
+  // `line-style` says the link is derived from a fold, `width` says how many
+  // child links it stands for (ADR 12), and the arrow *shapes* say what the link
+  // does to each of its ends (ADR 33).
   style.push({
     selector: 'edge:selected',
     style: {
