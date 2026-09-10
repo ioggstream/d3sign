@@ -42,6 +42,44 @@ function partyEndOf(edge) {
 }
 
 /**
+ * Which drawn end an `effectRole` lands on: the model states it as the triple's
+ * subject or object (rdf/predicateEffect.js), and a link drawn backwards — the
+ * direction swap, or a reciprocal group merged into one two-way element — has
+ * those exchanged. Knowing that an exchange happened takes no vocabulary, which
+ * is what lets this module stay free of imports from the RDF layer (ADR 0014).
+ */
+function drawnEffectEnd(effectRole, reversed) {
+  if (!effectRole) return null;
+  const onObject = effectRole.affectedEnd === 'object';
+  return onObject === !reversed ? 'target' : 'source';
+}
+
+/** The far end, for a caller that draws an already-anchored link backwards. */
+function oppositeEnd(end) {
+  if (end === 'target') return 'source';
+  if (end === 'source') return 'target';
+  return null;
+}
+
+/**
+ * What one drawn element says about its ends, as the keys graphStyle.js selects
+ * on: `targetEffect` and `sourceEffect`, each 'reading' or 'writing'. Absent
+ * rather than null when the link does neither, which is the convention
+ * `derived`, `collapsed` and `bidirectional` already follow — a cytoscape
+ * `edge[attr]` selector tests for the key, not for its value — and which is
+ * also what leaves the source end of a one-way link with no head at all.
+ *
+ * A two-way link is one relation asserted in both directions with the *same*
+ * predicate, so whatever it does to the far end it does to the near one too.
+ * There is no two-way link that reads or writes one end only.
+ */
+function effectKeys(effect, end, bidirectional) {
+  if (!effect || !end) return {};
+  if (bidirectional) return { sourceEffect: effect, targetEffect: effect };
+  return end === 'target' ? { targetEffect: effect } : { sourceEffect: effect };
+}
+
+/**
  * Replaces `A -produces-> b -accessed-by-> C` with one arrow `A → C` carrying
  * `b`'s label, for every `b` being used as nothing but a payload.
  *
@@ -291,6 +329,11 @@ export function toCytoscapeElements(model, filterState, viewOptions = {}) {
       // it is not a quad in the store, which is what `derived` means to the
       // stylesheet, the edge panel and go-to-source.
       derived: Boolean(edge.collapsed) || source !== fromIri || target !== toIri,
+      // What the link does to an end, and which end that is *as drawn*: the
+      // model states it against the triple (rdf/graphModel.js) and showing the
+      // inverse has just exchanged the ends, so it moves with them.
+      effect: edge.effectRole?.effect || null,
+      effectEnd: drawnEffectEnd(edge.effectRole, showInverse),
       // The same relation can be asserted in more than one visible graph, and a
       // fold can bring several child links to the same place: both land on one id.
       baseId: `${source}->${target}:${groupToken}`,
@@ -371,6 +414,9 @@ export function toCytoscapeElements(model, filterState, viewOptions = {}) {
         data.foldedTo = [...new Set([...group.map((i) => i.toIri), ...back.map((i) => i.fromIri)])];
       }
       if (bothWays) data.bidirectional = true;
+      // Every member of a group shares its drawn predicate — that is what the
+      // group token is — so the first member speaks for all of them.
+      Object.assign(data, effectKeys(first.effect, first.effectEnd, bothWays));
       elements.push({ data });
       edgesShown += 1;
       continue;
@@ -392,7 +438,12 @@ export function toCytoscapeElements(model, filterState, viewOptions = {}) {
         id: occurrence === 0 ? id : `${id}#${occurrence}`,
         label: item.predicateLabel,
       };
-      if (occurrence < twoWayCount) data.bidirectional = true;
+      const bidirectional = occurrence < twoWayCount;
+      if (bidirectional) data.bidirectional = true;
+      // A reciprocal member is drawn with its ends exchanged (just above), so
+      // the end its effect lands on is exchanged too.
+      const effectEnd = forward ? item.effectEnd : oppositeEnd(item.effectEnd);
+      Object.assign(data, effectKeys(item.effect, effectEnd, bidirectional));
       elements.push({ data });
       edgesShown += 1;
     }

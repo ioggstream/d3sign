@@ -67,6 +67,16 @@ export function edgePanelSummary(data = {}, { alternatives = [] } = {}) {
     // the only place that says so in words, since the drawing says it with a
     // second arrowhead and nothing else.
     bidirectional: Boolean(data.bidirectional),
+    // What the link does to each end, and so which terminator the drawing gives
+    // it (docs/adr/0033-link-terminators-by-effect.md). Named in words for the
+    // same reason `bidirectional` is: the drawing says it with the shape of one
+    // arrowhead and nothing else, and a shape that small is worth spelling out
+    // once here. Ends that the link neither reads nor writes are left out, so an
+    // empty list means it says nothing about either.
+    effects: [
+      ...(data.sourceEffect ? [{ effect: data.sourceEffect, node: displayIdOf(data.source || '') }] : []),
+      ...(data.targetEffect ? [{ effect: data.targetEffect, node: displayIdOf(data.target || '') }] : []),
+    ],
     standsFor: [],
     // The other predicates D3FEND licenses between these two classes, computed
     // by the shell and handed in — resolving them needs the model's rdf:type,
@@ -265,6 +275,9 @@ export function renderEdgePanel(host, edgeData, actions = {}, options = {}) {
   if (summary.collapsed) appendBadge(section, 'collapsed artifact path');
   else if (summary.derived) appendBadge(section, 'derived from a fold');
   if (summary.bidirectional) appendBadge(section, 'asserted both ways');
+  for (const { effect, node } of summary.effects) {
+    appendBadge(section, effect === 'writing' ? `changes ${node}` : `reads ${node}`);
+  }
   if (summary.invertible) appendBadge(section, 's: swap direction');
 
   if (summary.definition) renderDefinition(summary.definition, section);

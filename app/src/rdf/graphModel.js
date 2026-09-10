@@ -18,6 +18,7 @@
 import { PREFIXES, PROVENANCE, curieWith, inversePredicateOf } from './emit.js';
 import { artifactFlowRoleOf } from './artifactFlow.js';
 import { classifyPredicate } from './linkKind.js';
+import { predicateEffectOf } from './predicateEffect.js';
 import { classifyNodeCategory } from './nodeKind.js';
 import d3fendCategories from '../data/d3fend-categories.json';
 import d3fendMetadata from '../data/d3fend-metadata.json';
@@ -183,7 +184,7 @@ function isResource(term) {
  *
  * Returns `{ nodes, edges, containment, parentOf }`:
  * - `nodes`: Map of IRI → `{ iri, id, label, rdfType, coreCategory, nodeKind, offensive }`
- * - `edges`: `{ from, to, predicate, kind, inverse, flowRole }`, IRIs on both
+ * - `edges`: `{ from, to, predicate, kind, inverse, flowRole, effectRole }`, IRIs on both
  *   ends, predicate as a CURIE — one entry per quad, so a relation asserted in
  *   two visible graphs is two (parallel) edges, as it is in the store.
  * - `containment` / `parentOf`: the compound-node structure, both directions.
@@ -261,6 +262,13 @@ export function buildGraphModel(store) {
       // inverse cannot change which paths collapse. It is also what keeps
       // viz/toCytoscape.js free of imports from this layer (ADR 0014).
       flowRole: artifactFlowRoleOf(curie),
+      // Whether the link reads or changes an end, and which end, in the
+      // orientation the predicate was written in (rdf/predicateEffect.js).
+      // Resolved here for the same reason as the two above — it is a fact about
+      // the vocabulary, and the view is not allowed to know the vocabulary. The
+      // view *is* allowed to know that drawing a link backwards exchanges its
+      // ends, which is the one adjustment it makes.
+      effectRole: predicateEffectOf(curie),
     });
   }
 
