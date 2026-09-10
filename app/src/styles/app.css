@@ -927,6 +927,16 @@ main#app-grid {
 /* The citation under a legal definition: secondary to the definition itself, tight
    against it rather than a paragraph of its own weight. */
 .node-panel .node-panel-source { font-size: 0.94em; color: var(--c-text-faint); margin-bottom: var(--s-2); }
+/* The class a section is about, above its definition and its Attack/Defense
+   subheads. Those are h4 too, so this has to read as their owner rather than
+   their peer: full text, panel ink, and the section's first line. */
+.node-panel h4.node-panel-class {
+  font-size: 1em;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--c-text);
+  margin-top: 0;
+}
 .node-panel-d3fend + .node-panel-d3fend {
   margin-top: var(--s-4);
   padding-top: var(--s-4);

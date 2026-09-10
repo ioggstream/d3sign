@@ -32,6 +32,35 @@ describe('parseDiagram — dotted arrows', () => {
   });
 });
 
+describe('parseDiagram — thick arrows in a chain', () => {
+  // Which triples a thick arrow yields is snapshotted (`edge-forms`). What no
+  // snapshot shows is the failure it replaces: before `==` joined the arrow
+  // grammar, the tail of a mixed chain was swallowed whole as one node id
+  // ("flush ==>|d3f:modifies| db"), silently, because the line still matched on
+  // its leading `-->`. The absent node is the assertion.
+  const ast = parseDiagram(
+    [
+      'graph',
+      'a[A d3f:Host]',
+      'b[B d3f:Host]',
+      'c[C d3f:Host]',
+      'a -->|d3f:runs| b ==>|d3f:modifies| c',
+    ].join('\n'),
+  );
+
+  it('reads one edge per arrow when the styles are mixed', () => {
+    expect(ast.edges.map((e) => [e.from, e.predicate, e.to, e.dotted])).toEqual([
+      ['a', 'd3f:runs', 'b', false],
+      ['b', 'd3f:modifies', 'c', false],
+    ]);
+  });
+
+  it('declares no node named after the arrow text', () => {
+    expect(ast.nodes.map((n) => n.id)).toEqual(['a', 'b', 'c']);
+    expect(ast.warnings).toEqual([]);
+  });
+});
+
 describe('parseDiagram — arrow heads', () => {
   // Which triples each head yields is snapshotted (`edge-forms` in testcases.md).
   // What is left here is the ambiguity the o/x heads create with ids, which no

@@ -23,5 +23,8 @@ G:b d3f:related G:c.
 G:c d3f:related G:b.
 G:a d3f:connected-to G:b.
 G:b d3f:connected-to G:a.
-G:a d3f:adds G:d
+G:a d3f:adds G:d.
+G:b d3f:runs G:c.
+G:a d3f:runs G:c.
+G:c d3f:modifies G:d
 }

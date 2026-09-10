@@ -19,18 +19,28 @@
 // dashes, with whitespace or `&` before it — which is how mermaid writes it
 // (`a o--o b`). Mermaid is as ambiguous as we are about a node called `x`.
 const LEFT_HEAD = String.raw`(?:<|(?<=[\s&])[ox])`;
-const DASHES = String.raw`-{1,3}\.?-{0,2}`;
+const DASH_BODY = String.raw`-{1,3}\.?-{0,2}`;
+// Mermaid's thick link (`==>`, `<==>`, `==o`). `=` is not a legal id character,
+// so unlike the `o`/`x` heads it needs no disambiguation, and mermaid has no
+// dotted-thick form — hence no `\.?` here.
+const THICK_BODY = String.raw`={2,3}`;
+const LINK_BODY = `(?:${DASH_BODY}|${THICK_BODY})`;
 const RIGHT_HEAD = String.raw`[>ox]`;
 
-/** The arrows the parser understands: dashes, optionally dotted, with heads. */
-export const ARROW = `${LEFT_HEAD}?${DASHES}${RIGHT_HEAD}?`;
+/**
+ * The arrows the parser understands: dashes (optionally dotted) or the thick
+ * `==` body, with heads. Thickness is presentation like dottedness, so `==>`
+ * yields the same triple as `-->`; unlike `dotted` it is not even kept in the
+ * AST, because nothing downstream renders it.
+ */
+export const ARROW = `${LEFT_HEAD}?${LINK_BODY}${RIGHT_HEAD}?`;
 
 /**
- * Any link operator, labelled or not, including the thick and invisible styles
- * `ARROW` does not accept (`==>`, `~~~`). Deliberately wider: this is what
- * masks arrows away and what hunts for mistakes, so it has to see the lines the
- * parser refuses as well as the ones it takes. Two *or more* dashes matters — a
- * single `-` is a legal id character, so `dc-1-net` must survive untouched.
+ * Any link operator, labelled or not, including the invisible style `~~~` that
+ * `ARROW` does not accept. Deliberately wider: this is what masks arrows away
+ * and what hunts for mistakes, so it has to see the lines the parser refuses as
+ * well as the ones it takes. Two *or more* dashes matters — a single `-` is a
+ * legal id character, so `dc-1-net` must survive untouched.
  */
 export const ANY_LINK_SOURCE = `${LEFT_HEAD}?[-=.~]{2,}${RIGHT_HEAD}?`;
 

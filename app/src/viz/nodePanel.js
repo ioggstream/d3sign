@@ -513,6 +513,7 @@ export function renderNodePanel(host, nodeData, store, actions = {}) {
     const section = document.createElement('div');
     section.className = 'node-panel-d3fend';
     const heading = document.createElement('h4');
+    heading.className = 'node-panel-class';
     heading.textContent = `${term.label} (${qname})`;
     section.appendChild(heading);
     renderDefinition(term.documentation, section);
@@ -538,6 +539,15 @@ export function renderNodePanel(host, nodeData, store, actions = {}) {
   for (const { localName, entry } of metadataEntries) {
     const section = document.createElement('div');
     section.className = 'node-panel-d3fend';
+
+    // Which class the definition and the rows below belong to. A node can be typed
+    // more than once, and without this its panel is a run of unattributed
+    // paragraphs and Attack/Defense headings that all look like one class's.
+    // Same shape as the term-projection heading above, so the two read as one list.
+    const classHeading = document.createElement('h4');
+    classHeading.className = 'node-panel-class';
+    classHeading.textContent = `${resolveLabel(localName)} (d3f:${localName})`;
+    section.appendChild(classHeading);
 
     if (entry.deprecated) {
       const badge = document.createElement('span');
