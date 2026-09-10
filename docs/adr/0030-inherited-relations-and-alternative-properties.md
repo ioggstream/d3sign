@@ -125,18 +125,19 @@ implementation detail outside an ADR. They describe the
 code as it is, not the decision, and go stale: check
 the code before trusting them.
 
-Measured on D3FEND 1.5, and asserted in
-`test/d3fend-restrictions.test.js`: 2160 of the 3655
-classes in the projection carry no relation row, 1201
-of those have ancestors that do; 6 of 219 object
-properties declare an `rdfs:domain` and 8 an
-`rdfs:range`, against 1787 `owl:Restriction` axioms
-over 1303 classes; the closure would turn 3154 rows
-into 30643 in an already 2.0 MB file; ancestors per
-class run to a median of 7 and a maximum of 15; 504
-classes have more than one parent; inherited rows reach
-107 for one class, median 4 over a median of 3
-superclasses (5 folds for `d3f:WebApplicationFirewall`);
+Projection figures re-measured on D3FEND 1.6, and
+asserted in `test/d3fend-restrictions.test.js`: 2188 of
+the 3688 classes in the projection carry no relation
+row, 1229 of those have ancestors that do; the closure
+would turn 3162 rows into 31008 in an already 2.0 MB
+file; ancestors per class run to a median of 7 and a
+maximum of 15; 514 classes have more than one parent;
+inherited rows reach 107 for one class, median 4 over a
+median of 3 superclasses (5 folds for
+`d3f:WebApplicationFirewall`). The ontology figures are
+still the 1.5 measurement: 6 of 219 object properties
+declare an `rdfs:domain` and 8 an `rdfs:range`, against
+1787 `owl:Restriction` axioms over 1303 classes;
 the loose tier reaches 108 rows for a single class; the
 query covers 4319 candidate relations against the 1787
 restrictions, because D3FEND states many relations only

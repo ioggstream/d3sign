@@ -35,7 +35,6 @@ dbms2 -->|d3f:writes| dbf
 be -->|d3f:connects| dbms2
 be-->|d3f:reads| dbms2
 
-
 dbf[d3f:DatabaseFile]
 api[d3f:WebServerApplication]
 api -->|d3f:connects| be
