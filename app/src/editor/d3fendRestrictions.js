@@ -5,12 +5,12 @@
  * D3FEND states almost nothing on a leaf. `d3f:WebServerApplication` carries no
  * relation of its own; everything it can do is stated on `d3f:Application` and
  * `d3f:Software`. `data/d3fend-metadata.json` is indexed per class with no
- * `rdfs:subClassOf*` closure (app/scripts/build-d3fend-metadata.py), so 2160 of
- * its 3655 classes list no relations at all and 1201 of those have ancestors
+ * `rdfs:subClassOf*` closure (app/scripts/build-d3fend-metadata.py), so 2188 of
+ * its 3688 classes list no relations at all and 1229 of those have ancestors
  * that do. The panels read this module instead of the file directly.
  *
  * The closure is walked here rather than baked into the file because it does not
- * fit: 3154 rows become 30643, on a projection already 2.0 MB. Walking it costs
+ * fit: 3162 rows become 31008, on a projection already 2.0 MB. Walking it costs
  * nothing at this depth — ancestors per class run to a median of 7 and a maximum
  * of 15 — and the walk is memoised per class anyway.
  *
@@ -37,7 +37,7 @@ const ancestorCache = new Map();
  *
  * Breadth-first over *all* parents. `getAncestorPath` in d3fendHierarchy.js
  * follows only the first one, which is fine for the display path it feeds and
- * wrong here: 504 D3FEND classes have more than one parent, and taking the first
+ * wrong here: 514 D3FEND classes have more than one parent, and taking the first
  * silently drops the branch the relation is stated on.
  *
  * `visited` is seeded with the class itself, so a cycle in malformed ontology

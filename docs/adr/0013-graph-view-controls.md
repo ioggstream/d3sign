@@ -101,6 +101,18 @@ at at a time.
   follow the letter. The keystroke is only swallowed once the guards pass, so a
   letter these shortcuts decline still reaches whatever had focus.
 
+- [x] `r` turns the drawing a quarter turn clockwise
+  and `Shift+R` counter-clockwise, the same two
+  transforms the header buttons apply. It is the one
+  unmodified key that is not about the selection, so
+  it answers with nothing selected and has no
+  context-menu item to be printed beside: the two
+  rotate buttons name it in their tooltips instead,
+  as the chips name their own chords. It passes the
+  same two guards as the selection keys, and an
+  auto-repeat is declined, since every turn
+  re-separates the overlapping pairs and refits.
+
 - [x] `Alt+,` folds the TriG column away and hands its
   width to the graph. It answers from any tab — this
   is a layout shortcut, not a graph one.
@@ -141,6 +153,17 @@ Cons:
   upright, so a rotated drawing is not a rigid rotation of the rendered image.
 - Non-hierarchical layouts ignore container nesting, so a rotated or
   re-laid-out view may not show containment as clearly as ELK layered.
+- A turn ends by refitting the drawing, so it drops
+  the pan and zoom the reader was working at. On a
+  key that costs one keystroke this is felt more
+  than it was on a button.
+- Four turns are not the identity: the separation
+  pass nudges nodes after each one, and the labels
+  stay upright, so the drawing that comes back is
+  not the drawing that left.
+- `r` is swallowed whenever the graph is visible and
+  focus is outside a text field, so it is no longer
+  free for a pane sharing the screen with it.
 
 ## DONTREADME
 

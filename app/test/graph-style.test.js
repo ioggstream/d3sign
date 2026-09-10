@@ -12,6 +12,7 @@ import {
   containerIconSize,
   containerLabelBand,
   containerLabelOffsetX,
+  containerSideGutter,
 } from '../src/viz/graphPrefs.js';
 import { LINK_KINDS } from '../src/rdf/linkKind.js';
 
@@ -23,8 +24,12 @@ const ICON_SET = {
 
 const ICON_PREFS = { ...DEFAULT_PREFS, nodeStyle: 'icon' };
 
-/** Stands in for a cytoscape element: the style functions only ever read data. */
-const element = (data) => ({ data: (key) => data[key] });
+/**
+ * Stands in for a cytoscape element: the style functions only ever read data.
+ * `data()` with no key returns the whole object, as cytoscape's does — which is
+ * how the label mappers read it.
+ */
+const element = (data) => ({ data: (key) => (key === undefined ? data : data[key]) });
 
 const ruleFor = (style, selector) => style.find((rule) => rule.selector === selector);
 /** Strips the unit off a `px` length so the geometry can be compared numerically. */
@@ -123,12 +128,28 @@ describe('buildStyle in icon mode', () => {
 describe('a container node', () => {
   const container = (prefs) => ruleFor(buildStyle(prefs, ICON_SET), 'node[isContainer]').style;
 
-  it('reserves the label band as a gutter cytoscape can parse', () => {
+  it('spends its padding on the side gutter alone, as one length cytoscape can parse', () => {
     // `padding` is one length, not a CSS-style shorthand: a four-value string is
     // rejected and silently leaves the default of 0, which draws no gutter at all.
+    // Which is why the label band is not in here — cytoscape pays a `padding` on
+    // all four sides, and a three-line label's worth of it below and beside the
+    // children is the waste graphPrefs.js splits the two numbers to avoid.
     for (const prefs of [DEFAULT_PREFS, ICON_PREFS]) {
-      expect(container(prefs).padding).toBe(containerLabelBand(prefs));
+      expect(container(prefs).padding).toBe(containerSideGutter(prefs));
       expect(typeof container(prefs).padding).toBe('number');
+      expect(container(prefs).padding).toBeLessThan(containerLabelBand(prefs));
+    }
+  });
+
+  it('asks for the band as node height above the children, not around them', () => {
+    // The band's size is a per-container `min-height` bypass (graphPane.js): it
+    // needs the children's measured height, which a cached style mapper cannot
+    // see. The stylesheet's share is where the surplus goes — all of it on top,
+    // or half the band pads the bottom and the box grows for nothing.
+    for (const prefs of [DEFAULT_PREFS, ICON_PREFS]) {
+      expect(container(prefs)['min-height-bias-top']).toBe('100%');
+      expect(container(prefs)['min-height-bias-bottom']).toBe('0%');
+      expect('min-height' in container(prefs)).toBe(false);
     }
   });
 
@@ -147,23 +168,33 @@ describe('a container node', () => {
       // the label alongside the first child instead of under the border.
       expect(2 * style.padding + style['text-margin-x']).toBe(containerLabelOffsetX(prefs));
       expect(2 * style.padding + style['text-margin-y']).toBe(CONTAINER_INSET);
-      expect(containerLabelBand(prefs)).toBe(style.padding);
     }
   });
 
   it('leaves room in the band for a three-line label', () => {
     // id, label and rdf:type, each a line of `fontSize` — cytoscape's line height
     // is 1 — plus the background box drawn around them. Any more than that and the
-    // label starts covering the children.
+    // label starts covering the children. Measured against the band, which is the
+    // only room above them: the padding is the side gutter and sits outside it.
     const style = container(DEFAULT_PREFS);
     const label = CONTAINER_INSET + DEFAULT_PREFS.fontSize * 3 + style['text-background-padding'];
-    expect(label).toBeLessThanOrEqual(style.padding);
+    expect(label).toBeLessThanOrEqual(containerLabelBand(DEFAULT_PREFS));
   });
 });
 
 describe('edge labels', () => {
   it('maps the label when they are on', () => {
-    expect(ruleFor(buildStyle(DEFAULT_PREFS), 'edge').style.label).toBe('data(label)');
+    // A function rather than `data(label)`: `labelDetail` composes the drawn text
+    // from the data (`drawnEdgeLabel`), so the stored label is what it reads, not
+    // what it draws.
+    const label = ruleFor(buildStyle(DEFAULT_PREFS), 'edge').style.label;
+    expect(resolve(label, element({ label: 'd3f:accesses' }))).toBe('d3f:accesses');
+    expect(
+      resolve(
+        ruleFor(buildStyle({ ...DEFAULT_PREFS, labelDetail: 'name' }), 'edge').style.label,
+        element({ label: 'd3f:accesses' }),
+      ),
+    ).toBe('accesses');
   });
 
   it('drops the mapping entirely when they are off', () => {
@@ -250,8 +281,21 @@ describe('two-way edges', () => {
   const bidirectional = ruleFor(style, 'edge[bidirectional]').style;
 
   it('puts a head at the source end too', () => {
-    expect(bidirectional['source-arrow-shape']).toBe('triangle');
+    // The same `vee` the base rule draws at the target end: shape is what says
+    // what a link does to each of its ends now (ADR 0033), so a two-way link
+    // that neither reads nor writes has to look like a one-way one at both ends.
+    expect(bidirectional['source-arrow-shape']).toBe('vee');
+    expect(ruleFor(style, 'edge').style['target-arrow-shape']).toBe('vee');
     expect(ruleFor(style, 'edge').style['source-arrow-shape']).toBeUndefined();
+  });
+
+  it('yields the source end to an effect, which is stated after it', () => {
+    // `d3f:accessed-by` between a pair that also states the forward relation is
+    // two-way *and* reads its source. Ordered the other way round, the plain
+    // `vee` would win and the circle the effect asks for would never be drawn.
+    for (const effect of ['reading', 'writing']) {
+      expect(indexOf(`edge[sourceEffect="${effect}"]`)).toBeGreaterThan(indexOf('edge[bidirectional]'));
+    }
   });
 
   it('says only the shape, so the kind rules still own the colour', () => {

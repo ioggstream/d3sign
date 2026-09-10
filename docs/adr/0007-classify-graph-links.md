@@ -99,7 +99,8 @@ before trusting them.
   `loadFilterState` makes visible any `LINK_KINDS`
   entry that recorded vocabulary did not contain.
   Payloads predating the `kinds` field fall back to
-  their own `visibleKinds`, which for them is
-  equivalent.
+  their own `visibleKinds`, so a kind one of them hid
+  is made visible again once — the two cases cannot be
+  told apart without the field.
 - Both live in `localStorage`, like the rest of the
   view state.

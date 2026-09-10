@@ -1612,14 +1612,18 @@ function isGraphShortcutContext(event) {
 }
 
 /**
- * Unmodified keys acting on the selected element. Each entry is also advertised as
- * the matching context-menu item's hint (viz/nodeMenu.js), which is where a user
- * finds out these exist — so the two have to agree.
+ * Unmodified keys acting on the graph. All but `r` act on the selected element and
+ * are advertised as the matching context-menu item's hint (viz/nodeMenu.js), which
+ * is where a user finds out they exist — so the two have to agree.
  *
- * Each key asks the selection what kind it is and does nothing when the answer is
- * the wrong one: `f` folds a container, `s` swaps a link's direction, and only `g`
- * means something on both. A key that declines still counts as handled — it belongs
- * to the graph, so it must not fall through to whatever else is on screen.
+ * Each of those asks the selection what kind it is and does nothing when the answer
+ * is the wrong one: `f` folds a container, `s` swaps a link's direction, and only
+ * `g` means something on both. A key that declines still counts as handled — it
+ * belongs to the graph, so it must not fall through to whatever else is on screen.
+ *
+ * `r` is the exception on both counts: it turns the whole drawing, so it answers
+ * with nothing selected and has no element menu to be printed in. Its home is the
+ * rotate buttons' tooltips (docs/adr/0013-graph-view-controls.md).
  */
 const GRAPH_SHORTCUTS = {
   f: () => {
@@ -1670,6 +1674,14 @@ const GRAPH_SHORTCUTS = {
     if (selection?.kind !== 'node') return;
     stepPathFocus('incoming');
   },
+  // Rotation is a view transform, not an element action, so it needs no selection.
+  // `Shift+R` turns the other way: the dispatcher matches on the lowercased key, so
+  // the direction is read off the modifier rather than being a second entry here.
+  // An auto-repeat is declined — each turn re-separates every overlapping pair and
+  // refits, and four of them do not put the drawing back where it started.
+  r: (event) => {
+    if (!event.repeat) graphPane.rotate(event.shiftKey ? -1 : 1);
+  },
 };
 
 window.addEventListener(
@@ -1689,7 +1701,7 @@ window.addEventListener(
       if (shortcut) {
         if (!isGraphShortcutContext(event)) return;
         event.preventDefault();
-        shortcut();
+        shortcut(event);
         return;
       }
     }

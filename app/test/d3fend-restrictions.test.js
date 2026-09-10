@@ -13,7 +13,7 @@ describe('getAncestors', () => {
   it('walks every parent, not just the first', () => {
     // d3f:WebServerApplication reaches d3f:Software through
     // d3f:ServiceApplication and d3f:Application; a first-parent-only walk (the
-    // one getAncestorPath does) drops whichever branch it does not take, and 504
+    // one getAncestorPath does) drops whichever branch it does not take, and 514
     // D3FEND classes have more than one parent.
     expect(getAncestors('WebServerApplication')).toEqual(
       expect.arrayContaining(['Application', 'ServiceApplication', 'Software', 'Artifact']),
@@ -69,10 +69,10 @@ describe('relationsFor', () => {
   });
 
   it('inherits the incoming relations too, not only the outgoing ones', () => {
-    // 34 rows for a class that states none: 4 outgoing and 30 incoming. The
+    // 36 rows for a class that states none: 5 outgoing and 31 incoming. The
     // panel gets busier, which is the acknowledged cost of the fix.
     const rows = relationsFor('WebServerApplication');
-    expect(rows.filter((r) => r.direction === 'out')).toHaveLength(4);
+    expect(rows.filter((r) => r.direction === 'out')).toHaveLength(5);
     expect(rows.filter((r) => r.direction === 'in').length).toBeGreaterThan(0);
   });
 

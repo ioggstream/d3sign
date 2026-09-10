@@ -46,7 +46,8 @@ editable TriG pane holding the whole RDF document (hand-edits drive the graph;
 [docs/adr/0009-direct-rdf-import.md](docs/adr/0009-direct-rdf-import.md)), and
 the interactive **D3FEND Graph** — a Cytoscape.js view with per-predicate
 filtering and inverse-direction toggling. Its header also carries a layout
-algorithm dropdown, two 90° rotate buttons, and a `View` chip holding the
+algorithm dropdown, two 90° rotate buttons (`R` and `Shift+R` from the
+keyboard), and a `View` chip holding the
 visualization preferences: node spacing, node size, label size, link labels,
 the text size of the info panels, and whether nodes are drawn as coloured dots or as
 [D3FEND icons](https://github.com/ioggstream/d3fend-icons). Nodes are coloured by
