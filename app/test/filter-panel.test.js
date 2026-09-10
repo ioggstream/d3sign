@@ -44,11 +44,30 @@ describe('loadFilterState — visibleKinds', () => {
   });
 
   it('keeps a kind the user explicitly hid', () => {
-    stored.set(KEY, JSON.stringify({ visibleKinds: LINK_KINDS.filter((k) => k !== 'data-flow') }));
+    // `kinds` is what makes "hidden" legible: without it a kind missing from
+    // `visibleKinds` is indistinguishable from one that did not exist yet, and
+    // the migration above puts it back. Every payload `saveFilterState` writes
+    // carries the field, so this is the shape the check has to be made against.
+    stored.set(
+      KEY,
+      JSON.stringify({
+        visibleKinds: LINK_KINDS.filter((k) => k !== 'data-flow'),
+        kinds: [...LINK_KINDS],
+      }),
+    );
 
     const { visibleKinds } = loadFilterState(DIAGRAM, []);
     expect(visibleKinds.has('data-flow')).toBe(false);
     expect(visibleKinds.has('connectivity')).toBe(true);
+  });
+
+  it('cannot keep one hidden by a payload predating the vocabulary field', () => {
+    // The acknowledged cost of the fallback: a pre-`kinds` payload that hid
+    // data-flow reads exactly like one written before the kind existed, so the
+    // migration restores it. One re-hide, once, against edges lost forever.
+    stored.set(KEY, JSON.stringify({ visibleKinds: LINK_KINDS.filter((k) => k !== 'data-flow') }));
+
+    expect(loadFilterState(DIAGRAM, []).visibleKinds.has('data-flow')).toBe(true);
   });
 
   it('round-trips through saveFilterState', () => {

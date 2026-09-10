@@ -19,8 +19,9 @@ export function loadFilterState(diagramId, allPredicates) {
   // otherwise read as "the user hid it" and drop those edges forever. `kinds`
   // records the vocabulary in force when the payload was written, so a kind added
   // later defaults to visible while a kind the user actually de-selected stays
-  // hidden. Payloads predating `kinds` fall back to their own visibleKinds, which
-  // is the same thing for them.
+  // hidden. Payloads predating `kinds` fall back to their own visibleKinds, so a
+  // kind such a payload hid comes back once: the two cases are indistinguishable
+  // in it, and restoring an edge is the cheaper way to be wrong.
   const visibleKinds = new Set(saved?.visibleKinds ?? LINK_KINDS);
   if (saved?.visibleKinds) {
     const knownWhenSaved = new Set(saved.kinds ?? saved.visibleKinds);
