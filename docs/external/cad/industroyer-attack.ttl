@@ -75,7 +75,7 @@ and circuit breakers at power grid substations""",
 cad:0_3793515095831853
     a cad:Thing;
     cad:comment
-        """IEC-61850 has an alternative version consisting 
+        """IEC-61850 has an alternative version consisting
 of an EXE payload instead of DLL""";
     cad:objective
         "Enumerate control points from devices, ultimately modifying those control points";
@@ -84,7 +84,7 @@ of an EXE payload instead of DLL""";
 cad:0_40220906207033713
     a d3f:SharedLibraryFile;
     cad:comment
-        """OPC DA Payload attempts to change the state of 
+        """OPC DA Payload attempts to change the state of
 discovered OPC items. Not modeled for brevity""";
     rdfs:label "OPC DA Payload";
     rdfs:subClassOf cad:0_4668062821330595 .
@@ -194,7 +194,7 @@ cad:0_9009293180954207
     cad:if-conditional cad:0_6751401835686202;
     d3f:has-participant cad:0_24979480113369423;
     rdfs:comment
-        """Payload sends a COTP packet, 
+        """Payload sends a COTP packet,
 then several MMS packets""";
     rdfs:label "Network Connection Open Event".
 cad:0_9025502540699027
@@ -208,8 +208,8 @@ cad:0_9111950702664015
 cad:0_9116525570426061
     a d3f:SharedLibraryFile;
     cad:comment
-        """IEC-104 is fairly similar to IEC-101 payload, 
-except communications take place over TCP/IP, 
+        """IEC-104 is fairly similar to IEC-101 payload,
+except communications take place over TCP/IP,
 and the method of iterating through IOAs may vary.""";
     rdfs:label "IEC-104 Payload";
     rdfs:subClassOf cad:0_4668062821330595 .
@@ -267,4 +267,3 @@ cad:protocol-2 a owl:AnnotationProperty; rdfs:label "Protocol2".
 #   "d3f_property": "agent-in",
 #   "label": "agent-in"
 # }
-

@@ -1376,3 +1376,240 @@ back to the whole drawing — worse the deeper they were zoomed in.
   other caller. The context menu and the `f` shortcut both go through one
   `foldNode()`, because a shortcut that refits when the menu does not reads as a
   bug in the shortcut.
+
+## 2026-09-09 — a connection URL fronting a cluster has no single D3FEND class
+
+- D3FEND lacks `d3f:Cluster`, `d3f:Endpoint`, `d3f:ConnectionString`, `d3f:URI`,
+  `d3f:LoadBalancer`, `d3f:VirtualIP` and any `resolves-to` property. A MySQL URL
+  hiding an InnoDB cluster has to be split: `d3f:URL` (its definition names JDBC
+  explicitly) → `d3f:DomainName` → several `d3f:DatabaseServer`.
+- The one-to-many is already legal: every naming restriction uses
+  `owl:someValuesFrom` (`DomainName identifies IPAddress`, `Hostname identifies Host`, `URL addresses Resource`) and nothing declares cardinality or
+  `owl:FunctionalProperty`, so one name identifying many addresses needs no new
+  axiom.
+- For the cluster as one object: `d3f:HostGroup` is the only class with a
+  `contains someValuesFrom d3f:Host` restriction, but it is typed as access-control
+  configuration (`AccessControlGroup` → `ConfigurationResource`). `d3f:DigitalSystem`
+  fits semantically and carries no restrictions at all, so it needs a local
+  `contains` axiom.
+- D3FEND does not use `rdfs:domain`/`rdfs:range` for artifact relations — 8 of 261
+  properties have a domain, all on `Artifact`/`Event`/`Weakness`/`Process`. Asking
+  "which properties have domain X" always returns nothing; read the
+  `owl:Restriction` blank nodes under `rdfs:subClassOf` instead, and query which
+  classes name X as a restriction filler to get the inbound relations.
+- `d3f:maps` is not a name→address mapping: "x discovers and records how y is
+  arranged and interconnected", i.e. a discovery act. `d3f:has-member`/`member-of`
+  sit under `d3f:d3fend-kb-object-property` (KB bookkeeping), not
+  `d3f:associated-with`, and carry no definition — not usable for domain modelling.
+
+## 2026-09-09 — the cloud database is the class that has no host
+
+- `d3f:Cloud-basedDatabaseApplication` ("underlying infrastructure is managed by a
+  third-party cloud provider", synonym "Serverless Database Application") is the
+  URL-only counterpart to `d3f:DatabaseServer`: it sits under
+  `DatabaseServiceApplication` → `Application` → `Software`, entirely outside the
+  `Server` → `Host` → `ComputerNetworkNode` branch, and its single restriction is
+  `d3f:provider some d3f:CloudServiceProvider`. No host, hostname or IP relation
+  exists on it — that absence is the modelling statement.
+- `d3f:provider` is the only bridge from a `d3f:DigitalArtifact` to the `d3f:Agent`
+  subtree (`CloudServiceProvider` → `ServiceProvider` → `Provider` →
+  `Organization` → `Non-PersonEntity` → `Agent`), and
+  `Cloud-basedDatabaseApplication` is the only artifact class using it. Code that
+  walks artifact edges (`app/src/rdf/artifactFlow.js`) cannot assume every edge
+  stays inside `DigitalArtifact`.
+- Link a URL to it with `d3f:identifies` (inherited from `d3f:Identifier`,
+  `identifies some d3f:Artifact`), not `d3f:addresses` (`d3f:URL addresses some d3f:Resource`, and an Application is not a `d3f:Resource`).
+- Cloud classes have no defensive coverage: `Cloud-basedDatabaseApplication` is in
+  0 rows of `d3fend-full-mappings.csv` and 0 technique restrictions, and no
+  `def_artifact` value anywhere contains "Cloud" — the 434 cloud rows are all
+  offensive. Coverage lives on `d3f:URL` (28 def rows: URL Analysis, URL Reputation
+  Analysis, Homoglyph Detection), `d3f:NetworkResource` (54), and `d3f:Credential`.
+  Type the node for what it is, but keep `d3f:URL`/`d3f:Credential` for the
+  countermeasures.
+- Dead branches to avoid: `d3f:RemoteResource` and `d3f:WebResource` have zero
+  restrictions, zero fillers and zero mapping rows. `d3f:CloudService`,
+  `d3f:CloudPlatform`, `d3f:CloudInstance`, `d3f:Tenant` do not exist; the complete
+  cloud artifact set is six classes (`Cloud-basedDatabaseApplication`,
+  `CloudConfiguration`, `CloudInstanceMetadata`, `CloudStorage`, `CloudUserAccount`,
+  `CloudServiceSensor`).
+
+## 2026-09-09 — grouping by relation: four reasons a box is the wrong element
+
+ADR 0032 asked whether N same-predicate edges from one subject should become a
+container node. Rejected. The four grounds are independent, which is what made
+the answer clear rather than a judgement call:
+
+- **A compound node is a tree.** `parentOf` in `app/src/rdf/graphModel.js` keeps
+  the first parent — "cytoscape compound nodes are a tree, not a DAG". A target
+  set is not a tree: two subjects pointing at one target want two overlapping
+  boxes, and a target already inside a `d3f:contains` container has no parent
+  slot. ADR 0031 settled that contest for containment, so a relation-drawn box
+  would appear only where the diagram had nothing else to say.
+- **Non-transitivity, measurable.** D3FEND declares five
+  `owl:TransitiveProperty` object properties and four are the containment family
+  (`contains`, `contained-by`, `may-contain`, `may-be-contained-by`; the fifth is
+  `process-ancestor`). Boxes nest and a reader reads the nesting, so only a
+  composing predicate can be drawn as one. Grep the ontology before arguing about
+  this — it is a two-second check.
+- **The box already means two things** (ADR 0016 containment, ADR 0031 instance
+  membership), and 0031 books the ambiguity as a Con. A third meaning is not one
+  more: it is one box shape per predicate the diagram uses.
+- **Measure the corpus before designing.** Largest same-subject-same-predicate
+  fan-out across `app/src/data/examples/` is four; the median is one. And the one
+  literal instance of the ADR's own sketch (`multi-graph.md`, `CDN d3f:mediates-access-to dc-1 & dc-2`) is the case the feature would damage — the
+  two targets have an edge to each other and children of their own. A feature
+  whose motivating example refuses it is not motivated.
+
+Two things worth keeping from the rejected design work:
+
+- The viable alternative was a **fold-style stack**, not a box: one synthetic node
+  standing for the N targets with *no* parent link to them. It escapes the first
+  three grounds because it contests no parent slot and claims no containment, and
+  it would have cost almost no new code — `node[folded]` styling, `foldedCount`,
+  `derivedEdgeWidth` and ADR 0026's `standsFor` channel already exist. It died on
+  the fourth ground alone. Recorded in the ADR so it need not be re-derived.
+- An `&`-joined mermaid group **is** visible to the parser (the edges share an
+  `arrowIndex` in `app/src/parser/edgeParser.js`) but never reaches the RDF, and
+  ADR 0014 forbids the view reading anything else. Any grouping feature must
+  re-derive its group structurally from the store, the way `collapseArtifactPaths`
+  does. Do not reach for `arrowIndex`.
+
+## 2026-09-09 — a platform is fault tolerant only if the graph says two things are one thing
+
+`multi-graph.md` draws two datacenters, each with an "Application" inside it, and
+looks redundant. The graph is not: `dc-1-app` and `dc-2-app` are unrelated
+resources sharing a label. Every availability question dies there — nothing can
+count the sites a service runs in, because nothing says which nodes are the same
+service. Settled in ADR 0034 with `16-application-site-coverage.rq`,
+`17-dependency-locality.rq` and `multi-site-platform.md`.
+
+- **Check the ontology before designing the model.** D3FEND 1.6.0 has *no* term
+  for redundancy, replica, failover, availability zone, datacenter, cluster or
+  fault tolerance. Every `Cluster*` class is machine-learning clustering.
+  `d3f:depends-on` exists and is stated once in the whole file, on
+  `d3f:PublicKey`. So the property cannot be asserted; it has to be derived.
+- **`Host`, `Application` and `Process` are not three peers.** The stated shape is
+  `Host ⊑ ∃contains Application`, `Server ⊑ ∃runs ServiceApplication`,
+  `ApplicationProcess ⊑ ∃runs Application`. Nothing relates `Host` to `Process` at
+  all, so containment has to supply that edge. `d3f:Service` does not exist.
+- **`d3f:DatabaseService` is a process, not an application.** Its parent is
+  `d3f:ServiceApplicationProcess`. The corpus uses it where it means the product,
+  which reads as a typo of intent that no validation query catches.
+- **A host has no location.** `d3f:PhysicalLocation` is a stub under
+  `D3FENDCore`; `d3f:has-location`'s one restriction is on `d3f:PhysicalArtifact`,
+  and `d3f:Host` is a `DigitalArtifact`. The ontology's own bridge is three hops
+  through a `ComputerEnclosure`. Nesting the host in a location box says it in one.
+- **The correlation point is a shared node, not a predicate.** N processes with
+  `d3f:runs` into one `d3f:ServiceApplication` is the identity statement, and it
+  is a fan-in the drawing already handles — no new vocabulary, no new box shape,
+  and ADR 0032 stays intact because `d3f:runs` never becomes a container.
+- **Two site-availability questions, not one.** "How many sites does this service
+  run in" reports a service in both sites as healthy while its only database sits
+  in one of them. The check that finds that walks the other way: per site, per
+  service running there, what does it need that the site has not got.
+- **`d3f:contains+`, always with the `+`.** `owl:TransitiveProperty` is declared
+  and materialised by nothing — the worker flattens `owl:Restriction`s and does
+  not reason. A missing `+` reports every application as deployed nowhere.
+- **`K:d3fend` holds class-level `d3f:contains`,** from that same restriction
+  flattening. A containment path that escapes the document-graph filter walks the
+  ontology instead of the platform, so the K: exclusion is load-bearing here and
+  the test fixture now carries those triples on purpose.
+- **`OPTIONAL` around the whole deployment pattern** is what makes an application
+  nothing runs report `sites = 0` rather than vanishing. An inner join drops
+  exactly the likeliest single point of failure.
+- **No node on this machine,** so the vitest suite could not run. Validated both
+  `.rq` files with `pyoxigraph` against hand-written quads matching the emitter's
+  output — 11 assertions, all passing. That checks the SPARQL, not the emitter;
+  `app/test/platform-topology.test.js` is what closes the gap and is unrun.
+
+## 2026-09-10 — an ontology bump moves the numbers a test asserts
+
+`relationsFor('WebServerApplication')` returned 5 outgoing rows against an
+assertion of 4. Nothing in the closure layer changed: D3FEND 1.6 (commit
+28c79de) states `d3f:manages d3f:EventLog` on `d3f:Application`, which every
+application below it now inherits.
+
+- **A count asserted from the projection is a fact about the ontology version,**
+  not about the code. Every such number moved: 3655 → 3688 classes, 2160 → 2188
+  with no relation row of their own, 504 → 514 with more than one parent, and the
+  closure 3154 → 3162 rows expanding to 31008. They are quoted in three places —
+  the test, the module docstring, and ADR 0030's DONTREADME — and all three had
+  to follow.
+- **Read the new row before touching the assertion.** The added predicate was
+  legitimate inheritance, so the fix was the number. Had the extra row been a
+  duplicate, the same failure would have pointed at the dedupe key instead.
+- **The ontology-derived figures stayed 1.5** (restriction and property counts,
+  the 4319 candidates) because they come from the TTL, not the projection, and
+  re-measuring them was not part of this. ADR 0030 now says which half is which
+  rather than implying one measurement.
+- **`vitest` runs in the container,** `docker exec d3sign-dev-1 sh -c 'cd /code/app && npx vitest run'` — no node on the host. 15 unrelated failures on this branch
+  are the in-progress topology and graph-style work, not this change.
+
+## 2026-09-10 — the rotate shortcut was a binding, not a feature
+
+`R` / `Shift+R` on the graph pane turned out to be three lines in
+`GRAPH_SHORTCUTS`: `graphPane.rotate(±1)` already existed behind the header
+buttons, with the accumulated `rotationSteps`, the re-application at
+`layoutstop` and the overlap pass all in place.
+
+- **Read the README before the code.** It already said "two 90° rotate
+  buttons", which turned "implement rotation" into "bind a key".
+- **`r` breaks the shape of the table it joins.** Every other bare key acts on
+  the selection and is taught by the context menu's hint. A view transform has
+  no element menu to live in, so its discovery moved to the buttons' `title`
+  and the doc comment and ADR 0013 had to stop claiming the table is uniform.
+- **The direction rides on the modifier.** The dispatcher looks up
+  `event.key.toLowerCase()`, so `Shift+R` cannot be a second entry — the
+  handler had to start receiving the event.
+- **A key is cheaper to press than a button, so its costs are felt more.**
+  `rotate()` ends with `cy.fit`, discarding pan and zoom, and four turns are
+  not the identity because the separation pass nudges nodes each time. Both are
+  now cons in ADR 0013, and `event.repeat` is declined.
+
+## 2026-09-10 — five stale graph-style assertions, three redesigns behind them
+
+`test/graph-style.test.js` failed on five assertions and none of them was a
+bug: each named a property the source had deliberately stopped setting.
+
+- **Two numbers where the test still knew one.** The container's cytoscape
+  `padding` used to *be* the label band; cf43396 split it, because `padding` is
+  one scalar drawn on all four sides and a three-line label's worth of it below
+  the children is waste. The band is node height now — a per-container
+  `min-height` bypass written by `graphPane.js`, biased `100%` to the top by the
+  sheet. So `padding === containerLabelBand` became `padding === containerSideGutter`, and the three-line-label check measures against the band
+  rather than the padding.
+- **What the stylesheet can still be held to** once a value moves to a bypass:
+  the bias pair, and that `min-height` is *absent* from the sheet. Asserting the
+  band's size there would just re-freeze what the split un-froze.
+- **`data(label)` cannot survive a label preference.** `labelDetail` composes the
+  drawn text from the data, so the mapper is a function and the assertion had to
+  resolve it. The test's `element()` stub only answered keyed `data(k)` calls;
+  the label mappers call bare `data()`, so the stub grew the no-key case.
+- **`triangle` at the source end is now an effect, not a direction.** ADR 0033
+  spends arrow shape on what a link does to each end, so a two-way link draws
+  the base `vee` at both. The ordering that lets an effect override it was
+  asserted by a code comment only — it is a test now.
+- **A test that fails because the design moved says so in its comment.** All
+  five now name the mechanism they are pinning, so the next redesign fails
+  against a stated intent rather than a number.
+
+## 2026-09-10 — a fixture that omits the field the feature is made of
+
+`filter-panel.test.js` asserted that a hidden link kind stays hidden, from a
+payload with no `kinds` key. That is precisely the payload the loader treats as
+predating the vocabulary, so the migration put the kind back. The test could
+never have passed: it has been red since the initial import, and its node-kind
+twin passes only because that one writes `nodeKinds`.
+
+- **The migration's whole content is the vocabulary field.** Without `kinds`,
+  "absent from `visibleKinds`" is both "the user hid it" and "it did not exist
+  yet", and the loader has to pick one. It picks visible, because a lost edge is
+  invisible and a restored one is a click.
+- **Fixture-shaped bug, not a code bug.** `saveFilterState` has written `kinds`
+  since that commit, so no payload in the wild looks like the fixture except the
+  legacy ones the fallback is for. The fix was the fixture, plus a second test
+  that states the fallback's cost instead of leaving it to be rediscovered.
+- **The comment said "equivalent", and that is why the fixture looked right.**
+  Both `filterPanel.js` and ADR 0007 claimed a pre-`kinds` payload falls back to
+  something equivalent; it is equivalent only when the payload hid nothing. A
+  wrong sentence in a doc comment survives as long as the test agreeing with it.

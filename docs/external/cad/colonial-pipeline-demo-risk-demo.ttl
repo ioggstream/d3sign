@@ -29,7 +29,7 @@ a d3f:VPNServer; d3f:accesses cad:0_5094563823244651; rdfs:label "VPN".
 cad:0_1739115285623688
     a cad:Note;
     rdfs:comment
-        """Malicious cyber actors acquired employee user credentials 
+        """Malicious cyber actors acquired employee user credentials
 for a VPN service externally.The employee had used the
 
 credentials for an external service from where they are
@@ -115,7 +115,7 @@ cad:0_40027622918795625
     a d3f:Kernel-basedProcessIsolation;
     cad:comment
         """Some EDR and EPPs
-run untrusted execs in a local 
+run untrusted execs in a local
 sandbox preventing full filesystem
 access.""";
     d3f:isolates cad:0_5017706016798443;
@@ -127,7 +127,7 @@ cad:0_43020776454953813
 cad:0_45095151035943726
     a cad:Note;
     rdfs:comment
-        """On may 7th 2021 the Colonial Pipeline Company (CPC) 
+        """On may 7th 2021 the Colonial Pipeline Company (CPC)
 learned they were victims of a ransomware cyber attack.
 
 
@@ -211,7 +211,7 @@ cad:0_8928485744223281
 the initial access, not enough public information
 is available to be 100% certain.
 
-CISA jumped straight to MFA which may have 
+CISA jumped straight to MFA which may have
 been possible to implement quickly. These password
 policies on the otherhand are more likely to be supported
 
@@ -310,4 +310,3 @@ cad:type a owl:AnnotationProperty; rdfs:label "type".
 #   "d3f_property": "note",
 #   "label": "note"
 # }
-

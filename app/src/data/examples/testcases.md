@@ -162,6 +162,42 @@ G:default {
 }
 ```
 
+## subgraph-with-property
+
+Given
+
+```mermaid
+---
+title: subgraph-with-property
+---
+graph
+
+%% node type is defined by the subgraph tag.
+%%   the relation is defined by the first rdf:Property in the label.
+subgraph dc [EU-RM d3f:has-location d3f:PhysicalLocation dpv:PubliclyOwnedSpace]
+  webapp[Web Application d3f:WebApplication]
+  browser[Browser d3f:Browser]
+end
+
+```
+
+Then
+
+```turtle
+@prefix d3f: <https://d3fend.mitre.org/ontologies/d3fend.owl#> .
+@prefix G: <urn:d3fend-graph:> .
+G:default {
+    G:dc a d3f:PhysicalLocation, dpv:PubliclyOwnedSpace;
+        rdfs:label "EU-RM" ;
+    G:webapp a d3f:WebApplication;
+        rdfs:label "Web Application" .
+        d3f:has-location G:dc .
+    G:browser a d3f:Browser;
+        rdfs:label "Browser" .
+        d3f:has-location G:dc .
+}
+```
+
 ## complex-node-syntax
 
 Given
@@ -368,6 +404,39 @@ G:parse-links {
         rdfs:label "Host 1" .
     G:a d3f:reads G:b .
     G:a d3f:writes G:b .
+    G:b a d3f:Host;
+        rdfs:label "Host 2"
+}
+```
+
+## parse-link-comments
+
+Given
+
+```mermaid
+---
+id: parse-link-comments
+title: parse-link-comments
+---
+graph
+
+a[Host 1 d3f:Host]
+b[Host 2 d3f:Host]
+
+%% Unlabeled text must be ignored.
+a -->|Use only d3f:reads ignore other unlabeled comment| b
+
+```
+
+Then
+
+```trig
+@prefix d3f: <https://d3fend.mitre.org/ontologies/d3fend.owl#> .
+@prefix G: <urn:d3fend-graph:> .
+G:parse-link-comments {
+    G:a a d3f:Host;
+        rdfs:label "Host 1" .
+    G:a d3f:reads G:b .
     G:b a d3f:Host;
         rdfs:label "Host 2"
 }

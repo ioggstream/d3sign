@@ -352,4 +352,3 @@ cad:reference a owl:AnnotationProperty; rdfs:label "Reference".
 #   "d3f_property": "agent-in",
 #   "label": "agent-in"
 # }
-

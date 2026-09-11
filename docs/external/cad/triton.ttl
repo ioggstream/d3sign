@@ -339,6 +339,5 @@ cad:definition a owl:AnnotationProperty; rdfs:label "definition".
 
 #
 # Data/Annotation property messages:
-# Node: 0.5961669008539066 type: artifact-node has  = 
+# Node: 0.5961669008539066 type: artifact-node has  =
 # [WARN]: Empty name or value in user_properties
-

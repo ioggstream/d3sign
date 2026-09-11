@@ -53,7 +53,7 @@ export function selectionLabel(selection) {
   if (!selection) return NOTHING_SELECTED;
   if (selection.kind === 'edge') return edgeLabel(selection);
   const id = displayIdOf(selection.id);
-  const hints = ['>/<: flow'];
+  const hints = ['>/<: flow', 'b: start here'];
   // Only a container has anything for `f` to do, so only a container advertises it.
   if (selection.foldable) hints.unshift(`f: ${selection.folded ? 'unfold' : 'fold'}`);
   return `${id} · ${hints.join(' · ')}`;

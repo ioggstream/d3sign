@@ -147,17 +147,17 @@ cad:0_7681260130997116
 cad:0_7727563780195316
     a cad:Note;
     rdfs:comment
-        """Triton Safety Instrumented System Attack was a campaign employed by TEMP.Veles 
+        """Triton Safety Instrumented System Attack was a campaign employed by TEMP.Veles
 which leveraged the Triton malware framework against a petrochemical organization.
-The malware and techniques used within this campaign targeted specific 
-Triconex Safety Controllers within the environment. The incident was eventually 
+The malware and techniques used within this campaign targeted specific
+Triconex Safety Controllers within the environment. The incident was eventually
 discovered due to a safety trip that occurred as a result of an issue in the malware.""";
     rdfs:label "Overview".
 cad:0_8069256921019861
     a d3f:Condition;
     rdfs:comment
-        """Upon connection, checks if 
-the controller is a running 
+        """Upon connection, checks if
+the controller is a running
 state""";
     rdfs:label "OT Controller State Check".
 cad:0_8894161113792598
@@ -227,4 +227,3 @@ cad:parameter a owl:AnnotationProperty; rdfs:label "Parameter".
 #   "d3f_property": "exploits",
 #   "label": "exploits"
 # }
-

@@ -173,5 +173,15 @@ export function renderPrefsPanel(host, prefs, onChange, { bulkHost } = {}) {
     'An artifact that only sits between a producer and a consumer becomes the label on one arrow between them';
   addRow(list, 'prefs-row', collapseLabel);
 
+  const orientLabel = document.createElement('label');
+  const orientToggle = document.createElement('input');
+  orientToggle.type = 'checkbox';
+  orientToggle.checked = prefs.orientByFlow;
+  orientToggle.addEventListener('change', () => emit({ orientByFlow: orientToggle.checked }));
+  orientLabel.append(orientToggle, ' Orient links along the flow');
+  orientLabel.title =
+    'Draws each link in the direction the flow runs, using its inverse name where that is backwards from the triple';
+  addRow(list, 'prefs-row', orientLabel);
+
   host.appendChild(list);
 }

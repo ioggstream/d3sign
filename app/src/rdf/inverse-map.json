@@ -52,6 +52,8 @@
   "d3f:decodes": "d3f:decoded-by",
   "d3f:deletes": "d3f:deleted-by",
   "d3f:initiates": "d3f:initiated-by",
+  "d3f:has-recipient": "d3f:recipient-of",
+  "d3f:has-sender": "d3f:sender-of",
   "d3f:manages": "d3f:managed-by",
   "d3f:may-execute": "d3f:may-be-executed-by",
   "d3f:may-produce": "d3f:may-be-produced-by",
