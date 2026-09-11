@@ -27,8 +27,15 @@ const DATA_FLOW_PREDICATES = new Set([
   'd3f:access-mediated-by',
 ]);
 
+// d3f:precedes is here rather than in `other`, where it fell by default: it is
+// the most frequent predicate in the CAD corpus and the only pure ordering one,
+// so leaving it unclassified let the Links chip switch off the very sequence an
+// attack graph is about. Control flow is the closest of the five buckets — it
+// says which step runs after which, and nothing traverses it.
 const CONTROL_FLOW_PREDICATES = new Set([
   'd3f:controls',
+  'd3f:precedes',
+  'd3f:preceded-by',
   'd3f:runs',
   'd3f:queries',
   'd3f:may-run',

@@ -228,4 +228,3 @@ cad:description a owl:AnnotationProperty; rdfs:label "Description".
 #   "d3f_property": "carrries",
 #   "label": "carrries"
 # }
-

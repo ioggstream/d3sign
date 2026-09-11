@@ -131,10 +131,10 @@ Nullsoft value, and deletes digital signatures to avoid invalidation""";
 cad:0_2996481954669147
     a cad:Note;
     rdfs:comment
-        """BlackEnergy is a malware toolkit that has been used by both criminal and APT actors. It dates back to at least 2007 
-and was originally designed to create botnets for use in conducting Distributed Denial of Service (DDoS) attacks, 
-but its use has evolved to support various plug-ins. It is well known for being used during the confrontation between 
-Georgia and Russia in 2008, as well as in targeting Ukrainian institutions. Variants include BlackEnergy 2 and 
+        """BlackEnergy is a malware toolkit that has been used by both criminal and APT actors. It dates back to at least 2007
+and was originally designed to create botnets for use in conducting Distributed Denial of Service (DDoS) attacks,
+but its use has evolved to support various plug-ins. It is well known for being used during the confrontation between
+Georgia and Russia in 2008, as well as in targeting Ukrainian institutions. Variants include BlackEnergy 2 and
 
 BlackEnergy 3.""";
     rdfs:label "Overview".
@@ -181,10 +181,10 @@ cad:0_409309122660914
 cad:0_41296826358099703
     a cad:Note;
     rdfs:comment
-        """For brevity, not all ATT&CK techniques used are included. 
+        """For brevity, not all ATT&CK techniques used are included.
 
 
-This model is based on the BlackEnergy3 version of the malware, 
+This model is based on the BlackEnergy3 version of the malware,
 there are various different execution pathways and multiple versions
 of this malware, this is based on one of the samples by Boose Allen.""";
     rdfs:label "Note".
@@ -317,12 +317,12 @@ a d3f:Email; d3f:contains cad:0_3329939593593305; rdfs:label "Email".
 cad:0_7718788434430688
     a cad:Note;
     rdfs:comment
-        """Threat actors use native remote access services and valid credentials to open breakers and 
+        """Threat actors use native remote access services and valid credentials to open breakers and
 disrupt power distribution to over 225,000 customers within three distribution areas for 6 hours.
 
 
-After opening the breakers, threat actors deliver malicious firmware update to serial-to-Ethernet 
-communications devices. The malicious updates render the converters inoperable, and sever 
+After opening the breakers, threat actors deliver malicious firmware update to serial-to-Ethernet
+communications devices. The malicious updates render the converters inoperable, and sever
 connections between the control center and the substations.""";
     rdfs:label "Dissruption of Control".
 cad:0_7731797695452911 a d3f:T1136; rdfs:label "Create Account".
@@ -705,4 +705,3 @@ cad:vs-dll a owl:AnnotationProperty; rdfs:label "VS.dll".
 # Data/Annotation property messages:
 # Node: 0.3077258795517196 type: artifact-node has  = Includes two backdoors, a hardcoded public keyuthentication process, and a hardcoded username and password.
 # [WARN]: Empty name or value in user_properties
-

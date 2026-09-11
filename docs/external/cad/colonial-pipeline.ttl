@@ -32,7 +32,7 @@ cad:0_1516481331298123
 cad:0_1739115285623688
     a cad:Note;
     rdfs:comment
-        """Malicious cyber actors acquired employee user credentials 
+        """Malicious cyber actors acquired employee user credentials
 for a VPN service externally.The employee had used the
 
 credentials for an external service from where they are
@@ -100,7 +100,7 @@ cad:0_40027622918795625
     a d3f:Kernel-basedProcessIsolation;
     cad:comment
         """Some EDR and EPPs
-run untrusted execs in a local 
+run untrusted execs in a local
 sandbox preventing full filesystem
 access.""";
     d3f:isolates cad:0_5017706016798443;
@@ -112,7 +112,7 @@ cad:0_43020776454953813
 cad:0_45095151035943726
     a cad:Note;
     rdfs:comment
-        """On may 7th 2021 the Colonial Pipeline Company (CPC) 
+        """On may 7th 2021 the Colonial Pipeline Company (CPC)
 learned they were victims of a ransomware cyber attack.
 
 In response CPC "proactively took certain systems offline"
@@ -261,4 +261,3 @@ cad:comment a owl:AnnotationProperty; rdfs:label "comment".
 #   "d3f_property": "note",
 #   "label": "note"
 # }
-

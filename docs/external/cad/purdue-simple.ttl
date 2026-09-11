@@ -142,4 +142,3 @@ cad:description a owl:AnnotationProperty; rdfs:label "Description".
 #   "label": "undefined",
 #   "auto_created": true
 # }
-

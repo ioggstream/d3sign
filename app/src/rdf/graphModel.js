@@ -17,6 +17,7 @@
  */
 import { PREFIXES, PROVENANCE, curieWith, inversePredicateOf } from './emit.js';
 import { artifactFlowRoleOf } from './artifactFlow.js';
+import { flowPolarityOf, isSequencePredicate } from './flowPolarity.js';
 import { classifyPredicate } from './linkKind.js';
 import { predicateEffectOf } from './predicateEffect.js';
 import { classifyNodeCategory } from './nodeKind.js';
@@ -269,6 +270,16 @@ export function buildGraphModel(store) {
       // view *is* allowed to know that drawing a link backwards exchanges its
       // ends, which is the one adjustment it makes.
       effectRole: predicateEffectOf(curie),
+      // Which way the flow runs along the link, as against which way the triple
+      // was written (rdf/flowPolarity.js). Resolved here for the same reason as
+      // the three above, and it has to be: the view turns it into a *default*
+      // for the direction map, so it must be a fact about the predicate as
+      // written or a swapped predicate would keep re-deriving its own default.
+      flowPolarity: flowPolarityOf(curie),
+      // Whether the link's whole content is an ordering, which the layout must
+      // not reverse to break a cycle. Resolved here rather than read off the
+      // predicate in viz/layouts.js, so the geometry stays free of vocabulary.
+      sequence: isSequencePredicate(curie),
     });
   }
 
