@@ -60,6 +60,10 @@ export const DEFAULT_PREFS = {
   // are drawn, so it defaults off: a diagram must first be seen as the TriG
   // describes it (docs/adr/0026-collapse-artifact-mediated-paths.md).
   collapseArtifactPaths: false,
+  // The second one, and off for the same reason: it changes what the arrows say,
+  // and a diagram has to be readable as the TriG describes it before it is
+  // reoriented (docs/adr/0035-improve-flow-discovery.md).
+  orientByFlow: false,
 };
 
 function clamp(value, [min, max], fallback) {
@@ -81,6 +85,7 @@ export function normalizePrefs(prefs) {
   // default — so unlike the filters, where an absent entry means "hidden", there is
   // no vocabulary to record.
   merged.collapseArtifactPaths = Boolean(merged.collapseArtifactPaths);
+  merged.orientByFlow = Boolean(merged.orientByFlow);
   return merged;
 }
 

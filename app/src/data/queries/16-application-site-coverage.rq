@@ -1,0 +1,45 @@
+# title: Applications not deployed across two sites
+# about: Every application whose processes sit inside fewer than two d3f:PhysicalLocation boxes. Single points of failure by site.
+# needs: d3fend
+
+# The platform convention is docs/adr/0034-platform-topology-and-location.md:
+# site --d3f:contains--> host --d3f:contains--> process --d3f:runs--> one shared
+# application node. This counts the distinct sites that fan into each application.
+#
+# `d3f:contains+` is written out because nothing materialises transitivity: D3FEND
+# declares d3f:contains an owl:TransitiveProperty and the engine flattens
+# owl:Restrictions only (ADR 0020). Without the `+` a two-level nesting reports
+# every application as deployed nowhere.
+SELECT ?app ?label (COUNT(DISTINCT ?loc) AS ?sites) (GROUP_CONCAT(DISTINCT ?locLabel; separator=", ") AS ?where)
+WHERE {
+  { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
+  GRAPH ?g {
+    ?app a ?appClass .
+    OPTIONAL { ?app rdfs:label ?label }
+  }
+
+  # An application according to D3FEND, not according to the diagram — so
+  # d3f:WebApplication and d3f:DatabaseApplication count without being listed.
+  # d3f:ApplicationProcess is under d3f:Process and so is not matched here, which
+  # is what keeps a deployment from being counted as a service of its own.
+  GRAPH K:d3fend { ?appClass rdfs:subClassOf* d3f:Application }
+
+  # OPTIONAL, so an application nothing runs reports 0 rather than disappearing:
+  # the likeliest single point of failure is the service that is deployed nowhere,
+  # and an inner join would drop exactly that row.
+  #
+  # Its own document-graph variable, because the site and the application are
+  # commonly drawn in different diagrams of the same document.
+  OPTIONAL {
+    { SELECT DISTINCT ?dg WHERE { GRAPH ?dg {} FILTER(!STRSTARTS(STR(?dg), STR(K:))) } }
+    GRAPH ?dg {
+      ?proc d3f:runs ?app .
+      ?loc a d3f:PhysicalLocation ;
+           d3f:contains+ ?proc .
+      OPTIONAL { ?loc rdfs:label ?locLabel }
+    }
+  }
+}
+GROUP BY ?app ?label
+HAVING (COUNT(DISTINCT ?loc) < 2)
+ORDER BY ?sites ?label ?app

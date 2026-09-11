@@ -23,7 +23,7 @@ cad:0_2007297748557304
 cad:0_3171334039703656
     a cad:Note;
     rdfs:comment
-        """In November & December of 2023, IRGC affiliated threat actors the CyberAv3ngers 
+        """In November & December of 2023, IRGC affiliated threat actors the CyberAv3ngers
 gained access to Unitronics PLC's in water and wastewater systems across the US.
 
 The Unitronics Vision Series PLC's came with a built in HMI screen, once accessed
@@ -114,4 +114,3 @@ cad:comment a owl:AnnotationProperty; rdfs:label "comment".
 #   "d3f_property": "agent-in",
 #   "label": "agent-in"
 # }
-

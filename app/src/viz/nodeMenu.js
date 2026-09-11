@@ -35,6 +35,8 @@ export function nodeMenuItems(
     onShowIncomingFlow,
     onStepOutgoingFlow,
     onStepIncomingFlow,
+    onSetFlowRoot,
+    isFlowRoot = false,
     onQuery,
   } = {},
 ) {
@@ -92,6 +94,19 @@ export function nodeMenuItems(
       hint: ',',
       description: 'The same flow one hop at a time: each use reaches one link further in',
       onSelect: () => onStepIncomingFlow(data.id),
+    });
+  }
+  // After the four focus items and before `Query`: like them it acts on the
+  // whole drawing from this node, but it moves the nodes rather than dimming
+  // them (docs/adr/0035-improve-flow-discovery.md).
+  if (onSetFlowRoot) {
+    items.push({
+      label: isFlowRoot ? 'Stop starting here' : 'Start the reading here',
+      hint: 'b',
+      description: isFlowRoot
+        ? 'Let the layout choose where the drawing begins again'
+        : 'Move this node to the leftmost layer and lay the rest of the drawing out to its right. Needs the ELK layered layout',
+      onSelect: () => onSetFlowRoot(data.id),
     });
   }
   // Before `Show info`, which is the terminal action: this one leaves the tab.

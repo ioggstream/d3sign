@@ -28,7 +28,7 @@ a d3f:VPNServer; d3f:accesses cad:0_5094563823244651; rdfs:label "VPN".
 cad:0_1739115285623688
     a cad:Note;
     rdfs:comment
-        """Malicious cyber actors acquired employee user credentials 
+        """Malicious cyber actors acquired employee user credentials
 for a VPN service externally.The employee had used the
 
 credentials for an external service from where they are
@@ -88,7 +88,7 @@ cad:0_39505519354093166
 cad:0_45095151035943726
     a cad:Note;
     rdfs:comment
-        """On may 7th 2021 the Colonial Pipeline Company (CPC) 
+        """On may 7th 2021 the Colonial Pipeline Company (CPC)
 learned they were victims of a ransomware cyber attack.
 
 
@@ -178,4 +178,3 @@ cad:0_9876456337150709
 #   "label": "agent-in",
 #   "d3f_property": "agent-in"
 # }
-

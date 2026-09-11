@@ -143,6 +143,15 @@ export function parseDiagram(source) {
           );
           continue;
         }
+        // Prose beside the predicate is ignored (edgeParser.js), so a second
+        // predicate in the same label is ignored with it — and unlike prose, that
+        // is worth saying: the author wrote a relation that is not drawn.
+        if (e.predicates) {
+          warnings.push(
+            `Link label "${e.predicates.join(' ')}" in "${line}" names more than one ` +
+              `predicate: only "${e.predicate}" is written — one link is one relation.`,
+          );
+        }
         edges.push({ from: e.from, to: e.to, predicate: e.predicate, dotted: e.dotted });
       }
       continue;

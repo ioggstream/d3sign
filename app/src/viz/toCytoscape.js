@@ -26,6 +26,14 @@
  * (docs/adr/0026-collapse-artifact-mediated-paths.md). Also view state, also
  * invisible to the store.
  *
+ * `viewOptions.orientByFlow` changes the *default* direction of a link from "as
+ * written" to "along the flow", so a diagram whose predicates run both ways
+ * still reads left to right (docs/adr/0035-improve-flow-discovery.md). It
+ * reuses the direction swap rather than adding a second way to draw a link
+ * backwards, so a reoriented link is relabelled with its inverse name and the
+ * edge panel still reports how the triple was written. An explicit swap always
+ * wins over the default.
+ *
  * Returns `{ elements, stats }`, where stats reports shown-vs-total nodes and
  * links so the header chips can show the effect of the active filters.
  */
@@ -188,6 +196,18 @@ export function toCytoscapeElements(model, filterState, viewOptions = {}) {
   const { nodes, edges, containment, parentOf } = model;
   const elements = [];
 
+  /**
+   * Which way to draw a link the user has said nothing about.
+   *
+   * The polarity rides on the model edge, so this module still imports nothing
+   * from the RDF layer (ADR 0014): it knows that a link has a preferred
+   * direction, not which predicates have one. A 'reverse' polarity with no
+   * inverse name leaves the link as written rather than dropping it — the same
+   * check the manual swap makes one line below, for the same reason.
+   */
+  const defaultDirectionFor = (edge) =>
+    viewOptions.orientByFlow && edge.flowPolarity === 'reverse' && edge.inverse ? 'inverse' : 'forward';
+
   // 1. Node-kind filter. `visibleNodeKinds` may be absent when a caller passes a
   //    bare filter state, in which case nothing is filtered out.
   const visibleNodes = new Map();
@@ -300,7 +320,14 @@ export function toCytoscapeElements(model, filterState, viewOptions = {}) {
   //     folded container is the internal detail folding exists to hide.
   const anchored = [];
   for (const edge of effectiveEdges) {
-    const dir = direction.get(edge.predicate) || 'forward';
+    // The direction map holds what the user chose, one predicate at a time
+    // (docs/adr/0019-select-and-swap-edges.md). What it does *not* hold is the
+    // default, and `orientByFlow` changes that default from "as written" to
+    // "along the flow" (rdf/flowPolarity.js, docs/adr/0035-improve-flow-discovery.md).
+    // `??` rather than `||` so an explicit choice still wins in both directions:
+    // a user who swaps a flow-oriented link back gets 'forward' recorded, and
+    // that must not read as "unset" and be re-oriented on the next render.
+    const dir = direction.get(edge.predicate) ?? defaultDirectionFor(edge);
     const showInverse = dir === 'inverse' && edge.inverse;
     const fromIri = showInverse ? edge.to : edge.from;
     const toIri = showInverse ? edge.from : edge.to;
@@ -382,6 +409,10 @@ export function toCytoscapeElements(model, filterState, viewOptions = {}) {
       kind: first.edge.kind,
       predicate: first.edge.predicate,
       invertible: Boolean(first.edge.inverse),
+      // Only when true, the convention `derived`, `collapsed` and
+      // `bidirectional` already follow: a cytoscape `edge[attr]` selector — and
+      // the layout's cycle-breaking hook — tests for the key, not its value.
+      ...(first.edge.sequence ? { sequence: true } : {}),
     };
 
     if (group.some((item) => item.derived) || back.some((item) => item.derived)) {

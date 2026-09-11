@@ -1,0 +1,44 @@
+# title: Dependencies missing from a site
+# about: For each site an application runs in, the things it depends on that no process there provides. Cross-site single points of failure.
+
+# The question 16-application-site-coverage.rq cannot ask. A service deployed in
+# two sites counts as covered there, and is still lost with one of them if its
+# database only exists in the other. This walks the other way: per site, per
+# service running in it, what does the service need that the site has not got.
+#
+# Requirements are read from d3f:depends-on only, which the convention states
+# application-to-application (docs/adr/0034-platform-topology-and-location.md).
+# d3f:accesses, d3f:reads and d3f:writes are deliberately not read: they are data
+# flow, and folding them in turns every log write into an availability obligation.
+# DISTINCT because a service with two processes in one site would otherwise report
+# the same missing dependency once per process.
+SELECT DISTINCT ?site ?app ?missing ?missingLabel
+WHERE {
+  { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
+  GRAPH ?g {
+    ?loc a d3f:PhysicalLocation ;
+         d3f:contains+ ?proc .
+    ?proc d3f:runs ?app .
+    OPTIONAL { ?loc rdfs:label ?siteLabel }
+  }
+
+  # Its own document graph: the dependency between two services is a statement
+  # about the services, so it commonly lives in a different diagram from the
+  # topology that deploys them.
+  { SELECT DISTINCT ?rg WHERE { GRAPH ?rg {} FILTER(!STRSTARTS(STR(?rg), STR(K:))) } }
+  GRAPH ?rg {
+    ?app d3f:depends-on ?missing .
+    OPTIONAL { ?missing rdfs:label ?missingLabel }
+  }
+
+  FILTER NOT EXISTS {
+    { SELECT DISTINCT ?eg WHERE { GRAPH ?eg {} FILTER(!STRSTARTS(STR(?eg), STR(K:))) } }
+    GRAPH ?eg {
+      ?loc d3f:contains+ ?depProc .
+      ?depProc d3f:runs ?missing .
+    }
+  }
+
+  BIND(COALESCE(?siteLabel, STR(?loc)) AS ?site)
+}
+ORDER BY ?site ?app

@@ -591,7 +591,9 @@ renderPrefsPanel(prefsChip.body, prefs, (next) => {
   // handles by restyling. This one changes which elements exist, so the drawing and
   // the chip counts both have to come from a fresh build
   // (docs/adr/0026-collapse-artifact-mediated-paths.md).
-  const rebuild = next.collapseArtifactPaths !== prefs.collapseArtifactPaths;
+  const rebuild =
+    next.collapseArtifactPaths !== prefs.collapseArtifactPaths ||
+    next.orientByFlow !== prefs.orientByFlow;
   prefs = next;
   savePrefs(next);
   graphPane.setPrefs(next);
@@ -1647,6 +1649,19 @@ const GRAPH_SHORTCUTS = {
     else if (selection.data?.collapsed) {
       graphPane.flashError('a collapsed artifact path has no single predicate to swap');
     } else graphPane.flashError(`${selection.predicate} has no inverse property`);
+  },
+  // Begin the reading here: the selected node is pinned to the leftmost layer
+  // and the drawing fans out rightward from it
+  // (docs/adr/0035-improve-flow-discovery.md). Pressing it on the node that is
+  // already the root clears the pin, the way `f` unfolds what it folded.
+  //
+  // Only a layered layout has layers to pin to, and a key that silently does
+  // nothing reads as broken, so the pane says which case it is.
+  b: () => {
+    if (selection?.kind !== 'node') return;
+    if (!graphPane.setFlowRoot(selection.id)) {
+      graphPane.flashError('only the ELK layered layout can start from a node');
+    }
   },
   // Leaves the graph tab, which no other shortcut here does — but it is the
   // selection that makes the query meaningful, so it belongs to the selection's

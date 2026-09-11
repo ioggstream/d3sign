@@ -29,10 +29,10 @@ sub-namespaces are named (`E:` is
 `urn:d3fend-graph:enrichment:`, `N:` is
 `urn:d3fend-graph:nbr:`):
 
-| Prefix | IRI | For |
-| --- | --- | --- |
-| `T:` | `urn:d3fend-graph:template:` | templates |
-| `ds:` | `urn:d3sign:` | provenance |
+| Prefix | IRI                          | For        |
+| ------ | ---------------------------- | ---------- |
+| `T:`   | `urn:d3fend-graph:template:` | templates  |
+| `ds:`  | `urn:d3sign:`                | provenance |
 
 `ds:` is deliberately not under `urn:d3fend-graph:`:
 `ds:instantiates` and `ds:partOf` are a vocabulary

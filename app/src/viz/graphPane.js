@@ -1,7 +1,13 @@
 import cytoscape from 'cytoscape';
 import elk from 'cytoscape-elk';
 import { toCytoscapeElements } from './toCytoscape.js';
-import { DEFAULT_LAYOUT_ID, layoutOptions, normalizeSteps, rotatePoint } from './layouts.js';
+import {
+  DEFAULT_LAYOUT_ID,
+  layoutOptions,
+  normalizeSteps,
+  rotatePoint,
+  supportsFlowRoot,
+} from './layouts.js';
 import {
   PATH_FOCUS_DEPTH_CLASSES,
   buildStyle,
@@ -279,6 +285,11 @@ export function createGraphPane(host, {
   // Kept as state so a re-render (filter change, new diagram) keeps the
   // orientation the user picked instead of snapping back to the algorithm's.
   let rotationSteps = 0;
+  // The node the reading starts from: pinned to the leftmost layer by whichever
+  // ELK layout is running (docs/adr/0035-improve-flow-discovery.md). Pane state
+  // for the same reason `rotationSteps` is — a filter change or a new selection
+  // must not silently give the drawing a different starting point.
+  let flowRootId = null;
   let iconSet = null;
   let pathFocus = null;
 
@@ -431,7 +442,7 @@ export function createGraphPane(host, {
    * nudged.
    */
   function runLayout(anchor = null) {
-    const layout = cy.layout(layoutOptions(layoutId, prefs));
+    const layout = cy.layout(layoutOptions(layoutId, prefs, { rootId: flowRootId }));
     layout.one('layoutstop', () => {
       rotateBy(rotationSteps);
       // Before separating: the band is part of a container's box, so overlaps have
@@ -444,6 +455,30 @@ export function createGraphPane(host, {
     });
     layout.run();
   }
+
+  /**
+   * Pins `nodeId` to the leftmost layer and re-lays the drawing out around it,
+   * or clears the pin when it is already the root or the id is null
+   * (docs/adr/0035-improve-flow-discovery.md).
+   *
+   * False when the running layout has no layers, so both callers — the key and
+   * the menu — can say why nothing moved instead of looking broken. Anchored on
+   * the node itself, the way a fold is: the node the reader is looking at
+   * should hold still while the rest rearranges around it.
+   */
+  function applyFlowRoot(nodeId) {
+    if (!supportsFlowRoot(layoutId)) return false;
+    const next = nodeId && nodeId !== flowRootId ? nodeId : null;
+    flowRootId = next;
+    runLayout(captureAnchor(next ?? nodeId));
+    return true;
+  }
+
+  const onSetFlowRoot = (nodeId) => {
+    if (!applyFlowRoot(nodeId)) {
+      flashEdgeError(host, 'only the ELK layered layout can start from a node');
+    }
+  };
 
   // Keep the graph filling its tile as the panes are resized (drag gutters,
   // window resize) — cytoscape doesn't pick this up on its own since the
@@ -553,6 +588,8 @@ export function createGraphPane(host, {
       onShowIncomingFlow,
       onStepOutgoingFlow,
       onStepIncomingFlow,
+      onSetFlowRoot,
+      isFlowRoot: data.id === flowRootId,
       onQuery,
     });
   const edgeItems = (data) =>
@@ -664,11 +701,13 @@ export function createGraphPane(host, {
      * the right answer when the whole drawing has changed.
      */
     update(model, filterState, { anchorNode } = {}) {
-      // The one preference the *element set* depends on, so it is read here rather
-      // than in setPrefs, which only restyles and relayouts
-      // (docs/adr/0026-collapse-artifact-mediated-paths.md).
+      // The two preferences the *elements* depend on, so they are read here
+      // rather than in setPrefs, which only restyles and relayouts
+      // (docs/adr/0026-collapse-artifact-mediated-paths.md,
+      // docs/adr/0035-improve-flow-discovery.md).
       const { elements, stats } = toCytoscapeElements(model, filterState, {
         collapseArtifactPaths: prefs.collapseArtifactPaths,
+        orientByFlow: prefs.orientByFlow,
       });
       // A node removed under the pointer never fires `mouseout`, so its cursor
       // would stick — and folding rebuilds the graph from under the pointer every
@@ -717,6 +756,24 @@ export function createGraphPane(host, {
         applyContainerBands();
         cy.fit(undefined, 20);
       }
+    },
+    /**
+     * Starts the reading from this node: it is pinned to the leftmost layer and
+     * the drawing is re-laid out around it. Passing the current root, or null,
+     * clears the pin.
+     *
+     * Returns false when the running layout has no layers to pin to, so the
+     * caller can say why nothing moved rather than leaving a key looking broken.
+     * Anchored on the root itself, the way a fold anchors on the node it folds:
+     * the node the reader is looking at should not jump when the rest of the
+     * drawing rearranges around it.
+     */
+    setFlowRoot(nodeId) {
+      return applyFlowRoot(nodeId);
+    },
+    /** The node the reading currently starts from, or null. */
+    flowRoot() {
+      return flowRootId;
     },
     /** Turns the drawing by `steps` quarter turns clockwise (negative = counter-clockwise). */
     rotate(steps) {

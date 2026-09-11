@@ -77,23 +77,50 @@ function elkSpacing(prefs) {
  * gutter, and its children's box overflows it. It is doubly needed now that the
  * gutter differs per container: there is no one value the root could carry.
  */
-function elkNodeOptions(prefs) {
-  return (node) =>
-    node.isParent()
+function elkNodeOptions(prefs, rootId) {
+  return (node) => {
+    const options = node.isParent()
       ? {
           'elk.padding': elkPaddingFor(
             prefs,
             estimatedLabelLines(drawnLabel(node.data(), prefs), prefs.fontSize),
           ),
         }
-      : undefined;
+      : {};
+    // The node the reading starts from, pinned to the leftmost layer
+    // (docs/adr/0035-improve-flow-discovery.md). Merged rather than substituted:
+    // a container can be the root too, and it still needs its padding. Only
+    // `layered` has layers, and every other algorithm ignores the key.
+    if (rootId && node.id() === rootId) {
+      options['elk.layered.layering.layerConstraint'] = 'FIRST';
+    }
+    return Object.keys(options).length ? options : undefined;
+  };
+}
+
+/**
+ * Which edges ELK's greedy cycle breaker may not sacrifice.
+ *
+ * cytoscape-elk skips any edge this returns a non-nil value for, so an edge
+ * that states an order survives a cycle formed with anything else: reversing
+ * one to break a cycle would draw a sequence running backwards.
+ *
+ * Which links those are is a fact about the vocabulary, so it arrives on the
+ * element as `sequence` (rdf/flowPolarity.js → rdf/graphModel.js →
+ * viz/toCytoscape.js) rather than being looked up here. That is what keeps this
+ * module pure geometry, and it is the same route `kind` and the effect keys
+ * already take to the stylesheet.
+ */
+function sequencePriority(edge) {
+  return edge.data('sequence') ? 1 : null;
 }
 
 function elkLayout(algorithm, extra = () => ({})) {
-  return (prefs) => ({
+  return (prefs, view = {}) => ({
     name: 'elk',
     nodeDimensionsIncludeLabels: true,
-    nodeLayoutOptions: elkNodeOptions(prefs),
+    nodeLayoutOptions: elkNodeOptions(prefs, view.rootId),
+    priority: sequencePriority,
     elk: {
       algorithm,
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
@@ -114,6 +141,12 @@ export const LAYOUTS = [
     label: 'ELK layered',
     hierarchical: true,
     options: elkLayout('layered', (prefs) => ({
+      // ELK's own default for `layered`, so this changes no drawing. It is
+      // written down because the flow orientation and the layer-0 root both
+      // assume left-to-right, and a silent default is a poor thing for two
+      // features to rest on. Rotation remains the general orientation control
+      // (docs/adr/0013-graph-view-controls.md); this adds none.
+      'elk.direction': 'RIGHT',
       'elk.layered.spacing.nodeNodeBetweenLayers': Math.round(prefs.nodeSpacing * 1.33),
       'elk.layered.spacing.edgeNodeBetweenLayers': Math.round(prefs.nodeSpacing * 0.66),
     })),
@@ -185,6 +218,17 @@ export const LAYOUTS = [
 export const DEFAULT_LAYOUT_ID = 'elk-layered';
 
 /**
+ * Whether a layout can start the reading from a chosen node.
+ *
+ * Only `layered` has layers to pin one to. Every other algorithm silently
+ * ignores `layerConstraint`, and silence is the wrong answer to a keystroke:
+ * the caller says so instead (docs/adr/0035-improve-flow-discovery.md).
+ */
+export function supportsFlowRoot(id) {
+  return id === 'elk-layered';
+}
+
+/**
  * Centres a node's box on the coordinate the layout produced for it.
  *
  * Every layout here runs with `nodeDimensionsIncludeLabels`, so what each one
@@ -212,11 +256,19 @@ function layoutEntry(id) {
   return LAYOUTS.find((l) => l.id === id) ?? LAYOUTS.find((l) => l.id === DEFAULT_LAYOUT_ID);
 }
 
-/** Cytoscape layout options for a dropdown id, falling back to the default. */
-export function layoutOptions(id, prefs = DEFAULT_PREFS) {
+/**
+ * Cytoscape layout options for a dropdown id, falling back to the default.
+ *
+ * `view` carries what the *drawing* asks of the layout rather than what the
+ * preferences do: `rootId` is the node the reading starts from
+ * (docs/adr/0035-improve-flow-discovery.md). Only the ELK entries read it; the
+ * cytoscape-native ones take their single spacing multiplier and ignore it,
+ * which is why it is passed to `options` rather than merged in here.
+ */
+export function layoutOptions(id, prefs = DEFAULT_PREFS, view = {}) {
   // Applied here rather than per entry: it corrects how cytoscape reads any
   // layout's output, so no entry may be without it.
-  return { ...layoutEntry(id).options(prefs), transform: labelAnchorTransform };
+  return { ...layoutEntry(id).options(prefs, view), transform: labelAnchorTransform };
 }
 
 /** Normalizes any integer number of quarter turns to 0..3. */
