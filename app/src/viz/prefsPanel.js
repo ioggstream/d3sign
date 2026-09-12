@@ -34,6 +34,27 @@ const LABEL_DETAIL_OPTIONS = [
   },
 ];
 
+// docs/adr/0037-location-containment-view.md. The `pins` hint carries the warning
+// the ADR asks for: an inherited place is drawn on a node that states no triple
+// about it, and the TriG pane will not show a matching line.
+const LOCATION_VIEW_OPTIONS = [
+  { value: 'off', label: 'Links', hint: 'The location links, drawn as links' },
+  {
+    value: 'pins',
+    label: 'Pins',
+    hint:
+      'The place on each node, with the links hidden. A node inside a located ' +
+      'container shows its container’s place, which no triple of its own states',
+  },
+  {
+    value: 'boxes',
+    label: 'Boxes',
+    hint:
+      'Each node drawn inside a box for its place, with the links hidden. A node ' +
+      'already inside a container stays there',
+  },
+];
+
 /**
  * A `<fieldset>` of radios for one enum preference. `name` is shared across the
  * group's inputs, which is what gives the browser roving-focus arrow keys — so it
@@ -161,20 +182,17 @@ export function renderPrefsPanel(host, prefs, onChange, { bulkHost } = {}) {
   edgeLabel.title = 'Predicate names along the links';
   addRow(list, 'prefs-row', edgeLabel);
 
-  const locationLabel = document.createElement('label');
-  const locationToggle = document.createElement('input');
-  locationToggle.type = 'checkbox';
-  locationToggle.checked = prefs.locationPins;
-  locationToggle.addEventListener('change', () =>
-    emit({ locationPins: locationToggle.checked }),
+  addRow(
+    list,
+    'prefs-row',
+    radioGroup({
+      legend: 'Location',
+      name: 'prefs-location-view',
+      options: LOCATION_VIEW_OPTIONS,
+      selected: prefs.locationView,
+      onPick: (locationView) => emit({ locationView }),
+    }),
   );
-  locationLabel.append(locationToggle, ' Location pins');
-  // The warning is the point of the second sentence: an inherited pin is the one
-  // place the drawing says more than the TriG (docs/adr/0036-location-pins.md).
-  locationLabel.title =
-    'Draws each node’s place on the node and hides the location links that said it. ' +
-    'A node inside a located container shows its container’s place, which no triple of its own states.';
-  addRow(list, 'prefs-row', locationLabel);
 
   const collapseLabel = document.createElement('label');
   const collapseToggle = document.createElement('input');

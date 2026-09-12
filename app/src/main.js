@@ -28,7 +28,7 @@ import {
   renderGraphPanel,
   graphMatchesQuery,
 } from './viz/graphVisibility.js';
-import { createFilterChip } from './viz/filterChip.js';
+import { createFilterChip, placeUnderAnchor } from './viz/filterChip.js';
 import { loadPrefs, savePrefs } from './viz/graphPrefs.js';
 import { renderPrefsPanel } from './viz/prefsPanel.js';
 import { renderDiagramList } from './viz/diagramList.js';
@@ -149,7 +149,9 @@ const filterChipHost = document.getElementById('graph-filter-chips');
 const cyHost = document.getElementById('cy-host');
 const nodePanelHost = document.getElementById('node-panel');
 const selectionBoxHost = document.getElementById('graph-selection');
-const lintMessage = document.getElementById('lint-message');
+const lintChip = document.getElementById('lint-chip');
+const lintChipLabel = document.getElementById('lint-chip-label');
+const lintPanel = document.getElementById('lint-panel');
 const copyEditorButton = document.getElementById('copy-editor-button');
 const copyTurtleButton = document.getElementById('copy-turtle-button');
 const queryChipHost = document.getElementById('query-filter-chips');
@@ -595,8 +597,10 @@ renderPrefsPanel(prefsChip.body, prefs, (next) => {
     next.collapseArtifactPaths !== prefs.collapseArtifactPaths ||
     next.orientByFlow !== prefs.orientByFlow ||
     // Absorbing a location link removes it and sometimes the place it pointed at,
-    // so a restyle would leave both on screen (docs/adr/0036-location-pins.md).
-    next.locationPins !== prefs.locationPins;
+    // and the box view reparents on top of that, so a restyle would leave the old
+    // drawing on screen (docs/adr/0036-location-pins.md,
+    // docs/adr/0037-location-containment-view.md).
+    next.locationView !== prefs.locationView;
   prefs = next;
   savePrefs(next);
   graphPane.setPrefs(next);
@@ -610,14 +614,44 @@ renderPrefsPanel(prefsChip.body, prefs, (next) => {
   if (rebuild) renderGraph();
 }, { bulkHost: prefsChip.bulkHost });
 
+/**
+ * Reports lint messages on the header chip, which opens the full list in its
+ * popover. Takes one message or a list of them: the count is what a chip narrow
+ * enough to never cover a pane control can still say honestly.
+ */
 function showLint(message) {
-  if (message) {
-    lintMessage.textContent = message;
-    lintMessage.hidden = false;
-  } else {
-    lintMessage.hidden = true;
+  const messages = (Array.isArray(message) ? message : [message]).filter(Boolean);
+  if (!messages.length) {
+    lintChip.hidden = true;
+    lintPanel.hidePopover();
+    return;
   }
+  lintChipLabel.textContent =
+    messages.length > 1 ? `${messages.length} issues` : messages[0];
+  lintChip.title = messages.join('\n');
+  lintChip.hidden = false;
+  lintPanel.replaceChildren(
+    ...messages.map((text) => {
+      const p = document.createElement('p');
+      p.textContent = text;
+      return p;
+    }),
+  );
+  // Re-place it: a list that grew while it was open no longer fits where it did.
+  if (lintPanel.matches(':popover-open')) placeUnderAnchor(lintChip, lintPanel);
 }
+
+lintPanel.addEventListener('beforetoggle', (event) => {
+  if (event.newState === 'open') lintPanel.style.visibility = 'hidden';
+});
+lintPanel.addEventListener('toggle', (event) => {
+  const isOpen = event.newState === 'open';
+  lintChip.setAttribute('aria-expanded', String(isOpen));
+  if (isOpen) placeUnderAnchor(lintChip, lintPanel);
+});
+window.addEventListener('resize', () => {
+  if (lintPanel.matches(':popover-open')) placeUnderAnchor(lintChip, lintPanel);
+});
 
 async function ensureEnrichment() {
   if (enrichmentLoaded) return;
@@ -844,9 +878,13 @@ async function handleTextChange(text) {
   visibleGraphs = loadVisibleGraphs([...graphContributions.keys()]);
 
   const allWarnings = [...warnings, ...templateWarnings, ...diagrams.flatMap((d) => d.ast.warnings)];
-  showLint(allWarnings.length ? allWarnings.join(' ') : null);
 
   await applyGraphVisibility();
+  // Linted after the model is built, not before: a location contradiction is a fact
+  // about the merged store rather than about any one block, so `buildGraphModel` is
+  // the only thing that can see it (docs/adr/0037-location-containment-view.md).
+  showLint([...allWarnings, ...(currentModel?.warnings ?? [])]);
+
   // The pane was left as the user typed it, so say why it no longer matches.
   if (turtleDirty) setTurtleDirty(true, 'edited — mermaid changed since');
 
@@ -876,7 +914,7 @@ function renderSelectedPreview() {
   // document — the editor still shows the one line the user typed.
   const source = selected ? (selected.expandedSource ?? selected.source) : '';
   // Render errors are reported inside the preview pane itself; the header lint
-  // banner stays reserved for TriG/parser problems.
+  // chip stays reserved for TriG/parser problems.
   renderMermaidPreview(mermaidHost, source);
 }
 
@@ -1001,10 +1039,18 @@ for (const example of examples) {
   option.value = example.name;
   option.textContent = example.fileName;
   if (example.title) option.title = example.title;
-  if (example.name === defaultExample.name) option.selected = true;
   exampleSelect.appendChild(option);
 }
-let selectedExample = defaultExample.name;
+// The box starts on the placeholder rather than on the example whose text the
+// editor happens to open with: what is being edited may be a restored document,
+// and the picker says what it is for, not what is open — the same reason the
+// query library box has one.
+const examplePlaceholder = document.createElement('option');
+examplePlaceholder.value = '';
+examplePlaceholder.textContent = 'Pick an example…';
+examplePlaceholder.selected = true;
+exampleSelect.prepend(examplePlaceholder);
+let selectedExample = '';
 exampleSelect.addEventListener('change', () => {
   const example = examples.find((e) => e.name === exampleSelect.value);
   if (!example) return;

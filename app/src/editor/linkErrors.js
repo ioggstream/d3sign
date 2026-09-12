@@ -32,7 +32,7 @@ function buildDecorations(view) {
  * Marks the mermaid lines that will not render: today that means back arrows,
  * `c <--|d3f:reads| d` and friends, which mermaid has no syntax for (see
  * `backArrowSpans` in parser/edgeParser.js — the parser and this share the one
- * definition, and the parser also names the arrow in the lint banner).
+ * definition, and the parser also names the arrow on the lint chip).
  *
  * Editor-only feedback, computed from the live text rather than handed over by
  * the parse: nothing about it reaches the AST, the store or the graph view

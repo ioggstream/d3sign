@@ -170,3 +170,25 @@ check the code before trusting them.
   condition in [main.js](../../app/src/main.js). Only the first would leave
   absorbed edges on screen when the box is ticked.
 - Defaults live in `app/src/config/viewDefaults.js`, not in `graphPrefs.js`.
+
+---
+
+```trig
+
+:rm a d3f:PhysicalLocation .
+:mi a d3f:PhysicalLocation .
+
+:rm-a d3f:has-location :rm ;
+ a d3f:ComputerEnclosure ;
+ d3f:contains :rm-a-1, :rm-a-2 .
+
+:rm-b a d3f:ComputerEnclosure ;
+  d3f:has-location :rm ;
+  d3f:contains :rm-b-1, :rm-b-2 .
+
+:mi-a d3f:has-location :mi ;
+  a d3f:ComputerEnclosure ;
+  d3f:contains :mi-a-1, :mi-a-2 .
+
+
+```
