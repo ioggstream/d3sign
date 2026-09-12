@@ -110,6 +110,60 @@ function effectKeys(effect, end, bidirectional) {
  * between one pair of nodes indistinguishable to `reselectEdge`.
  */
 /**
+ * Containment augmented with a parent for every node that names its own place
+ * (docs/adr/0037-location-containment-view.md).
+ *
+ * Returns fresh Maps. The model is built once per store change and re-read on every
+ * filter and preference render, so mutating it here would leak this view into the
+ * other two.
+ *
+ * Parenting is a view option, and `parentOf` is the model's — which is why this is
+ * here and not in rdf/graphModel.js. It stays free of vocabulary all the same: a
+ * node's own place is `locationIri`, resolved in the model, and nothing below names
+ * a predicate or a class (ADR 0014).
+ *
+ * Four conditions, each refusing for its own reason:
+ *
+ * 1. `locationIri` — a node's *own* statement. An inherited place must never
+ *    reparent, or every descendant becomes a sibling of its own ancestor.
+ * 2. no existing parent — containment wins, which is the decision this implements
+ *    and the reason the view does nothing on a drawing that already nests.
+ * 3. the place is a node in the model.
+ * 4. the place is not already below this node. `:a d3f:contains :rm` with
+ *    `:a d3f:has-location :rm` would otherwise parent each to the other, and nothing
+ *    downstream catches that: `visibleParentOf` guards only hops over *hidden*
+ *    parents, and `separateSiblings` walks from the orphans, of which a cycle has
+ *    none — so the sibling pass would stop running in silence.
+ */
+function locationContainment(model) {
+  const containment = new Map([...model.containment].map(([iri, kids]) => [iri, [...kids]]));
+  const parentOf = new Map(model.parentOf);
+
+  /** True when `place` is `iri` or sits below it, i.e. parenting would close a loop. */
+  const wouldCycle = (iri, place) => {
+    const seen = new Set();
+    let current = place;
+    while (current !== undefined && !seen.has(current)) {
+      if (current === iri) return true;
+      seen.add(current);
+      current = parentOf.get(current);
+    }
+    return false;
+  };
+
+  for (const [iri, node] of model.nodes) {
+    const place = node.locationIri;
+    if (!place || parentOf.has(iri) || !model.nodes.has(place)) continue;
+    if (wouldCycle(iri, place)) continue;
+    const children = containment.get(place) || [];
+    if (!children.includes(iri)) children.push(iri);
+    containment.set(place, children);
+    parentOf.set(iri, place);
+  }
+  return { containment, parentOf };
+}
+
+/**
  * Replaces location links with the 📍 already on each node's label
  * (docs/adr/0036-location-pins.md).
  *
@@ -243,7 +297,15 @@ function collapseArtifactPaths(visibleEdges, { visibleNodes, containment, repres
 
 export function toCytoscapeElements(model, filterState, viewOptions = {}) {
   const { visiblePredicates, direction, visibleKinds, visibleNodeKinds, foldedNodes } = filterState;
-  const { nodes, edges, containment, parentOf } = model;
+  const { nodes, edges } = model;
+  // A caller passing a bare `{}` — every test that does not care, and the default
+  // argument — means the complete drawing, which is what `off` is.
+  const locationView = viewOptions.locationView ?? 'off';
+  // Shadowed rather than passed around: every walk below — `visibleParentOf`,
+  // `representativeOf`, `hasVisibleChild`, `hasDrawnChild` — reads these two and
+  // none of them has to know where the parenting came from (ADR 0016).
+  const { containment, parentOf } =
+    locationView === 'boxes' ? locationContainment(model) : model;
   const elements = [];
 
   /**
@@ -353,12 +415,16 @@ export function toCytoscapeElements(model, filterState, viewOptions = {}) {
     effectiveEdges = collapse.edges;
   }
 
-  // 3¾. Absorb location links into the pins already on the nodes. Gated on the
-  //      `location` kind for the same reason the collapse is gated on `data-flow`:
-  //      a filter a view transform can overrule is not a filter, so unticking the
-  //      chip leaves the links and the places exactly as they were.
+  // 3¾. Absorb location links into whatever replaced them — the pin on the node, or
+  //      the box around it. Both views drop the link, so both run this; the place is
+  //      then dropped or kept by `absorbLocationLinks`' own refusal list, and under
+  //      `boxes` a place that gained a child is kept by it without a special case.
+  //
+  //      Gated on the `location` kind for the same reason the collapse is gated on
+  //      `data-flow`: a filter a view transform can overrule is not a filter, so
+  //      unticking the chip leaves the links and the places exactly as they were.
   const absorbedPlaces = new Set();
-  if (viewOptions.locationPins && visibleKinds.has('location')) {
+  if (locationView !== 'off' && visibleKinds.has('location')) {
     const absorb = absorbLocationLinks(effectiveEdges, {
       visibleNodes,
       containment,

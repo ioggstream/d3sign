@@ -6,7 +6,25 @@
  * clipping, and light-dismiss gives click-outside, Escape, and single-open-at-a-time
  * for free. Only the placement needs JS, since CSS anchor positioning isn't portable yet.
  */
-export function createFilterChip(chipHost, { id, label, icon, title, shortcut, search }) {
+/**
+ * Pins a popover under the element that opens it, flipping above / clamping when it
+ * wouldn't fit. Only callable once the popover is open — while closed the UA
+ * stylesheet keeps it `display: none`, so it has no measurable size.
+ */
+export function placeUnderAnchor(anchorElement, popover) {
+  popover.style.top = '0px';
+  popover.style.left = '0px';
+  const anchor = anchorElement.getBoundingClientRect();
+  const own = popover.getBoundingClientRect();
+  const left = Math.max(8, Math.min(anchor.left, window.innerWidth - own.width - 8));
+  const below = anchor.bottom + 6;
+  const fitsBelow = below + own.height <= window.innerHeight - 8;
+  popover.style.left = `${left}px`;
+  popover.style.top = `${fitsBelow ? below : Math.max(8, anchor.top - own.height - 6)}px`;
+  popover.style.visibility = '';
+}
+
+export function createFilterChip(chipHost,{ id, label, icon, title, shortcut, search }) {
   const popoverId = `${id}-popover`;
 
   const chip = document.createElement('button');
@@ -81,23 +99,7 @@ export function createFilterChip(chipHost, { id, label, icon, title, shortcut, s
   popover.appendChild(body);
   document.body.appendChild(popover);
 
-  /**
-   * Pins the popover under the chip, flipping above / clamping when it wouldn't fit.
-   * Only callable once the popover is open — while closed the UA stylesheet keeps it
-   * `display: none`, so it has no measurable size.
-   */
-  function place() {
-    popover.style.top = '0px';
-    popover.style.left = '0px';
-    const anchor = chip.getBoundingClientRect();
-    const own = popover.getBoundingClientRect();
-    const left = Math.max(8, Math.min(anchor.left, window.innerWidth - own.width - 8));
-    const below = anchor.bottom + 6;
-    const fitsBelow = below + own.height <= window.innerHeight - 8;
-    popover.style.left = `${left}px`;
-    popover.style.top = `${fitsBelow ? below : Math.max(8, anchor.top - own.height - 6)}px`;
-    popover.style.visibility = '';
-  }
+  const place = () => placeUnderAnchor(chip, popover);
 
   // Keep it invisible from the moment it is shown until `toggle` has placed it,
   // so it never paints at the wrong position.

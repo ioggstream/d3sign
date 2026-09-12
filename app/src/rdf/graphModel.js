@@ -227,10 +227,17 @@ function locationEdgeTargets(edges) {
  * The test is `coreCategory === 'Location'`, which covers `d3f:PhysicalLocation` and
  * DPV's Location family without naming either.
  *
- * Returns `{ label, iri }`, where `iri` is set **only** when the location came from
- * an edge on the node itself: that is the edge the view may absorb, and an inherited
- * location has none. Null for a node with no location at all, which is a correct
- * answer — a logical service has no place, only its deployments do.
+ * Returns `{ label, iri, conflict }`. `iri` is set **only** when the location came
+ * from an edge on the node itself: that is the edge the view may absorb, and an
+ * inherited location has none. Null for a node with no location at all, which is a
+ * correct answer — a logical service has no place, only its deployments do.
+ *
+ * `conflict` is the second thing the walk is for. A node that names its own place is
+ * still drawn inside whatever contains it, because containment wins the parent
+ * (docs/adr/0037-location-containment-view.md). If the thing containing it is
+ * somewhere else, the drawing is asserting two places for one component, and only the
+ * author can say which statement is wrong — so the walk carries on past the node's
+ * own answer, and reports the first ancestor that disagrees.
  *
  * Two limits, neither fixed here. `parentOf` is first-parent-wins ("cytoscape
  * compound nodes are a tree, not a DAG"), so a node contained by both a rack and a
@@ -239,25 +246,35 @@ function locationEdgeTargets(edges) {
  * reports a location only where the nesting is drawn.
  */
 function locationOf(iri, nodes, parentOf, locationTargets) {
+  const nameOf = (node) => node && (node.label || node.id);
   const seen = new Set(); // a hand-drawn d3f:contains loop must terminate
+  let found = null; // the node's own answer, kept while the walk looks for a clash
   let current = iri;
   while (current && !seen.has(current)) {
     seen.add(current);
+    const node = nodes.get(current);
+    // A place this hop names, or — for an ancestor only — the hop being one itself.
+    // A place is not located in itself, which is why the second half skips `iri`.
     const stated = locationTargets.get(current);
-    if (stated) {
-      const place = nodes.get(stated);
-      const label = place ? place.label || place.id : null;
+    const place = stated ? nodes.get(stated) : null;
+    const here =
+      (place && { value: stated, label: nameOf(place) }) ||
+      (current !== iri && node?.coreCategory === 'Location'
+        ? { value: current, label: nameOf(node) }
+        : null);
+
+    if (here?.label) {
       // The IRI only when the node itself stated it — `a-h1` inheriting `:a`'s
       // place has no edge of its own for the view to absorb.
-      return label && { label, iri: current === iri ? stated : null };
-    }
-    if (current !== iri) {
-      const node = nodes.get(current);
-      if (node?.coreCategory === 'Location') return { label: node.label || node.id, iri: null };
+      if (!found) found = { label: here.label, iri: current === iri ? stated : null };
+      else if (here.value !== found.place) {
+        return { ...found, conflict: { container: current, place: here.label } };
+      }
+      if (!found.place) found.place = here.value;
     }
     current = parentOf.get(current);
   }
-  return null;
+  return found;
 }
 
 /**
@@ -407,15 +424,24 @@ export function buildGraphModel(store) {
 
   // A second pass, because the walk reads the `coreCategory` the first one assigns.
   const locationTargets = locationEdgeTargets(edges);
+  const warnings = [];
   for (const node of nodes.values()) {
     const location = locationOf(node.iri, nodes, parentOf, locationTargets);
     if (!location) continue;
     node.location = location.label;
     // Only when the node stated it itself: this is the edge the view may absorb.
     if (location.iri) node.locationIri = location.iri;
+    if (!location.conflict) continue;
+    // Both sides named, because either statement could be the wrong one and this
+    // cannot tell (docs/adr/0037-location-containment-view.md).
+    const container = nodes.get(location.conflict.container);
+    warnings.push(
+      `"${node.label || node.id}" is in "${location.label}", but "${container?.label || container?.id}" ` +
+        `around it is in "${location.conflict.place}". One of the two is wrong.`,
+    );
   }
 
-  return { nodes, edges, containment, parentOf };
+  return { nodes, edges, containment, parentOf, warnings };
 }
 
 /** The distinct predicate CURIEs a model's edges use, for the Links filter. */

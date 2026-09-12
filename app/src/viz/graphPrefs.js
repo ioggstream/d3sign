@@ -36,6 +36,18 @@ export const NODE_STYLES = ['color', 'icon'];
  */
 export const LABEL_DETAILS = ['full', 'name'];
 
+/**
+ * How a node's place is drawn (docs/adr/0037-location-containment-view.md):
+ * `off` leaves the location links as links, `pins` puts the place on the node and
+ * absorbs them, `boxes` draws the node inside its place and absorbs them too.
+ *
+ * A string rather than two booleans, and not by taste: the two views cannot both be
+ * on. A location box gives the place a visible child, which is exactly the condition
+ * that stops `absorbLocationLinks` dropping a place — so a combined state would draw
+ * the box and the pin and no link between them.
+ */
+export const LOCATION_VIEWS = ['off', 'pins', 'boxes'];
+
 // Re-exported so every existing caller keeps importing preferences from one place,
 // while the values themselves stay editable without reading this file's logic.
 export { DEFAULT_PREFS };
@@ -55,17 +67,24 @@ export function normalizePrefs(prefs) {
   if (!NODE_STYLES.includes(merged.nodeStyle)) merged.nodeStyle = DEFAULT_PREFS.nodeStyle;
   if (!LABEL_DETAILS.includes(merged.labelDetail)) merged.labelDetail = DEFAULT_PREFS.labelDetail;
   merged.edgeLabels = Boolean(merged.edgeLabels);
-  // `showLocation` was the key while the location was only a label and the edges
-  // were still drawn. It became `locationPins` when the pin started replacing the
-  // edge (docs/adr/0036-location-pins.md); a payload holding the old key means the
-  // same intent, so it is carried over rather than discarded.
+  // Two renames, so two hops. `showLocation` was the key while the location was only
+  // a label and the links were still drawn; it became the `locationPins` boolean when
+  // the pin started replacing the link (ADR 0036), and that boolean became this enum
+  // when the box joined it as a third view (ADR 0037). A payload holding either old
+  // key means the same intent, so it is carried over rather than discarded.
   //
   // Read off `prefs`, not off `merged`: the defaults have already filled
-  // `locationPins` in by the time they are merged, so `merged` can never tell a
-  // saved value from an absent one.
-  const renamed = prefs?.locationPins === undefined ? prefs?.showLocation : undefined;
-  merged.locationPins = Boolean(renamed ?? merged.locationPins);
+  // `locationView` in by the time they are merged, so `merged` can never tell a saved
+  // value from an absent one.
+  if (prefs?.locationView === undefined) {
+    const pins = prefs?.locationPins ?? prefs?.showLocation;
+    if (pins !== undefined) merged.locationView = pins ? 'pins' : 'off';
+  }
   delete merged.showLocation;
+  delete merged.locationPins;
+  if (!LOCATION_VIEWS.includes(merged.locationView)) {
+    merged.locationView = DEFAULT_PREFS.locationView;
+  }
   // A payload written before this key existed loads as false, which is also the
   // default — so unlike the filters, where an absent entry means "hidden", there is
   // no vocabulary to record.
@@ -151,7 +170,9 @@ export function drawnLabel(data, prefs) {
   // line saying where that name lives. Last, so it reads as context under the
   // identity rather than as part of it. Already carries its 📍 from
   // viz/toCytoscape.js, the way `foldNote` carries its ▸.
-  const location = prefs.locationPins ? data.location : null;
+  // `pins` only: the box view draws the node inside its place, which says the same
+  // thing the line would, in the one place a reader is already looking.
+  const location = prefs.locationView === 'pins' ? data.location : null;
   if (prefs.labelDetail !== 'name') {
     return [data.label, location].filter(Boolean).join('\n');
   }

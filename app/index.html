@@ -31,10 +31,18 @@
            main.js from app/config/d3fend.json, which rebuild-data.sh generates, so
            a release bump is one variable there and no edit here. -->
       <a id="d3fend-version" class="brand-version" target="_blank" rel="noreferrer noopener"></a>
-    </div>
-    <div class="header-tools">
+      <!-- Beside the title rather than in the tools: it opens a document, like the
+           Files pane does, and is not a session action like the three on the right. -->
       <select id="example-select" aria-label="Load an example diagram"
               title="Load an example diagram"></select>
+    </div>
+    <div class="header-tools">
+      <!-- The collapsed half of the lint report. It is in the flow so it can never
+           cover a pane control; the panel it opens is not (see .lint-panel in
+           styles/app.css). -->
+      <button type="button" id="lint-chip" class="lint-chip" aria-expanded="false"
+              popovertarget="lint-panel" hidden><span id="lint-chip-label"
+              aria-live="polite"></span></button>
       <button type="button" id="reset-layout-button" class="copy-button"
               title="Put every view back in the column it ships in">Reset layout</button>
       <!-- Session, not query: these act on everything this browser is holding
@@ -44,7 +52,10 @@
       <button type="button" id="destroy-session-button" class="copy-button"
               title="Delete every saved query and document from this browser">Destroy session</button>
     </div>
-    <div id="lint-message" class="lint-message" role="status" hidden></div>
+    <!-- A popover, like the graph's filter panels: the top layer gives click-outside
+         and Escape for free, and the panel is only up while it is asked for. The
+         live region is the chip, which is always in the page. -->
+    <div id="lint-panel" class="lint-panel" popover="auto"></div>
   </header>
   <!-- Every column is a tab group and every pane can live in any of them, so the
        tab bars are empty here: layout/columns.js fills them from the saved

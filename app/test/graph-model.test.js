@@ -200,6 +200,60 @@ describe('buildGraphModel — from turtle only', () => {
       expect(nodes.get('urn:d3fend-graph:h').location).toBe('dc');
     });
 
+    // Containment wins the parent, so a node naming a place is still drawn inside
+    // whatever contains it. When those two disagree the drawing asserts two places
+    // for one component, and only the author can say which statement is wrong
+    // (docs/adr/0037-location-containment-view.md).
+    describe('a place that disagrees with the container', () => {
+      const warningsFor = (turtle) => buildGraphModel(storeFromTurtle(turtle)).warnings;
+
+      it('is reported, naming both components and both places', () => {
+        const warnings = warningsFor(`
+          G:rm a d3f:PhysicalLocation ; rdfs:label "Roma" .
+          G:mi a d3f:PhysicalLocation ; rdfs:label "Milano" .
+          G:a0 a d3f:Host ; d3f:has-location G:mi ; d3f:contains G:a1 .
+          G:a1 a d3f:Host ; d3f:has-location G:rm .
+        `);
+        expect(warnings).toHaveLength(1);
+        expect(warnings[0]).toContain('a1');
+        expect(warnings[0]).toContain('Roma');
+        expect(warnings[0]).toContain('a0');
+        expect(warnings[0]).toContain('Milano');
+      });
+
+      it('says nothing when the container is in the same place', () => {
+        expect(
+          warningsFor(`
+            G:rm a d3f:PhysicalLocation ; rdfs:label "Roma" .
+            G:a0 a d3f:Host ; d3f:has-location G:rm ; d3f:contains G:a1 .
+            G:a1 a d3f:Host ; d3f:has-location G:rm .
+          `),
+        ).toEqual([]);
+      });
+
+      it('says nothing when the container names no place', () => {
+        expect(
+          warningsFor(`
+            G:rm a d3f:PhysicalLocation ; rdfs:label "Roma" .
+            G:a0 a d3f:Host ; d3f:contains G:a1 .
+            G:a1 a d3f:Host ; d3f:has-location G:rm .
+          `),
+        ).toEqual([]);
+      });
+
+      // The nesting convention, where the container *is* the place rather than
+      // naming one. Disagreeing with it is the same contradiction.
+      it('is reported when the node sits in one place and names another', () => {
+        const warnings = warningsFor(`
+          G:rm a d3f:PhysicalLocation ; rdfs:label "Roma" .
+          G:mi a d3f:PhysicalLocation ; rdfs:label "Milano" ; d3f:contains G:a1 .
+          G:a1 a d3f:Host ; d3f:has-location G:rm .
+        `);
+        expect(warnings).toHaveLength(1);
+        expect(warnings[0]).toContain('Milano');
+      });
+    });
+
     // A hand-drawn containment loop is legal mermaid and must not hang the walk.
     it('terminates on a containment cycle', () => {
       const nodes = located(`
@@ -618,7 +672,7 @@ describe('toCytoscapeElements — folding containers', () => {
 
 describe('toCytoscapeElements — absorbing location links into pins', () => {
   const G = (id) => `urn:d3fend-graph:${id}`;
-  const PINS = { locationPins: true };
+  const PINS = { locationView: 'pins' };
 
   const render = (turtle, { viewOptions = PINS, ...options } = {}) => {
     const model = buildGraphModel(storeFromTurtle(turtle));
@@ -713,6 +767,95 @@ describe('toCytoscapeElements — absorbing location links into pins', () => {
     expect(edges.map((e) => e.predicate)).toEqual(['dpv:isOutsideOfLocation']);
     expect(nodes.has(G('rm'))).toBe(true);
     expect(nodes.get(G('a')).location).toBeUndefined();
+  });
+});
+
+describe('toCytoscapeElements — drawing location as containment', () => {
+  const G = (id) => `urn:d3fend-graph:${id}`;
+  const BOXES = { locationView: 'boxes' };
+
+  const render = (turtle, viewOptions = BOXES) => {
+    const model = buildGraphModel(storeFromTurtle(turtle));
+    const { elements } = toCytoscapeElements(
+      model,
+      filterState({ predicates: modelPredicates(model) }),
+      viewOptions,
+    );
+    return {
+      nodes: new Map(elements.filter((e) => !e.data.source).map((e) => [e.data.id, e.data])),
+      edges: elements.filter((e) => e.data.source).map((e) => e.data),
+    };
+  };
+
+  it('puts an unparented node inside the place it names, with no link and no pin', () => {
+    const { nodes, edges } = render(`
+      G:rm a d3f:PhysicalLocation ; rdfs:label "Roma" .
+      G:a a d3f:Host ; d3f:has-location G:rm .
+    `);
+    expect(nodes.get(G('a')).parent).toBe(G('rm'));
+    expect(nodes.get(G('rm')).isContainer).toBe(true);
+    expect(edges).toEqual([]);
+    // The box says where it is; the line would say it twice.
+    expect(nodes.get(G('a')).location).toBe('📍 Roma');
+  });
+
+  // Containment wins the parent, which is the decision this implements — and the
+  // reason the view does nothing on a drawing that already nests.
+  it('leaves an already-contained node where containment put it', () => {
+    const { nodes } = render(`
+      G:rm a d3f:PhysicalLocation ; rdfs:label "Roma" .
+      G:rack a d3f:Host ; d3f:contains G:a .
+      G:a a d3f:Host ; d3f:has-location G:rm .
+    `);
+    expect(nodes.get(G('a')).parent).toBe(G('rack'));
+  });
+
+  // An inherited place must never reparent: a-h1 would become a sibling of the
+  // very node that gave it its place.
+  it('does not reparent a node that only inherits its place', () => {
+    const { nodes } = render(`
+      G:rm a d3f:PhysicalLocation ; rdfs:label "Roma" .
+      G:a a d3f:Host ; d3f:has-location G:rm ; d3f:contains G:a-h1 .
+      G:a-h1 a d3f:ApplicationProcess .
+    `);
+    expect(nodes.get(G('a')).parent).toBe(G('rm'));
+    expect(nodes.get(G('a-h1')).parent).toBe(G('a'));
+  });
+
+  it('draws the links untouched in the off view', () => {
+    const { nodes, edges } = render(
+      `
+      G:rm a d3f:PhysicalLocation ; rdfs:label "Roma" .
+      G:a a d3f:Host ; d3f:has-location G:rm .
+    `,
+      {},
+    );
+    expect(nodes.get(G('a')).parent).toBeUndefined();
+    expect(edges.map((e) => e.predicate)).toEqual(['d3f:has-location']);
+  });
+
+  // The guard with no precedent. Containment parents :rm to :a, so parenting :a to
+  // :rm would close a loop — and nothing downstream would catch it, because
+  // visibleParentOf only guards hops over hidden parents and separateSiblings walks
+  // from the orphans, of which a cycle has none.
+  it('refuses a parent that would make a node its own ancestor', () => {
+    const { nodes } = render(`
+      G:rm a d3f:PhysicalLocation ; rdfs:label "Roma" .
+      G:a a d3f:Host ; d3f:contains G:rm ; d3f:has-location G:rm .
+    `);
+    expect(nodes.get(G('rm')).parent).toBe(G('a'));
+    expect(nodes.get(G('a')).parent).toBeUndefined();
+
+    // Said again as the property that matters: every chain terminates.
+    for (const id of nodes.keys()) {
+      const seen = new Set();
+      let current = id;
+      while (current !== undefined) {
+        expect(seen.has(current)).toBe(false);
+        seen.add(current);
+        current = nodes.get(current)?.parent;
+      }
+    }
   });
 });
 
