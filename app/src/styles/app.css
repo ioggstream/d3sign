@@ -323,32 +323,64 @@ header h1 {
 
 .header-tools { display: flex; align-items: center; gap: var(--s-4); margin-left: auto; }
 
-/* Deliberately out of the header's flow, hanging off its bottom edge. In the row
-   it used to grow the header, and since the shell grid gives the columns whatever
-   the header leaves (see above), a warning that came and went between keystrokes
-   resized every pane and the graph with it. Floating, the header's height is the
-   same whether a warning is up or not, so typing moves nothing. */
-.lint-message {
-  position: absolute;
-  top: 100%;
-  right: var(--s-6);
-  z-index: 5;
+/* Capped like the query pickers: an example's file name is as long as it likes,
+   and the brand group is not the place to find that out. */
+#example-select { flex: none; max-width: 18rem; }
+
+/* The lint report is two halves. The chip is in the header's flow: one line, the
+   height of the buttons beside it, so the header is the same height whether a
+   warning is up or not — which matters because the shell grid gives the columns
+   whatever the header leaves, and a block that grew and shrank between keystrokes
+   resized every pane and the graph with it. The panel it opens is out of the flow
+   for the same reason, and only the click asks for it, so nothing covers a pane
+   control until the reader says so. */
+.lint-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  max-width: 22ch;
+  padding: var(--s-1) var(--s-3);
+  border: 1px solid var(--c-warn-edge);
+  border-radius: var(--r-sm);
+  background: var(--c-warn-wash);
+  color: var(--c-warn-ink);
+  font: inherit;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.lint-chip[hidden] { display: none; }
+.lint-chip::before { content: '⚠'; flex: none; }
+.lint-chip::after { content: '▾'; flex: none; font-size: var(--fs-xs); }
+.lint-chip[aria-expanded='true']::after { content: '▴'; }
+/* The label is the only part that may be cut: the ⚠ and the caret say what the
+   chip is and that it opens. */
+#lint-chip-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Placed by placeUnderAnchor() in viz/filterChip.js, like the graph's filter
+   popovers — hence fixed and inset: auto. */
+.lint-panel {
+  position: fixed;
+  margin: 0;
+  inset: auto;
   max-width: min(60ch, 60vw);
-  max-height: 8rem;
+  max-height: 12rem;
   overflow: auto;
-  display: flex;
-  gap: var(--s-3);
   padding: var(--s-2) var(--s-4);
   border: 1px solid var(--c-warn-edge);
   border-radius: var(--r-sm);
   background: var(--c-warn-wash);
   color: var(--c-warn-ink);
-  /* It sits over the pane chrome now, so it has to read as a layer. */
+  /* It sits over the pane chrome, so it has to read as a layer. */
   box-shadow: var(--e-menu);
-  font-size: var(--fs-lg);
+  font-size: var(--fs-md);
 }
-.lint-message[hidden] { display: none; }
-.lint-message::before { content: '⚠'; flex: none; }
+/* One per line: the chip already carries the count, so the panel is the list. */
+.lint-panel p { margin: 0 0 var(--s-2); }
+.lint-panel p:last-child { margin-bottom: 0; }
 
 /* ---------------------------------------------------------------------------
    Columns, tab bars, panes (docs/adr/0022-column-tab-groups.md)

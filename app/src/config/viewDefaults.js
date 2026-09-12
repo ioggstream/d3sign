@@ -12,7 +12,8 @@
  * - **A preference that changes which elements exist defaults off.** A diagram is
  *   first seen as its triples describe it; a view that adds, removes or reroutes
  *   elements is something the user opts into. `collapseArtifactPaths`,
- *   `orientByFlow` and `locationPins` are the three, and all three are false.
+ *   `orientByFlow` and `locationView` are the three — the first two false, and the
+ *   third at the one of its values that draws everything.
  * - **Everything else is a matter of taste**, and defaults to whatever reads best
  *   on the example corpus.
  *
@@ -41,10 +42,12 @@ export const DEFAULT_PREFS = {
   // One size for all three, between the two.
   editorFontSize: 13,
   edgeLabels: true,
-  // Draws each node's place on the node and hides the location links that said it.
-  // Off by the rule above: it removes edges, and a place left with nothing else to
-  // say is removed with them (docs/adr/0036-location-pins.md).
-  locationPins: false,
+  // How a node's place is drawn: `off` leaves the location links alone, `pins` puts
+  // the place on the node, `boxes` draws the node inside its place. Both of the
+  // latter remove the links they replace, so by the rule above neither is the
+  // default (docs/adr/0036-location-pins.md,
+  // docs/adr/0037-location-containment-view.md).
+  locationView: 'off',
   // Changes *which* elements exist rather than how they are drawn, so it defaults
   // off: a diagram must first be seen as the TriG describes it
   // (docs/adr/0026-collapse-artifact-mediated-paths.md).

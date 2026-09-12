@@ -32,6 +32,8 @@ Implementation details MUST NOT be recorded in Context, Consequences or Decision
 - [x] We will use Architecture Decision Records, as [described by Michael Nygard](http://thinkrelevance.com/blog/2011/11/15/documenting-architecture-decisions).
 - [x] Decision is a list of checkboxes, to be marked as the decision is implemented.
 - [x] MUST NOT include implementation details, code snippets or step-by-step procedures.
+- [x] MUST use plain language and normative language (e.g., MUST, MUST NOT, ..).
+- [x] MUST NOT repeat concepts, or emphasis constructions.
 - [x] Consequences section contain bullet lists of Pros and Cons.
 - [x] Useful implementation details MAY go in `## DONTREADME`. That section names files, functions and
   values; the other sections do not.

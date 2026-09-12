@@ -62,26 +62,31 @@ describe('view preferences', () => {
     expect(loadPrefs().collapseArtifactPaths).toBe(false);
   });
 
-  it('leaves location pins off by default', () => {
-    // It removes the location links and sometimes the place they pointed at, so it
-    // is in the same class as the two above: a diagram is first seen as its triples
-    // describe it (docs/adr/0036-location-pins.md).
-    expect(DEFAULT_PREFS.locationPins).toBe(false);
+  it('shows the complete drawing by default, and rejects an unknown view', () => {
+    // Both of the other two remove the location links, so they are in the same class
+    // as the two preferences above: a diagram is first seen as its triples describe
+    // it (docs/adr/0037-location-containment-view.md).
+    expect(DEFAULT_PREFS.locationView).toBe('off');
     stored.set('d3fend-graph:view-prefs', JSON.stringify({ nodeStyle: 'icon' }));
-    expect(loadPrefs().locationPins).toBe(false);
-    savePrefs({ ...DEFAULT_PREFS, locationPins: true });
-    expect(loadPrefs().locationPins).toBe(true);
+    expect(loadPrefs().locationView).toBe('off');
+    savePrefs({ ...DEFAULT_PREFS, locationView: 'boxes' });
+    expect(loadPrefs().locationView).toBe('boxes');
+    expect(normalizePrefs({ locationView: 'elsewhere' }).locationView).toBe('off');
   });
 
-  it('carries a payload written under the old showLocation key onto locationPins', () => {
-    // The key was renamed when the pin started replacing the link rather than just
-    // annotating the node. The intent is the same, so it is migrated, not dropped.
-    stored.set('d3fend-graph:view-prefs', JSON.stringify({ showLocation: true }));
-    expect(loadPrefs().locationPins).toBe(true);
-    expect(loadPrefs().showLocation).toBeUndefined();
-
-    stored.set('d3fend-graph:view-prefs', JSON.stringify({ showLocation: false }));
-    expect(loadPrefs().locationPins).toBe(false);
+  // Two renames, so two hops: showLocation → locationPins → locationView. Both old
+  // keys mean the same intent, so both are carried over rather than discarded.
+  it.each([
+    ['showLocation', true, 'pins'],
+    ['showLocation', false, 'off'],
+    ['locationPins', true, 'pins'],
+    ['locationPins', false, 'off'],
+  ])('migrates a payload written under %s: %s', (key, value, expected) => {
+    stored.set('d3fend-graph:view-prefs', JSON.stringify({ [key]: value }));
+    const prefs = loadPrefs();
+    expect(prefs.locationView).toBe(expected);
+    expect(prefs.showLocation).toBeUndefined();
+    expect(prefs.locationPins).toBeUndefined();
   });
 
   it('sizes the info panel independently of the graph labels', () => {
@@ -140,7 +145,7 @@ describe('drawnLabel — the location line', () => {
     displayId: 'm1-web',
     location: '📍 Milan',
   };
-  const on = { ...DEFAULT_PREFS, locationPins: true };
+  const on = { ...DEFAULT_PREFS, locationView: 'pins' };
 
   // In both modes: a label reduced to the name is the one that most wants a line
   // saying where that name lives.
@@ -154,10 +159,12 @@ describe('drawnLabel — the location line', () => {
     expect(drawnLabel(data, { ...on, labelDetail: 'name' })).toBe('nginx\n📍 Milan');
   });
 
-  it('drops it in both modes when the preference is off', () => {
-    const off = { ...DEFAULT_PREFS, locationPins: false };
-    expect(drawnLabel(data, { ...off, labelDetail: 'full' })).toBe(data.label);
-    expect(drawnLabel(data, { ...off, labelDetail: 'name' })).toBe('nginx');
+  // `boxes` draws the node inside its place, which says the same thing the line
+  // would — so the line is drawn for `pins` alone.
+  it.each(['off', 'boxes'])('draws no line in the %s view', (locationView) => {
+    const other = { ...DEFAULT_PREFS, locationView };
+    expect(drawnLabel(data, { ...other, labelDetail: 'full' })).toBe(data.label);
+    expect(drawnLabel(data, { ...other, labelDetail: 'name' })).toBe('nginx');
   });
 
   it('changes nothing for a node with no location', () => {
