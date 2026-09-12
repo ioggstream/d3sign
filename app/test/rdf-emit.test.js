@@ -41,17 +41,48 @@ describe('emitQuads — ssh-authentication.md', () => {
 
 });
 
-/** Splits testcases.md into { name, mermaid } per `## section-name` heading. */
+/**
+ * Splits testcases.md into { name, mermaid }, one entry per *independent scenario* —
+ * which is usually, but not always, one per `## section-name` heading.
+ *
+ * A section may hold more than one block, and the two reasons are different.
+ *
+ * Some sections state a rule by contrast: `subgraph-with-property` shows a title that
+ * names a property beside one that does not, and the second block is the whole content
+ * of "Location classes are not special, if no property is specified". Those are two
+ * scenarios and both must run — taking the first match left every such block
+ * unexecuted.
+ *
+ * Others show one scenario *split across* blocks that merge: `merge-diagrams-with-same-id`
+ * writes `id: merge-me` on both, and what it claims is true of the union, not of either
+ * half. Snapshotting the second half alone would record an output the document never
+ * asserts. A block whose `id:` an earlier block in the same section already used is
+ * therefore skipped here; the merge deserves a test of its own, which it does not yet
+ * have.
+ *
+ * The first block of a section keeps the section's own name, later ones are suffixed
+ * `-2`, `-3`, … so the snapshot files already on disk keep their names.
+ */
 function parseTestcaseSections(markdown) {
   const headingRe = /^## (.+)$/gm;
   const headings = [...markdown.matchAll(headingRe)];
-  return headings.map((h, i) => {
+  return headings.flatMap((h, i) => {
     const name = h[1].trim();
     const start = h.index + h[0].length;
     const end = i + 1 < headings.length ? headings[i + 1].index : markdown.length;
     const body = markdown.slice(start, end);
-    const mermaid = /```mermaid\r?\n([\s\S]*?)```/.exec(body)[1];
-    return { name, mermaid };
+    const seenIds = new Set();
+    const scenarios = [];
+    for (const [, mermaid] of body.matchAll(/```mermaid\r?\n([\s\S]*?)```/g)) {
+      const id = /^\s*id:\s*(\S+)\s*$/m.exec(mermaid)?.[1];
+      if (id && seenIds.has(id)) continue; // a continuation of the block before it
+      if (id) seenIds.add(id);
+      scenarios.push({
+        name: scenarios.length === 0 ? name : `${name}-${scenarios.length + 1}`,
+        mermaid,
+      });
+    }
+    return scenarios;
   });
 }
 
@@ -93,6 +124,99 @@ describe('emitQuads — containment as d3f:contains triples', () => {
 
   it('emits no d3f:contains for an untagged subgraph', () => {
     expect(containsQuads('subgraph-ignored-without-tag')).toEqual([]);
+  });
+
+  // A subgraph title naming a property says what the box stands for, and that is
+  // what gets written. d3f:contains must not be written beside it: it is transitive,
+  // so a nested box would compose a containment path nobody stated
+  // (docs/adr/0032-rejected-cytoscape-container-node-by-relation.md).
+  describe('a subgraph naming a property', () => {
+    const quadsOf = (name) => {
+      const section = sections.find((s) => s.name === name);
+      const ast = parseDiagram(section.mermaid);
+      return emitQuads(ast, ast.frontmatter.id || 'default').quads;
+    };
+
+    it('writes no d3f:contains', () => {
+      expect(containsQuads('subgraph-with-property')).toEqual([]);
+    });
+
+    it('writes the named predicate from each member to the container', () => {
+      const located = quadsOf('subgraph-with-property')
+        .filter((q) => q.predicate.value.endsWith('#has-location'))
+        .map((q) => [q.subject.value, q.object.value]);
+      expect(located).toEqual([
+        [nodeIri('webapp'), nodeIri('dc')],
+        [nodeIri('browser'), nodeIri('dc')],
+      ]);
+    });
+
+    // Naming d3f:contains is asking for the default, and it must not be inverted into
+    // `ws-1 d3f:contains dc` — the containment family is stated from the container.
+    it('keeps the container as the subject when the title names d3f:contains', () => {
+      const { quads } = emitQuads(
+        parseDiagram(
+          ['graph', 'subgraph dc [DC d3f:contains d3f:PhysicalLocation]', '  a[A d3f:Host]', 'end'].join('\n'),
+        ),
+        'default',
+      );
+      const contains = quads
+        .filter((q) => q.predicate.value.endsWith('#contains'))
+        .map((q) => [q.subject.value, q.object.value]);
+      expect(contains).toEqual([[nodeIri('dc'), nodeIri('a')]]);
+    });
+
+    // The property token is a predicate, not a type: before the class/property split
+    // in parser/nodeParser.js it was emitted as `G:dc a d3f:has-location`.
+    it('does not type the container with the property', () => {
+      const types = quadsOf('subgraph-with-property')
+        .filter((q) => q.subject.value === nodeIri('dc') && q.predicate.value.endsWith('#type'))
+        .map((q) => q.object.value);
+      expect(types.some((t) => t.endsWith('#has-location'))).toBe(false);
+      expect(types.some((t) => t.endsWith('#PhysicalLocation'))).toBe(true);
+    });
+
+    // "Location classes are not special, if no property is specified" — testcases.md,
+    // beside the second block this reads. Typing a subgraph d3f:PhysicalLocation does
+    // not make its box mean anything but containment; only a property in the title
+    // does, and there is none here.
+    it('falls back to containment for a location class with no property', () => {
+      const quads = quadsOf('subgraph-with-property-2');
+      expect(
+        quads
+          .filter((q) => q.predicate.value.endsWith('#contains'))
+          .map((q) => [q.subject.value, q.object.value]),
+      ).toEqual([
+        [nodeIri('dc'), nodeIri('webapp')],
+        [nodeIri('dc'), nodeIri('browser')],
+      ]);
+      expect(quads.some((q) => q.predicate.value.endsWith('#has-location'))).toBe(false);
+    });
+  });
+
+  // Only the *subgraph-title* route is exclusive: naming a property there replaces
+  // containment. An ordinary edge line is emitted by a separate loop, so a node can
+  // be contained by one thing and state its location about another at the same time.
+  it('lets a nested node state its own location by an edge', () => {
+    const { quads } = emitQuads(
+      parseDiagram(
+        [
+          'graph',
+          'subgraph a [rack d3f:Host]',
+          '  h1[host d3f:Host]',
+          'end',
+          'a -->|d3f:has-location| rm',
+          'rm[Roma d3f:PhysicalLocation]',
+        ].join('\n'),
+      ),
+      'default',
+    );
+    const pairs = (suffix) =>
+      quads
+        .filter((q) => q.predicate.value.endsWith(suffix))
+        .map((q) => [q.subject.value, q.object.value]);
+    expect(pairs('#contains')).toEqual([[nodeIri('a'), nodeIri('h1')]]);
+    expect(pairs('#has-location')).toEqual([[nodeIri('a'), nodeIri('rm')]]);
   });
 
   // An untagged subgraph is presentational padding: it is not an entity, so its

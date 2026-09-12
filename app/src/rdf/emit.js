@@ -116,6 +116,23 @@ export function nodeIri(nodeId) {
 }
 
 /**
+ * The predicates a subgraph title may name that are stated *from the container* —
+ * `dc d3f:contains ws-1`, not `ws-1 d3f:contains dc`. Everything else is written the
+ * other way round, because the member is the subject of the relation that placed it:
+ * `ws-1 d3f:has-location dc`.
+ *
+ * There is no way to derive the direction from the CURIE alone, and the completions
+ * projection does not carry domain and range, so the exception is listed rather than
+ * inferred. It is deliberately the containment family and nothing else — those are
+ * the terms whose whole meaning is "this box holds these", which is what a subgraph
+ * already says by being drawn.
+ *
+ * `d3f:contains` named explicitly is therefore the same emission as naming nothing,
+ * which is the honest reading of writing it: the author asked for the default.
+ */
+const CONTAINER_STATED_PREDICATES = new Set(['d3f:contains', 'd3f:may-contain']);
+
+/**
  * True when an edge label names a predicate a diagram may write — it carries one of
  * TYPING_PREFIXES.
  *
@@ -265,16 +282,36 @@ export function emitQuads(ast, diagramId, { taggedIds = null, provenance = null 
 
   // Containment reaches the graph view as d3f:contains triples, nothing else:
   // the view rebuilds the compound hierarchy from them (rdf/graphModel.js).
+  //
+  // Unless the subgraph title names a property, in which case that is the relation
+  // the box stands for and `d3f:contains` is *not* also written: asserting both would
+  // claim containment the author did not, and `d3f:contains` is transitive, so a
+  // nested box would compose it into a path nobody stated
+  // (docs/adr/0032-rejected-cytoscape-container-node-by-relation.md).
+  //
+  // The named predicate is written from the member's side — `G:webapp
+  // d3f:has-location G:dc` — because that is the direction D3FEND declares it in, and
+  // it is the same shape `ds:partOf` already has. That leaves the pair drawable as a
+  // link today and re-readable as a parent later, should a box ever mean a third
+  // thing: MEMBERSHIP_PREDICATES in rdf/graphModel.js is the seam, and adding an entry
+  // there is the whole change. Nothing is grouped by it for now.
   for (const sg of ast.subgraphs) {
     // isTagged, not sg.classes: a subgraph re-opened without a title in another
     // block of the same document is still the tagged resource (db-replica.md).
     if (!isTagged(sg.id)) continue;
     const children = childrenByParent.get(sg.id) || [];
     if (!children.length) continue;
-    const subject = namedNode(nodeIri(sg.id));
-    const containsPredicate = namedNode(expandCurie('d3f:contains'));
+    const container = namedNode(nodeIri(sg.id));
+    if (sg.predicate && !CONTAINER_STATED_PREDICATES.has(sg.predicate)) {
+      const predicate = namedNode(expandCurie(sg.predicate));
+      for (const childId of children) {
+        quads.push(quad(namedNode(nodeIri(childId)), predicate, container, graph));
+      }
+      continue;
+    }
+    const containsPredicate = namedNode(expandCurie(sg.predicate || 'd3f:contains'));
     for (const childId of children) {
-      quads.push(quad(subject, containsPredicate, namedNode(nodeIri(childId)), graph));
+      quads.push(quad(container, containsPredicate, namedNode(nodeIri(childId)), graph));
     }
   }
 

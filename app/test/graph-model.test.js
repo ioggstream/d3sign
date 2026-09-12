@@ -11,6 +11,7 @@ const { namedNode, quad } = DataFactory;
 const PREAMBLE = `
 @prefix d3f: <http://d3fend.mitre.org/ontologies/d3fend.owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dpv: <https://w3id.org/dpv#> .
 @prefix G: <urn:d3fend-graph:> .
 `;
 
@@ -110,6 +111,103 @@ describe('buildGraphModel — from turtle only', () => {
     const login = events.nodes.get('urn:d3fend-graph:login');
     expect(login.coreCategory).toBe('Event');
     expect(login.nodeKind).toBe('events');
+  });
+
+  // The branch is named PhysicalLocation and the category is named Location, because
+  // DPV's Location family folds onto the same one and a dpv:CloudLocation is not
+  // physical. The node colour and the location *link* colour are then the same value.
+  it('resolves the PhysicalLocation branch to the Location category and bucket', () => {
+    const sites = buildGraphModel(storeFromTurtle('G:dc a d3f:PhysicalLocation .'));
+    const dc = sites.nodes.get('urn:d3fend-graph:dc');
+    expect(dc.coreCategory).toBe('Location');
+    expect(dc.nodeKind).toBe('location');
+  });
+
+  // A diagram states location two ways — an explicit d3f:has-location edge, or
+  // nesting inside a container that is a place — and both resolve to the same word
+  // on the node (docs/adr/0036-location-pins.md).
+  describe('location resolved from the containing site', () => {
+    const located = (turtle) => buildGraphModel(storeFromTurtle(turtle)).nodes;
+    const at = (nodes, id) => nodes.get(`urn:d3fend-graph:${id}`);
+
+    it('reads a place the node names itself, and carries the IRI to absorb', () => {
+      const nodes = located(`
+        G:rm a d3f:PhysicalLocation ; rdfs:label "Roma" .
+        G:a a d3f:Host ; d3f:has-location G:rm .
+      `);
+      expect(at(nodes, 'a').location).toBe('Roma');
+      expect(at(nodes, 'a').locationIri).toBe('urn:d3fend-graph:rm');
+    });
+
+    // The inheritance the pin exists for: a-h1 states nothing, and is in Roma
+    // because the thing containing it said so. No IRI — it has no edge to absorb.
+    it('inherits a place stated by a container that is not itself a place', () => {
+      const nodes = located(`
+        G:rm a d3f:PhysicalLocation ; rdfs:label "Roma" .
+        G:a a d3f:Host ; d3f:has-location G:rm ; d3f:contains G:a-h1 .
+        G:a-h1 a d3f:ApplicationProcess .
+      `);
+      expect(at(nodes, 'a-h1').location).toBe('Roma');
+      expect(at(nodes, 'a-h1').locationIri).toBeUndefined();
+    });
+
+    it('prefers a place the node names over one it is nested in', () => {
+      const nodes = located(`
+        G:milan a d3f:PhysicalLocation ; rdfs:label "Milan" ; d3f:contains G:h .
+        G:rm a d3f:PhysicalLocation ; rdfs:label "Roma" .
+        G:h a d3f:Host ; d3f:has-location G:rm .
+      `);
+      expect(at(nodes, 'h').location).toBe('Roma');
+    });
+
+    // A location link, and deliberately not a place: saying "Roma" here would be a
+    // confident wrong answer, which is worse than the blank it replaces.
+    it('never reads dpv:isOutsideOfLocation as a place', () => {
+      const nodes = located(`
+        G:rm a d3f:PhysicalLocation ; rdfs:label "Roma" .
+        G:a a d3f:Host ; dpv:isOutsideOfLocation G:rm .
+      `);
+      expect(at(nodes, 'a').location).toBeUndefined();
+    });
+
+    it('walks past intermediate containers to the site', () => {
+      const nodes = located(`
+        G:milan a d3f:PhysicalLocation ; rdfs:label "Milan" ; d3f:contains G:m1 .
+        G:m1 a d3f:Host ; d3f:contains G:m1-web .
+        G:m1-web a d3f:ApplicationProcess .
+      `);
+      expect(nodes.get('urn:d3fend-graph:m1-web').location).toBe('Milan');
+      expect(nodes.get('urn:d3fend-graph:m1').location).toBe('Milan');
+    });
+
+    // A logical service has no location; its deployments do (ADR 0034). A blank here
+    // is the model being right, not a gap in it.
+    it('leaves an unlocated node without one', () => {
+      const nodes = located('G:orders a d3f:DatabaseApplication ; rdfs:label "Orders" .');
+      expect(nodes.get('urn:d3fend-graph:orders').location).toBeUndefined();
+    });
+
+    it('does not make a site its own location', () => {
+      const nodes = located('G:milan a d3f:PhysicalLocation ; rdfs:label "Milan" .');
+      expect(nodes.get('urn:d3fend-graph:milan').location).toBeUndefined();
+    });
+
+    it('falls back to the id when the site has no label', () => {
+      const nodes = located(`
+        G:dc a d3f:PhysicalLocation ; d3f:contains G:h .
+        G:h a d3f:Host .
+      `);
+      expect(nodes.get('urn:d3fend-graph:h').location).toBe('dc');
+    });
+
+    // A hand-drawn containment loop is legal mermaid and must not hang the walk.
+    it('terminates on a containment cycle', () => {
+      const nodes = located(`
+        G:a a d3f:Host ; d3f:contains G:b .
+        G:b a d3f:Host ; d3f:contains G:a .
+      `);
+      expect(nodes.get('urn:d3fend-graph:a').location).toBeUndefined();
+    });
   });
 
   it('turns d3f:contains into containment, not into an edge', () => {
@@ -515,6 +613,106 @@ describe('toCytoscapeElements — folding containers', () => {
       const leaf = elements.find((e) => e.data.id === G('leaf'));
       expect(leaf.data.parent).toBe(G('outer'));
     });
+  });
+});
+
+describe('toCytoscapeElements — absorbing location links into pins', () => {
+  const G = (id) => `urn:d3fend-graph:${id}`;
+  const PINS = { locationPins: true };
+
+  const render = (turtle, { viewOptions = PINS, ...options } = {}) => {
+    const model = buildGraphModel(storeFromTurtle(turtle));
+    const { elements } = toCytoscapeElements(
+      model,
+      filterState({ predicates: modelPredicates(model), ...options }),
+      viewOptions,
+    );
+    return {
+      nodes: new Map(elements.filter((e) => !e.data.source).map((e) => [e.data.id, e.data])),
+      edges: elements.filter((e) => e.data.source).map((e) => e.data),
+    };
+  };
+
+  const TWO_SITES = `
+    G:rm a d3f:PhysicalLocation ; rdfs:label "Roma" .
+    G:mi a d3f:PhysicalLocation ; rdfs:label "Milano" .
+    G:a a d3f:Host ; d3f:has-location G:rm ; d3f:contains G:a-h1 .
+    G:b a d3f:Host ; d3f:has-location G:mi ; d3f:contains G:b-h1 .
+    G:a-h1 a d3f:ApplicationProcess .
+    G:b-h1 a d3f:ApplicationProcess .
+  `;
+
+  it('draws the pin and drops both the link and the place', () => {
+    const { nodes, edges } = render(TWO_SITES);
+    expect(nodes.get(G('a')).location).toBe('📍 Roma');
+    expect(nodes.get(G('b')).location).toBe('📍 Milano');
+    expect(edges).toEqual([]);
+    expect(nodes.has(G('rm'))).toBe(false);
+    expect(nodes.has(G('mi'))).toBe(false);
+  });
+
+  it('gives the contained nodes the pin too, without a link of their own', () => {
+    const { nodes } = render(TWO_SITES);
+    expect(nodes.get(G('a-h1')).location).toBe('📍 Roma');
+    expect(nodes.get(G('b-h1')).location).toBe('📍 Milano');
+  });
+
+  it('leaves everything alone with the preference off', () => {
+    const { nodes, edges } = render(TWO_SITES, { viewOptions: {} });
+    expect(edges.map((e) => [e.source, e.target])).toEqual([
+      [G('a'), G('rm')],
+      [G('b'), G('mi')],
+    ]);
+    expect(nodes.has(G('rm'))).toBe(true);
+    // The pin is still on the data — `drawnLabel` is what decides to draw it.
+    expect(nodes.get(G('a')).location).toBe('📍 Roma');
+  });
+
+  // The filter is authoritative: a view transform may not overrule it.
+  it('leaves everything alone when the location kind is hidden', () => {
+    const { nodes, edges } = render(TWO_SITES, {
+      kinds: LINK_KINDS.filter((k) => k !== 'location'),
+    });
+    expect(edges).toEqual([]);
+    expect(nodes.has(G('rm'))).toBe(true);
+  });
+
+  // A place with contents is a box, and a box with contents is not redundant with
+  // a pin — this is what protects the nesting convention.
+  it('keeps a place that contains something', () => {
+    const { nodes, edges } = render(`
+      G:rm a d3f:PhysicalLocation ; rdfs:label "Roma" ; d3f:contains G:h2 .
+      G:h2 a d3f:Host .
+      G:a a d3f:Host ; d3f:has-location G:rm .
+    `);
+    expect(nodes.get(G('a')).location).toBe('📍 Roma');
+    expect(nodes.has(G('rm'))).toBe(true);
+    expect(edges).toEqual([]);
+  });
+
+  // Absorbing and dropping are separate decisions: the link goes whatever happens
+  // at the far end, so a pin means one thing everywhere in the drawing.
+  it('keeps a place with a link of its own, and still absorbs the location link', () => {
+    const { nodes, edges } = render(`
+      G:rm a d3f:PhysicalLocation ; rdfs:label "Roma" .
+      G:net a d3f:Network ; d3f:connected-to G:rm .
+      G:a a d3f:Host ; d3f:has-location G:rm .
+    `);
+    expect(nodes.has(G('rm'))).toBe(true);
+    expect(edges.map((e) => e.predicate)).toEqual(['d3f:connected-to']);
+    expect(nodes.get(G('a')).location).toBe('📍 Roma');
+  });
+
+  // A location link the model refuses to read as a place has no pin standing in
+  // for it, so removing it would lose the fact outright.
+  it('does not absorb dpv:isOutsideOfLocation', () => {
+    const { nodes, edges } = render(`
+      G:rm a d3f:PhysicalLocation ; rdfs:label "Roma" .
+      G:a a d3f:Host ; dpv:isOutsideOfLocation G:rm .
+    `);
+    expect(edges.map((e) => e.predicate)).toEqual(['dpv:isOutsideOfLocation']);
+    expect(nodes.has(G('rm'))).toBe(true);
+    expect(nodes.get(G('a')).location).toBeUndefined();
   });
 });
 

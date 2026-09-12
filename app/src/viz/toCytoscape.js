@@ -109,6 +109,56 @@ function effectKeys(effect, end, bidirectional) {
  * an assertion nobody made, and not null, which would make every collapsed edge
  * between one pair of nodes indistinguishable to `reselectEdge`.
  */
+/**
+ * Replaces location links with the 📍 already on each node's label
+ * (docs/adr/0036-location-pins.md).
+ *
+ * Two decisions, deliberately kept apart. **Every** location link is absorbed, with
+ * no condition on the far end, so a pin means exactly the same thing everywhere in
+ * the drawing; absorbing only some of them would draw one predicate two ways in one
+ * diagram, depending on a property of the far end that the reader cannot see.
+ *
+ * Whether the *place* is then drawn is decided separately, and refuses unless all
+ * three hold: nothing else points at it or from it, it has no visible children, and
+ * at least one pin that replaced one of its links is actually drawn. A place with
+ * contents is a box, and a box with contents is not redundant with a pin; a place
+ * with a link of its own is still saying something only that link can say.
+ *
+ * Returns `{ edges, places }` — the surviving edge list, and the place IRIs the
+ * caller must not draw.
+ */
+function absorbLocationLinks(visibleEdges, { visibleNodes, containment, locatedNodes }) {
+  const absorbedInto = new Map(); // place iri -> whether a drawn pin replaced a link
+  const kept = [];
+  for (const edge of visibleEdges) {
+    // `locatedNodes` is the set whose label actually carries a pin. An edge whose
+    // source has no pin is not replaced by anything, so removing it would lose the
+    // fact outright — `dpv:isOutsideOfLocation` is the case that matters, since it
+    // is a location link the model deliberately refuses to read as a place.
+    if (edge.kind !== 'location' || !locatedNodes.has(edge.from)) {
+      kept.push(edge);
+      continue;
+    }
+    absorbedInto.set(edge.to, true);
+  }
+
+  // A second look at what is left, because a place is kept by any *surviving* link —
+  // including one absorbed from a different place's perspective.
+  const stillLinked = new Set();
+  for (const edge of kept) {
+    stillLinked.add(edge.from);
+    stillLinked.add(edge.to);
+  }
+
+  const places = new Set();
+  for (const [iri, replaced] of absorbedInto) {
+    if (!replaced || stillLinked.has(iri)) continue;
+    if (containment.get(iri)?.some((child) => visibleNodes.has(child))) continue;
+    places.add(iri);
+  }
+  return { edges: kept, places };
+}
+
 function collapseArtifactPaths(visibleEdges, { visibleNodes, containment, representativeOf }) {
   // Which links each node could be an endpoint of, in the role the *written*
   // predicate gives it. `other` counts every incident link that is not a leg of
@@ -303,6 +353,26 @@ export function toCytoscapeElements(model, filterState, viewOptions = {}) {
     effectiveEdges = collapse.edges;
   }
 
+  // 3¾. Absorb location links into the pins already on the nodes. Gated on the
+  //      `location` kind for the same reason the collapse is gated on `data-flow`:
+  //      a filter a view transform can overrule is not a filter, so unticking the
+  //      chip leaves the links and the places exactly as they were.
+  const absorbedPlaces = new Set();
+  if (viewOptions.locationPins && visibleKinds.has('location')) {
+    const absorb = absorbLocationLinks(effectiveEdges, {
+      visibleNodes,
+      containment,
+      locatedNodes: new Set(
+        [...visibleNodes].filter(([, node]) => node.locationIri).map(([iri]) => iri),
+      ),
+    });
+    for (const iri of absorb.places) absorbedPlaces.add(iri);
+    effectiveEdges = absorb.edges;
+  }
+
+  /** True for a node absorbed into some other node's label, by either transform. */
+  const absorbed = (iri) => collapsedPayloads.has(iri) || absorbedPlaces.has(iri);
+
   /**
    * True for a node that still has a child left *on screen* — which a collapsed
    * payload is not. Distinct from `hasVisibleChild`: that one decides which folds
@@ -312,7 +382,7 @@ export function toCytoscapeElements(model, filterState, viewOptions = {}) {
    */
   const hasDrawnChild = (iri) =>
     Boolean(
-      containment.get(iri)?.some((child) => visibleNodes.has(child) && !collapsedPayloads.has(child)),
+      containment.get(iri)?.some((child) => visibleNodes.has(child) && !absorbed(child)),
     );
 
   // 3a. Re-anchor each edge onto the nodes actually drawn, and drop the ones that
@@ -485,8 +555,9 @@ export function toCytoscapeElements(model, filterState, viewOptions = {}) {
   for (const [iri, node] of visibleNodes) {
     // Drawn by a folded ancestor instead.
     if (representativeOf(iri) !== iri) continue;
-    // Drawn as the label on the arrow that replaced it.
-    if (collapsedPayloads.has(iri)) continue;
+    // Drawn as the label on the arrow that replaced it, or as the 📍 on the nodes
+    // that named it.
+    if (absorbed(iri)) continue;
 
     const folded = foldRoots.has(iri);
     // The label goes out in parts as well as stacked, because *how much of it is
@@ -515,6 +586,14 @@ export function toCytoscapeElements(model, filterState, viewOptions = {}) {
     // set is keyed on. Resolving it to an icon is the stylesheet's job
     // (viz/graphStyle.js) — this module stays a pure view of the RDF.
     if (node.rdfType?.startsWith('d3f:')) data.typeName = node.rdfType.slice('d3f:'.length);
+    // Where the node sits, resolved in rdf/graphModel.js from its own location edge
+    // or from the place containing it. The 📍 is composed here, the way `foldNote`
+    // composes its ▸ — the stylesheet draws labels and never decorates them.
+    //
+    // Kept out of the stacked `label` above on purpose: that is the node's identity,
+    // and a location is context around it. `label` staying the whole truth is what
+    // lets `drawnLabel` decide whether to draw the pin at all.
+    if (node.location) data.location = `📍 ${node.location}`;
     // Whose plan this is, for `nodeColor` in viz/graphStyle.js — an attack is red
     // whatever branch it sits on. Set only when true, like `folded` and `foldable`.
     if (node.offensive) data.offensive = true;
