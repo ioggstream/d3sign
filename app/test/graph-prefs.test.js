@@ -18,6 +18,7 @@ let containerIconSize;
 let containerLabelBand;
 let containerLabelOffsetX;
 let CONTAINER_INSET;
+let drawnLabel;
 
 beforeAll(async () => {
   ({
@@ -30,6 +31,7 @@ beforeAll(async () => {
     containerLabelBand,
     containerLabelOffsetX,
     CONTAINER_INSET,
+    drawnLabel,
   } = await import('../src/viz/graphPrefs.js'));
 });
 
@@ -58,6 +60,28 @@ describe('view preferences', () => {
     // unlike the filters there is no vocabulary to record.
     stored.set('d3fend-graph:view-prefs', JSON.stringify({ nodeStyle: 'icon' }));
     expect(loadPrefs().collapseArtifactPaths).toBe(false);
+  });
+
+  it('leaves location pins off by default', () => {
+    // It removes the location links and sometimes the place they pointed at, so it
+    // is in the same class as the two above: a diagram is first seen as its triples
+    // describe it (docs/adr/0036-location-pins.md).
+    expect(DEFAULT_PREFS.locationPins).toBe(false);
+    stored.set('d3fend-graph:view-prefs', JSON.stringify({ nodeStyle: 'icon' }));
+    expect(loadPrefs().locationPins).toBe(false);
+    savePrefs({ ...DEFAULT_PREFS, locationPins: true });
+    expect(loadPrefs().locationPins).toBe(true);
+  });
+
+  it('carries a payload written under the old showLocation key onto locationPins', () => {
+    // The key was renamed when the pin started replacing the link rather than just
+    // annotating the node. The intent is the same, so it is migrated, not dropped.
+    stored.set('d3fend-graph:view-prefs', JSON.stringify({ showLocation: true }));
+    expect(loadPrefs().locationPins).toBe(true);
+    expect(loadPrefs().showLocation).toBeUndefined();
+
+    stored.set('d3fend-graph:view-prefs', JSON.stringify({ showLocation: false }));
+    expect(loadPrefs().locationPins).toBe(false);
   });
 
   it('sizes the info panel independently of the graph labels', () => {
@@ -104,6 +128,48 @@ describe('view preferences', () => {
     // inert — but they must not disturb the keys the stylesheet does read.
     const prefs = normalizePrefs({ theme: 'dark' });
     expect(prefs).toMatchObject(DEFAULT_PREFS);
+  });
+});
+
+describe('drawnLabel — the location line', () => {
+  // Already pinned: viz/toCytoscape.js composes the 📍 the way it composes the ▸,
+  // so this module joins lines and knows nothing about the marker.
+  const data = {
+    label: 'm1-web\nnginx\nd3f:ApplicationProcess',
+    name: 'nginx',
+    displayId: 'm1-web',
+    location: '📍 Milan',
+  };
+  const on = { ...DEFAULT_PREFS, locationPins: true };
+
+  // In both modes: a label reduced to the name is the one that most wants a line
+  // saying where that name lives.
+  it('appends the location under the identity in full mode', () => {
+    expect(drawnLabel(data, { ...on, labelDetail: 'full' })).toBe(
+      'm1-web\nnginx\nd3f:ApplicationProcess\n📍 Milan',
+    );
+  });
+
+  it('appends it in name mode too', () => {
+    expect(drawnLabel(data, { ...on, labelDetail: 'name' })).toBe('nginx\n📍 Milan');
+  });
+
+  it('drops it in both modes when the preference is off', () => {
+    const off = { ...DEFAULT_PREFS, locationPins: false };
+    expect(drawnLabel(data, { ...off, labelDetail: 'full' })).toBe(data.label);
+    expect(drawnLabel(data, { ...off, labelDetail: 'name' })).toBe('nginx');
+  });
+
+  it('changes nothing for a node with no location', () => {
+    const { location, ...unlocated } = data;
+    expect(drawnLabel(unlocated, on)).toBe(data.label);
+  });
+
+  // The fold note reports what the drawing is hiding, so it stays last.
+  it('keeps the fold note after the location in name mode', () => {
+    expect(drawnLabel({ ...data, foldNote: '▸ 3 nodes' }, { ...on, labelDetail: 'name' })).toBe(
+      'nginx\n📍 Milan\n▸ 3 nodes',
+    );
   });
 });
 

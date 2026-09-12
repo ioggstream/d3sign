@@ -37,6 +37,8 @@ const LAYOUT_AFFECTING = [
   'containerPadding',
   // Two fewer lines on every node is two fewer lines of room a container needs.
   'labelDetail',
+  // And one more line on every located node is one more, for the same reason.
+  'locationPins',
 ];
 const PATH_FOCUS_DIRECTIONS = new Set(['outgoing', 'incoming']);
 const PATH_FOCUS_DIM_CLASS = 'path-focus-dim';
@@ -708,6 +710,7 @@ export function createGraphPane(host, {
       const { elements, stats } = toCytoscapeElements(model, filterState, {
         collapseArtifactPaths: prefs.collapseArtifactPaths,
         orientByFlow: prefs.orientByFlow,
+        locationPins: prefs.locationPins,
       });
       // A node removed under the pointer never fires `mouseout`, so its cursor
       // would stick — and folding rebuilds the graph from under the pointer every

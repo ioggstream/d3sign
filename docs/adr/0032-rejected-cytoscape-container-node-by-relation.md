@@ -214,6 +214,17 @@ Notes for LLM agents. They describe the code as it is, not
 the decision, and go stale: check the code before trusting
 them.
 
+- A subgraph whose title names a property writes that
+  predicate from each member instead of `d3f:contains`
+  ([ADR 0034](0034-platform-topology-and-location.md)),
+  and the box is then *not* drawn as a container — the
+  members get arrows, which is what this ADR decided. So
+  the two decisions agree: nothing is grouped by a
+  non-transitive relation. Should that ever be wanted,
+  the seam is `MEMBERSHIP_PREDICATES` in
+  [rdf/graphModel.js](../../app/src/rdf/graphModel.js) —
+  the same member-stated shape `ds:partOf` already has —
+  and it supersedes this ADR rather than amending it.
 - The single-parent rule is `parentOf` in
   [rdf/graphModel.js](../../app/src/rdf/graphModel.js) —
   `if (!parentOf.has(...)) parentOf.set(...)`, commented

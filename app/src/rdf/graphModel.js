@@ -58,7 +58,23 @@ export const MEMBERSHIP_PREDICATES = new Set([PROVENANCE.partOf]);
  */
 const HIDDEN_PREDICATES = new Set([PROVENANCE.instantiates]);
 
-const CORE_CATEGORY_PRIORITY = ['Agent', 'Goal', 'Plan', 'Artifact', 'Event'];
+const CORE_CATEGORY_PRIORITY = ['Agent', 'Goal', 'Plan', 'Artifact', 'Event', 'PhysicalLocation'];
+
+/**
+ * D3FEND branch name → core category, for the branches whose category is not simply
+ * their own name. Only one entry: `d3f:PhysicalLocation` and DPV's Location family
+ * are the same thing to a reader, so they share the category `Location` and with it
+ * one colour and one Nodes bucket. Calling it `PhysicalLocation` would read as a
+ * contradiction on a `dpv:CloudLocation` node, which is a location and not physical.
+ *
+ * PhysicalLocation is last in the priority list: it is a place, and a node that is
+ * also an Artifact or an Agent is better drawn as the thing than as where it sits.
+ * The class has no subclasses in D3FEND (d3f:PhysicalLocation is a direct child of
+ * d3f:D3FENDCore), so the rank decides nothing today.
+ */
+const CATEGORY_BY_D3FEND_BRANCH = {
+  PhysicalLocation: 'Location',
+};
 
 /**
  * This app's own namespaces, as opposed to the vocabularies: the document
@@ -123,15 +139,22 @@ const CATEGORY_BY_DPV_FAMILY = {
   LegalBasis: 'LegalBasis',
   Purpose: 'Purpose',
   Process: 'Process',
+  // Folds onto the same category as d3f:PhysicalLocation rather than getting a
+  // second colour, exactly as Entity and Data fold onto Agent and Artifact: a place
+  // is a place whichever vocabulary named it.
+  Location: 'Location',
 };
 
 /**
  * Highest-priority category among a node's classes: a D3FENDCore top-level branch
- * (Agent > Goal > Plan > Artifact > Event) per d3fend-categories.json, or the category
- * a DPV family maps to per legal-categories.json.
+ * (Agent > Goal > Plan > Artifact > Event > PhysicalLocation) per
+ * d3fend-categories.json, or the category a DPV family maps to per
+ * legal-categories.json. A branch whose category is not its own name is remapped
+ * through CATEGORY_BY_D3FEND_BRANCH.
  *
- * Event comes last only for tidiness: no class in d3fend-categories.json reaches both
- * the Event branch and another one, so its rank never decides anything today.
+ * Event and PhysicalLocation come last only for tidiness: no class in
+ * d3fend-categories.json reaches either branch and another one, so their rank never
+ * decides anything today.
  *
  * Null for a node whose classes fall outside both tables (e.g. d3f:Vulnerability,
  * d3f:Weakness, an unprojected DPV term) — those keep the default node style.
@@ -147,11 +170,92 @@ function coreCategoryOf(typeIris) {
     for (const branch of d3fendCategories[iri.slice(PREFIXES.d3f.length)] || []) branches.add(branch);
   }
   const d3fendBranch = CORE_CATEGORY_PRIORITY.find((branch) => branches.has(branch));
-  if (d3fendBranch) return d3fendBranch;
+  if (d3fendBranch) return CATEGORY_BY_D3FEND_BRANCH[d3fendBranch] ?? d3fendBranch;
 
   for (const iri of typeIris) {
     const family = legalCategories[shortLabel(iri)];
     if (family) return CATEGORY_BY_DPV_FAMILY[family] ?? null;
+  }
+  return null;
+}
+
+/**
+ * The predicate that says a thing is *not* somewhere. It is a location link and
+ * classifies as one, so it is coloured and filtered with the others — but reading it
+ * as a place would put a confident wrong answer on a node, which is worse than the
+ * blank it replaces (docs/adr/0036-location-pins.md).
+ */
+const NEGATED_LOCATION_PREDICATE = 'dpv:isOutsideOfLocation';
+
+/**
+ * Each node's own location target, from the edges that state one.
+ *
+ * Keyed on the edge's `kind` rather than on the predicate, so this stays one more
+ * consumer of the classification in rdf/linkKind.js instead of a second list of
+ * names to keep in step. The one predicate named outright is the negated one, and
+ * it is named here rather than in the view: `viz/` may not know a vocabulary.
+ *
+ * First edge wins, like `parentOf` does. A node stating two places is drawing
+ * something this reading cannot express, and picking one is better than picking
+ * both.
+ */
+function locationEdgeTargets(edges) {
+  const targets = new Map();
+  for (const edge of edges) {
+    if (edge.kind !== 'location') continue;
+    if (edge.predicate === NEGATED_LOCATION_PREDICATE) continue;
+    if (!targets.has(edge.from)) targets.set(edge.from, edge.to);
+  }
+  return targets;
+}
+
+/**
+ * Where a node sits — the place it names, or the place it is in.
+ *
+ * A diagram states location two ways: an explicit `d3f:has-location` edge, or
+ * nesting inside a container that *is* a place. Both mean the same thing to a
+ * reader, so both resolve here to the same word, drawn on the node itself
+ * (`drawnLabel` in viz/graphPrefs.js). See docs/adr/0036-location-pins.md.
+ *
+ * One walk, starting at the node and climbing `parentOf`:
+ *
+ * 1. the place this node's own location edge names, at every hop — which is what
+ *    makes a host inherit the place its rack stated;
+ * 2. failing that, an *ancestor* that is itself a place.
+ *
+ * Step 2 is skipped for the node itself, because a place is not located in itself.
+ * The test is `coreCategory === 'Location'`, which covers `d3f:PhysicalLocation` and
+ * DPV's Location family without naming either.
+ *
+ * Returns `{ label, iri }`, where `iri` is set **only** when the location came from
+ * an edge on the node itself: that is the edge the view may absorb, and an inherited
+ * location has none. Null for a node with no location at all, which is a correct
+ * answer — a logical service has no place, only its deployments do.
+ *
+ * Two limits, neither fixed here. `parentOf` is first-parent-wins ("cytoscape
+ * compound nodes are a tree, not a DAG"), so a node contained by both a rack and a
+ * site reports whichever quad the store returned first. And containment is resolved
+ * within the union of the visible graphs, so a platform split across diagrams
+ * reports a location only where the nesting is drawn.
+ */
+function locationOf(iri, nodes, parentOf, locationTargets) {
+  const seen = new Set(); // a hand-drawn d3f:contains loop must terminate
+  let current = iri;
+  while (current && !seen.has(current)) {
+    seen.add(current);
+    const stated = locationTargets.get(current);
+    if (stated) {
+      const place = nodes.get(stated);
+      const label = place ? place.label || place.id : null;
+      // The IRI only when the node itself stated it — `a-h1` inheriting `:a`'s
+      // place has no edge of its own for the view to absorb.
+      return label && { label, iri: current === iri ? stated : null };
+    }
+    if (current !== iri) {
+      const node = nodes.get(current);
+      if (node?.coreCategory === 'Location') return { label: node.label || node.id, iri: null };
+    }
+    current = parentOf.get(current);
   }
   return null;
 }
@@ -299,6 +403,16 @@ export function buildGraphModel(store) {
     node.coreCategory = coreCategoryOf(node.types);
     node.nodeKind = classifyNodeCategory(node.coreCategory);
     node.offensive = isOffensive(node.types);
+  }
+
+  // A second pass, because the walk reads the `coreCategory` the first one assigns.
+  const locationTargets = locationEdgeTargets(edges);
+  for (const node of nodes.values()) {
+    const location = locationOf(node.iri, nodes, parentOf, locationTargets);
+    if (!location) continue;
+    node.location = location.label;
+    // Only when the node stated it itself: this is the edge the view may absorb.
+    if (location.iri) node.locationIri = location.iri;
   }
 
   return { nodes, edges, containment, parentOf };

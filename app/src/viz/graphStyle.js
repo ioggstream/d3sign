@@ -35,6 +35,7 @@ export const CATEGORY_COLORS = {
   Event: '#f59f00',
   Measure: '#0c8599',
   LegalBasis: '#5f3dc4',
+  Location: '#e76793',
   Purpose: '#9c6644',
   Process: '#495057',
 };
@@ -61,11 +62,23 @@ const OFFENSIVE_COLOR = '#e03131';
 const TACTICAL_VERB_COLOR = CATEGORY_COLORS.Plan;
 
 /**
+ * Colour of a location link (`d3f:has-location`, `dpv:hasLocation`, … — the bucket
+ * `rdf/linkKind.js` classifies). Deliberately the same pink as the Location branch,
+ * the way TACTICAL_VERB_COLOR is the Plan green: the arrow into a site and the site
+ * itself are one idea, so a reader who has learned the box has learned the arrow.
+ *
+ * Pink because everything nearer to hand is already spoken for — the Plan green, the
+ * offensive red, the selection blue and the path-focus teals — and a location link
+ * must not be misread as an adversary's, which is why it sits this far from `#e03131`.
+ */
+const LOCATION_COLOR = CATEGORY_COLORS.Location;
+
+/**
  * The one colour selection is said in, for both kinds of element. Nodes and edges
  * express it differently — a border, a halo — but a user should not have to learn
  * that twice, so at least the colour is shared.
  */
-const SELECTION_COLOR = '#1c7ed6';
+const SELECTION_COLOR = '#ff0000';
 const PATH_FOCUS_NODE_COLOR = '#0b7285';
 const PATH_FOCUS_EDGE_COLOR = '#0c8599';
 
@@ -484,15 +497,25 @@ export function buildStyle(prefs, iconSet = null) {
 
   // The link kind rides on every edge from toCytoscape.js, so a tactical verb is
   // recognisable without reading its label — which the edge-label preference may
-  // well have turned off. Only this kind is coloured: the point is to tell the
-  // defensive action apart from the flows and the topology, not to paint five
-  // buckets nobody can hold in their head.
+  // well have turned off. Two kinds are coloured and the rest keep the neutral grey:
+  // the defensive action, and where a component sits. Both are things a reader looks
+  // for before reading any label. Painting all six buckets is still more than anyone
+  // can hold in their head, and the legend already names them.
   style.push({
     selector: 'edge[kind="tactical-verb"]',
     style: {
       'line-color': TACTICAL_VERB_COLOR,
       'target-arrow-color': TACTICAL_VERB_COLOR,
       'source-arrow-color': TACTICAL_VERB_COLOR,
+    },
+  });
+
+  style.push({
+    selector: 'edge[kind="location"]',
+    style: {
+      'line-color': LOCATION_COLOR,
+      'target-arrow-color': LOCATION_COLOR,
+      'source-arrow-color': LOCATION_COLOR,
     },
   });
 

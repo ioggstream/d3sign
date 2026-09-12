@@ -18,7 +18,9 @@ since links may represent different kinds of relationships:
   with object y such that communication is *possible*
   between them without intermediate routing): A d3f:connected-to B, etc.
 - tactical-verb: A d3f:hardens B, A d3f:detects B, etc.
-- other: A d3f:has-location B, etc.
+- location (i.e., where a component sits; neither flow traverses
+  it): A d3f:has-location B, A dpv:hasLocation B, etc.
+- other: A d3f:related B, A d3f:connects B, etc.
 
 Note: d3f:connected-to is a direct subproperty of d3f:associated-with, sibling of both d3f:accesses (the data-flow root) and d3f:controls, so it is neither flow. It is a third kind of relationship that is neither data nor control flow.
 
@@ -29,15 +31,26 @@ Note: d3f:connected-to is a direct subproperty of d3f:associated-with, sibling o
   - control flow (d3f:authenticates, d3f:authorizes, d3f:controls, d3f:runs, etc.)
   - connectivity (d3f:connected-to): a link exists; nothing is asserted to cross it
   - d3f:d3fend-tactical-verb-property (ex. d3f:hardens, d3f:detects, ...)
+  - location (d3f:has-location, dpv:hasLocation,
+    dpv:isOutsideOfLocation): where a component sits
   - other (all other relationships)
 - [x] The UI shows a legend for the link classification, so user can toggle the visibility of each kind of link.
-- [x] Only tactical-verb links are styled by kind: they
-  are drawn green, arrowhead included, so a defensive
-  action is told apart from the flows and the topology
-  even with edge labels turned off. The other kinds
-  share the neutral grey — five coloured buckets are
-  more than a reader can hold in their head, and the
-  legend already names them.
+- [x] **Two kinds are styled by kind, and no more.**
+  Tactical-verb links are drawn green, arrowhead
+  included, so a defensive action is told apart from the
+  flows and the topology even with edge labels turned
+  off. Location links are drawn in the Location node
+  colour, so the arrow into a site and the site itself
+  read as one idea. The remaining kinds share the neutral
+  grey — painting all six is more than a reader can hold
+  in their head, and the legend already names them.
+- [x] **A coloured kind must answer a question a reader
+  asks before reading any label**, which is what these
+  two have in common: whose side is this action on, and
+  where does this component sit. That is the bar for a
+  third, and it is deliberately high — the budget is
+  spent, and this bullet amends the original "only
+  tactical-verb" decision rather than widening it again.
 - [x] Data flow and control flow take precedence over
   the tactical-verb bucket for the predicates that are
   both, `d3f:authenticates` among them.
@@ -92,6 +105,18 @@ before trusting them.
   `toCytoscape.js` already puts on every edge. It reuses
   the Plan branch colour, so the edge reads as belonging
   with the countermeasure it comes from.
+- The location colour is the `edge[kind="location"]` rule
+  beside it, reusing `CATEGORY_COLORS.Location` the same
+  way. That category is where both
+  `d3f:PhysicalLocation` and DPV's Location family land —
+  `CATEGORY_BY_D3FEND_BRANCH` and
+  `CATEGORY_BY_DPV_FAMILY` in `app/src/rdf/graphModel.js`
+  — so the node and the link cannot drift apart.
+- The predicate set is `LOCATION_PREDICATES` in
+  `app/src/rdf/linkKind.js`. Its DPV members are checked
+  against `legal-completions.json` by
+  `link-kind.test.js`, which is what keeps an invented
+  name like `dpv:hasDeploymentLocation` out.
 - The self-inverse entry for `d3f:connected-to` is in
   `app/src/rdf/inverse-map.json`.
 - Vocabulary migration: `saveFilterState` records

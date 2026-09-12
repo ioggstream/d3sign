@@ -12,6 +12,8 @@
  * the panel's sliders and the loader's clamping cannot drift apart.
  */
 
+import { DEFAULT_PREFS } from '../config/viewDefaults.js';
+
 const STORAGE_KEY = 'd3fend-graph:view-prefs';
 
 /** `[min, max]` per numeric preference; the panel renders its sliders from this. */
@@ -34,37 +36,9 @@ export const NODE_STYLES = ['color', 'icon'];
  */
 export const LABEL_DETAILS = ['full', 'name'];
 
-export const DEFAULT_PREFS = {
-  nodeStyle: 'color',
-  // Defaults to the whole stack — id, rdfs:label, rdf:type — because that is what
-  // the drawing has always said. `name` draws the label alone and moves the id and
-  // the type to the hover tooltip.
-  labelDetail: 'full',
-  nodeSpacing: 60,
-  nodeSize: 30,
-  fontSize: 10,
-  // Extra room inside a container, *added* to what its own label needs rather
-  // than replacing it: at 0 a container is as tight as its label allows, which is
-  // the rendering to compare any complaint against.
-  containerPadding: 0,
-  // The info panel's text, which is HTML rather than a cytoscape label and so has
-  // nothing to do with `fontSize`: the panel has to stay readable at a font size
-  // that would crowd the drawing. 13px is the previous fixed --fs-md.
-  panelFontSize: 13,
-  // The three CodeMirror panes, which used to disagree: the source editor took the
-  // 16px document default and the TriG and SPARQL panes a fixed --fs-sm (12px).
-  // One size for all three, between the two.
-  editorFontSize: 13,
-  edgeLabels: true,
-  // The one preference that changes *which* elements exist rather than how they
-  // are drawn, so it defaults off: a diagram must first be seen as the TriG
-  // describes it (docs/adr/0026-collapse-artifact-mediated-paths.md).
-  collapseArtifactPaths: false,
-  // The second one, and off for the same reason: it changes what the arrows say,
-  // and a diagram has to be readable as the TriG describes it before it is
-  // reoriented (docs/adr/0035-improve-flow-discovery.md).
-  orientByFlow: false,
-};
+// Re-exported so every existing caller keeps importing preferences from one place,
+// while the values themselves stay editable without reading this file's logic.
+export { DEFAULT_PREFS };
 
 function clamp(value, [min, max], fallback) {
   const n = Number(value);
@@ -81,6 +55,17 @@ export function normalizePrefs(prefs) {
   if (!NODE_STYLES.includes(merged.nodeStyle)) merged.nodeStyle = DEFAULT_PREFS.nodeStyle;
   if (!LABEL_DETAILS.includes(merged.labelDetail)) merged.labelDetail = DEFAULT_PREFS.labelDetail;
   merged.edgeLabels = Boolean(merged.edgeLabels);
+  // `showLocation` was the key while the location was only a label and the edges
+  // were still drawn. It became `locationPins` when the pin started replacing the
+  // edge (docs/adr/0036-location-pins.md); a payload holding the old key means the
+  // same intent, so it is carried over rather than discarded.
+  //
+  // Read off `prefs`, not off `merged`: the defaults have already filled
+  // `locationPins` in by the time they are merged, so `merged` can never tell a
+  // saved value from an absent one.
+  const renamed = prefs?.locationPins === undefined ? prefs?.showLocation : undefined;
+  merged.locationPins = Boolean(renamed ?? merged.locationPins);
+  delete merged.showLocation;
   // A payload written before this key existed loads as false, which is also the
   // default — so unlike the filters, where an absent entry means "hidden", there is
   // no vocabulary to record.
@@ -162,8 +147,15 @@ export const CONTAINER_INSET = 8;
  * would leave its box and the room reserved around it disagreeing.
  */
 export function drawnLabel(data, prefs) {
-  if (prefs.labelDetail !== 'name') return data.label ?? '';
-  return [data.name || data.displayId, data.foldNote].filter(Boolean).join('\n');
+  // In both modes, because a label reduced to the name is the one that most wants a
+  // line saying where that name lives. Last, so it reads as context under the
+  // identity rather than as part of it. Already carries its 📍 from
+  // viz/toCytoscape.js, the way `foldNote` carries its ▸.
+  const location = prefs.locationPins ? data.location : null;
+  if (prefs.labelDetail !== 'name') {
+    return [data.label, location].filter(Boolean).join('\n');
+  }
+  return [data.name || data.displayId, location, data.foldNote].filter(Boolean).join('\n');
 }
 
 /** Past this many characters a predicate name is broken at its hyphens. */
