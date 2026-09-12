@@ -249,29 +249,43 @@ describe('a folded container', () => {
   });
 });
 
-describe('tactical-verb edges', () => {
+describe('kind-coloured edges', () => {
   const style = buildStyle(DEFAULT_PREFS);
+  const COLOURED_KINDS = ['tactical-verb', 'location'];
   const tactical = ruleFor(style, 'edge[kind="tactical-verb"]').style;
+  const location = ruleFor(style, 'edge[kind="location"]').style;
 
-  it('draws them green, arrowhead included', () => {
+  it('draws a tactical verb green, arrowhead included', () => {
     expect(tactical['line-color']).toBe(CATEGORY_COLORS.Plan);
     expect(tactical['target-arrow-color']).toBe(CATEGORY_COLORS.Plan);
     // Both heads, so a two-way tactical link is not green with a grey tail.
     expect(tactical['source-arrow-color']).toBe(CATEGORY_COLORS.Plan);
   });
 
+  it('gives a location link a colour of its own, arrowhead included', () => {
+    const colour = location['line-color'];
+    expect(colour).toBeTruthy();
+    expect(location['target-arrow-color']).toBe(colour);
+    expect(location['source-arrow-color']).toBe(colour);
+    // Not the tactical green, and not the offensive red it would be misread as.
+    expect(colour).not.toBe(CATEGORY_COLORS.Plan);
+    expect(colour).not.toBe(ruleFor(style, 'edge').style['line-color']);
+  });
+
   it('leaves every other kind on the base edge colour', () => {
     const base = ruleFor(style, 'edge').style;
     expect(base['line-color']).not.toBe(CATEGORY_COLORS.Plan);
-    for (const kind of LINK_KINDS.filter((k) => k !== 'tactical-verb')) {
+    for (const kind of LINK_KINDS.filter((k) => !COLOURED_KINDS.includes(k))) {
       expect(ruleFor(style, `edge[kind="${kind}"]`)).toBeUndefined();
     }
   });
 
   it('is stated after the base edge rule, which cytoscape needs to let it win', () => {
-    expect(style.indexOf(ruleFor(style, 'edge[kind="tactical-verb"]'))).toBeGreaterThan(
-      style.indexOf(ruleFor(style, 'edge')),
-    );
+    for (const kind of COLOURED_KINDS) {
+      expect(style.indexOf(ruleFor(style, `edge[kind="${kind}"]`))).toBeGreaterThan(
+        style.indexOf(ruleFor(style, 'edge')),
+      );
+    }
   });
 });
 

@@ -6,7 +6,12 @@ import { parseDiagram } from '../src/parser/index.js';
 import { emitQuads } from '../src/rdf/emit.js';
 import { GraphStore } from '../src/rdf/store.js';
 import { buildGraphModel } from '../src/rdf/graphModel.js';
-import { classifyPredicate, LINK_KINDS, PRIVACY_PREDICATES } from '../src/rdf/linkKind.js';
+import {
+  classifyPredicate,
+  LINK_KINDS,
+  LOCATION_PREDICATES,
+  PRIVACY_PREDICATES,
+} from '../src/rdf/linkKind.js';
 import legalTerms from '../src/data/legal-completions.json';
 
 const diagramsDir = path.resolve(fileURLToPath(new URL('.', import.meta.url)), '../src/data/examples');
@@ -27,6 +32,11 @@ describe('classifyPredicate', () => {
     // A tactical verb, not control flow: it is a d3fend-tactical-verb-property.
     ['d3f:authenticates', 'tactical-verb'],
     ['d3f:connected-to', 'connectivity'],
+    // Where a node sits. It was the `other` bucket's own example until it earned a
+    // colour, and the DPV pair joins it rather than `privacy`: "where" is not "why".
+    ['d3f:has-location', 'location'],
+    ['dpv:hasLocation', 'location'],
+    ['dpv:isOutsideOfLocation', 'location'],
     // d3f:connects joins equipment, not networks — deliberately not connectivity.
     ['d3f:connects', 'other'],
     ['d3f:related', 'other'],
@@ -47,8 +57,11 @@ describe('classifyPredicate', () => {
   // Skipped until build-legal-metadata.py has run, like the rest of the suite's
   // projection-dependent assertions.
   const dpvTerms = legalTerms.dpv ?? {};
+  const dpvMembers = [...PRIVACY_PREDICATES, ...LOCATION_PREDICATES].filter((curie) =>
+    curie.startsWith('dpv:'),
+  );
   it.skipIf(!Object.keys(dpvTerms).length)('names only real DPV properties', () => {
-    for (const curie of PRIVACY_PREDICATES) {
+    for (const curie of dpvMembers) {
       const term = dpvTerms[curie.slice('dpv:'.length)];
       expect(term, `${curie} is not in the DPV projection`).toBeTruthy();
       expect(term.kind, curie).toBe('property');
@@ -65,6 +78,27 @@ describe('buildGraphModel — attaches kind to edges', () => {
 
     const decodes = buildGraphModel(store).edges.find((e) => e.predicate === 'd3f:decodes');
     expect(decodes.kind).toBe('data-flow');
+  });
+
+  // The corpus reaches d3f:has-location through the subgraph-with-property syntax
+  // (testcases.md, `subgraph dc [EU-RM d3f:has-location …]`) rather than by drawing an
+  // arrow, so that is the path worth pinning.
+  it('classifies d3f:has-location as location', () => {
+    const ast = parseDiagram(`\`\`\`mermaid
+graph
+subgraph dc [EU-RM d3f:has-location d3f:PhysicalLocation]
+  webapp[Web Application d3f:WebApplication]
+end
+\`\`\``);
+    const { quads, graphName } = emitQuads(ast, 'test');
+    const store = new GraphStore();
+    store.replaceGraph(graphName, quads);
+
+    const located = buildGraphModel(store).edges.find(
+      (e) => e.predicate === 'd3f:has-location',
+    );
+    expect(located).toBeTruthy();
+    expect(located.kind).toBe('location');
   });
 
   it('classifies d3f:connected-to as connectivity', () => {

@@ -81,6 +81,30 @@ end
 `d3f:ServiceApplicationProcess`, not `d3f:Application`. The database as a thing
 the platform provides is `orders`, a `d3f:DatabaseApplication`.
 
+
+## Artifact locations
+
+Associate every d3f:NetworkNode with its physical location,
+if associated via d3f:contains or d3f:has-location with a d3f:PhysicalLocation.
+
+```sparql
+SELECT DISTINCT
+  ?node
+  ?loc
+WHERE {
+  GRAPH ?g { ?node a ?class }
+  FILTER(!STRSTARTS(STR(?g), STR(K:)))
+
+  ?class
+    rdfs:subClassOf* d3f:NetworkNode .
+  
+  ?loc (^d3f:has-location*/d3f:contains*) ?node ;
+   a d3f:PhysicalLocation .   
+}
+ORDER BY ?node
+```
+
+
 ## Query to find locations
 
 complex service applications may span multiple applications
@@ -142,3 +166,67 @@ at the same `orders` node. Both checks then come back empty.
   where things run and what they need; the query does the arithmetic.
 - Fold Milan (`f`) and its two `d3f:runs` edges collapse into counted derived
   edges — the site is a real container, which is what nesting bought.
+
+---
+## Deployment zones
+
+```mermaid
+---
+title: Application R
+---
+graph
+
+
+agent[d3f:Agent]
+location[d3f:PhysicalLocation]
+%% Added via UI
+agentauthentication[d3f:AgentAuthentication Agent Authentication]
+agentauthentication -->|d3f:authenticates| agent
+%% Added via UI
+agentgroup[d3f:AgentGroup Agent Group]
+agentgroup -->|d3f:contains| agent
+%% Added via UI
+action[d3f:Action]
+action -->|d3f:has-agent| agent
+
+agent -->|d3f:uses| application
+application[d3f:ServiceApplication]
+%% Added via UI
+application -->|d3f:instructs| applicationprocess
+%% Added via UI
+host[d3f:Server]
+%% Added via UI
+serviceapplicationprocess[d3f:ServiceApplicationProcess Service Application Process]
+host -->|d3f:manages| applicationprocess
+
+computerenclosure[d3f:PhysicalLock Computer Enclosure]
+%% Added via UI
+physicallocation[d3f:PhysicalLocation Physical Location]
+computerenclosure -->|d3f:has-location| physicallocation
+
+computerenclosure -->|d3f:contains| host
+
+
+%% Added via UI
+localareanetwork[d3f:LocalAreaNetwork Local Area Network]
+%% Added via UI
+t1195[d3f:T1195 Supply Chain Compromise]
+t1195 -->|d3f:modifies| localareanetwork
+localareanetwork -->|d3f:may-contain| host
+host -->|d3f:contains| application
+%% Added via UI
+applicationprocess[d3f:ServiceApplicationProcess Application Process]
+applicationprocess -->|d3f:runs| application
+%% Added via UI
+applicationconfiguration[d3f:ApplicationConfiguration Application Configuration]
+%% Added via UI
+applicationprocess -->|d3f:uses| applicationconfiguration
+application -->|d3f:may-contain| applicationconfiguration
+%% Added via UI
+eventlog[d3f:EventLog Event Log]
+%% Added via UI
+logfile[d3f:LogFile Log File]
+logfile -->|d3f:contains| eventlog
+application -->|d3f:manages| eventlog
+
+```

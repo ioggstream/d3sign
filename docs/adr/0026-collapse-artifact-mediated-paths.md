@@ -16,12 +16,9 @@ client -->|d3f:produces| requests -->|d3f:executed-by| api
 api    -.->|d3f:produces| responses -.->|d3f:accessed-by| client
 ```
 
-That is the right RDF. The message is a resource, it
-carries a `d3f:` class, and both halves of the hop are
-real assertions. It is a poor *drawing*: the graph pane
-shows a bipartite graph in which no two agents are ever
-adjacent, so the thing the diagram is about — who
-exchanges what with whom — has to be reassembled by eye,
+While this is accurate, it makes the diagram harder to read:
+sender and receiver are not adjacent
+and data exchanges have to be reassembled by eye,
 two hops at a time. `003-webapp.md`, `004-data-pipeline.md`,
 `db-replica.md`, `ssh-authentication.md` and
 `ci-artifact-generation.md` are all written this way.
@@ -225,6 +222,14 @@ trusting them.
   called as step 3½ between the edge filter and the
   re-anchoring, plus `payloadEndOf`/`partyEndOf` above it.
   It returns `{ edges, payloads }`.
+- It is no longer the only transform that absorbs a node
+  into another node's label:
+  [ADR 0036](0036-location-pins.md) runs
+  `absorbLocationLinks` at step 3¾ on the same edge list.
+  The two meet at the `absorbed(iri)` helper, which the
+  node-emission `continue` and `hasDrawnChild` both read;
+  the sets behind it stay separate, because the refusal
+  lists have nothing in common.
 - `toCytoscapeElements` gained a third argument,
   `viewOptions`, defaulted to `{}` — which is why no
   existing test needed changing.

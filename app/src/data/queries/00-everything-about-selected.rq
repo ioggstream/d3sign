@@ -1,0 +1,19 @@
+# title: Everything about the selected node
+# about: Every triple with the selected node on either side, and which graph asserts it, plus the inferred location information.
+# scope: selection
+
+SELECT ?graph ?subject ?predicate ?object WHERE {
+  GRAPH ?graph {
+    { ?this ?predicate ?object . BIND(?this AS ?subject) }
+    UNION
+    { ?subject ?predicate ?this . BIND(?this AS ?object) }
+    UNION {
+      ?loc a d3f:PhysicalLocation ;
+      (^d3f:has-location*/d3f:contains*) ?this .
+      BIND(d3f:has-location AS ?predicate)
+      BIND(?this AS ?subject)
+      BIND(?loc AS ?object)        
+    }
+  }
+}
+ORDER BY ?graph ?predicate

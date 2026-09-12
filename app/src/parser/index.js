@@ -58,7 +58,30 @@ export function parseDiagram(source) {
     const isShared = !!styleClasses?.includes(SHARED_STYLE_CLASS);
     if (type === 'subgraph-open') {
       const parsed = parseSubgraphOpen(line);
-      const { classes, templates, label } = extractLabelTokens(parsed.title);
+      const { classes, properties, templates, label } = extractLabelTokens(parsed.title);
+      // Re-opening a subgraph adds to it rather than replacing it: `subgraph dc-1`
+      // with no title must not wipe the classes a titled declaration gave it.
+      const existing = subgraphs.get(parsed.id);
+      // A property in a subgraph title names the relation the box stands for, so
+      // membership is written as that predicate instead of d3f:contains (emit.js).
+      // One box is one relation, like one link is: a second property is dropped with
+      // a warning rather than silently picking a winner, as edgeParser.js does.
+      if (properties.length > 1) {
+        warnings.push(
+          `Subgraph "${parsed.id}" names more than one property (${properties.join(', ')}): ` +
+            `only "${properties[0]}" is written — one container is one relation.`,
+        );
+      }
+      // A property alone does not make the box a resource: "tagged" means carrying a
+      // class, and an untagged subgraph is presentational padding that emits nothing
+      // at all — so the relation would be dropped in silence rather than written.
+      if (properties.length && !classes.length && !existing?.classes?.length) {
+        warnings.push(
+          `Subgraph "${parsed.id}" names "${properties[0]}" but no class: an untagged ` +
+            'container is layout only, so the relation is not written — give it a type, ' +
+            `e.g. "${parsed.id}[${label || parsed.id} d3f:PhysicalLocation]".`,
+        );
+      }
       // A subgraph is a container, and a template reference replaces the node
       // that carries it — there is nothing coherent to do with both at once.
       if (templates.length) {
@@ -67,12 +90,11 @@ export function parseDiagram(source) {
             'a template is instantiated by a node, not by a container.',
         );
       }
-      // Re-opening a subgraph adds to it rather than replacing it: `subgraph dc-1`
-      // with no title must not wipe the classes a titled declaration gave it.
-      const existing = subgraphs.get(parsed.id);
       subgraphs.set(parsed.id, {
         id: parsed.id,
         classes: [...new Set([...(existing?.classes || []), ...classes])],
+        // Like `classes`, a re-opening without a title must not wipe it.
+        predicate: properties[0] ?? existing?.predicate,
         label: label || (existing?.label ?? parsed.id),
         parent: existing?.parent ?? stack[stack.length - 1],
         shared: existing?.shared || isShared,

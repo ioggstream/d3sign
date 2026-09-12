@@ -593,7 +593,10 @@ renderPrefsPanel(prefsChip.body, prefs, (next) => {
   // (docs/adr/0026-collapse-artifact-mediated-paths.md).
   const rebuild =
     next.collapseArtifactPaths !== prefs.collapseArtifactPaths ||
-    next.orientByFlow !== prefs.orientByFlow;
+    next.orientByFlow !== prefs.orientByFlow ||
+    // Absorbing a location link removes it and sometimes the place it pointed at,
+    // so a restyle would leave both on screen (docs/adr/0036-location-pins.md).
+    next.locationPins !== prefs.locationPins;
   prefs = next;
   savePrefs(next);
   graphPane.setPrefs(next);

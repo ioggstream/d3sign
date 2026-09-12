@@ -1593,6 +1593,74 @@ bug: each named a property the source had deliberately stopped setting.
   five now name the mechanism they are pinning, so the next redesign fails
   against a stated intent rather than a number.
 
+## 2026-09-11 — node lives in the docker `dev` service
+
+Three rounds of work shipped unverified because `node` and `npx` are not on the
+host PATH and I read that as "no runtime available". The project runs on
+`docker-compose.yaml`'s `dev` service, which was already up the whole time.
+
+- **The command is**
+  `docker compose exec -T -w /code/app dev npx vitest run`. `-T` because there is
+  no TTY, `-w /code/app` because the repo mounts at `/code` and vitest's root is
+  `app/`.
+- **Check `docker compose ps` before concluding a toolchain is missing.** A
+  devcontainer or compose service is the normal answer in a repo that has
+  `.devcontainer/` and a compose file, and both were in the listing I had read.
+- **The cost was not the delay, it was the false report.** Saying "you'll need to
+  run these" three times in a row, when the first baseline would have shown 20
+  red tests, put unverified work in front of the user as though the only thing
+  missing were a convenience.
+
+## 2026-09-11 — merged defaults cannot tell a saved value from an absent one
+
+The rename migration `showLocation` → `locationPins` read the key off the object
+that had already been spread over `DEFAULT_PREFS`. The default filled it in, so
+`merged.locationPins === undefined` was never true and the old value was never
+carried across. The test caught it; the reasoning would not have.
+
+- **Migrate off the raw payload, not off the merged object.** `{...DEFAULT, ...saved}`
+  destroys exactly the distinction a migration is asking about.
+- `normalizePrefs` already had the argument in scope — `prefs?.showLocation` — so
+  the fix was smaller than the bug.
+
+## 2026-09-11 — a colour constant nothing could ever look up
+
+Adding `CATEGORY_COLORS.Location` did not colour a single node. `coreCategoryOf`
+only ever returns a branch from `CORE_CATEGORY_PRIORITY`, a five-entry list that
+did not include `PhysicalLocation`, so the key was unreachable and the node kept
+`DEFAULT_CATEGORY_COLOR`. The edge rule worked only because it read the constant
+directly.
+
+- **A lookup table is half a feature; the thing that produces the key is the
+  other half.** Grep for what writes the key, not just for what reads it.
+- **`nodeKind.js` states the invariant that catches this** — a node's bucket
+  agrees with its category, both decided in one function. Colouring a category
+  with no bucket breaks it silently, which is why the Nodes chip had to come
+  with the colour rather than after it.
+- **The category name is not the branch name.** D3FEND's branch is
+  `PhysicalLocation`; DPV's family folds onto the same idea and a
+  `dpv:CloudLocation` is not physical, so the category is `Location` and
+  `CATEGORY_BY_D3FEND_BRANCH` does the one remap.
+
+## 2026-09-11 — `prefix:local-name` does not say class or property
+
+`CLASS_TOKEN_RE` matches `d3f:has-location` exactly as it matches
+`d3f:PhysicalLocation`, so a subgraph title naming a relation typed the box
+`a d3f:has-location`. The regex cannot be fixed: the two are the same shape.
+
+- **Ask the projection, not the spelling.** `termOf(qname)?.kind` is exact, and
+  the case convention (zero uppercase properties across all vocabularies) is
+  only *almost* exact — `d3f:t-SNEClustering`, `ob:gdpr-art12` and `tech:iOS`
+  are lowercase classes.
+- **Direction cannot be derived from a CURIE.** `d3f:has-location` is stated
+  from the member, `d3f:contains` from the container, and the completions
+  projection carries no domain or range. The containment family is a listed
+  exception in `emit.js`; inferring it would have silently written
+  `ws-1 d3f:contains dc`.
+- **A testcases.md section with no snapshot proves nothing.**
+  `toMatchFileSnapshot` writes the file on first run, so a new scenario is green
+  whatever it emits until someone reads the `.trig`.
+
 ## 2026-09-10 — a fixture that omits the field the feature is made of
 
 `filter-panel.test.js` asserted that a hidden link kind stays hidden, from a
@@ -1613,3 +1681,21 @@ twin passes only because that one writes `nodeKinds`.
   Both `filterPanel.js` and ADR 0007 claimed a pre-`kinds` payload falls back to
   something equivalent; it is equivalent only when the payload hid nothing. A
   wrong sentence in a doc comment survives as long as the test agreeing with it.
+
+## 2026-09-11 — "files were modified by this hook" from a hook that writes nothing
+
+The pre-push trufflehog hook reported `Failed - files were modified by this
+hook` while its own output said `verified_secrets: 0, unverified_secrets: 0`.
+The container only reads: it clones `file:///workdir` into its own tmpdir.
+
+- **pre-commit attributes any working-tree change to the hook that was running.**
+  It diffs the tree before and after each hook; it cannot tell the hook's writes
+  from anyone else's. A concurrent write - an editor saving, an agent editing,
+  a second pre-commit run - lands inside the ~6s docker scan and is blamed on it.
+- **The stash window makes concurrent inspection lie.** While the hook runs, the
+  unstaged changes live in `~/.cache/pre-commit/patch<ts>-<pid>`, so `git status`
+  reads clean, then reads dirty again after the restore. Two `git status` calls
+  minutes apart disagreeing is the stash, not lost work; the identical mtimes on
+  every restored file are the tell.
+- **Re-running the hook alone passed.** Nothing in `.pre-commit-config.yaml`
+  needed changing - the fix is to push with no other writer touching the tree.

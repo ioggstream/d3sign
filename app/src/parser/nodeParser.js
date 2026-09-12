@@ -1,4 +1,5 @@
 import { TYPING_PREFIXES, TEMPLATE_PREFIX } from '../rdf/emit.js';
+import { termOf } from '../editor/vocabularies.js';
 
 /**
  * A class token in any vocabulary a diagram may write — `d3f:Password`,
@@ -41,17 +42,28 @@ const CLASS_TOKEN_RE = new RegExp(
 const TEMPLATE_TOKEN_RE = new RegExp(`(?<![\\w:])${TEMPLATE_PREFIX}:([A-Za-z][\\w-]*)`, 'g');
 
 /**
- * Extracts class tokens, template references and the remaining free-text label
- * from a chunk of text (a node's shape content, a subgraph title, or a label
- * attr).
+ * Extracts class tokens, property tokens, template references and the remaining
+ * free-text label from a chunk of text (a node's shape content, a subgraph title, or
+ * a label attr).
  *
- * Both token kinds are stripped out of the label, which is what makes them
+ * All three token kinds are stripped out of the label, which is what makes them
  * writable inline: `ws-1[Web Server 1 T:HostTemplate]` is labelled
  * "Web Server 1".
+ *
+ * CLASS_TOKEN_RE cannot tell a class from a property — both are `prefix:local-name`
+ * — so the split is made afterwards by asking the vocabulary projection what the term
+ * actually is. Without it `subgraph dc [EU-RM d3f:has-location d3f:PhysicalLocation]`
+ * typed the subgraph `a d3f:has-location`, a predicate used as a class.
+ *
+ * A vocabulary that is not projected yet answers nothing, so its terms all read as
+ * classes — which is the behaviour every one of them had before this split, and the
+ * same way the rest of the app degrades until build-legal-metadata.py has run.
  */
 export function extractLabelTokens(text) {
-  if (!text) return { classes: [], templates: [], label: '' };
-  const classes = [...text.matchAll(CLASS_TOKEN_RE)].map((m) => m[0]);
+  if (!text) return { classes: [], properties: [], templates: [], label: '' };
+  const tokens = [...text.matchAll(CLASS_TOKEN_RE)].map((m) => m[0]);
+  const properties = tokens.filter((token) => termOf(token)?.kind === 'property');
+  const classes = tokens.filter((token) => !properties.includes(token));
   const templates = [...text.matchAll(TEMPLATE_TOKEN_RE)].map((m) => m[1]);
   const label = text
     .replace(CLASS_TOKEN_RE, '')
@@ -59,7 +71,7 @@ export function extractLabelTokens(text) {
     .replace(/<br\s*\/?>/gi, ' ')
     .replace(/\s+/g, ' ')
     .trim();
-  return { classes, templates, label };
+  return { classes, properties, templates, label };
 }
 
 function stripQuotes(s) {

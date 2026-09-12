@@ -55,6 +55,21 @@ const CONTROL_FLOW_PREDICATES = new Set([
 // ontology only by d3f:T1200 (Hardware Additions) and d3f:ConnectSocket.
 const CONNECTIVITY_PREDICATES = new Set(['d3f:connected-to']);
 
+// Where a node sits, not what crosses the link. Neither flow traverses these and
+// nothing is asserted to move along them: they place a component in the world, so
+// they are a bucket of their own rather than the `other` default they fell into.
+//
+// The DPV pair is here rather than in PRIVACY_PREDICATES for the same reason that set
+// excludes data flow: the axis is what the link asserts, and "where" is not "who" or
+// "why". Both are real DPV properties, checked against legal-completions.json by
+// link-kind.test.js — `dpv:hasDeploymentLocation` reads as though it must exist and
+// does not.
+export const LOCATION_PREDICATES = new Set([
+  'd3f:has-location',
+  'dpv:hasLocation',
+  'dpv:isOutsideOfLocation',
+]);
+
 // Descendants of d3f:d3fend-tactical-verb-property in the ontology. The sets
 // above are disjoint from this one: a predicate is classified by which branch
 // of the ontology it descends from, so no predicate needs arbitration.
@@ -131,6 +146,7 @@ export const LINK_KINDS = [
   'data-flow',
   'control-flow',
   'connectivity',
+  'location',
   'tactical-verb',
   'privacy',
   'other',
@@ -141,6 +157,7 @@ export function classifyPredicate(predicateCurie) {
   if (DATA_FLOW_PREDICATES.has(predicateCurie)) return 'data-flow';
   if (CONTROL_FLOW_PREDICATES.has(predicateCurie)) return 'control-flow';
   if (CONNECTIVITY_PREDICATES.has(predicateCurie)) return 'connectivity';
+  if (LOCATION_PREDICATES.has(predicateCurie)) return 'location';
   if (TACTICAL_VERB_PREDICATES.has(predicateCurie)) return 'tactical-verb';
   if (PRIVACY_PREDICATES.has(predicateCurie)) return 'privacy';
   return 'other';

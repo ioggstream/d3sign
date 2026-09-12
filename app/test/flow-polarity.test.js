@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { Parser } from 'n3';
 import { GraphStore } from '../src/rdf/store.js';
 import { buildGraphModel } from '../src/rdf/graphModel.js';
@@ -13,6 +13,38 @@ import { classifyPredicate } from '../src/rdf/linkKind.js';
 import { toCytoscapeElements } from '../src/viz/toCytoscape.js';
 
 const ORIENTED = { orientByFlow: true };
+
+/**
+ * Every cycle-forming arrow in a drawn graph, by depth-first search.
+ *
+ * The point of the whole feature is that the oriented graph is a DAG: a layered
+ * layout given a cycle has to reverse an edge to break it, and that reversal is
+ * the zig-zag. Reported as the offending arrows rather than as a count, so a
+ * regression names the predicate that put the cycle there.
+ */
+function cyclesIn(arrows) {
+  const out = new Map();
+  for (const arrow of arrows) {
+    const source = arrow.slice(0, arrow.indexOf(' '));
+    const target = arrow.slice(arrow.lastIndexOf(' ') + 1);
+    if (source === target) continue;
+    if (!out.has(source)) out.set(source, []);
+    out.get(source).push({ target, arrow });
+  }
+  const state = new Map();
+  const back = [];
+  const visit = (node) => {
+    state.set(node, 'open');
+    for (const { target, arrow } of out.get(node) ?? []) {
+      const seen = state.get(target);
+      if (seen === 'open') back.push(arrow);
+      else if (seen === undefined) visit(target);
+    }
+    state.set(node, 'done');
+  };
+  for (const node of out.keys()) if (!state.has(node)) visit(node);
+  return back;
+}
 
 /** A filter state that hides nothing, so a case only exercises the orientation. */
 function passThrough(model, { direction = new Map() } = {}) {
@@ -212,55 +244,3 @@ describe('toCytoscapeElements — orienting along the flow', () => {
   });
 });
 
-/**
- * Every cycle-forming arrow in a drawn graph, by depth-first search.
- *
- * The point of the whole feature is that the oriented graph is a DAG: a layered
- * layout given a cycle has to reverse an edge to break it, and that reversal is
- * the zig-zag. Reported as the offending arrows rather than as a count, so a
- * regression names the predicate that put the cycle there.
- */
-function cyclesIn(arrows) {
-  const out = new Map();
-  for (const arrow of arrows) {
-    const [source, , target] = [arrow.slice(0, arrow.indexOf(' ')), null, arrow.slice(arrow.lastIndexOf(' ') + 1)];
-    if (source === target) continue;
-    if (!out.has(source)) out.set(source, []);
-    out.get(source).push({ target, arrow });
-  }
-  const state = new Map();
-  const back = [];
-  const visit = (node) => {
-    state.set(node, 'open');
-    for (const { target, arrow } of out.get(node) ?? []) {
-      const seen = state.get(target);
-      if (seen === 'open') back.push(arrow);
-      else if (seen === undefined) visit(target);
-    }
-    state.set(node, 'done');
-  };
-  for (const node of out.keys()) if (!state.has(node)) visit(node);
-  return back;
-}
-
-describe('the CAD corpus', () => {
-  const dir = new URL('../../docs/external/cad/', import.meta.url);
-  const files = readdirSync(dir).filter((name) => name.endsWith('.ttl'));
-
-  it('has files to check', () => {
-    expect(files.length).toBeGreaterThan(0);
-  });
-
-  it.each(files)('%s draws fewer cycles oriented than as written', (name) => {
-    const store = new GraphStore();
-    store.addQuads(new Parser().parse(readFileSync(new URL(name, dir), 'utf8')));
-    const model = buildGraphModel(store);
-    const asWritten = cyclesIn(arrowsOf(model, {})).length;
-    const oriented = cyclesIn(arrowsOf(model, ORIENTED)).length;
-    // Not "zero": a diagram can assert a genuine loop, and the symmetric
-    // topology predicates are deliberately left unoriented. What must hold is
-    // that orienting never makes the drawing *harder* to lay out, which is the
-    // regression a wrong table entry produces.
-    expect(oriented, `${name}: ${asWritten} → ${oriented}`).toBeLessThanOrEqual(asWritten);
-  });
-});

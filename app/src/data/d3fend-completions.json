@@ -46757,7 +46757,9 @@
     "label": "label",
     "kind": "property",
     "documentation": "",
-    "parents": [],
+    "parents": [
+      "label"
+    ],
     "inverseOf": null,
     "characteristics": []
   },

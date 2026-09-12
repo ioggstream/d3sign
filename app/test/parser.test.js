@@ -149,6 +149,47 @@ describe('parseDiagram — ATT&CK sub-technique classes', () => {
   });
 });
 
+describe('parseDiagram — a property in a label is not a class', () => {
+  // CLASS_TOKEN_RE cannot tell `d3f:has-location` from `d3f:PhysicalLocation` — both
+  // are prefix:local-name — so the split asks the vocabulary projection which the
+  // term is. Without it the subgraph was typed `a d3f:has-location`.
+  const subgraphOf = (title) =>
+    parseDiagram(['graph', `subgraph dc [${title}]`, '  a[A d3f:Host]', 'end'].join('\n'))
+      .subgraphs[0];
+
+  it('splits the property out of the class list and keeps it as the relation', () => {
+    expect(subgraphOf('EU-RM d3f:has-location d3f:PhysicalLocation')).toMatchObject({
+      classes: ['d3f:PhysicalLocation'],
+      predicate: 'd3f:has-location',
+      label: 'EU-RM',
+    });
+  });
+
+  it('leaves a title with no property on containment', () => {
+    expect(subgraphOf('EU-RM d3f:PhysicalLocation').predicate).toBeUndefined();
+  });
+
+  it('warns when a title names a property but no class', () => {
+    const { warnings } = parseDiagram(
+      ['graph', 'subgraph dc [EU-RM d3f:has-location]', '  a[A d3f:Host]', 'end'].join('\n'),
+    );
+    expect(warnings.join('\n')).toMatch(/names "d3f:has-location" but no class/);
+  });
+
+  it('warns and picks the first when a title names two properties', () => {
+    const { warnings, subgraphs } = parseDiagram(
+      [
+        'graph',
+        'subgraph dc [EU-RM d3f:has-location d3f:contains d3f:PhysicalLocation]',
+        '  a[A d3f:Host]',
+        'end',
+      ].join('\n'),
+    );
+    expect(warnings.join('\n')).toMatch(/more than one property/);
+    expect(subgraphs[0].predicate).toBe('d3f:has-location');
+  });
+});
+
 describe('parseDiagram — back arrows', () => {
   // Mermaid has no back arrow: `<--`, `o--` and `x--` only open a link that a
   // head on the right has to close, so the line does not render at all. No

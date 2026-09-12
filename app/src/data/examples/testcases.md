@@ -190,13 +190,48 @@ G:default {
     G:dc a d3f:PhysicalLocation, dpv:PubliclyOwnedSpace;
         rdfs:label "EU-RM" ;
     G:webapp a d3f:WebApplication;
-        rdfs:label "Web Application" .
+        rdfs:label "Web Application" ;
         d3f:has-location G:dc .
     G:browser a d3f:Browser;
-        rdfs:label "Browser" .
+        rdfs:label "Browser" ;
         d3f:has-location G:dc .
 }
 ```
+
+Location classes are not special, if no property is specified.
+
+```mermaid
+---
+title: subgraph-with-property
+---
+graph
+
+%% node type is defined by the subgraph tag.
+%%   the relation is defined by the first rdf:Property in the label.
+subgraph dc [EU-RM d3f:PhysicalLocation dpv:PubliclyOwnedSpace]
+  webapp[Web Application d3f:WebApplication]
+  browser[Browser d3f:Browser]
+end
+
+```
+
+Then
+
+```turtle
+@prefix d3f: <https://d3fend.mitre.org/ontologies/d3fend.owl#> .
+@prefix G: <urn:d3fend-graph:> .
+G:default {
+    G:dc a d3f:PhysicalLocation, dpv:PubliclyOwnedSpace;
+        rdfs:label "EU-RM" ;
+        d3f:contains G:webapp, G:browser .
+    G:webapp a d3f:WebApplication;
+        rdfs:label "Web Application" .
+    G:browser a d3f:Browser;
+        rdfs:label "Browser" .
+
+}
+```
+
 
 ## complex-node-syntax
 

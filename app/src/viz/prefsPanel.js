@@ -161,6 +161,21 @@ export function renderPrefsPanel(host, prefs, onChange, { bulkHost } = {}) {
   edgeLabel.title = 'Predicate names along the links';
   addRow(list, 'prefs-row', edgeLabel);
 
+  const locationLabel = document.createElement('label');
+  const locationToggle = document.createElement('input');
+  locationToggle.type = 'checkbox';
+  locationToggle.checked = prefs.locationPins;
+  locationToggle.addEventListener('change', () =>
+    emit({ locationPins: locationToggle.checked }),
+  );
+  locationLabel.append(locationToggle, ' Location pins');
+  // The warning is the point of the second sentence: an inherited pin is the one
+  // place the drawing says more than the TriG (docs/adr/0036-location-pins.md).
+  locationLabel.title =
+    'Draws each node’s place on the node and hides the location links that said it. ' +
+    'A node inside a located container shows its container’s place, which no triple of its own states.';
+  addRow(list, 'prefs-row', locationLabel);
+
   const collapseLabel = document.createElement('label');
   const collapseToggle = document.createElement('input');
   collapseToggle.type = 'checkbox';

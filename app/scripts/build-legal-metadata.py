@@ -165,11 +165,16 @@ def read_graph(paths):
 # branches in build-d3fend-categories.py, and only the branches a *diagram* can name
 # are listed — `risk:` is not a typing vocabulary, so no drawn node is ever a Risk.
 #
-# Entity and Data come first because they are the two that fold onto an existing
-# D3FEND colour (Agent and Artifact); the rest get their own.
+# Entity, Data and Location come first because they are the three that fold onto an
+# existing D3FEND colour (Agent, Artifact and PhysicalLocation); the rest get their own.
+#
+# Location is ahead of Measure because a DPV location reaches both roots: a
+# `dpv:StorageLocation` is a place before it is a control, and the graph view draws it
+# as the site it names.
 FAMILY_ROOTS = [
     ("Entity", "dpv:Entity"),
     ("Data", "dpv:Data"),
+    ("Location", "dpv:Location"),
     ("Measure", "dpv:TechnicalOrganisationalMeasure"),
     ("LegalBasis", "dpv:LegalBasis"),
     ("Purpose", "dpv:Purpose"),
