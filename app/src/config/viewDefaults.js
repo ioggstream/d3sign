@@ -42,6 +42,10 @@ export const DEFAULT_PREFS = {
   // One size for all three, between the two.
   editorFontSize: 13,
   edgeLabels: true,
+  // How a link is routed. A matter of taste by the second rule above — it changes how
+  // links are drawn, never which of them exist — so it defaults to the curve the graph
+  // has always drawn, and every other value is something the user goes looking for.
+  edgeStyle: 'bezier',
   // How a node's place is drawn: `off` leaves the location links alone, `pins` puts
   // the place on the node, `boxes` draws the node inside its place. Both of the
   // latter remove the links they replace, so by the rule above neither is the

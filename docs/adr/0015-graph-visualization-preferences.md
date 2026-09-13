@@ -86,6 +86,7 @@ hardcoded ELK spacing block. Two consequences showed up in use:
   match the room kept clear around it. Composing at draw
   time also makes the setting a restyle rather than a
   rebuild of the element set.
+- [x] Link shape via a dropdown: straight or taxi.
 - [x] Layout spacing is derived, not fixed: each
   layout's options are a pure function of the
   preferences, mapping one node-spacing slider onto
@@ -282,3 +283,21 @@ before trusting them.
   `MultiFactorAuthentication` and `TestRunner`.
 - The magic numbers the band replaced were a
   `24`/`40`/`48` triplet.
+- link shapes details: curved (cytoscape's `bezier`,
+  the default and the routing the graph has always
+  drawn), orthogonal with rounded or with square
+  corners, segments with rounded corners, and straight.
+  Three of cytoscape's own values are left out —
+  `haystack` ignores arrow shapes, and the arrowheads
+  are what say whether a link reads or writes its ends
+  ([ADR 0033](0033-link-terminators-by-effect.md)),
+  while `unbundled-bezier` and `straight-triangle` want
+  per-edge control points, and every edge here is
+  styled by selector. The corner radii and the taxi
+  axis stay at cytoscape's defaults: the axis would
+  have to be re-derived each time the rotate buttons
+  turn the drawing ([ADR 0013](0013-graph-view-controls.md)),
+  and the radii are pixels rather than a share of the
+  node spacing, so tying them to that slider would make
+  it mean two things. It is a restyle, not a relayout —
+  the routing changes, the node boxes do not.

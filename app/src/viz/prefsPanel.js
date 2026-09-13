@@ -55,6 +55,56 @@ const LOCATION_VIEW_OPTIONS = [
   },
 ];
 
+// cytoscape's `curve-style` values, named for what they look like rather than for
+// what cytoscape calls them: "taxi" is a routing term, and the popover is read by
+// someone looking at a drawing.
+const EDGE_STYLE_OPTIONS = [
+  // { value: 'bezier', label: 'Curved', hint: 'One curve per link, spread apart where several share a pair' },
+  {
+    value: 'round-taxi',
+    label: 'Orthogonal, rounded',
+    hint: 'Right-angled routing with rounded corners',
+  },
+  // { value: 'taxi', label: 'Orthogonal, square', hint: 'Right-angled routing with square corners' },
+  /*{
+    value: 'round-segments',
+    label: 'Segments, rounded',
+    hint: 'Straight segments with rounded corners, routed freely rather than along the axes',
+  },*/
+  {
+    value: 'straight',
+    label: 'Straight',
+    hint: 'One straight line per link; links sharing a pair of nodes lie on top of each other',
+  },
+];
+
+/**
+ * A `<select>` for one enum preference, for a list too long to spend a radio on each.
+ * The hint goes on the option as well as on the row, since a closed dropdown shows
+ * only the chosen label.
+ */
+function selectField({ label: labelText, options, selected, onPick }) {
+  const field = document.createElement('label');
+  field.className = 'prefs-select';
+
+  const name = document.createElement('span');
+  name.textContent = labelText;
+
+  const select = document.createElement('select');
+  for (const option of options) {
+    const item = document.createElement('option');
+    item.value = option.value;
+    item.textContent = option.label;
+    item.title = option.hint;
+    if (option.value === selected) item.selected = true;
+    select.appendChild(item);
+  }
+  select.addEventListener('change', () => onPick(select.value));
+
+  field.append(name, select);
+  return field;
+}
+
 /**
  * A `<fieldset>` of radios for one enum preference. `name` is shared across the
  * group's inputs, which is what gives the browser roving-focus arrow keys — so it
@@ -181,6 +231,15 @@ export function renderPrefsPanel(host, prefs, onChange, { bulkHost } = {}) {
   edgeLabel.append(edgeToggle, ' Link labels');
   edgeLabel.title = 'Predicate names along the links';
   addRow(list, 'prefs-row', edgeLabel);
+
+  const edgeStyleField = selectField({
+    label: 'Link shape',
+    options: EDGE_STYLE_OPTIONS,
+    selected: prefs.edgeStyle,
+    onPick: (edgeStyle) => emit({ edgeStyle }),
+  });
+  edgeStyleField.title = 'How a link is routed between its two nodes';
+  addRow(list, 'prefs-row', edgeStyleField);
 
   addRow(
     list,

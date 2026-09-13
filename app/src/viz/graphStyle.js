@@ -409,7 +409,16 @@ export function buildStyle(prefs, iconSet = null) {
       // nothing to wrap on.
       'text-wrap': 'wrap',
       color: '#212529',
-      'curve-style': 'bezier',
+      // How a link is routed, straight from the preference (viz/graphPrefs.js).
+      //
+      // `taxi-direction` is left at cytoscape's `auto`, which reads the axis off the
+      // endpoints' relative positions. Pinning it to `horizontal` to match
+      // `elk.direction: 'RIGHT'` (viz/layouts.js) would be wrong the moment the rotate
+      // buttons turn the drawing a quarter turn, and rotation is a view control, not a
+      // relayout. `taxi-radius` and `segment-radii` likewise keep cytoscape's 15: they
+      // are a corner size in pixels, and deriving them from `nodeSpacing` would make
+      // the spacing slider mean two things.
+      'curve-style': prefs.edgeStyle,
       // An open head, which is what a link that neither reads nor changes its
       // ends is left with (docs/adr/0033-link-terminators-by-effect.md): it
       // states a direction and claims nothing about either end. Topology,

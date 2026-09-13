@@ -48,6 +48,28 @@ export const LABEL_DETAILS = ['full', 'name'];
  */
 export const LOCATION_VIEWS = ['off', 'pins', 'boxes'];
 
+/**
+ * How a link is routed: cytoscape's `curve-style`, passed through by graphStyle.js.
+ *
+ * A subset of cytoscape's own enum, and the three left out are left out for reasons
+ * rather than for room:
+ *   - `haystack` ignores arrow shapes, and the arrowheads are what say whether a link
+ *     reads or writes its ends (docs/adr/0033-link-terminators-by-effect.md);
+ *   - `unbundled-bezier` and `straight-triangle` want per-edge control points, and the
+ *     stylesheet has none to give — every edge here is styled by selector, not
+ *     individually.
+ *
+ * Nothing about the element set changes with this, which is what keeps it a restyle:
+ * see the note in viz/graphPane.js about `LAYOUT_AFFECTING`.
+ */
+export const EDGE_STYLES = [
+  // 'bezier',
+  'round-taxi',
+  // 'taxi',
+  // 'round-segments',
+  'straight'
+  ];
+
 // Re-exported so every existing caller keeps importing preferences from one place,
 // while the values themselves stay editable without reading this file's logic.
 export { DEFAULT_PREFS };
@@ -67,6 +89,9 @@ export function normalizePrefs(prefs) {
   if (!NODE_STYLES.includes(merged.nodeStyle)) merged.nodeStyle = DEFAULT_PREFS.nodeStyle;
   if (!LABEL_DETAILS.includes(merged.labelDetail)) merged.labelDetail = DEFAULT_PREFS.labelDetail;
   merged.edgeLabels = Boolean(merged.edgeLabels);
+  // No migration hop, unlike `locationView` below: this key has never had another
+  // name, so a payload without it simply takes the default.
+  if (!EDGE_STYLES.includes(merged.edgeStyle)) merged.edgeStyle = DEFAULT_PREFS.edgeStyle;
   // Two renames, so two hops. `showLocation` was the key while the location was only
   // a label and the links were still drawn; it became the `locationPins` boolean when
   // the pin started replacing the link (ADR 0036), and that boolean became this enum
