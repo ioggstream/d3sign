@@ -58,7 +58,7 @@ config:
   layout: elk
 ---
 graph LR
-u((User))
+u((d3f:User))
 
 subgraph provider[d3f:Network]
   checkout[Checkout d3f:WebServerApplication]

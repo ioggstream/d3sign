@@ -1817,6 +1817,13 @@ over its members) and add two testcases pinning it down.
   dropped `m1-web d3f:runs checkout` in multi-site-platform.md, whose third block
   wires ids the first block types. Hence `collectTaggedIds(diagrams)` exported from
   `emit.js`: main.js and the topology test now build the set the same way.
+- **Template provenance was the one channel that skipped the tagged check.**
+  `instanceLines` clones every member, padding subgraphs included, and
+  `buildGraphModel` mints a node for the *subject* of every quad — so a single
+  `G:r0-fe ds:partOf G:r0` drew an untagged template box as a typeless node inside
+  each instance (`docs/external/gcp/gcp-multi-region.md`). Guarding the two
+  provenance loops with `isTagged` is the fix; expansion still writes the padding
+  `subgraph` into the mermaid, which is where it belongs.
 - **The one corpus casualty is `u((User))`.** D3FEND has no class for a human actor
   (`UserAccount` is the nearest), so the example draws the user untyped and
   `u -->|d3f:uses| checkout` is now dropped with a warning.

@@ -40,7 +40,7 @@ elb & ilb -->|d3f:has-location| region
 
 elb[d3f:ReverseProxyServer External LB]
 
-elb -->|d3f:accesses| fe-a & fe-b & fe-c
+elb -->|d3f:accesses| fe
 
 
 %% :idea:
@@ -50,9 +50,9 @@ elb -->|d3f:accesses| fe-a & fe-b & fe-c
 %% problems may arise with subgraphs, but
 %% simplifies representations.
 subgraph fe
-fe-a[d3f:WebServerApplication]
-fe-b[d3f:WebServerApplication]
-fe-c[d3f:WebServerApplication]
+  fe-a[d3f:WebServerApplication]
+  fe-b[d3f:WebServerApplication]
+  fe-c[d3f:WebServerApplication]
 end
 
 
@@ -63,23 +63,24 @@ fe-c & be-c -->|d3f:has-location| zone-c
 ilb[d3f:ReverseProxyServer Internal LB]
 
 subgraph be
-be-a[d3f:WebServerApplication]
-be-b[d3f:WebServerApplication]
-be-c[d3f:WebServerApplication]
+  be-a[d3f:WebServerApplication]
+  be-b[d3f:WebServerApplication]
+  be-c[d3f:WebServerApplication]
 end
 
-fe-a & fe-b & fe-c -->|d3f:accesses| ilb
-ilb -->|d3f:accesses| be-a & be-b & be-c
+fe -->|d3f:accesses| ilb
+ilb -->|d3f:accesses| be
 
-be-a & be-b & be-c -->|d3f:access| db[d3f:DatabaseServiceApplication]
+be -->|d3f:accesses| db
+db[d3f:DatabaseServiceApplication]
 
 subgraph data
-db-standby[d3f:DatabaseServiceApplication]
+  db-standby[d3f:DatabaseServiceApplication]
 
-db-standby -->|d3f:copy-of| db
-db-standby -->|d3f:monitors| db
-db-standby -->|d3f:has-location| zone-a
-db -->|d3f:has-location| zone-b
+  db-standby -->|d3f:copy-of| db
+  db-standby -->|d3f:monitors| db
+  db-standby -->|d3f:has-location| zone-a
+  db -->|d3f:has-location| zone-b
 end
 ```
 
@@ -88,7 +89,10 @@ graph
 
 u -->|d3f:accesses| r0-elb & r1-elb
 subgraph GCP[d3f:has-location d3f:PhysicalLocation]
-r0[Region A T:Region]
-r1[Region B T:Region]
+  r0[Region A T:Region]
+  r1[Region B T:Region]
 end
+
+r0-db -->|d3f:copy-of| r1-db
+r0-db -->|d3f:monitors| r1-db
 ```
