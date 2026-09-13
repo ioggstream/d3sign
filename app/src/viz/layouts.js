@@ -77,7 +77,8 @@ function elkSpacing(prefs) {
  * gutter, and its children's box overflows it. It is doubly needed now that the
  * gutter differs per container: there is no one value the root could carry.
  */
-function elkNodeOptions(prefs, rootId) {
+function elkNodeOptions(prefs, view) {
+  const { rootId, tiers } = view;
   return (node) => {
     const options = node.isParent()
       ? {
@@ -94,6 +95,17 @@ function elkNodeOptions(prefs, rootId) {
     if (rootId && node.id() === rootId) {
       options['elk.layered.layering.layerConstraint'] = 'FIRST';
     }
+    // Which tier the node was computed to be in (viz/tierLayers.js). Partitioning is what
+    // states it: `elk.layered.layering.layerChoiceConstraint` reads like the right option
+    // and is inert here, since ELK only evaluates it inside the interactive layout visitor
+    // that cytoscape-elk never runs.
+    //
+    // Emitted for a container as well as for a leaf. A partitioned graph holding one
+    // unpartitioned node is not partly partitioned: ELK puts that node where its edges
+    // lead and moves its neighbours out of their tiers to suit
+    // (app/test/elk-partitioning.test.js).
+    const tier = tiers?.get(node.id());
+    if (tier !== undefined) options['elk.partitioning.partition'] = tier;
     return Object.keys(options).length ? options : undefined;
   };
 }
@@ -119,15 +131,33 @@ function elkLayout(algorithm, extra = () => ({})) {
   return (prefs, view = {}) => ({
     name: 'elk',
     nodeDimensionsIncludeLabels: true,
-    nodeLayoutOptions: elkNodeOptions(prefs, view.rootId),
+    nodeLayoutOptions: elkNodeOptions(prefs, view),
     priority: sequencePriority,
     elk: {
       algorithm,
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
       ...elkSpacing(prefs),
-      ...extra(prefs),
+      ...extra(prefs, view),
     },
   });
+}
+
+/**
+ * The two root options a tiered drawing needs, or nothing at all when no tier was
+ * computed — so every other layout, and `layered` without tiers, is laid out exactly as
+ * before.
+ *
+ * `separateConnectedComponents: false` is not a preference. Restricting the layering input
+ * to the flow links leaves a node like a standby replica in a component of its own, and
+ * `layered` splits components *before* the partition preprocessor runs — so each component
+ * would be given its own column 0 and the tiers would not line up across them.
+ */
+function partitioningOptions(view) {
+  if (!view.tiers?.size) return {};
+  return {
+    'elk.partitioning.activate': true,
+    'elk.separateConnectedComponents': false,
+  };
 }
 
 /** Cytoscape's own layouts take a single multiplier instead of explicit gaps. */
@@ -140,7 +170,8 @@ export const LAYOUTS = [
     id: 'elk-layered',
     label: 'ELK layered',
     hierarchical: true,
-    options: elkLayout('layered', (prefs) => ({
+    options: elkLayout('layered', (prefs, view) => ({
+      ...partitioningOptions(view),
       // ELK's own default for `layered`, so this changes no drawing. It is
       // written down because the flow orientation and the layer-0 root both
       // assume left-to-right, and a silent default is a poor thing for two
@@ -172,10 +203,18 @@ export const LAYOUTS = [
     id: 'breadthfirst',
     label: 'Breadth-first',
     hierarchical: false,
-    options: (prefs) => ({
+    options: (prefs, view = {}) => ({
       name: 'breadthfirst',
       nodeDimensionsIncludeLabels: true,
       directed: true,
+      // Where the walk starts (viz/tierLayers.js `layoutRoots`). Left off entirely when
+      // there is nothing to say, since an empty list would read as "no roots at all"
+      // rather than as "choose them yourself".
+      ...(view.roots ? { roots: view.roots } : {}),
+      // `maximal` — push each node below all of its incomers — is the obvious next thing
+      // to try here and must not be: it warns and abandons the adjustment half-done on a
+      // cycle, and `acyclic: true` removes the guard that stops it looping forever. A
+      // diagram of services that call each other is routinely cyclic.
       spacingFactor: 1.2 * spacingFactor(prefs),
       padding: 20,
     }),
@@ -220,11 +259,23 @@ export const DEFAULT_LAYOUT_ID = 'elk-layered';
 /**
  * Whether a layout can start the reading from a chosen node.
  *
- * Only `layered` has layers to pin one to. Every other algorithm silently
- * ignores `layerConstraint`, and silence is the wrong answer to a keystroke:
- * the caller says so instead (docs/adr/0035-improve-flow-discovery.md).
+ * `layered` pins it to the leftmost layer and `breadthfirst` walks out from it; the rest
+ * silently ignore both the layer constraint and the roots, and silence is the wrong answer
+ * to a keystroke, so the caller says so instead
+ * (docs/adr/0035-improve-flow-discovery.md).
  */
 export function supportsFlowRoot(id) {
+  return id === 'elk-layered' || id === 'breadthfirst';
+}
+
+/**
+ * Whether a layout can be told which tier each node belongs to.
+ *
+ * Partitioning is a `layered` feature, and the caller needs to know before it walks the
+ * graph — the walk is wasted otherwise, and the edge filter that goes with it would hide
+ * links from a layout that was never going to honour the tiers anyway.
+ */
+export function supportsTierLayering(id) {
   return id === 'elk-layered';
 }
 

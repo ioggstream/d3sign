@@ -105,7 +105,7 @@ export function nodeMenuItems(
       hint: 'b',
       description: isFlowRoot
         ? 'Let the layout choose where the drawing begins again'
-        : 'Move this node to the leftmost layer and lay the rest of the drawing out to its right. Needs the ELK layered layout',
+        : 'Begin the drawing at this node and lay the rest out from it. Needs the ELK layered or the breadth-first layout',
       onSelect: () => onSetFlowRoot(data.id),
     });
   }
