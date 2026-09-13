@@ -203,6 +203,24 @@ describe('edge labels', () => {
   });
 });
 
+describe('link shape', () => {
+  it('draws the preference, defaulting to the curve', () => {
+    expect(ruleFor(buildStyle(DEFAULT_PREFS), 'edge').style['curve-style']).toBe('bezier');
+    expect(
+      ruleFor(buildStyle({ ...DEFAULT_PREFS, edgeStyle: 'round-taxi' }), 'edge').style['curve-style'],
+    ).toBe('round-taxi');
+  });
+
+  it('leaves the corner sizes and the taxi axis to cytoscape', () => {
+    // `taxi-direction` would have to be re-derived on every rotation, and the radii
+    // are pixels rather than a share of the spacing: neither belongs in the sheet.
+    const edge = ruleFor(buildStyle({ ...DEFAULT_PREFS, edgeStyle: 'taxi' }), 'edge').style;
+    expect('taxi-direction' in edge).toBe(false);
+    expect('taxi-radius' in edge).toBe(false);
+    expect('segment-radii' in edge).toBe(false);
+  });
+});
+
 describe('a folded container', () => {
   const style = buildStyle(DEFAULT_PREFS, ICON_SET);
   const folded = ruleFor(style, 'node[folded]').style;
