@@ -180,6 +180,31 @@ export function inversePredicateOf(predicate) {
 }
 
 /**
+ * Every id carrying a class anywhere in the document, in any vocabulary a diagram may
+ * write — the `taggedIds` `emitQuads` wants.
+ *
+ * It is a fact about the document, not about a block: a node id denotes one RDF
+ * resource whatever block mentions it, so tagging it once tags it everywhere. That is
+ * what lets a subgraph re-opened without a title keep containing its children
+ * (db-replica.md), and what makes a bare id usable before its tagged declaration
+ * (multi-site-platform.md wires `m1-web` in a block that does not type it). Passing a
+ * per-block emission the ids of that block alone reads those references as untagged,
+ * and an untagged endpoint is not a resource (`endpointIds` below).
+ *
+ * Template blocks are declarations rather than data, so they tag nothing — their
+ * members exist only as the resources their instances generate.
+ */
+export function collectTaggedIds(diagrams) {
+  const taggedIds = new Set();
+  for (const d of diagrams) {
+    if (d.isTemplate) continue;
+    for (const n of d.ast.nodes) if (n.classes.length) taggedIds.add(n.id);
+    for (const s of d.ast.subgraphs) if (s.classes.length) taggedIds.add(s.id);
+  }
+  return taggedIds;
+}
+
+/**
  * Converts a parsed diagram AST (see parser/index.js) into an array of N3 quads.
  *
  * This is the *only* mermaid-aware step: the quads are the sole hand-off to the
@@ -200,9 +225,17 @@ export function inversePredicateOf(predicate) {
  * that is not true (docs/adr/0031-architecture-templates.md). It is
  * `{ instances: [{ id, templateId }], members: [{ id, instanceId }] }`, and the
  * quads land in this diagram's graph like every other.
+ *
+ * Returns `{ quads, graphName, warnings }`. The warnings are about links whose
+ * endpoints are not resources, which is a judgement `taggedIds` makes and the parser
+ * of one block cannot.
  */
 export function emitQuads(ast, diagramId, { taggedIds = null, provenance = null } = {}) {
   const quads = [];
+  // Warnings about links, which only this step can raise: whether an endpoint is a
+  // resource depends on `taggedIds`, a fact about the whole document that the parser
+  // of a single block does not have. They join the parser's own in main.js.
+  const warnings = [];
   const graph = namedNode(`urn:d3fend-graph:${diagramId}`);
 
   const nodeById = new Map(ast.nodes.map((n) => [n.id, n]));
@@ -256,6 +289,29 @@ export function emitQuads(ast, diagramId, { taggedIds = null, provenance = null 
     if (!parentId) continue;
     if (!childrenByParent.has(parentId)) childrenByParent.set(parentId, []);
     childrenByParent.get(parentId).push(id);
+  }
+
+  // The members an *untagged* box stands for when an edge names it — `vip
+  // -->|d3f:connects| fe` writes one triple per member (testcases.md,
+  // `subgraph-as-relationships`).
+  //
+  // The set is the one `d3f:contains` would have written had the box been tagged, so
+  // the same walk decides both: an untagged member is not a resource and is skipped, an
+  // untagged nested box is transparent, and a *tagged* nested box is itself the member
+  // while its children are not. Where `effectiveParent` climbs past untagged boxes
+  // looking for a tagged one, this stops at the first tagged ancestor — that box is the
+  // member, and nothing above it can claim what it holds.
+  const membersByBox = new Map();
+  for (const id of placed) {
+    if (!isTagged(id)) continue;
+    const seen = new Set([id]); // forward references can form cycles
+    let parentId = declaredParent(id);
+    while (parentId && subgraphById.has(parentId) && !isTagged(parentId) && !seen.has(parentId)) {
+      seen.add(parentId);
+      if (!membersByBox.has(parentId)) membersByBox.set(parentId, []);
+      membersByBox.get(parentId).push(id);
+      parentId = declaredParent(parentId);
+    }
   }
 
   for (const node of ast.nodes) {
@@ -315,15 +371,64 @@ export function emitQuads(ast, diagramId, { taggedIds = null, provenance = null 
     }
   }
 
+  /**
+   * What an edge endpoint denotes: a tagged id is itself, an untagged box is its
+   * members, and an untagged id that is no box is nothing at all.
+   *
+   * That last case is the containment rule applied to links: an id with no class is
+   * not a resource ([ADR 0003](../../docs/adr/0003-diagram-to-trig.md)), and the
+   * child loop above has always skipped it — only the edge loop used to write it
+   * anyway, minting `G:fe` as the object of a triple about a box that has no type, no
+   * label and no members.
+   */
+  const endpointIds = (id) => {
+    if (isTagged(id)) return { ids: [id], isBox: false };
+    if (subgraphById.has(id)) return { ids: membersByBox.get(id) || [], isBox: true };
+    return { ids: [], isBox: false };
+  };
+
   for (const edge of ast.edges) {
     // Already filtered by the parser, which warns; belt and braces for a hand-built
     // AST, and it keeps `d3f:dpv:hasDataSubject` unreachable from any path.
     if (!isWritablePredicate(edge.predicate)) continue;
     const predicateCurie = edge.predicate;
-    const subject = namedNode(nodeIri(edge.from));
-    const object = namedNode(nodeIri(edge.to));
+    const from = endpointIds(edge.from);
+    const to = endpointIds(edge.to);
+    const link = `${edge.from} ${predicateCurie} ${edge.to}`;
+    // One line must not write one triple per pair: `N*M` derived arrows in place of
+    // the ones the author drew is what ADR 0026 and ADR 0032 both refused.
+    if (from.isBox && to.isBox) {
+      warnings.push(
+        `Ignored link "${link}": both ends name an untagged container, which would ` +
+          'write one triple per pair — give one of them a type, so the link names it.',
+      );
+      continue;
+    }
+    const emptySide = !from.ids.length ? edge.from : !to.ids.length ? edge.to : null;
+    if (emptySide) {
+      const isBox = emptySide === edge.from ? from.isBox : to.isBox;
+      warnings.push(
+        isBox
+          ? `Ignored link "${link}": the container "${emptySide}" holds no typed member ` +
+              `to distribute "${predicateCurie}" over.`
+          : `Ignored link "${link}": "${emptySide}" carries no class, so it is not a ` +
+              `resource — give it a type, e.g. "${emptySide}[d3f:Host]".`,
+      );
+      continue;
+    }
     const predicate = namedNode(expandCurie(predicateCurie));
-    quads.push(quad(subject, predicate, object, graph));
+    const distributing = from.isBox || to.isBox;
+    for (const fromId of from.ids) {
+      for (const toId of to.ids) {
+        // A member of the box on one side named on the other — `pool -->|p| h-a` with
+        // `h-a` in `pool` — would distribute into `h-a p h-a`. The author wrote a
+        // relation between two things, not a loop.
+        if (distributing && fromId === toId) continue;
+        quads.push(
+          quad(namedNode(nodeIri(fromId)), predicate, namedNode(nodeIri(toId)), graph),
+        );
+      }
+    }
   }
 
   // Template provenance. One statement per member, and one per instance root:
@@ -351,5 +456,5 @@ export function emitQuads(ast, diagramId, { taggedIds = null, provenance = null 
     );
   }
 
-  return { quads, graphName: graph.value };
+  return { quads, graphName: graph.value, warnings };
 }

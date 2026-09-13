@@ -1,0 +1,21 @@
+@prefix d3f: <http://d3fend.mitre.org/ontologies/d3fend.owl#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix G: <urn:d3fend-graph:>.
+@prefix E: <urn:d3fend-graph:enrichment:>.
+
+G:default {
+G:h-a a d3f:Host.
+G:h-b a d3f:Host.
+G:h-c a d3f:Host.
+G:vip a d3f:ReverseProxyServer;
+    rdfs:label "VIP".
+G:log a d3f:LogFile.
+G:cache a d3f:Network;
+    rdfs:label "Cache";
+    d3f:contains G:h-c.
+G:vip d3f:connects G:h-a, G:h-b, G:cache.
+G:h-a d3f:writes G:log.
+G:h-b d3f:writes G:log.
+G:cache d3f:writes G:log
+}

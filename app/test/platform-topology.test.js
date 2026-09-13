@@ -25,7 +25,7 @@ import { createQueryEngine } from '../src/query/queryEngine.js';
 import { queryPrefixes, withPreamble } from '../src/query/queryPrefixes.js';
 import { kgGraphName } from '../src/rdf/knowledgeBases.js';
 import { parseDocument } from '../src/parser/document.js';
-import { emitQuads, nodeIri } from '../src/rdf/emit.js';
+import { collectTaggedIds, emitQuads, nodeIri } from '../src/rdf/emit.js';
 import { toNQuads } from '../src/rdf/serialize.js';
 
 const appDir = path.resolve(fileURLToPath(new URL('.', import.meta.url)), '..');
@@ -68,7 +68,13 @@ d3f:Server d3f:runs d3f:ServiceApplication .
 /** Every mermaid block of a markdown example, as n-quads in its own named graph. */
 async function documentQuads(markdown) {
   const { diagrams } = parseDocument(markdown);
-  const quads = diagrams.flatMap(({ ast, diagramId }) => emitQuads(ast, diagramId).quads);
+  // Like main.js: the example wires `m1-web` in a block that does not type it, and an
+  // endpoint typed nowhere the emitter can see is not a resource, so its link is not
+  // written. Tagged-ness is a fact about the document (ADR 0003).
+  const taggedIds = collectTaggedIds(diagrams);
+  const quads = diagrams.flatMap(
+    ({ ast, diagramId }) => emitQuads(ast, diagramId, { taggedIds }).quads,
+  );
   const graphNames = [...new Set(diagrams.map((d) => `urn:d3fend-graph:${d.diagramId}`))];
   return { nquads: await toNQuads(quads), graphNames };
 }
