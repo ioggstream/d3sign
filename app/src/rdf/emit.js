@@ -435,7 +435,15 @@ export function emitQuads(ast, diagramId, { taggedIds = null, provenance = null 
   // which member a resource was is *not* recorded, because the identifier scheme
   // already says it (`ws-1-nic` is `nic` of `ws-1`), and recording it would cost
   // a triple per member per instance for an answer nothing reads.
+  //
+  // Both loops apply the rule the type, containment and edge loops apply: an id with
+  // no class is not a resource. Expansion clones *every* member, padding subgraphs
+  // included (parser/templates.js), and a `ds:partOf` about one of those was enough to
+  // mint it — `buildGraphModel` makes a node for the subject of every quad, so an
+  // untagged `subgraph fe` in a template was drawn as a typeless box inside each
+  // instance (docs/external/gcp/gcp-multi-region.md: `r0-fe`, `r0-be`, `r0-data`).
   for (const instance of provenance?.instances || []) {
+    if (!isTagged(instance.id)) continue;
     quads.push(
       quad(
         namedNode(nodeIri(instance.id)),
@@ -446,6 +454,7 @@ export function emitQuads(ast, diagramId, { taggedIds = null, provenance = null 
     );
   }
   for (const member of provenance?.members || []) {
+    if (!isTagged(member.id)) continue;
     quads.push(
       quad(
         namedNode(nodeIri(member.id)),
