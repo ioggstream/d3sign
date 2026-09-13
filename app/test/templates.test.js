@@ -17,7 +17,7 @@ import path from 'node:path';
 import { parseDiagram } from '../src/parser/index.js';
 import { parseDocument, extractMermaidBlocks } from '../src/parser/document.js';
 import { expandDocument, templateRegistry } from '../src/parser/templates.js';
-import { emitQuads, nodeIri, expandCurie, PREFIXES, PROVENANCE } from '../src/rdf/emit.js';
+import { collectTaggedIds, emitQuads, nodeIri, expandCurie, PREFIXES, PROVENANCE } from '../src/rdf/emit.js';
 import { buildGraphModel, modelPredicates } from '../src/rdf/graphModel.js';
 import { GraphStore } from '../src/rdf/store.js';
 
@@ -37,12 +37,7 @@ const documentedExpansion = blocks[2].source;
 function emitDocument(markdown) {
   const { diagrams } = parseDocument(markdown, { defaultDiagramId: 'current' });
   const { diagrams: expanded, warnings } = expandDocument(diagrams);
-  const taggedIds = new Set();
-  for (const d of expanded) {
-    if (d.isTemplate) continue;
-    for (const n of d.ast.nodes) if (n.classes.length) taggedIds.add(n.id);
-    for (const s of d.ast.subgraphs) if (s.classes.length) taggedIds.add(s.id);
-  }
+  const taggedIds = collectTaggedIds(expanded);
   const quads = [];
   for (const d of expanded) {
     if (d.isTemplate) continue;
@@ -157,6 +152,64 @@ describe('template expansion — provenance', () => {
       ].sort(),
     );
     expect(objectsOf(nodeIri('ws-1'), PROVENANCE.partOf)).toEqual([]);
+  });
+
+  /**
+   * A template groups its members with plain subgraphs as any diagram does, and an
+   * untagged one is padding — not a resource (ADR 0003). Expansion clones it like
+   * every other member, and provenance about it used to be enough to mint it:
+   * `buildGraphModel` makes a node for the subject of every quad, so
+   * `G:r0-fe ds:partOf G:r0` drew a typeless box inside each instance
+   * (docs/external/gcp/gcp-multi-region.md, whose `fe`/`be`/`data` are exactly this).
+   */
+  describe('an untagged grouping subgraph inside a template', () => {
+    const document = [
+      '```mermaid',
+      '---',
+      'kind: template',
+      'id: Pod',
+      'root: pod',
+      '---',
+      'graph',
+      'subgraph pod [d3f:Host]',
+      'end',
+      'subgraph pad',
+      '  web[d3f:WebServerApplication]',
+      '  cache[d3f:Cache]',
+      'end',
+      '```',
+      '',
+      '```mermaid',
+      'graph',
+      'p0[Pod zero T:Pod]',
+      '```',
+    ].join('\n');
+    const emitted = emitDocument(document);
+    const pad = nodeIri('p0-pad');
+
+    it('is in no quad at all', () => {
+      expect(emitted.quads.filter((q) => q.subject.value === pad || q.object.value === pad)).toEqual([]);
+    });
+
+    it('leaves its typed members as members of the instance', () => {
+      const partOf = emitted.quads
+        .filter((q) => q.predicate.value === PROVENANCE.partOf)
+        .map((q) => [q.subject.value, q.object.value]);
+      expect(partOf.sort()).toEqual(
+        [
+          [nodeIri('p0-web'), nodeIri('p0')],
+          [nodeIri('p0-cache'), nodeIri('p0')],
+        ].sort(),
+      );
+    });
+
+    it('is therefore not a node in the graph model', () => {
+      const store = new GraphStore();
+      store.replaceGraph('urn:d3fend-graph:current', emitted.quads);
+      const model = buildGraphModel(store);
+      expect(model.nodes.has(pad)).toBe(false);
+      expect(model.parentOf.get(nodeIri('p0-web'))).toBe(nodeIri('p0'));
+    });
   });
 });
 
