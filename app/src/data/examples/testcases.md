@@ -232,7 +232,6 @@ G:default {
 }
 ```
 
-
 ## complex-node-syntax
 
 Given

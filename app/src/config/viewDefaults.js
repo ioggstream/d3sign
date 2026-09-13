@@ -45,8 +45,7 @@ export const DEFAULT_PREFS = {
   // How a node's place is drawn: `off` leaves the location links alone, `pins` puts
   // the place on the node, `boxes` draws the node inside its place. Both of the
   // latter remove the links they replace, so by the rule above neither is the
-  // default (docs/adr/0036-location-pins.md,
-  // docs/adr/0037-location-containment-view.md).
+  // default (docs/adr/0036-location-pins.md).
   locationView: 'off',
   // Changes *which* elements exist rather than how they are drawn, so it defaults
   // off: a diagram must first be seen as the TriG describes it

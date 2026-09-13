@@ -111,7 +111,7 @@ function effectKeys(effect, end, bidirectional) {
  */
 /**
  * Containment augmented with a parent for every node that names its own place
- * (docs/adr/0037-location-containment-view.md).
+ * (docs/adr/0036-location-pins.md).
  *
  * Returns fresh Maps. The model is built once per store change and re-read on every
  * filter and preference render, so mutating it here would leak this view into the
