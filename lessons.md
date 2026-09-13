@@ -1787,3 +1787,40 @@ the `breadthfirst` layout's root selection.
   shapes, which ADR 0033 spends on the reading/writing terminators; `unbundled-bezier`
   and `straight-triangle` need per-edge control points, and this stylesheet styles
   edges by selector only.
+
+## 2026-09-13 — a box as a set, and the untagged edge endpoint
+
+Task: assess `subgraph-as-relationships` (an edge naming a subgraph distributes
+over its members) and add two testcases pinning it down.
+
+- **The edge loop in `emit.js` does not apply the untagged rule the containment
+  loop applies.** Children are filtered by `isTagged` before `d3f:contains` is
+  written, but an edge is emitted whatever its endpoints are — so
+  `vip -->|d3f:connects| fe` on an untagged box already emits `G:vip d3f:connects G:fe`, a triple about an id ADR 0003 says is not a resource. Same rule, two
+  behaviors.
+- **Distribution is only coherent if the *untagged* box is the one that does it.**
+  A tagged box is a resource, so the link names it; an untagged box is a set
+  expression, which keeps "untagged is not a resource" intact. But tagged-ness is
+  document-global, so a class written in another block silently turns N triples
+  into 1 — the sharpest cost of the feature.
+- **It is sugar for the `&`-group.** `a -->|p| x & y & z` already yields exactly
+  the distributed quads and the group never reaches the RDF (ADR 0032), so nothing
+  downstream — `graphModel.js`, `toCytoscape.js`, the panels — learns anything new.
+  That framing is what keeps it from being a third meaning for a box, which ADR
+  0032 refused by name.
+- **The member set is not `effectiveParent`.** That walk climbs *past* an untagged
+  box looking for a tagged one; the member walk must stop at the named box whether
+  or not it is tagged. Same transparency rule, rooted differently.
+- **The per-block fallback of `emitQuads` is now lossy, and the tests were using
+  it.** `taggedIds` was optional and three suites omitted it, which was harmless
+  while an untagged endpoint still got its triple. With the new rule it silently
+  dropped `m1-web d3f:runs checkout` in multi-site-platform.md, whose third block
+  wires ids the first block types. Hence `collectTaggedIds(diagrams)` exported from
+  `emit.js`: main.js and the topology test now build the set the same way.
+- **The one corpus casualty is `u((User))`.** D3FEND has no class for a human actor
+  (`UserAccount` is the nearest), so the example draws the user untyped and
+  `u -->|d3f:uses| checkout` is now dropped with a warning.
+- **Adding a `## section` to testcases.md does not assert the `trig` block.**
+  `rdf-emit.test.js` snapshots the emitter's actual output, so a section added
+  before the behavior exists records today's wrong output and passes green. Land
+  the section with the implementation, or read the generated `.trig` by hand.

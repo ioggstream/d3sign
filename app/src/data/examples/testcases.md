@@ -432,8 +432,12 @@ end
 
 vip[VIP d3f:ReverseProxyServer]
 
-%% C1: this link in G does not have a matching mermaid link.
-%% C2: a later tag to `fe` alters G
+%% C1: these links in G do not have a matching mermaid
+%%   link: the graph view is built from the RDF alone,
+%%   so it draws three arrows where mermaid drew one.
+%% C2: a later tag to `fe` alters G — see
+%%   subgraph-as-relationships-tagged, where the box is
+%%   a resource and the link names it instead.
 vip -->|d3f:connects| fe
 ```
 
@@ -448,6 +452,114 @@ G:subgraph-as-relationships {
     G:h-c a d3f:Host .
     G:vip a d3f:ReverseProxyServer;
         d3f:connects G:h-a, G:h-b, G:h-c .
+}
+```
+
+## subgraph-as-relationships-tagged
+
+Given
+
+```mermaid
+---
+title: subgraph-as-relationships-tagged
+---
+graph
+
+%% WHEN the subgraph is tagged
+%% THEN it is a resource
+subgraph net [Frontend d3f:Network]
+    h-a[d3f:Host]
+    h-b[d3f:Host]
+end
+
+vip[VIP d3f:ReverseProxyServer]
+
+vip -->|d3f:connects| net
+```
+
+Then
+
+```trig
+@prefix d3f: <https://d3fend.mitre.org/ontologies/d3fend.owl#> .
+@prefix G: <urn:d3fend-graph:> .
+G:subgraph-as-relationships-tagged {
+    G:net a d3f:Network;
+        rdfs:label "Frontend" ;
+        d3f:contains G:h-a, G:h-b .
+    G:h-a a d3f:Host .
+    G:h-b a d3f:Host .
+    G:vip a d3f:ReverseProxyServer;
+        rdfs:label "VIP" ;
+        d3f:connects G:net .
+}
+```
+
+## subgraph-as-relationships-members
+
+Given
+
+```mermaid
+---
+title: subgraph-as-relationships-members
+---
+graph
+
+subgraph pool [Untagged]
+    h-a[d3f:Host]
+    %% WHEN a member is untagged
+    %% THEN it is skipped.
+    h-untagged
+
+    %% WHEN a nested subgraph is untagged
+    %% THEN it is traversed, like d3f:contains does.
+    subgraph padding
+        h-b[d3f:Host]
+    end
+
+    %% WHEN a nested subgraph is tagged
+    %% THEN it is the member; its children are not.
+    subgraph cache [Cache d3f:Network]
+        h-c[d3f:Host]
+    end
+end
+
+vip[VIP d3f:ReverseProxyServer]
+log[d3f:LogFile]
+
+vip -->|d3f:connects| pool
+
+%% WHEN the box is the source
+%% THEN it distributes the same way.
+%% A box at *both* ends is refused with a warning:
+%%   one line must not write N*M triples.
+pool -->|d3f:writes| log
+```
+
+Then
+
+```trig
+@prefix d3f: <https://d3fend.mitre.org/ontologies/d3fend.owl#> .
+@prefix G: <urn:d3fend-graph:> .
+G:subgraph-as-relationships-members {
+    G:h-a a d3f:Host .
+    G:h-b a d3f:Host .
+    G:h-c a d3f:Host .
+    G:cache a d3f:Network;
+        rdfs:label "Cache" ;
+        d3f:contains G:h-c .
+    G:vip a d3f:ReverseProxyServer;
+        rdfs:label "VIP" ;
+        d3f:connects G:h-a, G:h-b,
+        # G:cache is tagged => G:h-c is not d3f:contained directly
+        #   because it is a member of a tagged subgraph
+        G:cache .
+
+
+    G:log a d3f:LogFile .
+    G:h-a d3f:writes G:log .
+    G:h-b d3f:writes G:log .
+    # G:h-c is not d3f:writes directly because it is a member of a tagged subgraph.
+    G:cache d3f:writes G:log .
 }
 ```
 
