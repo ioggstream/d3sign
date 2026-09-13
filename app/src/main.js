@@ -7,7 +7,7 @@ import {
 import { mermaidIdOf, writtenTriplesOf } from './goToSource.js';
 import { parseDocument } from './parser/document.js';
 import { expandDocument } from './parser/templates.js';
-import { emitQuads, curieForGraphName, PREFIXES } from './rdf/emit.js';
+import { collectTaggedIds, emitQuads, curieForGraphName, PREFIXES } from './rdf/emit.js';
 import { alternativesBetween } from './editor/d3fendRestrictions.js';
 import { GraphStore } from './rdf/store.js';
 import { buildGraphModel, modelPredicates } from './rdf/graphModel.js';
@@ -829,25 +829,23 @@ async function handleTextChange(text) {
 
   // Every id carrying a class anywhere in the document, in any vocabulary a diagram
   // may write (TYPING_PREFIXES in rdf/emit.js) — a `dpv:`-only subgraph is as tagged
-  // as a `d3f:` one, and contains its children the same way. A node id denotes one
-  // RDF resource whatever block or named graph mentions it, so tagging it once
-  // tags it everywhere — which is how a subgraph re-opened without a title
-  // (db-replica.md) keeps containing its children instead of being read as
-  // presentational padding. See docs/adr/0003-diagram-to-trig.md.
-  const taggedIds = new Set();
-  for (const d of diagrams) {
-    if (d.isTemplate) continue;
-    for (const n of d.ast.nodes) if (n.classes.length) taggedIds.add(n.id);
-    for (const s of d.ast.subgraphs) if (s.classes.length) taggedIds.add(s.id);
-  }
+  // as a `d3f:` one, and contains its children the same way. See
+  // docs/adr/0003-diagram-to-trig.md and `collectTaggedIds` for why it is collected
+  // across the document rather than per block.
+  const taggedIds = collectTaggedIds(diagrams);
 
   const nextDiagramGraphNames = new Set();
   const mergedByGraphName = new Map();
+  const emitWarnings = [];
   for (const d of diagrams) {
     // A template block is a declaration, not data: its members exist only as the
     // resources its instances generate, so it contributes no graph of its own.
     if (d.isTemplate) continue;
-    const { quads, graphName } = emitQuads(d.ast, d.diagramId, { taggedIds, provenance: d.provenance });
+    const { quads, graphName, warnings: linkWarnings } = emitQuads(d.ast, d.diagramId, {
+      taggedIds,
+      provenance: d.provenance,
+    });
+    emitWarnings.push(...linkWarnings);
     nextDiagramGraphNames.add(graphName);
     if (!mergedByGraphName.has(graphName)) {
       mergedByGraphName.set(graphName, { diagramId: null, quads: [] });
@@ -876,7 +874,12 @@ async function handleTextChange(text) {
   await ensureEnrichment();
   visibleGraphs = loadVisibleGraphs([...graphContributions.keys()]);
 
-  const allWarnings = [...warnings, ...templateWarnings, ...diagrams.flatMap((d) => d.ast.warnings)];
+  const allWarnings = [
+    ...warnings,
+    ...templateWarnings,
+    ...diagrams.flatMap((d) => d.ast.warnings),
+    ...emitWarnings,
+  ];
 
   await applyGraphVisibility();
   // Linted after the model is built, not before: a location contradiction is a fact

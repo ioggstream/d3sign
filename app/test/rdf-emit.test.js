@@ -243,6 +243,100 @@ describe('emitQuads — containment as d3f:contains triples', () => {
   });
 });
 
+/**
+ * What an edge endpoint denotes. The snapshots in testcases.md
+ * (`subgraph-as-relationships*`) state the shapes; these are the refusals, which a
+ * snapshot of the quads cannot show because the whole point is that there are none.
+ */
+describe('emitQuads — an edge endpoint that is not a resource', () => {
+  const emit = (lines, options) => emitQuads(parseDiagram(['graph', ...lines].join('\n')), 'default', options);
+  const linksOf = (quads, suffix) =>
+    quads.filter((q) => q.predicate.value.endsWith(suffix)).map((q) => [q.subject.value, q.object.value]);
+
+  // The containment rule applied to links: an id with no class is not a resource, so
+  // it is no more the object of a triple than it is the child of a container.
+  it('writes no quad for an untagged endpoint, and says which id it was', () => {
+    const { quads, warnings } = emit(['a[Host d3f:Host]', 'a -->|d3f:reads| b']);
+    expect(linksOf(quads, '#reads')).toEqual([]);
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toContain('"b"');
+  });
+
+  // Tagged-ness is a fact about the document, so a bare reference to an id another
+  // block types is a resource here (multi-site-platform.md wires hosts this way).
+  it('writes the quad when another block typed the endpoint', () => {
+    const { quads, warnings } = emit(['a[Host d3f:Host]', 'a -->|d3f:reads| b'], {
+      taggedIds: new Set(['b']),
+    });
+    expect(linksOf(quads, '#reads')).toEqual([[nodeIri('a'), nodeIri('b')]]);
+    expect(warnings).toEqual([]);
+  });
+
+  it('distributes over the members of an untagged box, on either side', () => {
+    const { quads } = emit([
+      'subgraph pool',
+      '  h-a[d3f:Host]',
+      '  h-b[d3f:Host]',
+      'end',
+      'vip[d3f:ReverseProxyServer]',
+      'log[d3f:LogFile]',
+      'vip -->|d3f:connects| pool',
+      'pool -->|d3f:writes| log',
+    ]);
+    expect(linksOf(quads, '#connects')).toEqual([
+      [nodeIri('vip'), nodeIri('h-a')],
+      [nodeIri('vip'), nodeIri('h-b')],
+    ]);
+    expect(linksOf(quads, '#writes')).toEqual([
+      [nodeIri('h-a'), nodeIri('log')],
+      [nodeIri('h-b'), nodeIri('log')],
+    ]);
+  });
+
+  // One line must not write one triple per pair (ADR 0026, ADR 0032).
+  it('refuses a box at both ends', () => {
+    const { quads, warnings } = emit([
+      'subgraph l',
+      '  a[d3f:Host]',
+      'end',
+      'subgraph r',
+      '  b[d3f:Host]',
+      'end',
+      'l -->|d3f:reads| r',
+    ]);
+    expect(linksOf(quads, '#reads')).toEqual([]);
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toContain('both ends');
+  });
+
+  // A member of the box named on the other side would distribute into a loop.
+  it('drops the self-pair when a member is named opposite its own box', () => {
+    const { quads } = emit([
+      'subgraph pool',
+      '  h-a[d3f:Host]',
+      '  h-b[d3f:Host]',
+      'end',
+      'pool -->|d3f:reads| h-a',
+    ]);
+    expect(linksOf(quads, '#reads')).toEqual([[nodeIri('h-b'), nodeIri('h-a')]]);
+  });
+
+  // Silence would lose a line the author wrote: the box is empty, or holds nothing
+  // typed, so there is nothing to distribute over.
+  it('warns when the box holds no typed member', () => {
+    const { quads, warnings } = emit([
+      'subgraph pool',
+      '  untyped',
+      'end',
+      'vip[d3f:ReverseProxyServer]',
+      'vip -->|d3f:connects| pool',
+    ]);
+    expect(linksOf(quads, '#connects')).toEqual([]);
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toContain('"pool"');
+  });
+});
+
 describe('emitQuads — multi-graph.md (union across diagrams)', () => {
   const { diagrams } = parseDocument(readFixture('multi-graph.md'));
 
