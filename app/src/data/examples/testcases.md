@@ -409,6 +409,48 @@ G:default {
 }
 ```
 
+## subgraph-as-relationships
+
+Given
+
+```mermaid
+---
+title: subgraph-as-relationships
+---
+graph
+
+%% d3f:Artifact -->|d3f:whatever| subgraph
+%% means d3f:Artifact d3f:whatever ....
+%% evaluate this pattern with examples.
+%% problems may arise with subgraphs, but
+%% simplifies representations.
+subgraph fe
+    h-a[d3f:Host]
+    h-b[d3f:Host]
+    h-c[d3f:Host]
+end
+
+vip[VIP d3f:ReverseProxyServer]
+
+%% C1: this link in G does not have a matching mermaid link.
+%% C2: a later tag to `fe` alters G
+vip -->|d3f:connects| fe
+```
+
+Then
+
+```trig
+@prefix d3f: <https://d3fend.mitre.org/ontologies/d3fend.owl#> .
+@prefix G: <urn:d3fend-graph:> .
+G:subgraph-as-relationships {
+    G:h-a a d3f:Host .
+    G:h-b a d3f:Host .
+    G:h-c a d3f:Host .
+    G:vip a d3f:ReverseProxyServer;
+        d3f:connects G:h-a, G:h-b, G:h-c .
+}
+```
+
 ## parse-links
 
 Given

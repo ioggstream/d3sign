@@ -1761,3 +1761,29 @@ pane.
   the way `#query-select` already does it.
 - **Tests run in the container:** `docker exec d3sign-dev-1 sh -c 'cd /code/app && npx vitest run'`. 16 failures on this branch, all in graph/layout/query
   areas nobody touched here.
+
+## 2026-09-13 — link shape as a preference, and where `breadthfirst` starts
+
+Task: expose cytoscape's `curve-style` in the View popover, after a question about
+the `breadthfirst` layout's root selection.
+
+- **`breadthfirst` has no single start node.** With `roots` unset and
+  `directed: true` (`viz/layouts.js`), cytoscape uses `nodes.roots()` — *every*
+  childless node with in-degree 0. Depth is the hop count from the nearest of them,
+  first visit wins, and anything BFS never reaches (isolated nodes, a component that
+  is one cycle) is `unshift`ed as a **new row above depth 0**. So a fully cyclic
+  diagram renders as one flat top row, which looks like a bug and is not.
+- **The direction it reads is the direction *drawn*.** `toCytoscape.js` applies the
+  per-predicate swap and `orientByFlow` before the layout sees an element, so those
+  two view options change the root set.
+- **`curve-style` is a restyle, not a relayout.** The routing moves, the node boxes
+  do not, so `edgeStyle` stays out of `LAYOUT_AFFECTING` in `viz/graphPane.js` and
+  out of the `rebuild` condition in `main.js` — a relayout would discard dragged
+  positions for nothing.
+- **`taxi-direction` must stay `auto`.** Pinning it to `horizontal` to match
+  `elk.direction: 'RIGHT'` is right until the rotate buttons turn the drawing, and
+  rotation moves positions without re-running the layout.
+- **Three of cytoscape's curve styles are unusable here.** `haystack` ignores arrow
+  shapes, which ADR 0033 spends on the reading/writing terminators; `unbundled-bezier`
+  and `straight-triangle` need per-edge control points, and this stylesheet styles
+  edges by selector only.

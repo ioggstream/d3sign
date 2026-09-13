@@ -74,6 +74,19 @@ describe('view preferences', () => {
     expect(normalizePrefs({ locationView: 'elsewhere' }).locationView).toBe('off');
   });
 
+  it('keeps the curved link shape by default, and rejects an unknown one', () => {
+    // Unlike the two above this changes nothing about which elements exist, so it is
+    // a matter of taste — it defaults to the routing the graph has always drawn.
+    expect(DEFAULT_PREFS.edgeStyle).toBe('bezier');
+    stored.set('d3fend-graph:view-prefs', JSON.stringify({ nodeStyle: 'icon' }));
+    expect(loadPrefs().edgeStyle).toBe('bezier');
+    savePrefs({ ...DEFAULT_PREFS, edgeStyle: 'round-taxi' });
+    expect(loadPrefs().edgeStyle).toBe('round-taxi');
+    // `haystack` is a real cytoscape value this app refuses: it ignores arrow shapes,
+    // which is the channel the reading/writing terminators use.
+    expect(normalizePrefs({ edgeStyle: 'haystack' }).edgeStyle).toBe('bezier');
+  });
+
   // Two renames, so two hops: showLocation → locationPins → locationView. Both old
   // keys mean the same intent, so both are carried over rather than discarded.
   it.each([

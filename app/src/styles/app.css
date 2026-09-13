@@ -839,6 +839,10 @@ main#app-grid {
 .prefs-slider { display: grid; grid-template-columns: 5.5rem 1fr 2rem; align-items: center; gap: var(--s-3); }
 .prefs-slider input[type='range'] { width: 100%; margin: 0; accent-color: var(--c-accent); }
 .prefs-value { text-align: right; color: var(--c-text-faint); font-variant-numeric: tabular-nums; }
+/* The same two-column start as a slider row, so the dropdown's left edge lines up
+   with the slider tracks above it. */
+.prefs-select { display: grid; grid-template-columns: 5.5rem 1fr; align-items: center; gap: var(--s-3); }
+.prefs-select select { width: 100%; font: inherit; }
 
 /* ---------------------------------------------------------------------------
    Mermaid preview: the diagram selector
