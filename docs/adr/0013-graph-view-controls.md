@@ -33,6 +33,36 @@ at at a time.
   concentric, circle, grid) — no new dependency, works offline. Entries
   that flatten compound (container) nodes are labelled `(flat)`.
 
+- [x] A tier is decided by the links something travels
+  along, and by nothing else. Data flow and control
+  flow place a node; the links that say two nodes are
+  the same thing, are near each other, or are joined,
+  do not. A standby replica joined to its database by
+  a copy relation belongs beside it, and a drawing
+  that layers on that relation says instead that one
+  comes before the other.
+
+- [x] A node no flow link reaches takes the tier of
+  its nearest neighbour over any link, rather than
+  the first tier. A layout that reads direction gives
+  such a node no place, so it defaults to the front —
+  which is the one tier it demonstrably is not in.
+
+- [x] The distance to a tier is the longest path to
+  it, not the shortest. A shortcut past the middle of
+  a chain is a fact about the shortcut, and must not
+  pull what the chain ends in towards the front.
+
+- [x] Nothing is drawn before the node the reading
+  starts from. Tiers are counted from it, and
+  whatever the flow puts ahead of it is drawn level
+  with it instead.
+
+- [x] Both the layered and the breadth-first layout
+  can start the reading from a chosen node. The
+  layouts that cannot say so when asked, rather than
+  ignoring the request in silence.
+
 - [x] Rotation is a view transform, not a layout option: two buttons turn the
   drawing 90° clockwise / counter-clockwise by rotating node positions
   around the drawing's centre. This works identically for every algorithm,
@@ -164,6 +194,19 @@ Cons:
 - `r` is swallowed whenever the graph is visible and
   focus is outside a text field, so it is no longer
   free for a pane sharing the screen with it.
+- Tiering runs one layout over a smaller set of links
+  than the drawing shows, so a link that is drawn no
+  longer necessarily explains where a node sits. The
+  tiers are readable and the reason for them is not
+  always on screen.
+- A node placed by inheritance is placed by a
+  relation that states no order, so two drawings of
+  the same diagram can disagree about it as soon as
+  such a link is added or removed.
+- Only the layered layout has tiers. The other nine
+  draw the same diagram without them, so the tiers
+  are a property of one view rather than of the
+  model.
 
 ## DONTREADME
 
@@ -207,6 +250,31 @@ before trusting them.
   [app/src/viz/nodeMenu.js](../../app/src/viz/nodeMenu.js)
   and nothing enforces that the two agree, so a new
   key means editing both.
+- Tiers are `tierLayers(nodes, edges, { rootId })` in
+  [tierLayers.js](../../app/src/viz/tierLayers.js),
+  fed plain records by `drawnRecords()` in
+  `graphPane.js` — the same shape `pathFocus.js`
+  takes. `TIER_FLOW_KINDS` is the kind list, and
+  `graphPane` uses it twice: once for the walk, once
+  for the `eles` it hands the layout.
+- The tier reaches ELK as
+  `elk.partitioning.partition` per node, plus
+  `elk.partitioning.activate` and
+  `elk.separateConnectedComponents: false` on the
+  root graph, all in `layouts.js`.
+  `elk.layered.layering.layerChoiceConstraint` looks
+  like the right option and does nothing: ELK
+  evaluates it only inside the
+  `InteractiveLayeredGraphVisitor`, which
+  `cytoscape-elk` never runs.
+  [elk-partitioning.test.js](../../app/test/elk-partitioning.test.js)
+  characterises what does work, including why a
+  container must carry a partition too.
+- `breadthfirst` takes `roots` from
+  `layoutRoots(nodes, edges, rootId)`. Do not add
+  `maximal` or `acyclic`: the first abandons its
+  adjustment on a cycle, the second loops forever on
+  one.
 - `Alt+,` is `dock.cycleView('trig')`; the width it
   frees is redistributed because column widths are
   weights renormalised over the non-empty columns

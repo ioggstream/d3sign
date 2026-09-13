@@ -7,7 +7,9 @@ import {
   normalizeSteps,
   rotatePoint,
   supportsFlowRoot,
+  supportsTierLayering,
 } from './layouts.js';
+import { TIER_FLOW_KINDS, layoutRoots, tierLayers } from './tierLayers.js';
 import {
   PATH_FOCUS_DEPTH_CLASSES,
   buildStyle,
@@ -436,6 +438,30 @@ export function createGraphPane(host, {
   }
 
   /**
+   * The drawn graph as plain records, which is what the graph walks take: they are pure
+   * functions of a shape, testable without a cytoscape instance (viz/tierLayers.js,
+   * viz/pathFocus.js).
+   */
+  function drawnRecords() {
+    return {
+      nodes: cy.nodes().map((node) => ({
+        id: node.id(),
+        isParent: node.isParent(),
+        parentId: node.data('parent') ?? null,
+      })),
+      edges: cy.edges().map((edge) => ({
+        id: edge.id(),
+        source: edge.data('source'),
+        target: edge.data('target'),
+        kind: edge.data('kind'),
+        // A two-way link is one element standing for the relation asserted each way, so a
+        // walk that reads direction has to know which it is looking at.
+        bidirectional: edge.data('bidirectional'),
+      })),
+    };
+  }
+
+  /**
    * Runs the current layout, re-applying the pending rotation once it settles.
    *
    * With an `anchor` (from `captureAnchor`) the view stays where the reader left
@@ -445,7 +471,28 @@ export function createGraphPane(host, {
    * nudged.
    */
   function runLayout(anchor = null) {
-    const layout = cy.layout(layoutOptions(layoutId, prefs, { rootId: flowRootId }));
+    const view = { rootId: flowRootId };
+    // What the layout is run over. Normally everything drawn; under tier layering the
+    // non-flow links are held back, because a partition orders the tiers but an edge still
+    // forces its target into a later one — a `db → standby` link would push the replica
+    // past the tier it was computed into. cytoscape-elk reads node positions back and
+    // nothing else, so the routing those links would have got is no loss, and they stay on
+    // screen either way: this is the layout's input, not the drawing's.
+    let eles;
+    if (supportsTierLayering(layoutId)) {
+      const { nodes, edges } = drawnRecords();
+      view.tiers = tierLayers(nodes, edges, { rootId: flowRootId });
+      eles = cy
+        .nodes()
+        .union(cy.edges().filter((edge) => TIER_FLOW_KINDS.includes(edge.data('kind'))));
+    } else if (layoutId === 'breadthfirst') {
+      const { nodes, edges } = drawnRecords();
+      // Over every drawn link, not only the flow ones: these decide what the walk can
+      // reach, and a node it cannot reach is drawn in a row *above* the first one.
+      view.roots = layoutRoots(nodes, edges, flowRootId);
+    }
+
+    const layout = cy.layout({ ...layoutOptions(layoutId, prefs, view), ...(eles ? { eles } : {}) });
     layout.one('layoutstop', () => {
       rotateBy(rotationSteps);
       // Before separating: the band is part of a container's box, so overlaps have
@@ -479,7 +526,7 @@ export function createGraphPane(host, {
 
   const onSetFlowRoot = (nodeId) => {
     if (!applyFlowRoot(nodeId)) {
-      flashEdgeError(host, 'only the ELK layered layout can start from a node');
+      flashEdgeError(host, 'this layout cannot start the reading from a node — try ELK layered or breadth-first');
     }
   };
 
@@ -530,16 +577,11 @@ export function createGraphPane(host, {
       return;
     }
 
-    const edges = cy.edges().map((edge) => ({
-      id: edge.id(),
-      source: edge.data('source'),
-      target: edge.data('target'),
-      // A two-way link is one element standing for the relation asserted each
-      // way, so the flow can be followed along it in either direction.
-      bidirectional: edge.data('bidirectional'),
-    }));
+    // A two-way link is one element standing for the relation asserted each way, so the
+    // flow can be followed along it in either direction; `drawnRecords` carries that.
+    const { nodes, edges } = drawnRecords();
     const focused = directionalFlow(
-      cy.nodes().map((node) => node.id()),
+      nodes.map((node) => node.id),
       edges,
       nodeId,
       direction,

@@ -7,6 +7,8 @@ import {
   layoutOptions,
   normalizeSteps,
   rotatePoint,
+  supportsFlowRoot,
+  supportsTierLayering,
 } from '../src/viz/layouts.js';
 import { DEFAULT_PREFS, containerLabelBand } from '../src/viz/graphPrefs.js';
 
@@ -32,6 +34,88 @@ describe('layoutOptions', () => {
     for (const layout of LAYOUTS) {
       expect(layoutOptions(layout.id).transform).toBe(labelAnchorTransform);
     }
+  });
+});
+
+describe('tier layering', () => {
+  const tiers = new Map([
+    ['user', 0],
+    ['db', 3],
+  ]);
+  // `data()` is read for a container's label, which decides how tall its band is.
+  const node = (id, isParent = false) => ({
+    id: () => id,
+    isParent: () => isParent,
+    data: () => ({ id, label: id }),
+  });
+
+  it('states a node’s tier as its ELK partition', () => {
+    const options = layoutOptions('elk-layered', DEFAULT_PREFS, { tiers });
+    expect(options.nodeLayoutOptions(node('user'))).toEqual({ 'elk.partitioning.partition': 0 });
+    expect(options.nodeLayoutOptions(node('db'))).toEqual({ 'elk.partitioning.partition': 3 });
+    // A node the walk did not place says nothing, rather than claiming tier 0.
+    expect(options.nodeLayoutOptions(node('unknown'))).toBeUndefined();
+  });
+
+  it('partitions a container too, keeping its padding', () => {
+    // An unpartitioned node in a partitioned graph moves its neighbours out of their
+    // tiers (app/test/elk-partitioning.test.js).
+    const withBox = new Map([...tiers, ['box', 1]]);
+    const options = layoutOptions('elk-layered', DEFAULT_PREFS, { tiers: withBox });
+    const box = options.nodeLayoutOptions(node('box', true));
+    expect(box['elk.partitioning.partition']).toBe(1);
+    // The padding is the container's own, sized from its label; the tier is added to it
+    // rather than replacing it.
+    expect(box['elk.padding']).toMatch(/^\[top=\d+,left=\d+,bottom=\d+,right=\d+\]$/);
+  });
+
+  it('keeps the flow root’s layer constraint alongside its partition', () => {
+    const options = layoutOptions('elk-layered', DEFAULT_PREFS, { tiers, rootId: 'user' });
+    expect(options.nodeLayoutOptions(node('user'))).toEqual({
+      'elk.layered.layering.layerConstraint': 'FIRST',
+      'elk.partitioning.partition': 0,
+    });
+  });
+
+  it('turns partitioning on, and component separation off with it', () => {
+    // Holding the non-flow links back leaves a standby replica in a component of its own,
+    // and `layered` splits components before partitioning runs.
+    const elk = layoutOptions('elk-layered', DEFAULT_PREFS, { tiers }).elk;
+    expect(elk['elk.partitioning.activate']).toBe(true);
+    expect(elk['elk.separateConnectedComponents']).toBe(false);
+  });
+
+  it('changes nothing at all when no tier was computed', () => {
+    // The regression guard for every other drawing: an empty map is not a tiering.
+    const plain = layoutOptions('elk-layered', DEFAULT_PREFS).elk;
+    expect(layoutOptions('elk-layered', DEFAULT_PREFS, { tiers: new Map() }).elk).toEqual(plain);
+    expect('elk.partitioning.activate' in plain).toBe(false);
+    expect('elk.separateConnectedComponents' in plain).toBe(false);
+  });
+
+  it('is offered by the layered layout alone', () => {
+    expect(LAYOUTS.filter((l) => supportsTierLayering(l.id)).map((l) => l.id)).toEqual([
+      'elk-layered',
+    ]);
+  });
+});
+
+describe('starting the reading from a node', () => {
+  it('hands breadth-first its roots, and leaves the option off without them', () => {
+    expect(layoutOptions('breadthfirst', DEFAULT_PREFS, { roots: ['user'] }).roots).toEqual([
+      'user',
+    ]);
+    // Absent rather than empty: cytoscape reads an empty list as "no roots at all",
+    // where absence means "choose them yourself".
+    expect('roots' in layoutOptions('breadthfirst', DEFAULT_PREFS)).toBe(false);
+    expect('roots' in layoutOptions('breadthfirst', DEFAULT_PREFS, { roots: null })).toBe(false);
+  });
+
+  it('is offered by the two layouts that can honour it', () => {
+    expect(LAYOUTS.filter((l) => supportsFlowRoot(l.id)).map((l) => l.id)).toEqual([
+      'elk-layered',
+      'breadthfirst',
+    ]);
   });
 });
 

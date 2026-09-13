@@ -1831,3 +1831,33 @@ over its members) and add two testcases pinning it down.
   `rdf-emit.test.js` snapshots the emitter's actual output, so a section added
   before the behavior exists records today's wrong output and passes green. Land
   the section with the implementation, or read the generated `.trig` by hand.
+
+## 2026-09-13 — tiers come from the links something travels along
+
+Task: make a multi-tier diagram draw as `fe → be → db`, with a standby replica
+beside its database instead of in the first tier.
+
+- **`elk.layered.layering.layerChoiceConstraint` is a dead end.** Its own doc
+  string in the elkjs bundle says it "is only evaluated as part of the
+  `InteractiveLayeredGraphVisitor`", which `cytoscape-elk` never runs, so it is
+  accepted and ignored. Layout partitioning (`elk.partitioning.partition` +
+  `elk.partitioning.activate`) is what actually pins a node to a column.
+- **Partitioning orders partitions; edges still constrain layers.** A `db → standby` edge forces the standby into a later layer whatever partition it
+  carries. The fix is to keep that edge out of the *layout's* element set
+  (`cy.layout({ eles })`) while cytoscape goes on drawing it — `cytoscape-elk`
+  reads back node positions only, so its edge routing is no loss.
+- **One unpartitioned node spoils the whole partitioning.** A container without
+  `elk.partitioning.partition` is placed by its edges and drags its neighbours
+  out of their tiers, so a parent needs one too. Characterised in
+  `app/test/elk-partitioning.test.js`, which is also why that file exists:
+  library behaviour nobody should have to re-derive from a failed drawing.
+- **Excluding edges creates components, and `layered` splits components before
+  partitioning runs.** `elk.separateConnectedComponents: false` is therefore
+  mandatory with partitioning, not a matter of taste.
+- **A walk that tiers every node has nothing left to inherit.** The first
+  version ran Tarjan over all node ids, so a node with no flow link came out as
+  a tier-0 component — indistinguishable from a real source. Restricting the
+  walk to nodes a flow edge touches is what lets the inheritance pass place it.
+- **Do not reach for `breadthfirst`'s `maximal`/`acyclic`.** `maximal` warns and
+  `break`s mid-adjustment on a cycle; `acyclic: true` removes the guard that
+  stops it looping forever. d3f diagrams are routinely cyclic.

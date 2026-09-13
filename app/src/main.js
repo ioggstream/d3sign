@@ -1711,7 +1711,7 @@ const GRAPH_SHORTCUTS = {
   b: () => {
     if (selection?.kind !== 'node') return;
     if (!graphPane.setFlowRoot(selection.id)) {
-      graphPane.flashError('only the ELK layered layout can start from a node');
+      graphPane.flashError('this layout cannot start the reading from a node — try ELK layered or breadth-first');
     }
   },
   // Leaves the graph tab, which no other shortcut here does — but it is the
