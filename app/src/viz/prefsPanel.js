@@ -34,7 +34,7 @@ const LABEL_DETAIL_OPTIONS = [
   },
 ];
 
-// docs/adr/0037-location-containment-view.md. The `pins` hint carries the warning
+// docs/adr/0036-location-pins.md. The `pins` hint carries the warning
 // the ADR asks for: an inherited place is drawn on a node that states no triple
 // about it, and the TriG pane will not show a matching line.
 const LOCATION_VIEW_OPTIONS = [

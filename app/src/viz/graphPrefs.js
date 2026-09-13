@@ -37,7 +37,7 @@ export const NODE_STYLES = ['color', 'icon'];
 export const LABEL_DETAILS = ['full', 'name'];
 
 /**
- * How a node's place is drawn (docs/adr/0037-location-containment-view.md):
+ * How a node's place is drawn (docs/adr/0036-location-pins.md):
  * `off` leaves the location links as links, `pins` puts the place on the node and
  * absorbs them, `boxes` draws the node inside its place and absorbs them too.
  *

@@ -203,7 +203,7 @@ describe('buildGraphModel — from turtle only', () => {
     // Containment wins the parent, so a node naming a place is still drawn inside
     // whatever contains it. When those two disagree the drawing asserts two places
     // for one component, and only the author can say which statement is wrong
-    // (docs/adr/0037-location-containment-view.md).
+    // (docs/adr/0036-location-pins.md).
     describe('a place that disagrees with the container', () => {
       const warningsFor = (turtle) => buildGraphModel(storeFromTurtle(turtle)).warnings;
 
@@ -839,8 +839,11 @@ describe('toCytoscapeElements — drawing location as containment', () => {
   // visibleParentOf only guards hops over hidden parents and separateSiblings walks
   // from the orphans, of which a cycle has none.
   it('refuses a parent that would make a node its own ancestor', () => {
+    // `G:net` only keeps `G:rm` on the canvas: absorbing the location edge would
+    // otherwise drop the place, and the parenting under test would be unobservable.
     const { nodes } = render(`
       G:rm a d3f:PhysicalLocation ; rdfs:label "Roma" .
+      G:net a d3f:Network ; d3f:connected-to G:rm .
       G:a a d3f:Host ; d3f:contains G:rm ; d3f:has-location G:rm .
     `);
     expect(nodes.get(G('rm')).parent).toBe(G('a'));
