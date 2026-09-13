@@ -65,7 +65,7 @@ describe('view preferences', () => {
   it('shows the complete drawing by default, and rejects an unknown view', () => {
     // Both of the other two remove the location links, so they are in the same class
     // as the two preferences above: a diagram is first seen as its triples describe
-    // it (docs/adr/0037-location-containment-view.md).
+    // it (docs/adr/0036-location-pins.md).
     expect(DEFAULT_PREFS.locationView).toBe('off');
     stored.set('d3fend-graph:view-prefs', JSON.stringify({ nodeStyle: 'icon' }));
     expect(loadPrefs().locationView).toBe('off');

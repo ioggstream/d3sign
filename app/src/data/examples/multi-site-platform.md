@@ -81,7 +81,6 @@ end
 `d3f:ServiceApplicationProcess`, not `d3f:Application`. The database as a thing
 the platform provides is `orders`, a `d3f:DatabaseApplication`.
 
-
 ## Artifact locations
 
 Associate every d3f:NetworkNode with its physical location,
@@ -97,13 +96,12 @@ WHERE {
 
   ?class
     rdfs:subClassOf* d3f:NetworkNode .
-  
+
   ?loc (^d3f:has-location*/d3f:contains*) ?node ;
-   a d3f:PhysicalLocation .   
+   a d3f:PhysicalLocation .
 }
 ORDER BY ?node
 ```
-
 
 ## Query to find locations
 
@@ -167,7 +165,8 @@ at the same `orders` node. Both checks then come back empty.
 - Fold Milan (`f`) and its two `d3f:runs` edges collapse into counted derived
   edges — the site is a real container, which is what nesting bought.
 
----
+______________________________________________________________________
+
 ## Deployment zones
 
 ```mermaid

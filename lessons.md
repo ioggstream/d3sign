@@ -1593,6 +1593,42 @@ bug: each named a property the source had deliberately stopped setting.
   five now name the mechanism they are pinning, so the next redesign fails
   against a stated intent rather than a number.
 
+## 2026-09-12 — the guard the codebase had never needed
+
+Deriving a compound parent from a location edge made a true
+parent cycle reachable for the first time: `:a` containing `:rm`
+and also naming it would parent each to the other. Every walk
+nearby *looks* guarded and none of them helps.
+
+- **`visibleParentOf`'s `seen` set guards hops over hidden
+  parents, not the parenting itself.** With both nodes visible it
+  returns on the first hop and the set is never consulted.
+- **`separateSiblings` fails silently, not loudly.**
+  `siblingLevels` walks from `cy.nodes().orphans()`, and a cycle
+  has no orphan — so the whole sibling-separation pass stops
+  running and nothing says so.
+- **Existing guards are not evidence of safety.** The
+  self-containment check and "first parent wins" made cycles
+  unreachable, so no code downstream was ever written to survive
+  one. Adding a second source of parenting removed that
+  guarantee, and the audit had to be of what *depends* on the
+  invariant, not of what enforces it.
+
+## 2026-09-12 — a migration chain needs the raw payload at every hop
+
+`showLocation` → `locationPins` → `locationView` is two renames,
+and both hops have to read `prefs`, not the object already
+spread over the defaults. The defaults fill the new key in, so
+the merged object can never distinguish a saved value from an
+absent one — the same trap as the first rename, one layer
+deeper.
+
+- **Write the migration test as a table over both old keys.**
+  Four rows caught more than four assertions would have, because
+  the shape makes the missing hop obvious.
+- **Delete the old keys after migrating**, or `loadPrefs()`
+  returns a payload carrying three spellings of one preference.
+
 ## 2026-09-11 — node lives in the docker `dev` service
 
 Three rounds of work shipped unverified because `node` and `npx` are not on the
@@ -1684,8 +1720,7 @@ twin passes only because that one writes `nodeKinds`.
 
 ## 2026-09-11 — "files were modified by this hook" from a hook that writes nothing
 
-The pre-push trufflehog hook reported `Failed - files were modified by this
-hook` while its own output said `verified_secrets: 0, unverified_secrets: 0`.
+The pre-push trufflehog hook reported `Failed - files were modified by this hook` while its own output said `verified_secrets: 0, unverified_secrets: 0`.
 The container only reads: it clones `file:///workdir` into its own tmpdir.
 
 - **pre-commit attributes any working-tree change to the hook that was running.**
@@ -1699,3 +1734,30 @@ The container only reads: it clones `file:///workdir` into its own tmpdir.
   every restored file are the tell.
 - **Re-running the hook alone passed.** Nothing in `.pre-commit-config.yaml`
   needed changing - the fix is to push with no other writer touching the tree.
+
+## 2026-09-12 — a floating banner is a control the reader cannot reach past
+
+`#lint-message` hung off the header's bottom-right at `z-index: 5`, landing on
+the right column's tab bar and pane header tools. It was floated on purpose: in
+the flow it grew the header, and the shell grid gives the columns what the
+header leaves, so a warning coming and going between keystrokes resized every
+pane.
+
+- **Both constraints hold at once if the report is two halves.** A one-line chip
+  in the flow, the height of the buttons beside it, never changes the header's
+  height and never covers anything; the panel it opens is out of the flow and
+  only up while asked for.
+- **The popover was already written.** `viz/filterChip.js` uses `popover="auto"`
+  for exactly this - the top layer escapes pane clipping, light-dismiss gives
+  click-outside and Escape free. Its `place()` became the exported
+  `placeUnderAnchor(anchor, popover)`, so the lint panel is placed by the same
+  code rather than a second hand-rolled dismiss convention.
+- **A count is what a narrow chip can say honestly.** `showLint` now takes a
+  string or a list; the joined-with-spaces string at the parser call site could
+  only be truncated, a list can be `2 issues` with one `<p>` each in the panel.
+- **A picker that always shows a file name reads as a label.** `#example-select`
+  had no placeholder, so it claimed an example was open even when the editor had
+  restored a browser-local document. `'Pick an example…'` prepended and selected,
+  the way `#query-select` already does it.
+- **Tests run in the container:** `docker exec d3sign-dev-1 sh -c 'cd /code/app && npx vitest run'`. 16 failures on this branch, all in graph/layout/query
+  areas nobody touched here.

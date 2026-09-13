@@ -243,4 +243,3 @@ describe('toCytoscapeElements — orienting along the flow', () => {
     expect(drawn.find((el) => el.data.predicate === 'd3f:accesses').data.sequence).toBeUndefined();
   });
 });
-

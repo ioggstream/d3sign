@@ -1,10 +1,12 @@
-# 36. Location pins
+# 36. Represent a component's location
 
 Date: 2026-09-11
 
 ## Status
 
 Accepted
+
+Supersedes [ADR 0032](0032-rejected-cytoscape-container-node-by-relation.md).
 
 ## Context
 
@@ -14,181 +16,236 @@ to ensure:
 - availability requirements;
 - legal requirements.
 
-Location classes (eg. d3f:PhysicalLocation, dpv:Location) can be associated via:
+Location classes (eg. `d3f:PhysicalLocation`,
+`dpv:Location`) can be associated via:
 
-- d3f:contains (by containment)
-- d3f:has-location (by an explicit edge)
-- a combination of both, like (^d3f:contains*/d3f:has-location)
+- `d3f:contains` (by containment)
+- `d3f:has-location` (by an explicit edge)
+- a combination of both, like
+  (`^d3f:contains*/d3f:has-location`)
 
-A d3f:DigitalArtifact is not a location - e.g., a virtual machine, or even a physical host can be moved across datacenters.
+A `d3f:DigitalArtifact` is not a location - e.g., a
+virtual machine, or even a physical host can be moved
+across datacenters.
 
 Graph panel represents:
 
-- d3f:contains via a containment box toward Location class;
-- d3f:has-location via an explicit edge;
+- `d3f:contains` via a containment box toward Location
+  class;
+- `d3f:has-location` via an explicit edge;
 
-The app needs to provide a low friction way for the reader
-to identify components' location.
+The app needs to provide a low friction way for the
+reader to identify components' location.
 
+Neither representation provides it on its own.
+
+A box answers only while it is on screen. Fold it,
+scroll away, or draw the component in a diagram its
+place is not in, and the answer is gone.
+
+An edge answers, but expensively. Twenty components in
+three places is twenty arrows converging on three
+nodes, crossing everything else on the way. Each one
+carries a single word, and the reader traces a line to
+read it.
+
+Neither groups. A reader asking what is in a given
+place traces edges, or reads components one at a time.
+Grouping is what a box does, and a box is already
+understood here, because nesting already means place.
+
+[ADR 0032](0032-rejected-cytoscape-container-node-by-relation.md)
+refused to draw a box from a relation, on four
+grounds. One of them still applies and three do not.
+
+A compound node is a tree, so a component already
+inside a box has no parent left to give. That ground
+stands, and is accepted below rather than solved.
+
+Transitivity does not apply. A location box does not
+claim `d3f:has-location` composes; it claims a place
+holds what is in it, which is what a place is.
+
+The arithmetic does not apply either. The refused
+feature drew one box per predicate a diagram happened
+to use. This draws boxes only for places, a closed and
+small set in any drawing.
+
+Accepting that containment wins leaves a gap. A
+component inside one thing may name a place that thing
+is not in. That is a contradiction in the model rather
+than a rendering choice, and nothing reports it.
+
+Alternatives considered:
+
+- A marker pinned to a component's corner. No
+  convention draws one: cloud and architecture
+  notations all nest, and the corner label they do
+  define belongs to the group box, not to its members.
+- Let a stated place win the parent. The box view
+  would then work on nested drawings, at the cost of
+  moving a component out of the box its own
+  containment statement puts it in.
+- Report the contradiction as a library query. The
+  library already holds validation questions, but it
+  is long, and a reader has to think to run it.
 
 ## Decision
 
-- [x] **A component's location is resolved from its own `d3f:has-location` edge
-  first, and inherited from its ancestors otherwise.** One walk, starting at the
-  component: take the place its own location edge names; failing that, climb to
-  the next ancestor and ask the same; failing that, take an ancestor that *is* a
-  place. So `:a` reads `Roma` from its own edge, and `a-h1` — which states
-  nothing — reads `Roma` because the rack it is in does. A host in a located rack
-  is in that place, and saying so on the host is the point.
-
-- [x] **Both ways of stating location feed the same answer.** A document nesting
-  its hosts and a document drawing `d3f:has-location` arrows get the same word on
-  the same node. Which one to write stays the author's choice — nesting where the
-  containment is real, the edge where it is not — and the reader is not asked to
-  care.
-
-- [x] **`dpv:isOutsideOfLocation` never feeds a location.** It is a location
-  *link* and classifies as one for colour and filtering, but it asserts the
-  opposite of residence. Reading it as a place would put a confident wrong answer
-  on a node, which is worse than the blank it replaces. It stays an ordinary
-  drawn edge.
-
-- [x] **The place is drawn with a 📍 prefix.** A marker rather than prose: the
-  line sits under the node's identity and has to be told apart from it at a
-  glance, and a pin is what every map has trained the reader to read as "here".
-
-- [x] **There are two views, and a checkbox chooses between them.**
-  - **Off — the complete view.** Location edges are drawn as the edges they are,
-    boxes as the boxes they are. Nothing on the node. The drawing says what the
-    store says.
-  - **On — absorb.** The 📍 and the place name are drawn on the component, the
-    `d3f:has-location` edges that produced them are **not** drawn, and a place
-    left with nothing else to say is not drawn either.
-
-- [x] **Off is the default.** The absorb view removes elements, and the default
-  view is complete: a diagram is first seen as its triples describe it. This is
-  the same rule the other element-changing view options follow.
-
-- [x] **Absorbing an edge and dropping a place are two decisions, not one.**
-  Every location edge is absorbed whenever the view is on, so a pin means exactly
-  the same thing everywhere in the drawing and the fan-in is gone even around a
-  place that has to stay. Whether the *place* is then drawn is decided
-  separately, by what is left of it.
-
-- [x] **A place is dropped only when nothing else needs it.** It has no visible
-  children, nothing else points at it or from it, and the pin that replaced its
-  edge is actually drawn. A place that *contains* things is a box with contents,
-  and a box with contents is not redundant with a pin; a place with a link of its
-  own is still saying something that link is the only way to read. So a document
-  mixing both styles keeps its boxes and loses only its location arrows.
-
-- [x] **A surviving place is drawn without its location arrows**, which is the
-  price of the rule above: `:rm` can be on the canvas, `:a` can read `📍 Roma`,
-  and no line joins them. The alternative — absorbing only where the place could
-  also be dropped — would draw the same predicate two ways in one diagram
-  depending on a property of the far end, and a reader cannot be asked to infer
-  that rule from the drawing.
-
-- [x] **The Links filter stays authoritative.** The absorb happens only while the
-  `location` link kind is visible, so unticking that chip leaves edges and places
-  exactly as they were. A filter a view transform can overrule is not a filter.
-
-- [x] **An inherited location is drawn, and the checkbox says so.** `a-h1` shows
-  `📍 Roma` while stating no triple about Roma — it is true of it, because the
-  thing containing it said so, but a reader who goes looking in the TriG pane
-  will not find a matching line. The control's tooltip warns about this. It is
-  the one place the drawing knowingly says more than the text.
-
-- [x] **Absorbing is a transliteration, not a derivation**, and that is what
-  makes it safe to remove an edge. One triple becomes one pin: the same fact,
-  about the same thing, naming the same place. Nothing is composed, nothing is
-  invented, and the triple is still in the TriG pane unchanged.
+- [x] A component's location is resolved from its own
+  location edge first, and inherited from the things
+  containing it otherwise.
+- [x] Both ways of stating location resolve to the
+  same answer. Which one to write stays the author's
+  choice, and the reader is not asked to care.
+- [x] An edge asserting that a component is outside a
+  place never resolves to a location. It stays an
+  ordinary drawn edge.
+- [x] Location has three views, and one is chosen at a
+  time: the edges as drawn, a marker on the component,
+  or a box around it.
+- [x] The two drawn views remove the edges they
+  replace. One statement, one representation.
+- [x] The edges view MUST be the default. The other
+  two change which elements are drawn, and a drawing
+  is first seen as its triples describe it.
+- [x] In the marker view, a place left with nothing
+  else to say is not drawn. A place that holds
+  something, or that carries an edge of its own, is
+  kept.
+- [x] Absorbing an edge is a transliteration, not a
+  derivation, which is what makes removing it safe.
+  One statement becomes one mark, about the same
+  component, naming the same place.
+- [x] In the box view, containment wins the parent. A
+  component already inside something is never moved
+  into a location box.
+- [x] Only a component's own statement places it in a
+  box. An inherited place never does, or a descendant
+  would become a sibling of its own ancestor.
+- [x] A box MUST NOT be drawn where it would make a
+  component its own ancestor.
+- [x] A component whose stated place disagrees with
+  the place of the thing containing it MUST be
+  reported to the author.
+- [x] The report names both components and both
+  places. Which of the two statements is wrong is the
+  author's to decide.
+- [x] A container that names no place contradicts
+  nothing and is not reported. Silence is not
+  disagreement.
 
 ## Consequences
 
 Pros:
 
-- A component says where it is even when its place is not on screen. Fold a site,
-  and the hosts that were in it still read `📍 Roma`.
-- A drawing with twenty components in three sites loses twenty arrows and gains
-  twenty words. The arrows carried one word each and crossed the diagram to do
-  it; the words are on the nodes that own them.
-- The two ways of writing location — nesting and the explicit edge — become one
-  thing to read.
+- A component says where it is even when its place is
+  not on screen.
+- A drawing with many components in few places loses
+  the arrows that each carried one word, and gains the
+  word on the component that owns it.
+- A reader sees what is in a place by looking at one
+  box, which neither other view offers.
+- The box keeps meaning what it always meant: the
+  thing around holds the things inside.
+- A contradiction that was silent is reported, and
+  detecting it costs nothing beyond a walk that
+  already runs.
 - No new vocabulary, no new triple, no new node type.
 
 Cons:
 
-- An inherited pin has no triple behind it. `a-h1` reads `📍 Roma` and the TriG
-  pane has no line saying so; the reader has to know that the rack above it did.
-  This is the first place in the graph view where the drawing says more than the
-  text, and the tooltip is the only warning.
-- A place can vanish. Absorb `:a d3f:has-location :rm` and, if `:rm` had nothing
-  else to say, `:rm` is no longer drawn at all — a node in the store with no mark
-  on the canvas. The refusal list keeps this to the case where the pin genuinely
-  replaced it, but it is still a node the reader cannot click.
-- A place that survives loses the lines that explained why it is there. `:rm`
-  kept for one unrelated link is drawn with that link and nothing else, while the
-  components that named it show `📍 Roma` across the diagram with no line back.
-  The two readings are consistent but they do not visibly meet.
-- This is another view option that changes which elements exist, alongside the
-  ones that already do. Each is defensible alone; with two of them on, the
-  drawing is some distance from the store, and nothing on screen totals up how
-  far.
-- An emoji is measured badly by the label sizing, so a pinned line is slightly
-  under-measured and a container's band can end up a few pixels tight.
+- An inherited mark has no statement behind it. It is
+  true of the component, because the thing containing
+  it said so, but a reader checking the triples finds
+  no matching line. This is the one place the drawing
+  knowingly says more than the text.
+- A place can vanish in the marker view. The refusal
+  list keeps that to the case where a mark genuinely
+  replaced it, but it is still a node the reader
+  cannot click.
+- A place kept for an unrelated edge is drawn without
+  the edges that explained why it is there, while the
+  components naming it carry marks with no line back.
+  The two readings are consistent but do not meet.
+- The box view does nothing on a drawing that already
+  nests, which is the style the corpus prefers.
+  Containment wins, so there is nothing left to group.
+- A box is drawn from a statement that does not say
+  "contains", so what a box means is wider than it
+  was, for the third time.
+- Three views are three things to explain, and the two
+  useful ones are both off by default.
+- A marker is measured badly by the label sizing, so a
+  marked line is slightly under-measured and a
+  container's band can end up a few pixels tight.
 
 ## DONTREADME
 
-Notes for LLM agents. They describe the code, not the decision, and go stale:
-check the code before trusting them.
+Notes for LLM agents. They describe the code, not the
+decision, and go stale: check the code before trusting
+them.
 
-- **The pin is a glyph, not an icon.** A cytoscape node label is plain text, so
-  an SVG cannot go in it; the icon set does contain a `PhysicalLocation` icon,
-  but it is only reachable as a node `background-image`, and that slot holds the
-  node's type icon. The house idiom is the fold note's — glyph, space, text
-  (`▸ 3 nodes`) — composed in
-  [viz/toCytoscape.js](../../app/src/viz/toCytoscape.js) and never in the
-  stylesheet. `drawnLabel` in
-  [viz/graphPrefs.js](../../app/src/viz/graphPrefs.js) joins lines and knows
+- The view option is `locationView` in
+  `app/src/config/viewDefaults.js`, one of
+  `LOCATION_VIEWS` (`off`, `pins`, `boxes`) in
+  `app/src/viz/graphPrefs.js`, validated in
+  `normalizePrefs` beside `NODE_STYLES` and
+  `LABEL_DETAILS`. It replaced the `locationPins`
+  boolean, which replaced `showLocation`;
+  `normalizePrefs` migrates both, reading them off the
+  raw payload because the defaults have already filled
+  the key in by the time they are merged.
+- A string, not two booleans, and not by taste: a
+  location box gives the place a visible child, which
+  is the condition that stops `absorbLocationLinks`
+  dropping a place, so a combined state would draw the
+  box and the marker and no edge between them.
+- `locationOf` in `app/src/rdf/graphModel.js` walks
+  `parentOf` and returns `{ label, iri, conflict }`.
+  `iri` is set only for a node's own edge, and it is
+  what both drawn views key on. The walk carries on
+  past its own answer to find a disagreeing ancestor.
+  `locationEdgeTargets` beside it keys on
+  `edge.kind === 'location'` and names
+  `dpv:isOutsideOfLocation` as the one exclusion.
+- The marker is a glyph, composed in
+  `app/src/viz/toCytoscape.js` the way `foldNote`
+  composes its own. A cytoscape label is plain text,
+  so an icon cannot go in it; the icon set does hold a
+  `PhysicalLocation` icon, but it is reachable only as
+  a node `background-image`, and that slot holds the
+  node's type icon. `drawnLabel` in
+  `app/src/viz/graphPrefs.js` joins lines and knows
   nothing about the marker.
-- `locationOf` in [rdf/graphModel.js](../../app/src/rdf/graphModel.js) does the
-  walk and returns both the display string (`node.location`) and, **only** when
-  the location came from an edge on the node itself, `node.locationIri`. An
-  inherited location has no IRI, because there is no edge on that node to absorb.
-- The edge index it walks is built from `kind === 'location'`, which
-  `classifyPredicate` in [rdf/linkKind.js](../../app/src/rdf/linkKind.js) already
-  puts on every edge — the model layer does not re-test predicate names either.
-  The `dpv:isOutsideOfLocation` exclusion is the one predicate named explicitly,
-  and it is named in `graphModel.js`, not in the view.
-- The absorb sits at step 3½ of `toCytoscapeElements`, beside the artifact-path
-  collapse of [ADR 0026](0026-collapse-artifact-mediated-paths.md), and both feed
-  an `absorbed(iri)` helper read by the node-emission `continue` and by
-  `hasDrawnChild`. The two sets stay separate: the refusal lists differ.
-- `locationPins` is in `LAYOUT_AFFECTING` in
-  [viz/graphPane.js](../../app/src/viz/graphPane.js) *and* in the rebuild
-  condition in [main.js](../../app/src/main.js). Only the first would leave
-  absorbed edges on screen when the box is ticked.
-- Defaults live in `app/src/config/viewDefaults.js`, not in `graphPrefs.js`.
-
----
-
-```trig
-
-:rm a d3f:PhysicalLocation .
-:mi a d3f:PhysicalLocation .
-
-:rm-a d3f:has-location :rm ;
- a d3f:ComputerEnclosure ;
- d3f:contains :rm-a-1, :rm-a-2 .
-
-:rm-b a d3f:ComputerEnclosure ;
-  d3f:has-location :rm ;
-  d3f:contains :rm-b-1, :rm-b-2 .
-
-:mi-a d3f:has-location :mi ;
-  a d3f:ComputerEnclosure ;
-  d3f:contains :mi-a-1, :mi-a-2 .
-
-
-```
+- Parenting stays out of the model. `buildGraphModel`
+  takes no view option, per
+  [ADR 0014](0014-graph-view-from-rdf-only.md).
+  `locationContainment` in
+  `app/src/viz/toCytoscape.js` returns augmented
+  copies of `containment` and `parentOf`, shadowing
+  the destructure at the top of `toCytoscapeElements`,
+  so `visibleParentOf`, `representativeOf`,
+  `hasVisibleChild` and `hasDrawnChild` need no
+  change. Never mutate the model: it is cached across
+  renders.
+- The cycle guard has no precedent and is required.
+  A component containing a place and also naming it
+  would parent each to the other. `visibleParentOf`
+  does not catch that: its `seen` set guards only hops
+  over hidden parents. Neither does
+  `separateSiblings`, whose `siblingLevels` walks from
+  `cy.nodes().orphans()`, and a cycle has no orphan,
+  so the pass stops running in silence.
+- Absorbing runs for both drawn views, and
+  `absorbLocationLinks`' own refusal list keeps a
+  place that has become a box, with no special case.
+- `locationView` belongs in `LAYOUT_AFFECTING` in
+  `app/src/viz/graphPane.js` and in the rebuild
+  condition in `app/src/main.js`. Only the first would
+  leave absorbed edges on screen when the view
+  changes.
+- `buildGraphModel` returns the contradictions as
+  `warnings`. `app/src/main.js` calls `showLint` after
+  `applyGraphVisibility` rather than before, so they
+  join the parser's own.

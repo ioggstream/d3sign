@@ -234,7 +234,7 @@ function locationEdgeTargets(edges) {
  *
  * `conflict` is the second thing the walk is for. A node that names its own place is
  * still drawn inside whatever contains it, because containment wins the parent
- * (docs/adr/0037-location-containment-view.md). If the thing containing it is
+ * (docs/adr/0036-location-pins.md). If the thing containing it is
  * somewhere else, the drawing is asserting two places for one component, and only the
  * author can say which statement is wrong — so the walk carries on past the node's
  * own answer, and reports the first ancestor that disagrees.
@@ -433,7 +433,7 @@ export function buildGraphModel(store) {
     if (location.iri) node.locationIri = location.iri;
     if (!location.conflict) continue;
     // Both sides named, because either statement could be the wrong one and this
-    // cannot tell (docs/adr/0037-location-containment-view.md).
+    // cannot tell (docs/adr/0036-location-pins.md).
     const container = nodes.get(location.conflict.container);
     warnings.push(
       `"${node.label || node.id}" is in "${location.label}", but "${container?.label || container?.id}" ` +

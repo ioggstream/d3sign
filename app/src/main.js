@@ -598,8 +598,7 @@ renderPrefsPanel(prefsChip.body, prefs, (next) => {
     next.orientByFlow !== prefs.orientByFlow ||
     // Absorbing a location link removes it and sometimes the place it pointed at,
     // and the box view reparents on top of that, so a restyle would leave the old
-    // drawing on screen (docs/adr/0036-location-pins.md,
-    // docs/adr/0037-location-containment-view.md).
+    // drawing on screen (docs/adr/0036-location-pins.md).
     next.locationView !== prefs.locationView;
   prefs = next;
   savePrefs(next);
@@ -882,7 +881,7 @@ async function handleTextChange(text) {
   await applyGraphVisibility();
   // Linted after the model is built, not before: a location contradiction is a fact
   // about the merged store rather than about any one block, so `buildGraphModel` is
-  // the only thing that can see it (docs/adr/0037-location-containment-view.md).
+  // the only thing that can see it (docs/adr/0036-location-pins.md).
   showLint([...allWarnings, ...(currentModel?.warnings ?? [])]);
 
   // The pane was left as the user typed it, so say why it no longer matches.
