@@ -455,6 +455,10 @@ G:subgraph-as-relationships {
 }
 ```
 
+Note: To avoid accidentally fanning out relationships,
+the pad-a |d3f:relation| pad-b is not supported.
+Use pad-a |d3f:relation| r1 & r2 & r3 instead.
+
 ## subgraph-as-relationships-tagged
 
 Given
@@ -846,5 +850,93 @@ G:back-arrows-rejected {
         rdfs:label "Host 1" .
     G:b a d3f:Host;
         rdfs:label "Host 2"
+}
+```
+
+## edge-contained-by-normalized
+
+`d3f:contained-by` is the inverse of `d3f:contains`, and
+`d3f:contains` is the one predicate the graph view reads as
+structure rather than as a link. Written as an edge label it
+is therefore rewritten to `d3f:contains` with its ends
+exchanged, so the two legs draw the same box.
+
+```mermaid
+---
+id: edge-contained-by-normalized
+title: edge-contained-by-normalized
+---
+graph
+
+dc[EU-RM d3f:Network]
+webapp[Web Application d3f:WebApplication]
+browser[Browser d3f:Browser]
+
+%% WHEN an edge names d3f:contained-by
+%% THEN the emitted triple is d3f:contains,
+%%   subject and object exchanged.
+webapp -->|d3f:contained-by| dc
+browser -->|d3f:contained-by| dc
+
+%% WHEN an edge names any other predicate
+%% THEN it is written as drawn.
+webapp -->|d3f:uses| browser
+```
+
+Then
+
+```trig
+@prefix d3f: <https://d3fend.mitre.org/ontologies/d3fend.owl#> .
+@prefix G: <urn:d3fend-graph:> .
+G:edge-contained-by-normalized {
+    G:dc a d3f:Network;
+        rdfs:label "EU-RM";
+        d3f:contains G:webapp, G:browser .
+    G:webapp a d3f:WebApplication;
+        rdfs:label "Web Application";
+        d3f:uses G:browser .
+    G:browser a d3f:Browser;
+        rdfs:label "Browser" .
+}
+```
+
+## subgraph-contained-by-normalized
+
+The same rewrite applies to a subgraph title. A title naming
+a property is normally written from the member's side —
+`G:webapp d3f:has-location G:dc`, see `subgraph-with-property`
+— and draws one arrow per member. `d3f:contained-by` becomes
+`d3f:contains`, which is stated from the container, so the box
+is drawn instead.
+
+```mermaid
+---
+id: subgraph-contained-by-normalized
+title: subgraph-contained-by-normalized
+---
+graph
+
+%% WHEN a subgraph title names d3f:contained-by
+%% THEN it emits the same quads as naming
+%%   d3f:contains, or naming no property at all.
+subgraph dc [EU-RM d3f:contained-by d3f:Network]
+  webapp[Web Application d3f:WebApplication]
+  browser[Browser d3f:Browser]
+end
+```
+
+Then
+
+```trig
+@prefix d3f: <https://d3fend.mitre.org/ontologies/d3fend.owl#> .
+@prefix G: <urn:d3fend-graph:> .
+G:subgraph-contained-by-normalized {
+    G:dc a d3f:Network;
+        rdfs:label "EU-RM";
+        d3f:contains G:webapp, G:browser .
+    G:webapp a d3f:WebApplication;
+        rdfs:label "Web Application" .
+    G:browser a d3f:Browser;
+        rdfs:label "Browser" .
 }
 ```
