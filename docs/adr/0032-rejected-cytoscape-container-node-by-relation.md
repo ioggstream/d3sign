@@ -214,11 +214,27 @@ Notes for LLM agents. They describe the code as it is, not
 the decision, and go stale: check the code before trusting
 them.
 
+- `d3f:contained-by` never reaches the model: a diagram
+  writing it, as an edge label or as a subgraph title,
+  emits `d3f:contains` with the ends exchanged
+  (`NORMALIZED_INVERSES` in
+  [rdf/emit.js](../../app/src/rdf/emit.js)). It is the
+  transitive inverse of containment, so it is the same
+  claim and is drawn as the same box. Normalizing on the
+  way in rather than teaching the model a second predicate
+  keeps one representation of containment in the pipeline.
+  It does not reach RDF typed straight into the TriG pane
+  or imported as a `.ttl`, which bypass emit
+  ([ADR 0009](0009-direct-rdf-import.md)); such a quad is
+  still drawn as a link.
 - A subgraph whose title names a property writes that
   predicate from each member instead of `d3f:contains`
   ([ADR 0034](0034-platform-topology-and-location.md)),
   and the box is then *not* drawn as a container — the
-  members get arrows, which is what this ADR decided. So
+  members get arrows, which is what this ADR decided.
+  `d3f:contained-by` is the exception, by the entry above:
+  normalized before that branch is reached, so it is
+  container-stated by the time the title is read. So
   the two decisions agree: nothing is grouped by a
   non-transitive relation. Should that ever be wanted,
   the seam is `MEMBERSHIP_PREDICATES` in
@@ -231,9 +247,10 @@ them.
   "cytoscape compound nodes are a tree, not a DAG".
   `buildGraphModel` returns `{ nodes, edges, containment, parentOf }`.
 - The two predicate sets that make a parent are
-  `CONTAINMENT_PREDICATES` (`d3f:contains`) and
-  `MEMBERSHIP_PREDICATES` (`ds:partOf`, stated from the
-  member's side) in the same file. Membership is applied
+  `CONTAINMENT_PREDICATES` (`d3f:contains`, and nothing
+  else because the emitter normalizes `d3f:contained-by`
+  into it) and `MEMBERSHIP_PREDICATES` (`ds:partOf`, stated
+  from the member's side) in the same file. Membership is applied
   in a second pass after the quad loop, and skips a child
   containment already claimed.
 - `data.parent` is set in exactly one place: step 4 of

@@ -126,6 +126,74 @@ describe('emitQuads — containment as d3f:contains triples', () => {
     expect(containsQuads('subgraph-ignored-without-tag')).toEqual([]);
   });
 
+  // d3f:contained-by asserts the same fact as d3f:contains about the same pair, and
+  // d3f:contains is the one predicate read as structure. Emit rewrites the passive leg
+  // into the active one so both draw the same box (NORMALIZED_INVERSES in rdf/emit.js).
+  describe('d3f:contained-by normalized to d3f:contains', () => {
+    const emit = (lines) => emitQuads(parseDiagram(['graph', ...lines].join('\n')), 'default');
+    const pairs = (quads, suffix) =>
+      quads.filter((q) => q.predicate.value.endsWith(suffix)).map((q) => [q.subject.value, q.object.value]);
+
+    it('exchanges the ends of an edge naming d3f:contained-by', () => {
+      expect(pairs(containsQuads('edge-contained-by-normalized'), '#contains')).toEqual([
+        [nodeIri('dc'), nodeIri('webapp')],
+        [nodeIri('dc'), nodeIri('browser')],
+      ]);
+    });
+
+    it('writes no d3f:contained-by quad at all', () => {
+      const { quads } = emit(['a[A d3f:Host]', 'b[B d3f:Network]', 'a -->|d3f:contained-by| b']);
+      expect(pairs(quads, '#contained-by')).toEqual([]);
+      expect(pairs(quads, '#contains')).toEqual([[nodeIri('b'), nodeIri('a')]]);
+    });
+
+    // The title is container-stated once normalized, so the box is drawn instead of the
+    // one-arrow-per-member emission a named property otherwise gets.
+    it('draws a box for a subgraph title naming d3f:contained-by', () => {
+      expect(pairs(containsQuads('subgraph-contained-by-normalized'), '#contains')).toEqual([
+        [nodeIri('dc'), nodeIri('webapp')],
+        [nodeIri('dc'), nodeIri('browser')],
+      ]);
+    });
+
+    // The rewrite happens after the endpoints are resolved, so an untagged container
+    // still distributes over its members and every derived triple is exchanged.
+    it('exchanges the ends of each triple distributed over an untagged container', () => {
+      const { quads } = emit([
+        'net[Net d3f:Network]',
+        'subgraph pool',
+        '  h1[H1 d3f:Host]',
+        '  h2[H2 d3f:Host]',
+        'end',
+        'pool -->|d3f:contained-by| net',
+      ]);
+      expect(pairs(quads, '#contains')).toEqual([
+        [nodeIri('net'), nodeIri('h1')],
+        [nodeIri('net'), nodeIri('h2')],
+      ]);
+    });
+
+    // The point of the rewrite, stated once at the layer that guarantees it: the two
+    // legs are the same document. Everything downstream — the compound hierarchy in
+    // rdf/graphModel.js, the fold, the Links filter, the stored queries — therefore
+    // cannot tell them apart, which is why none of it had to learn the second leg.
+    it('emits the same document either way round', () => {
+      const passive = emit(['a[A d3f:Host]', 'b[B d3f:Network]', 'a -->|d3f:contained-by| b']);
+      const active = emit(['a[A d3f:Host]', 'b[B d3f:Network]', 'b -->|d3f:contains| a']);
+      const shape = ({ quads }) =>
+        quads.map((q) => [q.subject.value, q.predicate.value, q.object.value]).sort();
+      expect(shape(passive)).toEqual(shape(active));
+    });
+
+    // A warning is about the line the author typed, so it must quote the predicate as
+    // written and never the rewrite.
+    it('quotes the predicate as written in a warning', () => {
+      const { quads, warnings } = emit(['subgraph pool', '  h1[H1 d3f:Host]', 'end', 'pool -->|d3f:contained-by| fe']);
+      expect(pairs(quads, '#contains')).toEqual([]);
+      expect(warnings.join('\n')).toContain('d3f:contained-by');
+    });
+  });
+
   // A subgraph title naming a property says what the box stands for, and that is
   // what gets written. d3f:contains must not be written beside it: it is transitive,
   // so a nested box would compose a containment path nobody stated

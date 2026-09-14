@@ -141,7 +141,10 @@ const FLOW_REVERSED = new Set([
  *   position in a sequence. Two participants of one event are not ordered.
  * - `d3f:contains` [33] — reaches the view as a compound parent, never as a
  *   link (rdf/graphModel.js), so it has no arrow to orient. Its inverse
- *   `d3f:contained-by` *is* drawn, and is above.
+ *   `d3f:contained-by` is above and is now nearly as unreachable: a diagram
+ *   writing it emits `d3f:contains` with the ends exchanged (NORMALIZED_INVERSES
+ *   in rdf/emit.js). The entry is kept because TriG typed by hand or imported as
+ *   a `.ttl` bypasses emit, and such a quad is still drawn as a link.
  * - `d3f:modifies` [17], `d3f:deletes` and the rest of the lifecycle verbs —
  *   they end or alter a payload rather than move it, which is the same
  *   exclusion artifactFlow.js makes and for the same reason.

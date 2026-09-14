@@ -7,12 +7,11 @@ graph
 
 u((d3f:User))
 
-GCP[gcp:Cloud - Multi-Region GCP Deployment d3f:CloudServiceProvider]
 dns[d3f:DNSServer - Server with LB/geolocation routing policy]
 
-subgraph GCP
-region
-dns
+subgraph GCP[gcp:Cloud - Multi-Region GCP Deployment d3f:has-locationd3f:CloudServiceProvider]
+  region
+  dns
 end
 
 u -->|d3f:uses| dns
@@ -31,9 +30,9 @@ graph
 
 
 subgraph region[region A d3f:has-location d3f:PhysicalLocation]
-zone-a[zone A d3f:PhysicalLocation]
-zone-b[zone B d3f:PhysicalLocation]
-zone-c[zone C d3f:PhysicalLocation]
+  zone-a[zone A d3f:PhysicalLocation]
+  zone-b[zone B d3f:PhysicalLocation]
+  zone-c[zone C d3f:PhysicalLocation]
 end
 
 elb & ilb -->|d3f:has-location| region
@@ -71,8 +70,10 @@ end
 fe -->|d3f:accesses| ilb
 ilb -->|d3f:accesses| be
 
-be -->|d3f:accesses| db
 db[d3f:DatabaseServiceApplication]
+
+%% Can't fan-out n x m relationships directly to avoid polluting the diagram.
+be -->|d3f:accesses| db & db-standby
 
 subgraph data
   db-standby[d3f:DatabaseServiceApplication]
@@ -84,13 +85,23 @@ subgraph data
 end
 ```
 
+This diagram reusess the above template
+to replicate the infrastructure blocks on two regions.
+
 ```mermaid
 graph
 
 u -->|d3f:accesses| r0-elb & r1-elb
-subgraph GCP[d3f:has-location d3f:PhysicalLocation]
-  r0[Region A T:Region]
-  r1[Region B T:Region]
+r0[Region A T:Region]
+r1[Region B T:Region]
+
+%% To avoid that r0 and r1 members are directly placed under GCP,
+%%   we define them outside the GCP subgraph:
+%%   this is how template expansion works.
+%%   This allows having a nicer viz.
+subgraph GCP
+  r0
+  r1
 end
 
 r0-db -->|d3f:copy-of| r1-db

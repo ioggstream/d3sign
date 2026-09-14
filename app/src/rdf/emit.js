@@ -133,6 +133,43 @@ export function nodeIri(nodeId) {
 const CONTAINER_STATED_PREDICATES = new Set(['d3f:contains', 'd3f:may-contain']);
 
 /**
+ * Predicates rewritten to their inverse on the way into the store, ends exchanged.
+ *
+ * One entry, and the reason is specific to it rather than a general policy on inverse
+ * pairs: `d3f:contains` is the only predicate the graph view reads as *structure* — it
+ * builds the cytoscape compound hierarchy from it and never draws it as a link
+ * (`CONTAINMENT_PREDICATES` in rdf/graphModel.js). Left alone, `d3f:contained-by` says
+ * the same thing about the same two resources and gets an arrow, so one fact has two
+ * drawings depending on which leg the author happened to type.
+ *
+ * Normalizing here rather than teaching the model the second leg keeps one
+ * representation of containment in the pipeline: the model, the fold, the Links filter,
+ * the layouts and every stored SPARQL query go on knowing `d3f:contains` and nothing
+ * else. It is the same move emit already makes for a subgraph title that names
+ * `d3f:contains` explicitly (above) — the author asked for the default.
+ *
+ * `d3f:may-contain` / `d3f:may-be-contained-by` are deliberately absent: they assert a
+ * possibility and a box asserts a fact.
+ *
+ * What this does not cover: RDF typed straight into the TriG pane or imported as a
+ * `.ttl` never passes through emit ([ADR 0009](../../docs/adr/0009-direct-rdf-import.md),
+ * rdf/parseTrig.js), so a hand-written `d3f:contained-by` quad is still drawn as a link.
+ * Closing that would mean the model reading the predicate too, i.e. two representations.
+ */
+const NORMALIZED_INVERSES = new Map([['d3f:contained-by', 'd3f:contains']]);
+
+/**
+ * The predicate to write and whether the triple's ends must be exchanged to write it.
+ *
+ * Callers keep using the CURIE *as the author typed it* for anything the author reads
+ * back — warnings quote the line, not the rewrite.
+ */
+function normalizePredicate(curie) {
+  const normalized = NORMALIZED_INVERSES.get(curie);
+  return normalized ? { curie: normalized, swap: true } : { curie, swap: false };
+}
+
+/**
  * True when an edge label names a predicate a diagram may write — it carries one of
  * TYPING_PREFIXES.
  *
@@ -162,9 +199,11 @@ export function isWritablePredicate(label) {
  * `owl:SymmetricProperty`; the second is the invented names, kept because those
  * predicates are drawable but have no inverse in the ontology (`d3f:read-by` is
  * not a property — see viz/edgePanel.js, which is why the panel never looks an
- * inverse up in the term metadata). Note `d3f:contains` reaches the graph as
- * containment rather than as an edge (emitQuads below), so only the
- * `d3f:contained-by` leg of that pair is ever drawn as a swappable link.
+ * inverse up in the term metadata). Note that neither leg of the containment pair is
+ * ever drawn as a swappable link: `d3f:contains` reaches the graph as containment
+ * rather than as an edge, and `d3f:contained-by` is rewritten into it on the way in
+ * (NORMALIZED_INVERSES above). The pair stays in the file because it is still an
+ * inverse pair; it just has no edge to offer a swap on.
  */
 const symmetricInverses = new Map();
 for (const [predicate, inverse] of Object.entries(inverseMap)) {
@@ -358,14 +397,18 @@ export function emitQuads(ast, diagramId, { taggedIds = null, provenance = null 
     const children = childrenByParent.get(sg.id) || [];
     if (!children.length) continue;
     const container = namedNode(nodeIri(sg.id));
-    if (sg.predicate && !CONTAINER_STATED_PREDICATES.has(sg.predicate)) {
-      const predicate = namedNode(expandCurie(sg.predicate));
+    // A title naming `d3f:contained-by` becomes `d3f:contains` here, which *is*
+    // container-stated, so it falls through to the default branch below and draws a box
+    // instead of one arrow per member (NORMALIZED_INVERSES).
+    const titlePredicate = sg.predicate ? normalizePredicate(sg.predicate).curie : null;
+    if (titlePredicate && !CONTAINER_STATED_PREDICATES.has(titlePredicate)) {
+      const predicate = namedNode(expandCurie(titlePredicate));
       for (const childId of children) {
         quads.push(quad(namedNode(nodeIri(childId)), predicate, container, graph));
       }
       continue;
     }
-    const containsPredicate = namedNode(expandCurie(sg.predicate || 'd3f:contains'));
+    const containsPredicate = namedNode(expandCurie(titlePredicate || 'd3f:contains'));
     for (const childId of children) {
       quads.push(quad(container, containsPredicate, namedNode(nodeIri(childId)), graph));
     }
@@ -416,17 +459,22 @@ export function emitQuads(ast, diagramId, { taggedIds = null, provenance = null 
       );
       continue;
     }
-    const predicate = namedNode(expandCurie(predicateCurie));
+    // After the refusals above, which are all about the line as written: the
+    // both-ends-a-box and empty-side cases are the same cases whichever way the
+    // triple ends up pointing, and their warnings quote `link`.
+    const { curie: writtenCurie, swap } = normalizePredicate(predicateCurie);
+    const predicate = namedNode(expandCurie(writtenCurie));
     const distributing = from.isBox || to.isBox;
     for (const fromId of from.ids) {
       for (const toId of to.ids) {
         // A member of the box on one side named on the other — `pool -->|p| h-a` with
         // `h-a` in `pool` — would distribute into `h-a p h-a`. The author wrote a
-        // relation between two things, not a loop.
+        // relation between two things, not a loop. An identity test, so the swap below
+        // does not change it.
         if (distributing && fromId === toId) continue;
-        quads.push(
-          quad(namedNode(nodeIri(fromId)), predicate, namedNode(nodeIri(toId)), graph),
-        );
+        const subject = namedNode(nodeIri(swap ? toId : fromId));
+        const object = namedNode(nodeIri(swap ? fromId : toId));
+        quads.push(quad(subject, predicate, object, graph));
       }
     }
   }
