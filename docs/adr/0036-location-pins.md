@@ -39,20 +39,12 @@ reader to identify components' location.
 
 Neither representation provides it on its own.
 
-A box answers only while it is on screen. Fold it,
-scroll away, or draw the component in a diagram its
-place is not in, and the answer is gone.
+Edge view (default) is expensive:
+20 nodes in 3 places is 60 overlapping edges+labels.
 
-An edge answers, but expensively. Twenty components in
-three places is twenty arrows converging on three
-nodes, crossing everything else on the way. Each one
-carries a single word, and the reader traces a line to
-read it.
-
-Neither groups. A reader asking what is in a given
-place traces edges, or reads components one at a time.
-Grouping is what a box does, and a box is already
-understood here, because nesting already means place.
+Grouping works only if the infrastructure has
+a tree containment hierarchy - and may be unclear
+for distributed components.
 
 [ADR 0032](0032-rejected-cytoscape-container-node-by-relation.md)
 refused to draw a box from a relation, on four
