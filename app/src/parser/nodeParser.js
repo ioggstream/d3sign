@@ -23,7 +23,7 @@ import { termOf } from '../editor/vocabularies.js';
  * `termTokenPattern()` from editor/vocabularies.js, whose `[\w.-]+` local name
  * swallows both — hover wants the longest plausible token, the parser the exact one.
  */
-const CLASS_TOKEN_RE = new RegExp(
+export const CLASS_TOKEN_RE = new RegExp(
   `(?<![\\w:])(?:${TYPING_PREFIXES.slice()
     .sort((a, b) => b.length - a.length)
     .join('|')}):[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]*[0-9][A-Za-z0-9-]*)*`,

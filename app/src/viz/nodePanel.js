@@ -3,6 +3,7 @@ import { ADDED_MARKER } from '../editor/insertMeasure.js';
 import { neighbourClasses } from '../rdf/neighbourGraph.js';
 import { shortLabel } from '../rdf/graphModel.js';
 import { termOf } from '../editor/vocabularies.js';
+import { getAlternatives, labelOf } from '../editor/d3fendHierarchy.js';
 import { relationsFor } from '../editor/d3fendRestrictions.js';
 import d3fendMetadata from '../data/d3fend-metadata.json';
 import alignment from '../data/alignment.json';
@@ -75,6 +76,20 @@ function resolveLabel(localName) {
   return d3fendMetadata[localName]?.label || localName;
 }
 
+/**
+ * Whether `label` is just `localName` with spaces and case added — e.g.
+ * "File Eviction" for `FileEviction` — so printing both is the same fact
+ * twice. Not true of an ATT&CK-derived class like `T1566`, whose label
+ * ("Spearphishing") shares no text with the id at all.
+ *
+ * Exported for the tests: it is the one part of the redundancy check that
+ * is not DOM.
+ */
+export function isLabelRedundant(label, localName) {
+  const normalize = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  return normalize(label) === normalize(localName);
+}
+
 // ATT&CK sub-technique ids encode their hierarchy in the id itself, e.g.
 // "T1548.001" is a sub-technique of "T1548".
 const ATTACK_ID_RE = /^T\d+(?:\.\d+)*$/;
@@ -101,9 +116,23 @@ function chipTooltip(localName) {
 function makeChip(localName, className) {
   const chip = document.createElement('span');
   chip.className = className;
-  chip.textContent = `${resolveLabel(localName)} (${localName})`;
+
+  // Redundant for a Defense/Relations partner like `d3f:FileEviction`, whose
+  // label is just its local name with spacing added — but never true of an
+  // Attack partner such as `d3f:T1566`, so this naturally leaves those chips
+  // showing both.
+  const label = resolveLabel(localName);
+  const titleLines = [];
+  if (isLabelRedundant(label, localName)) {
+    chip.textContent = label;
+    titleLines.push(localName);
+  } else {
+    chip.textContent = `${label} (${localName})`;
+  }
+
   const tooltip = chipTooltip(localName);
-  if (tooltip) chip.title = tooltip;
+  if (tooltip) titleLines.push(tooltip);
+  if (titleLines.length) chip.title = titleLines.join('\n\n');
   return chip;
 }
 
@@ -130,7 +159,7 @@ export function addButtonTitle(rel) {
 /**
  * The button that writes the relation into the diagram. It reports what it did
  * in place rather than through a re-render: `renderNodePanel` rebuilds the whole
- * modal, which would close every "Show more" the user had opened.
+ * panel, which would close every "Show more" the user had opened.
  */
 function renderAddButton(rel, onAdd) {
   const button = document.createElement('button');
@@ -204,7 +233,7 @@ function relationList(relations, onAdd) {
  *
  * `hidden` on the list, toggled in place — the same idiom `renderDefinition`
  * uses, and it has to act in place because `renderNodePanel` rebuilds the whole
- * modal and would close every other fold the reader had opened.
+ * panel and would close every other fold the reader had opened.
  */
 function renderInheritedGroup({ via, rows }, host, onAdd) {
   const list = relationList(rows, onAdd);
@@ -453,8 +482,57 @@ function renderLegalSection(rows, host) {
 }
 
 /**
+ * The dropdown that retypes a node from `qname` to one of its parents,
+ * siblings or children — the panel's "change class" control. Nothing when
+ * `onChangeClass` is absent (no mermaid source to rewrite, same gating as
+ * `onAddRelation`) or when the hierarchy has no alternative to offer.
+ *
+ * A plain `<select>`, like the rest of the app's few dropdowns
+ * (viz/prefsPanel.js's `selectField`) — kept local rather than imported,
+ * since that one is styled for the prefs panel, not this card.
+ */
+function renderClassSwap(qname, host, onChangeClass) {
+  if (!onChangeClass) return;
+  const { parents, siblings, children } = getAlternatives(qname);
+  if (!parents.length && !siblings.length && !children.length) return;
+
+  const select = document.createElement('select');
+  select.className = 'node-panel-class-swap';
+  select.title = 'Change this node to a related class in the hierarchy';
+
+  const current = document.createElement('option');
+  current.value = qname;
+  current.textContent = `${labelOf(qname)} (${qname})`;
+  current.selected = true;
+  select.appendChild(current);
+
+  const group = (title, alternatives) => {
+    if (!alternatives.length) return;
+    const optgroup = document.createElement('optgroup');
+    optgroup.label = title;
+    for (const alt of alternatives) {
+      const option = document.createElement('option');
+      option.value = alt;
+      option.textContent = `${labelOf(alt)} (${alt})`;
+      optgroup.appendChild(option);
+    }
+    select.appendChild(optgroup);
+  };
+  group('Parents', parents);
+  group('Siblings', siblings);
+  group('Children', children);
+
+  select.addEventListener('change', () => {
+    if (select.value === qname) return;
+    onChangeClass(qname, select.value);
+  });
+
+  host.appendChild(select);
+}
+
+/**
  * Sets the info panel's text size, in pixels. Every font size inside the panel is
- * relative to it, so the one property scales the whole modal.
+ * relative to it, so the one property scales the whole card.
  *
  * Written to the `<dialog>` itself, not to the panel body: the body is rebuilt on
  * every open (`renderPanelFrame` empties it), and the two panels share the one
@@ -465,7 +543,7 @@ export function applyPanelFontSize(host, size) {
 }
 
 /**
- * Renders the node info modal: title, D3FEND metadata (truncated definition,
+ * Renders the node info panel: title, D3FEND metadata (truncated definition,
  * kill-chain, deprecated flag, separate Attack/Defense/Relations sections)
  * looked up from the precomputed d3fend-metadata.json, plus the full list of
  * the node's RDF properties read live from `store` (see ADR-0008).
@@ -482,6 +560,11 @@ export function applyPanelFontSize(host, size) {
  * value when nothing was added (the user cancelled, or there was nothing new).
  * Unlike `onAddRelation` it does not touch the diagram source, so it is offered
  * for nodes that were never written in mermaid.
+ *
+ * `actions.onChangeClass(oldQname, newQname)` — when given — puts a "change
+ * class" dropdown under every class heading, offering that class's parents,
+ * siblings and children. Gated the same as `onAddRelation`: it rewrites the
+ * mermaid source, so it needs one to rewrite.
  */
 export function renderNodePanel(host, nodeData, store, actions = {}) {
   // `displayId`, not the label's first line: that line is the id only while the
@@ -516,6 +599,7 @@ export function renderNodePanel(host, nodeData, store, actions = {}) {
     heading.className = 'node-panel-class';
     heading.textContent = `${term.label} (${qname})`;
     section.appendChild(heading);
+    renderClassSwap(qname, section, actions.onChangeClass);
     renderDefinition(term.documentation, section);
     // The article the term is defined by, dereferenced from dct:source at build time
     // (ADR 0025). Shown here for the same reason the definition is: on a legal node it
@@ -546,8 +630,15 @@ export function renderNodePanel(host, nodeData, store, actions = {}) {
     // Same shape as the term-projection heading above, so the two read as one list.
     const classHeading = document.createElement('h4');
     classHeading.className = 'node-panel-class';
-    classHeading.textContent = `${resolveLabel(localName)} (d3f:${localName})`;
+    const label = resolveLabel(localName);
+    if (isLabelRedundant(label, localName)) {
+      classHeading.textContent = label;
+      classHeading.title = `d3f:${localName}`;
+    } else {
+      classHeading.textContent = `${label} (d3f:${localName})`;
+    }
     section.appendChild(classHeading);
+    renderClassSwap(`d3f:${localName}`, section, actions.onChangeClass);
 
     if (entry.deprecated) {
       const badge = document.createElement('span');
@@ -612,7 +703,10 @@ export function renderNodePanel(host, nodeData, store, actions = {}) {
   }
   host.appendChild(table);
 
-  if (!host.open) host.showModal();
+  // `show()`, not `showModal()`: the panel is a card floating over the graph pane,
+  // not a modal over the window, so the drawing it describes stays visible and
+  // clickable underneath (docs/adr/0037-non-modal-info-card.md).
+  if (!host.open) host.show();
 }
 
 /**
@@ -630,7 +724,7 @@ export function renderPanelFrame(host, titleText) {
   closeButton.type = 'button';
   closeButton.className = 'node-panel-close';
   closeButton.textContent = '✕';
-  closeButton.title = 'Close this panel and go back to the graph (Esc)';
+  closeButton.title = 'Close this panel (Esc)';
   closeButton.addEventListener('click', () => closeNodePanel(host));
   host.appendChild(closeButton);
 

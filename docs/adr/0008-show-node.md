@@ -6,6 +6,12 @@ Date: 2026-07-09
 
 Accepted
 
+The presentation clauses that make the panel a *modal* are superseded by
+[ADR 0037](0037-non-modal-info-card.md): the same `<dialog>` now opens
+non-modally as a card over the graph pane, so the drawing stays visible and
+clickable. Everything about the panel's content, and the gestures that open it,
+stands.
+
 ## Context
 
 Given a node, I want to see all

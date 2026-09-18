@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { addButtonTitle, groupByAncestor, groupRelations } from '../src/viz/nodePanel.js';
+import { addButtonTitle, groupByAncestor, groupRelations, isLabelRedundant } from '../src/viz/nodePanel.js';
 import { ADDED_MARKER } from '../src/editor/insertMeasure.js';
 import { relationsFor } from '../src/editor/d3fendRestrictions.js';
 import d3fendMetadata from '../src/data/d3fend-metadata.json';
@@ -126,6 +126,16 @@ describe('addButtonTitle', () => {
 
   it('falls back to the local name for a class the metadata does not know', () => {
     expect(addButtonTitle(relation({ targetLocalName: 'NotAClass' }))).toContain('NotAClass (NotAClass)');
+  });
+});
+
+describe('isLabelRedundant', () => {
+  it('is true when the label is the local name with spacing and case added', () => {
+    expect(isLabelRedundant('File Eviction', 'FileEviction')).toBe(true);
+  });
+
+  it('is false when the label and local name share no text, as with ATT&CK ids', () => {
+    expect(isLabelRedundant('Spearphishing', 'T1566')).toBe(false);
   });
 });
 
