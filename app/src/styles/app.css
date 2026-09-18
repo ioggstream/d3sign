@@ -44,11 +44,10 @@
   /* The far end of the brand mark's gradient — the only violet in the app. */
   --c-brand-far: #7048e8;
 
-  /* The graph canvas, and the scrim the info modal drops behind itself. The canvas
-     is deliberately not `--c-surface`: the node colours in viz/graphStyle.js were
-     picked against pure white, and a tinted canvas shifts every one of them. */
+  /* The graph canvas. Deliberately not `--c-surface`: the node colours in
+     viz/graphStyle.js were picked against pure white, and a tinted canvas shifts
+     every one of them. */
   --c-canvas: #fff;
-  --c-scrim: rgb(16 24 40 / 45%);
 
   /* Status. Each is a triplet — ink on wash, bounded by edge — so an alert, a
      badge and a state pill in the same colour cannot drift apart. */
@@ -931,17 +930,30 @@ main#app-grid {
 .files-empty { margin: 0; color: var(--c-text-faint); font-style: italic; }
 
 /* ---------------------------------------------------------------------------
-   Node / edge info modal (docs/adr/0008-show-node.md)
+   Node / edge info card (docs/adr/0008-show-node.md,
+   docs/adr/0037-non-modal-info-card.md)
    --------------------------------------------------------------------------- */
 
 .node-panel {
+  /* Opened with `show()`, so the UA places it as an ordinary absolute box against
+     the nearest positioned ancestor — `#graph-pane` — instead of centring it in
+     the top layer. `margin: 0` overrides the UA's `margin: auto`, which would
+     otherwise fight the inset below. Bottom-right, so it never covers the pane
+     header's controls. */
+  margin: 0;
+  inset: auto var(--s-4) var(--s-4) auto;
+  /* Above the tooltip (15) and the context menu (20), both of which are children
+     of `#cy-host` — which opens no stacking context of its own, so they compete
+     with this card directly and would otherwise paint over it. */
+  z-index: 25;
   /* 480px at the default text size, and in `em` so the box grows with the text
      rather than reflowing the same column: a larger font in a fixed width only
-     wraps harder and pushes the panel taller. 80vw is what stops the largest
-     setting from outgrowing the window. */
+     wraps harder and pushes the panel taller. The caps are what stop the largest
+     setting, or a narrow column, from pushing the card out of the pane — against
+     the pane rather than the viewport, since that is what it now floats in. */
   width: 37.5em;
-  max-width: 80vw;
-  max-height: 80vh;
+  max-width: calc(100% - var(--s-6));
+  max-height: calc(100% - 5rem);
   overflow-y: auto;
   padding: var(--s-5) var(--s-6);
   /* Set from the View chip's "Panel text size" (viz/nodePanel.js,
@@ -949,7 +961,6 @@ main#app-grid {
      --fs-* scale has against --fs-md — so one slider moves the whole panel. */
   font-size: var(--node-panel-fs, var(--fs-md));
 }
-.node-panel::backdrop { background: var(--c-scrim); }
 .node-panel h3 { font-size: 1.31em; font-weight: 650; margin: 0 var(--s-4) var(--s-4) 0; }
 .node-panel h4 {
   font-size: 0.875em;
@@ -1083,6 +1094,22 @@ main#app-grid {
   color: var(--c-text-faint);
   cursor: default;
 }
+/* Sits right under a class heading, so it reads as "retype this class" rather
+   than as one more row control — same placement logic as .node-panel-mint. */
+.node-panel-class-swap {
+  font: inherit;
+  font-size: .875em;
+  display: block;
+  margin-top: var(--s-1);
+  margin-bottom: var(--s-2);
+  padding: var(--s-1) var(--s-2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  background: var(--c-surface);
+  color: var(--c-text);
+  max-width: 100%;
+}
+.node-panel-class-swap:hover { border-color: var(--c-accent-edge); }
 .node-panel-props { width: 100%; border-collapse: collapse; font-size: 0.875em; }
 .node-panel-props td { border-top: 1px solid var(--c-border-subtle); padding: var(--s-1) var(--s-2); word-break: break-word; vertical-align: top; }
 .node-panel-props td:first-child { color: var(--c-text-muted); font-family: var(--font-mono); white-space: nowrap; }

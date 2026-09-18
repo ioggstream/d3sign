@@ -1,0 +1,50 @@
+#
+# Enrich your graph showing OWASP Top 10 and API Security risks
+#   and their path to your digital artifacts.
+#
+# needs: d3fend capec owasp
+
+PREFIX top10: <https://owasp.org/Top10/2025/>
+PREFIX top10_api: <https://owasp.org/API-Security/editions/2023/en/>
+
+CONSTRUCT
+{
+  ?o d3f:related ?cwe .
+  ?cwe d3f:related ?capec .
+  ?capec d3f:related ?t .
+  ?t d3f:related ?a .
+  ?a d3f:related ?node .
+  ?t rdf:type ?t .
+  ?cwe a ?cwe .
+}
+WHERE {
+  { SELECT DISTINCT ?g WHERE { GRAPH ?g {} FILTER(!STRSTARTS(STR(?g), STR(K:))) } }
+  GRAPH ?g {  ?node a ?a }
+
+  ?o a top10_api:Risk ;
+   rdfs:label ?owasp ;
+   d3f:associated-with ?cwe .
+
+  { ?a ?isCloseTo ?cursor . }
+  UNION
+  { ?cursor ?isCloseTo ?a . }
+
+  ?isCloseTo rdfs:subPropertyOf+ d3f:d3fend-object-property .
+  ?cursor rdfs:subClassOf* d3f:DigitalArtifact .
+
+  {
+    ?capec a d3f:CommonAttackPattern ;
+      d3f:related ?t ;
+      d3f:related ?cwe .
+      # ?t rdfs:subClassOf* d3f:OffensiveTechnique .
+      FILTER (STRSTARTS(STR(?t), STR(d3f:T)))
+
+      ?t ?attacks ?cursor ;
+        rdfs:label ?technique .
+  }
+  UNION
+  {
+    ?cwe (d3f:weakness-of|d3f:may-be-weakness-of) ?cursor .
+  }
+
+}

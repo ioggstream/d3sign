@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { hierarchyText, termSections } from '../src/editor/d3fendHierarchy.js';
+import { getAlternatives, hierarchyText, termSections } from '../src/editor/d3fendHierarchy.js';
 
 // `termSections` is what the hover card draws (via renderD3fendCard) and what
 // `hierarchyText` flattens for the completion popup. Asserted here rather than
@@ -75,5 +75,23 @@ describe('hierarchyText', () => {
 
   it('is undefined for a name outside every vocabulary', () => {
     expect(hierarchyText('d3f:NotAThing')).toBeUndefined();
+  });
+});
+
+describe('getAlternatives', () => {
+  it('lists parents, siblings and children for the node panel\'s "change class" dropdown', () => {
+    const { parents, siblings, children } = getAlternatives('d3f:Network');
+
+    expect(parents).toEqual(['d3f:DigitalInformationBearer']);
+    expect(children).toContain('d3f:LocalAreaNetwork');
+    // A sibling is another child of the same parent — never the class itself.
+    expect(siblings).not.toContain('d3f:Network');
+    for (const sibling of siblings) {
+      expect(getAlternatives(sibling).parents).toContain('d3f:DigitalInformationBearer');
+    }
+  });
+
+  it('is empty for a name outside every vocabulary', () => {
+    expect(getAlternatives('d3f:NotAThing')).toEqual({ parents: [], siblings: [], children: [] });
   });
 });

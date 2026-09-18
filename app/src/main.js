@@ -225,8 +225,8 @@ const linksChip = createFilterChip(filterChipHost, {
 // How the graph draws itself: view state, like the filters, so it never reaches
 // the store. Loaded before the pane so the first render already honours it.
 let prefs = loadPrefs();
-// The info panel is a modal outside the pane, so setPrefs cannot reach it: its
-// text size is applied to the shared <dialog> directly, here and on every change.
+// The info panel is a <dialog> the graph pane does not style, so setPrefs cannot
+// reach it: its text size is applied to it directly, here and on every change.
 applyPanelFontSize(nodePanelHost, prefs.panelFontSize);
 // Likewise the editors: CSS sizes them, so this runs before they are built and
 // their first measurement already reads the saved size.
@@ -413,7 +413,19 @@ function nodePanelActions(nodeData) {
   const actions = { onMintNeighbours: (localName) => mintNeighbourGraph(nodeData, localName) };
   const id = mermaidIdOf(nodeData.id);
   if (!id || !editorPane.hasSource(id)) return actions;
-  return { ...actions, onAddRelation: (rel) => editorPane.addRelation(id, rel) };
+  return {
+    ...actions,
+    onAddRelation: (rel) => editorPane.addRelation(id, rel),
+    // Closes rather than refreshes: the class just changed, so every
+    // relation/metadata row the panel is showing is for the class the node
+    // no longer has, and the redraw the change triggers lands after the
+    // usual debounce (docs/adr/0019-select-and-swap-edges.md).
+    onChangeClass: (oldQname, newQname) => {
+      const changed = editorPane.changeNodeClass(id, oldQname, newQname);
+      if (changed) closeNodePanel(nodePanelHost);
+      return changed;
+    },
+  };
 }
 
 /**
@@ -421,8 +433,8 @@ function nodePanelActions(nodeData) {
  * enrichment triple, or one typed into the TriG pane — which is what keeps the
  * button off a panel that could not honour it.
  *
- * The panel closes on the way out: it is a modal, so leaving it open over the
- * editor would hide the very line it just jumped to.
+ * The panel closes on the way out: the jump hands the user over to the editor, and
+ * the button says it will.
  */
 function edgePanelActions(edgeData) {
   const actions = { onQueryAlternatives: () => queryEdgeAlternatives(edgeData) };
@@ -486,8 +498,10 @@ function swapPredicateDirection(predicate) {
 const store = new GraphStore();
 const graphPane = createGraphPane(cyHost, {
   prefs,
-  // The info panel is a modal, so it is a menu action rather than a click: a left
-  // click selects instead (docs/adr/0008-show-node.md).
+  // A double click or a menu action, never a left click: that one selects instead
+  // (docs/adr/0008-show-node.md). The panel stays on what it was opened on — a
+  // click elsewhere moves the selection, not the card
+  // (docs/adr/0037-non-modal-info-card.md).
   onShowInfo: (nodeData) =>
     renderNodePanel(nodePanelHost, nodeData, store, nodePanelActions(nodeData)),
   // Edges answer the same gesture as nodes, now that a tap on one only selects
@@ -1518,12 +1532,11 @@ const VIEWS = [
     // ResizeObserver only re-measures — framing the drawing is a "you are seeing
     // this for the first time" action, not something a gutter drag should do.
     onShow: () => graphPane.fitView(),
-    onMove: () => {
-      // One `<dialog>` serves the node and the edge panel. Re-parenting the
-      // ancestor of an open top-layer modal is not well defined, so close it.
-      closeNodePanel(nodePanelHost);
-      graphPane.fitView();
-    },
+    // The info panel used to be closed here as well: re-parenting the ancestor of
+    // an open top-layer modal is not well defined. It is an ordinary positioned
+    // child of the pane now (docs/adr/0037-non-modal-info-card.md), so it travels
+    // with it and stays open.
+    onMove: () => graphPane.fitView(),
   },
   {
     id: 'trig',
@@ -1652,16 +1665,23 @@ function isTypingTarget(target) {
  *   and the graph are visible at the same time by default, and so, now, can the
  *   SPARQL pane be. Since `q` means something to both the graph and the query
  *   editor, "is the user typing?" is what keeps them apart;
- * - the info modal is closed, or the keystroke would act on an element hidden behind
- *   it. One `<dialog>` serves both the node and the edge panel, so this one check
- *   covers both.
+ * - focus is not inside the info panel, so a key pressed while the user is on one of
+ *   its own controls is not read as a graph key. It used to be "the info panel is
+ *   closed", which was right while the panel was a modal covering the drawing; the
+ *   card floats over it instead (docs/adr/0037-non-modal-info-card.md), and the
+ *   whole point is that the graph is still there to act on. One `<dialog>` serves
+ *   both the node and the edge panel, so this one check covers both.
  *
  * Visibility rather than focus is a deliberate simplification: tracking which
  * column owns the keyboard would be more precise, and is the fix if a bare key
  * ever fires for the wrong pane (docs/adr/0022-column-tab-groups.md).
  */
 function isGraphShortcutContext(event) {
-  return dock.isVisible('graph') && !isTypingTarget(event.target) && !nodePanelHost.open;
+  return (
+    dock.isVisible('graph') &&
+    !isTypingTarget(event.target) &&
+    !nodePanelHost.contains(event.target)
+  );
 }
 
 /**
@@ -1759,6 +1779,16 @@ window.addEventListener(
     // guard: a letter this shortcut declines has to reach whatever did have focus.
     if (!event.altKey && !event.ctrlKey && !event.metaKey) {
       if (event.key === 'Escape') {
+        // The UA cancels only a *modal* dialog, and the info panel is no longer
+        // one (docs/adr/0037-non-modal-info-card.md), so closing it on Esc is
+        // the app's job now. One `<dialog>` serves both panels, so the one check
+        // covers node and edge. `isTypingTarget` leaves an Esc aimed at a
+        // CodeMirror autocomplete to the editor that opened it.
+        if (nodePanelHost.open && !isTypingTarget(event.target)) {
+          closeNodePanel(nodePanelHost);
+          event.preventDefault();
+          return;
+        }
         if (!isGraphShortcutContext(event)) return;
         if (clearPathFocus()) event.preventDefault();
         return;
