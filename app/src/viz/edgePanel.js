@@ -1,5 +1,5 @@
 /**
- * The edge info modal: what a drawn link actually asserts.
+ * The edge info panel: what a drawn link actually asserts.
  *
  * The counterpart of viz/nodePanel.js, opened by the same gesture — a double click,
  * or `Show info` on the right-click menu (docs/adr/0019-select-and-swap-edges.md).
@@ -254,7 +254,7 @@ function renderAlternatives(summary, host, actions) {
 }
 
 /**
- * Renders the edge info modal into `host` (the shared `<dialog>`).
+ * Renders the edge info panel into `host` (the shared `<dialog>`).
  *
  * `actions.onGoToSource` — when given — puts a "Go to mermaid source" button at the
  * end, the same action the right-click menu offers. The panel is handed the
@@ -342,5 +342,6 @@ export function renderEdgePanel(host, edgeData, actions = {}, options = {}) {
     host.appendChild(button);
   }
 
-  if (!host.open) host.showModal();
+  // Non-modal, for the reason nodePanel.js gives at the same line.
+  if (!host.open) host.show();
 }

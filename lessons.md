@@ -1861,3 +1861,90 @@ beside its database instead of in the first tier.
 - **Do not reach for `breadthfirst`'s `maximal`/`acyclic`.** `maximal` warns and
   `break`s mid-adjustment on a cycle; `acyclic: true` removes the guard that
   stops it looping forever. d3f diagrams are routinely cyclic.
+
+## 2026-09-14 — normalize an inverse at emission, not in the model
+
+Task: draw `d3f:contained-by` as a box, like its inverse `d3f:contains`.
+
+- **Normalizing in the emitter beat teaching the model a second predicate.** The
+  plan started at `CONTAINMENT_PREDICATES` in `rdf/graphModel.js` and needed a
+  third predicate set, a deferred pass, a precedence rule against `ds:partOf`
+  and a cycle guard — because both legs writable means `a contains b` plus
+  `a contained-by b` parents each to the other. Rewriting the passive leg in
+  `emitQuads` instead is one map and one `swap` flag, and the model, the fold,
+  the Links filter, the layouts and every stored query go on seeing exactly one
+  representation of containment.
+- **The rewrite must land after the refusals, not before.** The both-ends-a-box
+  and empty-side warnings quote the line the author typed, so they read
+  `edge.predicate`; only the `quad(...)` call reads the normalized CURIE. The
+  `distributing && fromId === toId` skip is an identity test and is unaffected.
+- **A subgraph title needed no new branch.** `d3f:contained-by` normalized to
+  `d3f:contains` is already in `CONTAINER_STATED_PREDICATES`, so it falls
+  through to the default box emission on its own.
+- **Emit-side normalization does not reach imported RDF.** TriG typed into the
+  pane and `.ttl` imports bypass `emitQuads` (ADR 0009), so a hand-written
+  `d3f:contained-by` quad is still an edge. That is why the `FLOW_REVERSED`
+  entry in `rdf/flowPolarity.js` stays.
+- **This branch has 16 pre-existing test failures.** Two look like they could be
+  yours and are not: `parser.test.js`'s duplicate-title check trips on
+  `subgraph-with-property` (two blocks, one title), and `flow-polarity.test.js`
+  trips on `d3f:receives`. Check the failing assertion, not the file name.
+
+## 2026-09-14 — the info panel as a non-modal card (ADR 0037)
+
+Task: stop the info panel covering the graph it describes.
+
+- **`showModal()` → `show()` was the whole mechanism.** A non-modal `<dialog>`
+  leaves the top layer and becomes an ordinary absolute box against its nearest
+  positioned ancestor. The element was already declared inside `#graph-pane`, and
+  that pane was already `position: relative`, so placing it took CSS only — no
+  markup move, no new element, no layout-registry entry.
+- **Two platform behaviours come off with the backdrop, and only one is
+  obvious.** `Esc` cancels *modal* dialogs only, so it had to be re-implemented in
+  the window `keydown` handler, guarded by `isTypingTarget` so a CodeMirror
+  autocomplete keeps its own `Esc`. The other is focus: `show()` focuses the
+  card's first control, which is why `isGraphShortcutContext` could not simply
+  drop its `!nodePanelHost.open` clause — it became
+  `!nodePanelHost.contains(event.target)`, which is the part of the old intent
+  that survives.
+- **`margin: 0` is load-bearing.** The UA centres an open dialog with
+  `margin: auto`, which silently beats an `inset`.
+- **`#cy-host` opens no stacking context.** It is `position: relative` with
+  `z-index: auto`, so the graph tooltip (15) and context menu (20) inside it
+  compete with anything outside it — the card needs an explicit `z-index` above
+  them despite coming later in the DOM.
+- **Deleting a rule can strand a token.** `--c-scrim` existed only for
+  `.node-panel::backdrop`; grep before assuming a variable has other users.
+- **Still 16 pre-existing failures on this branch**, in the same ten files as the
+  entry above. Nothing this task touched is under test: the suite is vitest in
+  plain node with no jsdom, so `renderNodePanel` and the CSS have no coverage at
+  all.
+
+## 2026-09-16 — hide the cURIe in the class heading when it repeats the label
+
+Task: `nodePanel.js`'s class heading always showed `Label (d3f:LocalName)`, even
+when the label is just the local name with spaces added — redundant for
+`FileEviction`, load-bearing for an ATT&CK id like `T1566` where the label
+("Spearphishing") shares no text with it.
+
+- **Exact-normalized-match, not fuzzy, was the right call.** Stripping
+  non-alphanumerics and lowercasing both strings before comparing catches the
+  spacing/case-only case cleanly and never hides a cURIe for a class whose label
+  genuinely diverges from its id — a fuzzy/edit-distance check would risk exactly
+  that false positive, so the user picked exact match over fuzzy up front.
+- Scope stayed to the one call site the user pointed at (classHeading,
+  `nodePanel.js`); the structurally identical patterns in the term-projection
+  heading and `makeChip` were left alone — not requested, and `makeChip` labels a
+  relation partner, not "this node's class", so the redundancy question is not
+  quite the same one there.
+- `isLabelRedundant` is a pure function, tested directly (no DOM/jsdom needed),
+  same pattern as `groupRelations`/`groupByAncestor` already in this file.
+- Tests run via `docker compose exec -T -w /code/app dev npx vitest run` — no
+  node on the host, per the entries above. 21/21 passed in
+  `node-panel.test.js`.
+- **Follow-up, same session:** extended `isLabelRedundant` to `makeChip`
+  (Attack/Defense/Relations chips share this one function), moving the bare
+  `(LocalName)` into `title` alongside the existing `chipTooltip` text when
+  redundant. Needed no Attack-specific exclusion: an ATT&CK id's label never
+  normalizes equal to its `T####` id, so those chips keep showing both without
+  a special case.

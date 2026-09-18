@@ -42,6 +42,19 @@ export function getParents(qname) {
   return (item.parents ?? []).map((parent) => qualify(parts.prefix, parent));
 }
 
+/**
+ * The classes a "change class" dropdown offers instead of `qname`: its
+ * parents, its siblings (the other children of each parent), and its
+ * children. Deduplicated and with `qname` itself removed from siblings —
+ * `getChildren(parent)` includes the class it was asked about.
+ */
+export function getAlternatives(qname) {
+  const parents = getParents(qname);
+  const siblings = [...new Set(parents.flatMap(getChildren))].filter((sibling) => sibling !== qname);
+  const children = getChildren(qname);
+  return { parents, siblings, children };
+}
+
 // Root-first chain of ancestor labels above `qname`, following the first parent at
 // each level. Guards against cycles in malformed ontology data.
 export function getAncestorPath(qname) {

@@ -124,6 +124,9 @@ depends on both being correct:
 
 - [x] **Bare-key shortcuts gate on visibility, not on focus.** `f g s q < >` ask
   "is the graph on screen, is the user not typing, is the info modal closed".
+  (The third question is now "is focus outside the info panel": the panel is no
+  longer a modal hiding the element a key would act on —
+  [ADR 0037](0037-non-modal-info-card.md).)
   ADR 0013's first guard was "the graph is the tab on screen", which was
   sufficient when only one right-column pane could be visible at a time. It no
   longer is: the graph and the SPARQL pane can now be in different columns and

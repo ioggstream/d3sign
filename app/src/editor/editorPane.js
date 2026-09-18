@@ -8,6 +8,7 @@ import { d3fendCompletionSource } from './d3fendCompletion.js';
 import { d3fendHover } from './d3fendHover.js';
 import { editorDarkTheme } from './editorTheme.js';
 import { documentSymbols } from './documentSymbols.js';
+import { classTokenReplacement } from './classSwap.js';
 import { relationInsertion } from './insertMeasure.js';
 import { mermaidBlockHighlight } from './mermaidBlocks.js';
 import { knownNodeHighlight } from './knownNodes.js';
@@ -199,13 +200,15 @@ function createTextEditor(
       silent = false;
     },
     /**
-     * A targeted write, `{ from, insert }` as CodeMirror wants it. Not `setText`:
-     * one change is one undo step and leaves the rest of the document — and the
-     * caret — alone. It reports back through the usual debounced `onChange`.
+     * A targeted write, `{ from, to, insert }` as CodeMirror wants it — `to`
+     * defaults to `from`, so a plain insertion needs only `{ from, insert }`.
+     * Not `setText`: one change is one undo step and leaves the rest of the
+     * document — and the caret — alone. It reports back through the usual
+     * debounced `onChange`.
      */
-    insertAt: ({ from, insert }) => {
-      if (from < 0 || from > view.state.doc.length) return false;
-      view.dispatch({ changes: { from, insert } });
+    insertAt: ({ from, to = from, insert }) => {
+      if (from < 0 || to > view.state.doc.length || to < from) return false;
+      view.dispatch({ changes: { from, to, insert } });
       return true;
     },
     flush,
@@ -309,6 +312,16 @@ export function createEditorPane(host, initialText, onChange) {
      */
     addRelation: (mermaidId, rel) => {
       const change = relationInsertion(pane.getText(), mermaidId, rel);
+      return change ? pane.insertAt(change) : false;
+    },
+    /**
+     * Retypes the node written as `mermaidId` from `oldQname` to `newQname`
+     * — the node panel's "change class" dropdown. False when the id or the
+     * old class token is not in the text, the same condition a caller would
+     * otherwise have to check first via `hasSource`.
+     */
+    changeNodeClass: (mermaidId, oldQname, newQname) => {
+      const change = classTokenReplacement(pane.getText(), mermaidId, oldQname, newQname);
       return change ? pane.insertAt(change) : false;
     },
   };
