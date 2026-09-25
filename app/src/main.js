@@ -689,11 +689,13 @@ async function ensureEnrichment() {
  * under the caret would fight the user.
  */
 async function applyGraphVisibility({ writeTurtle = true } = {}) {
+  const edgeComments = [];
   for (const contribution of graphContributions.values()) {
     const isVisible = visibleGraphs.has(contribution.name);
     store.replaceGraph(contribution.name, isVisible ? contribution.quads : []);
+    if (isVisible && contribution.edgeComments) edgeComments.push(...contribution.edgeComments);
   }
-  currentModel = buildGraphModel(store);
+  currentModel = buildGraphModel(store, { edgeComments });
 
   if (writeTurtle && !turtleDirty) await renderTurtle();
 
@@ -712,7 +714,8 @@ async function applyGraphVisibility({ writeTurtle = true } = {}) {
  */
 async function renderTurtle() {
   const allQuads = [...graphContributions.values()].flatMap((c) => c.quads);
-  turtlePane.setText(await toTurtle(allQuads), { silent: true });
+  const allEdgeComments = [...graphContributions.values()].flatMap((c) => c.edgeComments || []);
+  turtlePane.setText(await toTurtle(allQuads, { edgeComments: allEdgeComments }), { silent: true });
 }
 
 /** Hand-edited TriG is never overwritten silently; the badge is the reconciliation cue. */
@@ -855,18 +858,19 @@ async function handleTextChange(text) {
     // A template block is a declaration, not data: its members exist only as the
     // resources its instances generate, so it contributes no graph of its own.
     if (d.isTemplate) continue;
-    const { quads, graphName, warnings: linkWarnings } = emitQuads(d.ast, d.diagramId, {
+    const { quads, graphName, warnings: linkWarnings, edgeComments } = emitQuads(d.ast, d.diagramId, {
       taggedIds,
       provenance: d.provenance,
     });
     emitWarnings.push(...linkWarnings);
     nextDiagramGraphNames.add(graphName);
     if (!mergedByGraphName.has(graphName)) {
-      mergedByGraphName.set(graphName, { diagramId: null, quads: [] });
+      mergedByGraphName.set(graphName, { diagramId: null, quads: [], edgeComments: [] });
     }
     const merged = mergedByGraphName.get(graphName);
     merged.diagramId = d.diagramId;
     merged.quads = merged.quads.concat(quads);
+    merged.edgeComments = merged.edgeComments.concat(edgeComments);
   }
   for (const [graphName, merged] of mergedByGraphName) {
     graphContributions.set(graphName, {
@@ -875,6 +879,7 @@ async function handleTextChange(text) {
       description: merged.diagramId,
       kind: 'diagram',
       quads: merged.quads,
+      edgeComments: merged.edgeComments,
     });
   }
   for (const stale of knownGraphNames) {

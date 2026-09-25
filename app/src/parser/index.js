@@ -54,7 +54,7 @@ export function parseDiagram(source) {
   const stack = [];
   const warnings = [];
 
-  for (const { type, line, styleClasses } of lines) {
+  for (const { type, line, styleClasses, comment: blockComment } of lines) {
     const isShared = !!styleClasses?.includes(SHARED_STYLE_CLASS);
     if (type === 'subgraph-open') {
       const parsed = parseSubgraphOpen(line);
@@ -174,7 +174,17 @@ export function parseDiagram(source) {
               `predicate: only "${e.predicate}" is written — one link is one relation.`,
           );
         }
-        edges.push({ from: e.from, to: e.to, predicate: e.predicate, dotted: e.dotted });
+        // `blockComment` (a %% comment block above this line, tokenizer.js) is
+        // distinct from edgeParser.js's own per-arrow `comment` (prose left over
+        // after stripping the predicate token out of a `|label|`, e.g.
+        // `|d3f:reads over TLS|` -> "over TLS") — that field is never propagated.
+        edges.push({
+          from: e.from,
+          to: e.to,
+          predicate: e.predicate,
+          dotted: e.dotted,
+          ...(blockComment ? { comment: blockComment } : {}),
+        });
       }
       continue;
     }
@@ -188,6 +198,7 @@ export function parseDiagram(source) {
     if (stack.length && !node.parent) node.parent = stack[stack.length - 1];
     if (isShared) node.shared = true;
     applyShape(node, parsed.shapeContent, parsed.attrs);
+    if (blockComment) node.comment = blockComment;
     if (node.templates.length > 1) {
       warnings.push(
         `Node "${parsed.id}" references more than one template ` +

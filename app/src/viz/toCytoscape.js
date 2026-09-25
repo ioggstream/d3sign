@@ -605,6 +605,10 @@ export function toCytoscapeElements(model, filterState, viewOptions = {}) {
         id: occurrence === 0 ? id : `${id}#${occurrence}`,
         label: item.predicateLabel,
       };
+      // Only an asserted (non-derived/folded) edge stands for exactly one
+      // underlying model edge, so it is the only case with an unambiguous
+      // comment to show — see graphPane.js's edge hover tooltip.
+      if (item.edge.comment) data.comment = item.edge.comment;
       const bidirectional = occurrence < twoWayCount;
       if (bidirectional) data.bidirectional = true;
       // A reciprocal member is drawn with its ends exchanged (just above), so

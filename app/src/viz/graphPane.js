@@ -547,6 +547,7 @@ export function createGraphPane(host, {
   // (viz/nodeMenu.js).
   const contextMenu = createContextMenu(host);
   const nodeTooltip = createNodeTooltip(host);
+  const edgeTooltip = createNodeTooltip(host);
   function clearPathFocusClasses() {
     cy.batch(() => {
       cy.nodes().removeClass(
@@ -682,9 +683,20 @@ export function createGraphPane(host, {
   });
   cy.on('mouseout', 'node', () => nodeTooltip.hide());
 
+  // A %% comment block the author attached to the edge's mermaid line
+  // (parser/tokenizer.js, rdf/emit.js) — new information regardless of
+  // `labelDetail`, so unlike the node tooltip above this is not gated on it.
+  cy.on('mouseover', 'edge', (evt) => {
+    const data = evt.target.data();
+    if (!data.comment) return;
+    edgeTooltip.show(evt.renderedPosition, [['comment', data.comment]]);
+  });
+  cy.on('mouseout', 'edge', () => edgeTooltip.hide());
+
   cy.on('tap', () => {
     contextMenu.close();
     nodeTooltip.hide();
+    edgeTooltip.hide();
   });
   cy.on('cxttap', (evt) => {
     if (evt.target === cy) contextMenu.close();
@@ -694,6 +706,7 @@ export function createGraphPane(host, {
   cy.on('pan zoom', () => {
     contextMenu.close();
     nodeTooltip.hide();
+    edgeTooltip.hide();
   });
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') contextMenu.close();

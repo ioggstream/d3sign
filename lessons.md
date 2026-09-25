@@ -1948,3 +1948,61 @@ when the label is just the local name with spaces added — redundant for
   redundant. Needed no Attack-specific exclusion: an ATT&CK id's label never
   normalizes equal to its `T####` id, so those chips keep showing both without
   a special case.
+
+## 2026-09-21 — links across containers: the layout adapter was the problem (ADR 0040)
+
+- The complaint was "links cross container nodes, especially `:connected-to`".
+  Three causes, all in `cytoscape-elk` or in how the app fed it, none in ELK:
+  it reads node positions back and discards every route ELK computed; it
+  declares **every** edge on the root graph (its own TODO), so a link between
+  two children of one box was the root's to route and was free to leave it; and
+  `graphPane.runLayout` held the non-flow links out of the layout input
+  altogether, so `connected-to` was never laid out at all.
+- Replaced it with `app/src/viz/elkLayout.js` — same job, ~190 lines, edges
+  declared on the lowest common ancestor. Two traps found only by running it:
+  a registered cytoscape layout is called **without `new`**, so a `class`
+  constructor throws (cytoscape-elk survives on its transpiled build); and an
+  ELK rejection left the pane with no `layoutstop` at all, i.e. no rotation,
+  bands, separation or fit — it now settles the nodes where they are.
+- `priority` in cytoscape-elk is documented and never implemented: the
+  `sequencePriority` hook in `layouts.js` was dead. It is ELK's `elk.priority`
+  per edge now.
+- Routes are replayed as cytoscape `segment-weights`/`segment-distances`, never
+  as absolute pixels: the pane rotates, bands and separates *after* the layout,
+  and a weight-plus-distance pair is invariant under a rigid motion of the two
+  endpoints. Sign convention read out of cytoscape's `findSegmentsPoints`
+  (`vectorNormInverse = (-u.y, u.x)`, y down → positive is right of travel),
+  not guessed; `edge-distances: node-position` is mandatory with it, since
+  cytoscape's default measures from the node borders.
+- elkjs 0.9.3 does **not** emit `sections[0].container`, so the frame a route is
+  measured in cannot be read back — the adapter has to remember what it declared
+  the edge on. Characterised in `app/test/elk-sections.test.js`.
+- Measured, not assumed: feeding the non-flow links to ELK **does** cost the
+  tiers — a partition does not hold a node whose non-flow link pulls it onward.
+  The user chose routing over tier precision up front; restoring the filter in
+  `runLayout` is the one-line reversal.
+- Tests run via `docker compose exec -T -w /code/app dev npx vitest run` (no node
+  on the host). 21 failures remain across the suite, all pre-existing on this
+  branch (missing fixtures, query library, selection-box labels); the four in
+  `layouts.test.js` predate this change too.
+- **Same session, second round — replaying a layout's route is the wrong shape
+  of feature.** The user's verdict on the ELK replay: "some links are rigid,
+  don't re-shape when moving nodes, aren't affected by the link positioning
+  preference, and only work on ELK". All three are one fault — the route
+  belonged to the layout, not to the drawing, so it froze at `layoutstop`,
+  existed only where ELK ran, and overrode the preference permanently.
+- Replaced by `app/src/viz/linkRoutes.js`: obstacles are the containers holding
+  *neither* end, each crossing is passed on the nearer side, and a link whose
+  ends share a container is refused any bend that would leave it. Recomputed at
+  the end of a layout, during a drag (only the moving links), on drop and after
+  a rotation's separation pass. A link with a clear line carries no data, so the
+  edge-style preference governs it — the routed shape is the exception now.
+- The projection onto the source→target line paid off twice: a rotation needs no
+  recomputation at all, since the pair and the obstacles turn together.
+- Kept from the first round because they stand on their own: the ELK adapter
+  (edges on the lowest common ancestor → ELK reserves room *inside* a container;
+  `elk.priority` really implemented; a rejected layout still emits `layoutstop`)
+  and feeding every link to the layout.
+- Orphaned by the rewrite and to be deleted: `app/src/viz/elkRoutes.js` and
+  `app/test/elk-routes.test.js` (their content lives on in `linkRoutes.js` and
+  `link-routes.test.js`).
