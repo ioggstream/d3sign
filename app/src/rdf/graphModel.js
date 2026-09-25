@@ -304,14 +304,23 @@ function isResource(term) {
  * currently visible named graphs, since hidden ones are emptied by
  * `GraphStore.replaceGraph`).
  *
+ * `edgeComments` (from `emitQuads`, rdf/emit.js, threaded through main.js) is
+ * `{ subject, predicate, object, graph, comment }[]`: a %% comment block an edge
+ * carried in the mermaid source, keyed by the exact IRIs of the quad it describes
+ * so it can be matched here without re-deriving curies or normalization.
+ *
  * Returns `{ nodes, edges, containment, parentOf }`:
  * - `nodes`: Map of IRI → `{ iri, id, label, rdfType, coreCategory, nodeKind, offensive }`
- * - `edges`: `{ from, to, predicate, kind, inverse, flowRole, effectRole }`, IRIs on both
- *   ends, predicate as a CURIE — one entry per quad, so a relation asserted in
- *   two visible graphs is two (parallel) edges, as it is in the store.
+ * - `edges`: `{ from, to, predicate, kind, inverse, flowRole, effectRole, comment? }`, IRIs
+ *   on both ends, predicate as a CURIE — one entry per quad, so a relation asserted in
+ *   two visible graphs is two (parallel) edges, as it is in the store. `comment` is
+ *   present only when `edgeComments` names that exact quad.
  * - `containment` / `parentOf`: the compound-node structure, both directions.
  */
-export function buildGraphModel(store) {
+export function buildGraphModel(store, { edgeComments = [] } = {}) {
+  const edgeCommentByKey = new Map(
+    edgeComments.map((c) => [`${c.subject} ${c.predicate} ${c.object} ${c.graph}`, c.comment]),
+  );
   const nodes = new Map();
   const edges = [];
   const containment = new Map();
@@ -372,10 +381,14 @@ export function buildGraphModel(store) {
 
     nodeFor(quad.object.value);
     const curie = shortLabel(predicate);
+    const edgeComment = edgeCommentByKey.get(
+      `${subject.iri} ${predicate} ${quad.object.value} ${quad.graph.value}`,
+    );
     edges.push({
       from: subject.iri,
       to: quad.object.value,
       predicate: curie,
+      ...(edgeComment ? { comment: edgeComment } : {}),
       kind: classifyPredicate(curie),
       inverse: inversePredicateOf(curie),
       // Resolved here rather than in the view, so the collapse of an

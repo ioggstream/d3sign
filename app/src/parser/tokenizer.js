@@ -5,6 +5,8 @@ import { parseSubgraphOpen, isSubgraphEnd } from './subgraphParser.js';
 const STYLE_STATEMENT_RE = /^(classDef|class)\b/;
 /** The `:::styleClass` suffix mermaid allows on a node or edge endpoint. */
 const STYLE_SUFFIX_RE = /:::[A-Za-z0-9_-]+/g;
+/** A line that is entirely a `%%` comment (not a trailing comment on a statement). */
+const COMMENT_LINE_RE = /^\s*%%\s?(.*)$/;
 
 /**
  * Classifies one raw mermaid line into `{ type, line, styleClasses }`, or null
@@ -47,11 +49,27 @@ export function tokenizeLine(rawLine) {
  * Mermaid styling carries no d3fend meaning, so `classDef`/`class` statements
  * are dropped and the `:::styleClass` suffix is stripped from the lines that
  * keep their node declarations.
+ *
+ * One or more consecutive whole-line `%%` comments directly above a node or
+ * edge statement are collected, joined with `\n`, and attached to that
+ * token's `comment` field — the source of an rdfs:comment (nodes) or turtle
+ * `#` comment (edges), see emit.js. Any other line, including a blank one,
+ * breaks the block instead of letting it carry forward.
  */
 export function tokenizeBody(body) {
   const lines = [];
+  let pendingComment = [];
   for (const rawLine of body.split(/\r?\n/)) {
+    const commentMatch = COMMENT_LINE_RE.exec(rawLine);
+    if (commentMatch) {
+      pendingComment.push(commentMatch[1]);
+      continue;
+    }
     const token = tokenizeLine(rawLine);
+    if (token && (token.type === 'node' || token.type === 'edge') && pendingComment.length) {
+      token.comment = pendingComment.join('\n');
+    }
+    pendingComment = [];
     if (token) lines.push(token);
   }
   return lines;

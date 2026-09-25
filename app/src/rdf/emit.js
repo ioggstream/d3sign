@@ -265,9 +265,11 @@ export function collectTaggedIds(diagrams) {
  * `{ instances: [{ id, templateId }], members: [{ id, instanceId }] }`, and the
  * quads land in this diagram's graph like every other.
  *
- * Returns `{ quads, graphName, warnings }`. The warnings are about links whose
- * endpoints are not resources, which is a judgement `taggedIds` makes and the parser
- * of one block cannot.
+ * Returns `{ quads, graphName, warnings, edgeComments }`. The warnings are about
+ * links whose endpoints are not resources, which is a judgement `taggedIds` makes
+ * and the parser of one block cannot. `edgeComments` is `{ subject, predicate,
+ * object, graph, comment }[]`, one entry per quad an edge's %% comment block
+ * describes — see the edge loop below.
  */
 export function emitQuads(ast, diagramId, { taggedIds = null, provenance = null } = {}) {
   const quads = [];
@@ -362,6 +364,9 @@ export function emitQuads(ast, diagramId, { taggedIds = null, provenance = null 
     if (node.label) {
       quads.push(quad(subject, namedNode(PREFIXES.rdfs + 'label'), literal(node.label), graph));
     }
+    if (node.comment) {
+      quads.push(quad(subject, namedNode(PREFIXES.rdfs + 'comment'), literal(node.comment), graph));
+    }
   }
 
   for (const sg of ast.subgraphs) {
@@ -430,6 +435,14 @@ export function emitQuads(ast, diagramId, { taggedIds = null, provenance = null 
     return { ids: [], isBox: false };
   };
 
+  // A %% comment block above an edge line (parser/index.js) cannot become a quad —
+  // a triple has no subject of its own to hang rdfs:comment off — so it travels as
+  // a side channel keyed by the exact IRIs of the quad(s) it describes, for
+  // serialize.js to splice in as a turtle `#` comment and for graphModel.js to
+  // surface as an edge tooltip. One commented line distributing into several
+  // quads (an untagged box endpoint) gets an entry per quad.
+  const edgeComments = [];
+
   for (const edge of ast.edges) {
     // Already filtered by the parser, which warns; belt and braces for a hand-built
     // AST, and it keeps `d3f:dpv:hasDataSubject` unreachable from any path.
@@ -475,6 +488,15 @@ export function emitQuads(ast, diagramId, { taggedIds = null, provenance = null 
         const subject = namedNode(nodeIri(swap ? toId : fromId));
         const object = namedNode(nodeIri(swap ? fromId : toId));
         quads.push(quad(subject, predicate, object, graph));
+        if (edge.comment) {
+          edgeComments.push({
+            subject: subject.value,
+            predicate: predicate.value,
+            object: object.value,
+            graph: graph.value,
+            comment: edge.comment,
+          });
+        }
       }
     }
   }
@@ -513,5 +535,5 @@ export function emitQuads(ast, diagramId, { taggedIds = null, provenance = null 
     );
   }
 
-  return { quads, graphName: graph.value, warnings };
+  return { quads, graphName: graph.value, warnings, edgeComments };
 }
