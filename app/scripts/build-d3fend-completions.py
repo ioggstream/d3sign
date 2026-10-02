@@ -18,6 +18,19 @@ the full ancestor chain) so the editor can walk the hierarchy interactively,
 mirroring vscode-d3fend-language's hierarchy browser without depending on
 that project's build pipeline.
 
+A deprecated class also carries the classes that replace it, possibly none:
+
+    "T1093": {
+      "label": "Process Hollowing",
+      ...
+      "deprecated": true,
+      "replacedBy": ["T1055.012"]
+    }
+
+Both fields are absent on a class that is not deprecated - "absent means no",
+as `offensive` in build-d3fend-metadata.py - see replaced_by() for where the
+replacement is read from.
+
 Usage:
     python3 app/scripts/build-d3fend-completions.py /path/to/d3fend.ttl[.gz]
 
@@ -25,11 +38,12 @@ Requires: rdflib (pip install rdflib)
 """
 import gzip
 import json
+import re
 import sys
 from pathlib import Path
 
 import rdflib
-from rdflib.namespace import OWL, RDF, RDFS
+from rdflib.namespace import DCTERMS, OWL, RDF, RDFS
 
 D3FEND_NS = "http://d3fend.mitre.org/ontologies/d3fend.owl#"
 D3F = rdflib.Namespace(D3FEND_NS)
@@ -62,6 +76,36 @@ def first_literal(g, subject, predicate):
     for obj in g.objects(subject, predicate):
         return str(obj)
     return None
+
+
+# "This technique has been revoked by T1574.010", "... was superseded in ATT&CK
+# v19.0 by StealthTechnique and DefenseImpairmentTechnique." - the text after
+# the first " by " names the replacements.
+REPLACEMENT_COMMENT = re.compile(r"\b(?:revoked|superseded)\b.*?\bby\b(.*)", re.S)
+
+
+def replaced_by(g, c, classes):
+    """Local names of the classes that replace deprecated class `c`, possibly [].
+
+    D3FEND states no dcterms:isReplacedBy today. It links the replacement with
+    rdfs:seeAlso (186 of 232 deprecated classes in 1.6; the other seeAlso objects
+    are external URLs) and repeats it in rdfs:comment, which also covers 2 classes
+    seeAlso does not. The first source that yields a known class wins.
+    """
+    for predicate in (DCTERMS.isReplacedBy, RDFS.seeAlso):
+        found = sorted(local_name(o) for o in g.objects(c, predicate) if o in classes)
+        if found:
+            return found
+
+    names = {local_name(k) for k in classes}
+    for comment in g.objects(c, RDFS.comment):
+        match = REPLACEMENT_COMMENT.search(str(comment))
+        if match:
+            tokens = re.findall(r"[\w.-]+", match.group(1))
+            found = sorted({t.rstrip(".") for t in tokens} & names)
+            if found:
+                return found
+    return []
 
 
 def parse_graph(ttl_path: Path) -> rdflib.Graph:
@@ -107,6 +151,9 @@ def build(ttl_path: Path) -> dict:
             "inverseOf": None,
             "characteristics": [],
         }
+        if first_literal(g, c, OWL.deprecated) == "true":
+            out[name]["deprecated"] = True
+            out[name]["replacedBy"] = replaced_by(g, c, classes)
 
     for p in properties:
         name = local_name(p)

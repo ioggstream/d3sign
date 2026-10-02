@@ -15863,7 +15863,12 @@
       "OffensiveTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "DefenseImpairmentTechnique",
+      "StealthTechnique"
+    ]
   },
   "DefenseImpairmentTechnique": {
     "label": "Defense Impairment Technique",
@@ -20167,7 +20172,9 @@
       "SPARTAImpactTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "IMP-0002": {
     "label": "Disruption - SPARTA",
@@ -20177,7 +20184,9 @@
       "SPARTAImpactTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "IMP-0003": {
     "label": "Denial - SPARTA",
@@ -20187,7 +20196,9 @@
       "SPARTAImpactTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "IMP-0004": {
     "label": "Degradation - SPARTA",
@@ -20197,7 +20208,9 @@
       "SPARTAImpactTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "IMP-0005": {
     "label": "Destruction - SPARTA",
@@ -20207,7 +20220,9 @@
       "SPARTAImpactTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "IMP-0006": {
     "label": "Theft - SPARTA",
@@ -20217,7 +20232,9 @@
       "SPARTAImpactTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "IMP-0007": {
     "label": "Native Functionality Abuse - SPARTA",
@@ -30784,7 +30801,11 @@
       "ATTACKICSInhibitResponseFunctionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1691.001"
+    ]
   },
   "T0804": {
     "label": "Block Reporting Message - ATTACK ICS",
@@ -30794,7 +30815,11 @@
       "ATTACKICSInhibitResponseFunctionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1691.002"
+    ]
   },
   "T0805": {
     "label": "Block Serial COM - ATTACK ICS",
@@ -30804,7 +30829,11 @@
       "ATTACKICSInhibitResponseFunctionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1695.001"
+    ]
   },
   "T0806": {
     "label": "Brute Force I/O - ATTACK ICS",
@@ -30834,7 +30863,9 @@
       "ATTACKICSDiscoveryTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T0809": {
     "label": "Data Destruction - ATTACK ICS",
@@ -30854,7 +30885,9 @@
       "ATTACKICSInitialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T0811": {
     "label": "Data from Information Repositories - ATTACK ICS",
@@ -30874,7 +30907,11 @@
       "ATTACKICSLateralMovementTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1694.001"
+    ]
   },
   "T0813": {
     "label": "Denial of Control - ATTACK ICS",
@@ -30934,7 +30971,9 @@
       "ATTACKICSInitialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T0819": {
     "label": "Exploit Public-Facing Application - ATTACK ICS",
@@ -30994,7 +31033,9 @@
       "ATTACKICSDiscoveryTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T0825": {
     "label": "Location Identification - ATTACK ICS",
@@ -31004,7 +31045,9 @@
       "ATTACKICSCollectionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T0826": {
     "label": "Loss of Availability - ATTACK ICS",
@@ -31085,7 +31128,9 @@
       "ATTACKICSInhibitResponseFunctionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T0834": {
     "label": "Native API - ATTACK ICS",
@@ -31146,7 +31191,11 @@
       "ATTACKICSPersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1693.002"
+    ]
   },
   "T0840": {
     "label": "Network Connection Enumeration - ATTACK ICS",
@@ -31166,7 +31215,9 @@
       "ATTACKICSDiscoveryTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T0842": {
     "label": "Network Sniffing - ATTACK ICS",
@@ -31227,7 +31278,9 @@
       "ATTACKICSLateralMovementTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T0845": {
     "label": "Program Upload - ATTACK ICS",
@@ -31317,7 +31370,9 @@
       "ATTACKICSCollectionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T0851": {
     "label": "Rootkit - ATTACK ICS",
@@ -31358,7 +31413,9 @@
       "ATTACKICSDiscoveryTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T0855": {
     "label": "Unauthorized Command Message - ATTACK ICS",
@@ -31368,7 +31425,11 @@
       "ATTACKICSImpairProcessControlTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1692.001"
+    ]
   },
   "T0856": {
     "label": "Spoof Reporting Message - ATTACK ICS",
@@ -31379,7 +31440,11 @@
       "ATTACKICSImpairProcessControlTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1692.002"
+    ]
   },
   "T0857": {
     "label": "System Firmware - ATTACK ICS",
@@ -31390,7 +31455,11 @@
       "ATTACKICSPersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1693.001"
+    ]
   },
   "T0858": {
     "label": "Change Operating Mode - ATTACK ICS",
@@ -31523,7 +31592,9 @@
       "ATTACKICSCollectionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T0871": {
     "label": "Execution through API - ATTACK ICS",
@@ -31585,7 +31656,9 @@
       "ATTACKICSImpairProcessControlTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T0877": {
     "label": "I/O Image - ATTACK ICS",
@@ -31738,7 +31811,11 @@
       "ATTACKICSPersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1694.002"
+    ]
   },
   "T0892": {
     "label": "Change Credential - ATTACK ICS",
@@ -31828,7 +31905,11 @@
       "ExfiltrationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1560"
+    ]
   },
   "T1003": {
     "label": "OS Credential Dumping",
@@ -31928,7 +32009,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1547.004"
+    ]
   },
   "T1005": {
     "label": "Data from Local System",
@@ -31978,7 +32063,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1027.001"
+    ]
   },
   "T1010": {
     "label": "Application Window Discovery",
@@ -32029,7 +32118,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1547.010"
+    ]
   },
   "T1014": {
     "label": "Rootkit",
@@ -32050,7 +32143,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1546.008"
+    ]
   },
   "T1016": {
     "label": "System Network Configuration Discovery",
@@ -32090,7 +32187,11 @@
       "LateralMovementTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1072"
+    ]
   },
   "T1018": {
     "label": "Remote System Discovery",
@@ -32110,7 +32211,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1542.001"
+    ]
   },
   "T1020": {
     "label": "Automated Exfiltration",
@@ -32230,7 +32335,11 @@
       "ExfiltrationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1560"
+    ]
   },
   "T1023": {
     "label": "Shortcut Modification",
@@ -32240,7 +32349,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1547.009"
+    ]
   },
   "T1024": {
     "label": "Custom Cryptographic Protocol",
@@ -32250,7 +32363,11 @@
       "CommandAndControlTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1573"
+    ]
   },
   "T1025": {
     "label": "Data from Removable Media",
@@ -32270,7 +32387,9 @@
       "CommandAndControlTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1027": {
     "label": "Obfuscated Files or Information",
@@ -32471,7 +32590,11 @@
       "LateralMovementTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1021.006"
+    ]
   },
   "T1029": {
     "label": "Scheduled Transfer",
@@ -32501,7 +32624,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1543.003"
+    ]
   },
   "T1032": {
     "label": "Standard Cryptographic Protocol",
@@ -32511,7 +32638,11 @@
       "CommandAndControlTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1573"
+    ]
   },
   "T1033": {
     "label": "System Owner/User Discovery",
@@ -32532,7 +32663,9 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1035": {
     "label": "Service Execution",
@@ -32542,7 +32675,11 @@
       "ExecutionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1569.002"
+    ]
   },
   "T1036": {
     "label": "Masquerading",
@@ -32745,7 +32882,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1574.001"
+    ]
   },
   "T1039": {
     "label": "Data from Network Shared Drive",
@@ -32786,7 +32927,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1546.001"
+    ]
   },
   "T1043": {
     "label": "Commonly Used Port",
@@ -32796,7 +32941,9 @@
       "CommandAndControlTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1044": {
     "label": "File System Permissions Weakness",
@@ -32807,7 +32954,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1574.010"
+    ]
   },
   "T1045": {
     "label": "Software Packing",
@@ -32817,7 +32968,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1027.002"
+    ]
   },
   "T1046": {
     "label": "Network Service Discovery",
@@ -32898,7 +33053,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1543.003"
+    ]
   },
   "T1051": {
     "label": "Shared Webroot",
@@ -32908,7 +33067,9 @@
       "LateralMovementTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1052": {
     "label": "Exfiltration Over Physical Medium",
@@ -32950,7 +33111,11 @@
       "T1053"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1053.002"
+    ]
   },
   "T1053.002": {
     "label": "At",
@@ -32980,7 +33145,9 @@
       "T1053"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1053.005": {
     "label": "Scheduled Task",
@@ -33020,7 +33187,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1562.006"
+    ]
   },
   "T1055": {
     "label": "Process Injection",
@@ -33223,7 +33394,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1574.011"
+    ]
   },
   "T1059": {
     "label": "Command and Scripting Interpreter",
@@ -33373,7 +33548,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1547.001"
+    ]
   },
   "T1061": {
     "label": "Graphical User Interface",
@@ -33383,7 +33562,9 @@
       "ExecutionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1062": {
     "label": "Hypervisor",
@@ -33393,7 +33574,9 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1063": {
     "label": "Security Software Discovery",
@@ -33403,7 +33586,11 @@
       "DiscoveryTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1518.001"
+    ]
   },
   "T1064": {
     "label": "Scripting",
@@ -33414,7 +33601,9 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1065": {
     "label": "Uncommonly Used Port",
@@ -33424,7 +33613,11 @@
       "CommandAndControlTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1571"
+    ]
   },
   "T1066": {
     "label": "Indicator Removal from Tools",
@@ -33434,7 +33627,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1027.005"
+    ]
   },
   "T1067": {
     "label": "Bootkit",
@@ -33444,7 +33641,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1542.003"
+    ]
   },
   "T1068": {
     "label": "Exploitation for Privilege Escalation",
@@ -33514,7 +33715,11 @@
       "T1070"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1685.005"
+    ]
   },
   "T1070.002": {
     "label": "Clear Linux or Mac System Logs",
@@ -33524,7 +33729,11 @@
       "T1070"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1685.006"
+    ]
   },
   "T1070.003": {
     "label": "Clear Command History",
@@ -33685,7 +33894,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1574.002"
+    ]
   },
   "T1074": {
     "label": "Data Staged",
@@ -33725,7 +33938,11 @@
       "LateralMovementTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1550.002"
+    ]
   },
   "T1076": {
     "label": "Remote Desktop Protocol",
@@ -33735,7 +33952,11 @@
       "LateralMovementTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1021.001"
+    ]
   },
   "T1077": {
     "label": "Windows Admin Shares",
@@ -33745,7 +33966,11 @@
       "LateralMovementTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1021.002"
+    ]
   },
   "T1078": {
     "label": "Valid Accounts",
@@ -33808,7 +34033,11 @@
       "CommandAndControlTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1573"
+    ]
   },
   "T1080": {
     "label": "Taint Shared Content",
@@ -33828,7 +34057,11 @@
       "CredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1552.001"
+    ]
   },
   "T1082": {
     "label": "System Information Discovery",
@@ -33858,7 +34091,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1546.003"
+    ]
   },
   "T1085": {
     "label": "Rundll32",
@@ -33869,7 +34106,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1218.011"
+    ]
   },
   "T1086": {
     "label": "PowerShell",
@@ -33879,7 +34120,11 @@
       "ExecutionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1059.001"
+    ]
   },
   "T1087": {
     "label": "Account Discovery",
@@ -33940,7 +34185,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1548.002"
+    ]
   },
   "T1089": {
     "label": "Disabling Security Tools",
@@ -33950,7 +34199,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1562.001"
+    ]
   },
   "T1090": {
     "label": "Proxy",
@@ -34031,7 +34284,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1055.012"
+    ]
   },
   "T1094": {
     "label": "Custom Command and Control Protocol",
@@ -34041,7 +34298,11 @@
       "CommandAndControlTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1095"
+    ]
   },
   "T1095": {
     "label": "Non-Application Layer Protocol",
@@ -34061,7 +34322,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1564.004"
+    ]
   },
   "T1097": {
     "label": "Pass the Ticket",
@@ -34071,7 +34336,11 @@
       "LateralMovementTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1550.003"
+    ]
   },
   "T1098": {
     "label": "Account Manipulation",
@@ -34162,7 +34431,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1070.006"
+    ]
   },
   "T1100": {
     "label": "Web Shell",
@@ -34173,7 +34446,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1505.003"
+    ]
   },
   "T1101": {
     "label": "Security Support Provider",
@@ -34183,7 +34460,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1547.005"
+    ]
   },
   "T1102": {
     "label": "Web Service",
@@ -34234,7 +34515,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1546.010"
+    ]
   },
   "T1104": {
     "label": "Multi-Stage Channels",
@@ -34274,7 +34559,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1070.004"
+    ]
   },
   "T1108": {
     "label": "Redundant Access",
@@ -34285,7 +34574,9 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1109": {
     "label": "Component Firmware",
@@ -34296,7 +34587,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1542.002"
+    ]
   },
   "T1110": {
     "label": "Brute Force",
@@ -34437,7 +34732,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1553.002"
+    ]
   },
   "T1117": {
     "label": "Regsvr32",
@@ -34448,7 +34747,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1218.010"
+    ]
   },
   "T1118": {
     "label": "InstallUtil",
@@ -34459,7 +34762,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1218.004"
+    ]
   },
   "T1119": {
     "label": "Automated Collection",
@@ -34490,7 +34797,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1218.009"
+    ]
   },
   "T1122": {
     "label": "Component Object Model Hijacking",
@@ -34501,7 +34812,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1546.015"
+    ]
   },
   "T1123": {
     "label": "Audio Capture",
@@ -34541,7 +34856,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1070.005"
+    ]
   },
   "T1127": {
     "label": "Trusted Developer Utilities Proxy Execution",
@@ -34592,7 +34911,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1546.007"
+    ]
   },
   "T1129": {
     "label": "Shared Modules",
@@ -34612,7 +34935,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1553.004"
+    ]
   },
   "T1131": {
     "label": "Authentication Package",
@@ -34622,7 +34949,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1547.002"
+    ]
   },
   "T1132": {
     "label": "Data Encoding",
@@ -34855,7 +35186,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1546.011"
+    ]
   },
   "T1139": {
     "label": "Bash History",
@@ -34865,7 +35200,11 @@
       "CredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1552.003"
+    ]
   },
   "T1140": {
     "label": "Deobfuscate/Decode Files or Information",
@@ -34885,7 +35224,11 @@
       "CredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1056.002"
+    ]
   },
   "T1142": {
     "label": "Keychain",
@@ -34895,7 +35238,11 @@
       "CredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1555.001"
+    ]
   },
   "T1143": {
     "label": "Hidden Window",
@@ -34905,7 +35252,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1564.003"
+    ]
   },
   "T1144": {
     "label": "Gatekeeper Bypass",
@@ -34915,7 +35266,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1553.001"
+    ]
   },
   "T1145": {
     "label": "Private Keys",
@@ -34925,7 +35280,11 @@
       "CredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1552.004"
+    ]
   },
   "T1146": {
     "label": "Clear Command History",
@@ -34935,7 +35294,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1070.003"
+    ]
   },
   "T1147": {
     "label": "Hidden Users",
@@ -34945,7 +35308,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1564.002"
+    ]
   },
   "T1148": {
     "label": "HISTCONTROL",
@@ -34955,7 +35322,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1562.003"
+    ]
   },
   "T1149": {
     "label": "LC_MAIN Hijacking",
@@ -34965,7 +35336,9 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1150": {
     "label": "Plist Modification",
@@ -34977,7 +35350,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1547.011"
+    ]
   },
   "T1151": {
     "label": "Space after Filename",
@@ -34988,7 +35365,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1036.006"
+    ]
   },
   "T1152": {
     "label": "Launchctl",
@@ -35000,7 +35381,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1569.001"
+    ]
   },
   "T1153": {
     "label": "Source",
@@ -35010,7 +35395,9 @@
       "ExecutionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1154": {
     "label": "Trap",
@@ -35021,7 +35408,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1546.005"
+    ]
   },
   "T1155": {
     "label": "AppleScript",
@@ -35031,7 +35422,11 @@
       "ExecutionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1059.002"
+    ]
   },
   "T1156": {
     "label": "Malicious Shell Modification",
@@ -35041,7 +35436,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1546.004"
+    ]
   },
   "T1157": {
     "label": "Dylib Hijacking",
@@ -35052,7 +35451,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1574.004"
+    ]
   },
   "T1158": {
     "label": "Hidden Files and Directories",
@@ -35063,7 +35466,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1564.001"
+    ]
   },
   "T1159": {
     "label": "Launch Agent",
@@ -35073,7 +35480,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1543.001"
+    ]
   },
   "T1160": {
     "label": "Launch Daemon",
@@ -35084,7 +35495,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1543.004"
+    ]
   },
   "T1161": {
     "label": "LC_LOAD_DYLIB Addition",
@@ -35094,7 +35509,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1546.006"
+    ]
   },
   "T1162": {
     "label": "Login Item",
@@ -35104,7 +35523,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1547.011"
+    ]
   },
   "T1163": {
     "label": "Rc.common",
@@ -35114,7 +35537,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1037.004"
+    ]
   },
   "T1164": {
     "label": "Re-opened Applications",
@@ -35124,7 +35551,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1547.007"
+    ]
   },
   "T1165": {
     "label": "Startup Items",
@@ -35135,7 +35566,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1037.005"
+    ]
   },
   "T1166": {
     "label": "Setuid and Setgid",
@@ -35146,7 +35581,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1548.001"
+    ]
   },
   "T1167": {
     "label": "Securityd Memory",
@@ -35156,7 +35595,11 @@
       "CredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1555.002"
+    ]
   },
   "T1168": {
     "label": "Local Job Scheduling",
@@ -35167,7 +35610,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1053"
+    ]
   },
   "T1169": {
     "label": "Sudo",
@@ -35177,7 +35624,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1548.003"
+    ]
   },
   "T1170": {
     "label": "Mshta",
@@ -35188,7 +35639,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1218.005"
+    ]
   },
   "T1171": {
     "label": "LLMNR/NBT-NS Poisoning and Relay",
@@ -35198,7 +35653,11 @@
       "CredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1557.001"
+    ]
   },
   "T1172": {
     "label": "Domain Fronting",
@@ -35208,7 +35667,11 @@
       "CommandAndControlTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1090.004"
+    ]
   },
   "T1173": {
     "label": "Dynamic Data Exchange",
@@ -35218,7 +35681,11 @@
       "ExecutionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1559.002"
+    ]
   },
   "T1174": {
     "label": "Password Filter DLL",
@@ -35228,7 +35695,11 @@
       "CredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1556.002"
+    ]
   },
   "T1175": {
     "label": "Component Object Model and Distributed COM",
@@ -35239,7 +35710,9 @@
       "LateralMovementTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1176": {
     "label": "Software Extensions",
@@ -35280,7 +35753,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1547.008"
+    ]
   },
   "T1178": {
     "label": "SID-History Injection",
@@ -35290,7 +35767,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1134.005"
+    ]
   },
   "T1179": {
     "label": "Hooking",
@@ -35302,7 +35783,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1056.004"
+    ]
   },
   "T1180": {
     "label": "Screensaver",
@@ -35312,7 +35797,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1546.002"
+    ]
   },
   "T1181": {
     "label": "Extra Window Memory Injection",
@@ -35323,7 +35812,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1055.011"
+    ]
   },
   "T1182": {
     "label": "AppCert DLLs",
@@ -35334,7 +35827,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1546.009"
+    ]
   },
   "T1183": {
     "label": "Image File Execution Options Injection",
@@ -35346,7 +35843,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1546.012"
+    ]
   },
   "T1184": {
     "label": "SSH Hijacking",
@@ -35356,7 +35857,11 @@
       "LateralMovementTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1563.001"
+    ]
   },
   "T1185": {
     "label": "Browser Session Hijacking",
@@ -35376,7 +35881,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1055.013"
+    ]
   },
   "T1187": {
     "label": "Forced Authentication",
@@ -35396,7 +35905,11 @@
       "CommandAndControlTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1090.003"
+    ]
   },
   "T1189": {
     "label": "Drive-by Compromise",
@@ -35427,7 +35940,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1218.003"
+    ]
   },
   "T1192": {
     "label": "Spearphishing Link",
@@ -35437,7 +35954,11 @@
       "InitialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1566.002"
+    ]
   },
   "T1193": {
     "label": "Spearphishing Attachment",
@@ -35447,7 +35968,11 @@
       "InitialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1566.001"
+    ]
   },
   "T1194": {
     "label": "Spearphishing via Service",
@@ -35457,7 +35982,11 @@
       "InitialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1566.003"
+    ]
   },
   "T1195": {
     "label": "Supply Chain Compromise",
@@ -35508,7 +36037,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1218.002"
+    ]
   },
   "T1197": {
     "label": "BITS Jobs",
@@ -35531,7 +36064,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1553.003"
+    ]
   },
   "T1199": {
     "label": "Trusted Relationship",
@@ -35683,7 +36220,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1548.003"
+    ]
   },
   "T1207": {
     "label": "Rogue Domain Controller",
@@ -35703,7 +36244,11 @@
       "CredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1558.003"
+    ]
   },
   "T1209": {
     "label": "Time Providers",
@@ -35713,7 +36258,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1547.003"
+    ]
   },
   "T1210": {
     "label": "Exploitation of Remote Services",
@@ -35823,7 +36372,11 @@
       "CredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1552.002"
+    ]
   },
   "T1215": {
     "label": "Kernel Modules and Extensions",
@@ -35833,7 +36386,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1547.006"
+    ]
   },
   "T1216": {
     "label": "System Script Proxy Execution",
@@ -36124,7 +36681,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1218.001"
+    ]
   },
   "T1398": {
     "label": "Boot or Logon Initialization Scripts - ATTACK Mobile",
@@ -36145,7 +36706,9 @@
       "ATTACKMobilePersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1400": {
     "label": "Modify System Partition - ATTACK Mobile",
@@ -36157,7 +36720,11 @@
       "ATTACKMobilePersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1625.001"
+    ]
   },
   "T1401": {
     "label": "Device Administrator Permissions - ATTACK Mobile",
@@ -36167,7 +36734,11 @@
       "ATTACKMobilePrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1626.001"
+    ]
   },
   "T1402": {
     "label": "Broadcast Receivers - ATTACK Mobile",
@@ -36178,7 +36749,11 @@
       "ATTACKMobilePersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1624.001"
+    ]
   },
   "T1403": {
     "label": "Modify Cached Executable Code - ATTACK Mobile",
@@ -36188,7 +36763,9 @@
       "ATTACKMobilePersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1404": {
     "label": "Exploitation for Privilege Escalation - ATTACK Mobile",
@@ -36209,7 +36786,9 @@
       "ATTACKMobilePrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1406": {
     "label": "Obfuscated Files or Information - ATTACK Mobile",
@@ -36259,7 +36838,11 @@
       "ATTACKMobileDefenseEvasionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1630.003"
+    ]
   },
   "T1409": {
     "label": "Stored Application Data - ATTACK Mobile",
@@ -36280,7 +36863,11 @@
       "ATTACKMobileCredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1638"
+    ]
   },
   "T1411": {
     "label": "Input Prompt - ATTACK Mobile",
@@ -36290,7 +36877,11 @@
       "ATTACKMobileCredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1417.002"
+    ]
   },
   "T1412": {
     "label": "Capture SMS Messages - ATTACK Mobile",
@@ -36301,7 +36892,11 @@
       "ATTACKMobileCredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1636.004"
+    ]
   },
   "T1413": {
     "label": "Access Sensitive Data in Device Logs - ATTACK Mobile",
@@ -36312,7 +36907,9 @@
       "ATTACKMobileCredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1414": {
     "label": "Clipboard Data - ATTACK Mobile",
@@ -36333,7 +36930,9 @@
       "ATTACKMobileCredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1416": {
     "label": "URI Hijacking - ATTACK Mobile",
@@ -36343,7 +36942,11 @@
       "ATTACKMobileCredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1635.001"
+    ]
   },
   "T1417": {
     "label": "Input Capture - ATTACK Mobile",
@@ -36404,7 +37007,9 @@
       "ATTACKMobileDiscoveryTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1420": {
     "label": "File and Directory Discovery - ATTACK Mobile",
@@ -36494,7 +37099,9 @@
       "ATTACKMobileLateralMovementTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1428": {
     "label": "Exploitation of Remote Services - ATTACK Mobile",
@@ -36555,7 +37162,11 @@
       "ATTACKMobileCollectionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1636.003"
+    ]
   },
   "T1433": {
     "label": "Access Call Log - ATTACK Mobile",
@@ -36565,7 +37176,11 @@
       "ATTACKMobileCollectionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1636.002"
+    ]
   },
   "T1435": {
     "label": "Access Calendar Entries - ATTACK Mobile",
@@ -36575,7 +37190,11 @@
       "ATTACKMobileCollectionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1636.001"
+    ]
   },
   "T1436": {
     "label": "Commonly Used Port - ATTACK Mobile",
@@ -36586,7 +37205,9 @@
       "ATTACKMobileExfiltrationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1437": {
     "label": "Application Layer Protocol - ATTACK Mobile",
@@ -36616,7 +37237,11 @@
       "ATTACKMobileCommandAndControlTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1644"
+    ]
   },
   "T1444": {
     "label": "Masquerade as Legitimate Application - ATTACK Mobile",
@@ -36627,7 +37252,9 @@
       "ATTACKMobileInitialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1446": {
     "label": "Device Lockout - ATTACK Mobile",
@@ -36638,7 +37265,11 @@
       "ATTACKMobileImpactTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1629.002"
+    ]
   },
   "T1447": {
     "label": "Delete Device Data - ATTACK Mobile",
@@ -36649,7 +37280,11 @@
       "ATTACKMobileImpactTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1630.002"
+    ]
   },
   "T1448": {
     "label": "Carrier Billing Fraud - ATTACK Mobile",
@@ -36659,7 +37294,11 @@
       "ATTACKMobileImpactTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1643"
+    ]
   },
   "T1451": {
     "label": "SIM Card Swap - ATTACK Mobile",
@@ -36679,7 +37318,11 @@
       "ATTACKMobileImpactTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1643"
+    ]
   },
   "T1453": {
     "label": "Abuse Accessibility Features - ATTACK Mobile",
@@ -36690,7 +37333,9 @@
       "ATTACKMobileCredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1454": {
     "label": "Malicious SMS Message - ATTACK Mobile",
@@ -36700,7 +37345,9 @@
       "ATTACKMobileCollectionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1456": {
     "label": "Drive-By Compromise - ATTACK Mobile",
@@ -36761,7 +37408,11 @@
       "ATTACKMobileImpactTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1643"
+    ]
   },
   "T1474": {
     "label": "Supply Chain Compromise - ATTACK Mobile",
@@ -36811,7 +37462,9 @@
       "ATTACKMobileInitialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1476": {
     "label": "Deliver Malicious App via Other Means - ATTACK Mobile",
@@ -36821,7 +37474,9 @@
       "ATTACKMobileInitialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1477": {
     "label": "Exploit via Radio Interfaces - ATTACK Mobile",
@@ -36831,7 +37486,9 @@
       "ATTACKMobileInitialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": []
   },
   "T1478": {
     "label": "Install Insecure or Malicious Configuration - ATTACK Mobile",
@@ -36842,7 +37499,11 @@
       "ATTACKMobileInitialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1632.001"
+    ]
   },
   "T1480": {
     "label": "Execution Guardrails",
@@ -36932,7 +37593,11 @@
       "CommandAndControlTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1568.002"
+    ]
   },
   "T1484": {
     "label": "Domain or Tenant Policy Modification",
@@ -37003,7 +37668,11 @@
       "ImpactTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1561.002"
+    ]
   },
   "T1488": {
     "label": "Disk Content Wipe",
@@ -37013,7 +37682,11 @@
       "ImpactTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1561.001"
+    ]
   },
   "T1489": {
     "label": "Service Stop",
@@ -37073,7 +37746,11 @@
       "ImpactTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1565.001"
+    ]
   },
   "T1493": {
     "label": "Transmitted Data Manipulation",
@@ -37083,7 +37760,11 @@
       "ImpactTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1565.002"
+    ]
   },
   "T1494": {
     "label": "Runtime Data Manipulation",
@@ -37093,7 +37774,11 @@
       "ImpactTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1565.003"
+    ]
   },
   "T1495": {
     "label": "Firmware Corruption",
@@ -37285,7 +37970,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1027.004"
+    ]
   },
   "T1501": {
     "label": "Systemd Service",
@@ -37295,7 +37984,11 @@
       "PersistenceTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1543.002"
+    ]
   },
   "T1502": {
     "label": "Parent PID Spoofing",
@@ -37306,7 +37999,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1134.004"
+    ]
   },
   "T1503": {
     "label": "Credentials from Web Browsers",
@@ -37316,7 +38013,11 @@
       "CredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1555.003"
+    ]
   },
   "T1504": {
     "label": "PowerShell Profile",
@@ -37327,7 +38028,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1546.013"
+    ]
   },
   "T1505": {
     "label": "Server Software Component",
@@ -37408,7 +38113,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1550.004"
+    ]
   },
   "T1507": {
     "label": "Network Information Discovery - ATTACK Mobile",
@@ -37418,7 +38127,11 @@
       "ATTACKMobileCollectionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1421"
+    ]
   },
   "T1508": {
     "label": "Suppress Application Icon - ATTACK Mobile",
@@ -37428,7 +38141,11 @@
       "ATTACKMobileDefenseEvasionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1628.001"
+    ]
   },
   "T1509": {
     "label": "Non-Standard Port - ATTACK Mobile",
@@ -37448,7 +38165,11 @@
       "ATTACKMobileImpactTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1641.001"
+    ]
   },
   "T1512": {
     "label": "Video Capture - ATTACK Mobile",
@@ -37478,7 +38199,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1548.004"
+    ]
   },
   "T1516": {
     "label": "Input Injection - ATTACK Mobile",
@@ -37541,7 +38266,11 @@
       "PrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1546.014"
+    ]
   },
   "T1520": {
     "label": "Domain Generation Algorithms - ATTACK Mobile",
@@ -37551,7 +38280,11 @@
       "ATTACKMobileCommandAndControlTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1637.001"
+    ]
   },
   "T1521": {
     "label": "Encrypted Channel - ATTACK Mobile",
@@ -37601,7 +38334,11 @@
       "CredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1552.005"
+    ]
   },
   "T1523": {
     "label": "Evade Analysis Environment - ATTACK Mobile",
@@ -37612,7 +38349,11 @@
       "ATTACKMobileDiscoveryTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1633.001"
+    ]
   },
   "T1525": {
     "label": "Implant Internal Image",
@@ -37643,7 +38384,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1550.001"
+    ]
   },
   "T1528": {
     "label": "Steal Application Access Token",
@@ -37733,7 +38478,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1578.004"
+    ]
   },
   "T1537": {
     "label": "Transfer Data to Cloud Account",
@@ -37775,7 +38524,11 @@
       "ATTACKMobilePrivilegeEscalationTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1631.001"
+    ]
   },
   "T1541": {
     "label": "Foreground Persistence - ATTACK Mobile",
@@ -38230,7 +38983,11 @@
       "T1547"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1647"
+    ]
   },
   "T1547.012": {
     "label": "Print Processors",
@@ -38963,7 +39720,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1685"
+    ]
   },
   "T1562.001": {
     "label": "Disable or Modify Tools",
@@ -38973,7 +39734,11 @@
       "T1562"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1685"
+    ]
   },
   "T1562.002": {
     "label": "Disable Windows Event Logging",
@@ -38983,7 +39748,11 @@
       "T1562"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1685.001"
+    ]
   },
   "T1562.003": {
     "label": "Impair Command History Logging",
@@ -38993,7 +39762,11 @@
       "T1562"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1690"
+    ]
   },
   "T1562.004": {
     "label": "Disable or Modify System Firewall",
@@ -39003,7 +39776,11 @@
       "T1562"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1686"
+    ]
   },
   "T1562.006": {
     "label": "Indicator Blocking",
@@ -39013,7 +39790,11 @@
       "T1562"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1685"
+    ]
   },
   "T1562.007": {
     "label": "Disable or Modify Cloud Firewall",
@@ -39023,7 +39804,11 @@
       "T1562"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1686.001"
+    ]
   },
   "T1562.008": {
     "label": "Disable or Modify Cloud Logs",
@@ -39033,7 +39818,11 @@
       "T1562"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1685.002"
+    ]
   },
   "T1562.009": {
     "label": "Safe Mode Boot",
@@ -39043,7 +39832,11 @@
       "T1562"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1688"
+    ]
   },
   "T1562.010": {
     "label": "Downgrade Attack",
@@ -39053,7 +39846,11 @@
       "T1562"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1689"
+    ]
   },
   "T1562.011": {
     "label": "Spoof Security Alerting",
@@ -39063,7 +39860,11 @@
       "T1562"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1685.003"
+    ]
   },
   "T1562.012": {
     "label": "Disable or Modify Linux Audit System",
@@ -39073,7 +39874,11 @@
       "T1562"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1685.004"
+    ]
   },
   "T1562.013": {
     "label": "Disable or Modify Network Device Firewall",
@@ -39083,7 +39888,11 @@
       "T1562"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1686.002"
+    ]
   },
   "T1563": {
     "label": "Remote Service Session Hijacking",
@@ -39574,7 +40383,11 @@
       "T1574"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1574.001"
+    ]
   },
   "T1574.004": {
     "label": "Dylib Hijacking",
@@ -39705,7 +40518,11 @@
       "ATTACKMobileDefenseEvasionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1630.001"
+    ]
   },
   "T1577": {
     "label": "Compromise Application Executable - ATTACK Mobile",
@@ -39785,7 +40602,11 @@
       "ATTACKMobileCredentialAccessTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1634.001"
+    ]
   },
   "T1580": {
     "label": "Cloud Infrastructure Discovery",
@@ -39805,7 +40626,11 @@
       "ATTACKMobileDefenseEvasionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1627.001"
+    ]
   },
   "T1582": {
     "label": "SMS Control - ATTACK Mobile",
@@ -40786,7 +41611,11 @@
       "ATTACKMobileExecutionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1623.001"
+    ]
   },
   "T1606": {
     "label": "Forge Web Credentials",
@@ -40998,7 +41827,11 @@
       "ATTACKMobileDefenseEvasionTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1628.002"
+    ]
   },
   "T1619": {
     "label": "Cloud Storage Object Discovery",
@@ -41660,7 +42493,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1684.001"
+    ]
   },
   "T1657": {
     "label": "Financial Theft",
@@ -41822,7 +42659,11 @@
       "StealthTechnique"
     ],
     "inverseOf": null,
-    "characteristics": []
+    "characteristics": [],
+    "deprecated": true,
+    "replacedBy": [
+      "T1684.002"
+    ]
   },
   "T1673": {
     "label": "Virtual Machine Discovery",
@@ -46757,9 +47598,7 @@
     "label": "label",
     "kind": "property",
     "documentation": "",
-    "parents": [
-      "label"
-    ],
+    "parents": [],
     "inverseOf": null,
     "characteristics": []
   },

@@ -57,6 +57,13 @@ on the line the node is already declared on.
   same way, and the panel already gives a DPV- or legal-only node its own
   heading, so gating the dropdown to D3FEND would be a second, unrelated
   distinction.
+- [x] Deprecated entries are marked and name their
+  replacement in the option text. When the current
+  class is deprecated, a first "Replaced by" group
+  holds the replacement, and a class with a
+  replacement gets the dropdown even with no
+  hierarchy neighbours; see
+  [ADR 0041](0041-deprecated-d3fend-terms.md).
 - [x] Gated the same way [ADR 0018](0018-add-defensive-measure.md) gates
   the "+": a node the diagram did not write in mermaid gets no dropdown,
   since there is no CURIE token to rewrite.
@@ -109,7 +116,7 @@ code before trusting them.
   `changeNodeClass` is the mermaid-aware wrapper around it, next to
   `addRelation`.
 - `viz/nodePanel.js`'s `renderClassSwap(qname, host, onChangeClass)` builds
-  the `<select>`; it is called once per class heading, both in the
+  the `<select>`, with option text from `classSwapLabel`; it is called once per class heading, both in the
   D3FEND-metadata loop and the term-projection loop for other vocabularies.
 - `main.js`'s `nodePanelActions` gates `onChangeClass` behind the same
   `mermaidIdOf` + `hasSource` pair `onAddRelation` uses, and closes

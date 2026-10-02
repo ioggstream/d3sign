@@ -117,7 +117,9 @@ function createPanel(view) {
 
       const label = document.createElement('span');
       label.className = 'cm-completion-panel-label';
-      label.textContent = completion.label;
+      // `displayLabel` first: a label alias (d3fendCompletion.js) filters on the
+      // rdfs:label but inserts, and so shows, the id.
+      label.textContent = completion.displayLabel ?? completion.label;
       row.append(label);
 
       if (completion.detail) {

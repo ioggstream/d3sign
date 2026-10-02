@@ -3,7 +3,13 @@ import { ADDED_MARKER } from '../editor/insertMeasure.js';
 import { neighbourClasses } from '../rdf/neighbourGraph.js';
 import { shortLabel } from '../rdf/graphModel.js';
 import { termOf } from '../editor/vocabularies.js';
-import { getAlternatives, labelOf } from '../editor/d3fendHierarchy.js';
+import {
+  deprecationNote,
+  deprecationText,
+  getAlternatives,
+  isLabelRedundant,
+  labelOf,
+} from '../editor/d3fendHierarchy.js';
 import { relationsFor } from '../editor/d3fendRestrictions.js';
 import d3fendMetadata from '../data/d3fend-metadata.json';
 import alignment from '../data/alignment.json';
@@ -76,19 +82,9 @@ function resolveLabel(localName) {
   return d3fendMetadata[localName]?.label || localName;
 }
 
-/**
- * Whether `label` is just `localName` with spaces and case added — e.g.
- * "File Eviction" for `FileEviction` — so printing both is the same fact
- * twice. Not true of an ATT&CK-derived class like `T1566`, whose label
- * ("Spearphishing") shares no text with the id at all.
- *
- * Exported for the tests: it is the one part of the redundancy check that
- * is not DOM.
- */
-export function isLabelRedundant(label, localName) {
-  const normalize = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
-  return normalize(label) === normalize(localName);
-}
+// Re-exported for the tests, which predate its move to the editor, where
+// completion needs it too.
+export { isLabelRedundant };
 
 // ATT&CK sub-technique ids encode their hierarchy in the id itself, e.g.
 // "T1548.001" is a sub-technique of "T1548".
@@ -482,6 +478,18 @@ function renderLegalSection(rows, host) {
 }
 
 /**
+ * One entry of the class dropdown: `Label (qname)`, and for a deprecated class
+ * `Label (qname) — Deprecated, use Label2 (qname2)`.
+ *
+ * Exported for the tests: it is the part of the dropdown that is not DOM.
+ */
+export function classSwapLabel(qname) {
+  const text = `${labelOf(qname)} (${qname})`;
+  const deprecation = deprecationNote(qname);
+  return deprecation ? `${text} — ${deprecationText(deprecation)}` : text;
+}
+
+/**
  * The dropdown that retypes a node from `qname` to one of its parents,
  * siblings or children — the panel's "change class" control. Nothing when
  * `onChangeClass` is absent (no mermaid source to rewrite, same gating as
@@ -490,19 +498,30 @@ function renderLegalSection(rows, host) {
  * A plain `<select>`, like the rest of the app's few dropdowns
  * (viz/prefsPanel.js's `selectField`) — kept local rather than imported,
  * since that one is styled for the prefs panel, not this card.
+ *
+ * Deprecated entries say so, and name their replacement, in the option text: an
+ * `<option>` takes no styling a browser reliably draws. A deprecated current
+ * class also gets a first "Replaced by" group, so moving off it is one pick
+ * (docs/adr/0041-deprecated-d3fend-terms.md).
  */
 function renderClassSwap(qname, host, onChangeClass) {
   if (!onChangeClass) return;
   const { parents, siblings, children } = getAlternatives(qname);
-  if (!parents.length && !siblings.length && !children.length) return;
+  const replacedBy = deprecationNote(qname)?.replacedBy ?? [];
+  if (!replacedBy.length && !parents.length && !siblings.length && !children.length) return;
 
   const select = document.createElement('select');
   select.className = 'node-panel-class-swap';
   select.title = 'Change this node to a related class in the hierarchy';
 
-  const current = document.createElement('option');
-  current.value = qname;
-  current.textContent = `${labelOf(qname)} (${qname})`;
+  const optionFor = (value) => {
+    const option = document.createElement('option');
+    option.value = value;
+    option.textContent = classSwapLabel(value);
+    return option;
+  };
+
+  const current = optionFor(qname);
   current.selected = true;
   select.appendChild(current);
 
@@ -510,14 +529,10 @@ function renderClassSwap(qname, host, onChangeClass) {
     if (!alternatives.length) return;
     const optgroup = document.createElement('optgroup');
     optgroup.label = title;
-    for (const alt of alternatives) {
-      const option = document.createElement('option');
-      option.value = alt;
-      option.textContent = `${labelOf(alt)} (${alt})`;
-      optgroup.appendChild(option);
-    }
+    for (const alt of alternatives) optgroup.appendChild(optionFor(alt));
     select.appendChild(optgroup);
   };
+  group('Replaced by', replacedBy);
   group('Parents', parents);
   group('Siblings', siblings);
   group('Children', children);
@@ -643,7 +658,13 @@ export function renderNodePanel(host, nodeData, store, actions = {}) {
     if (entry.deprecated) {
       const badge = document.createElement('span');
       badge.className = 'node-panel-badge node-panel-badge-deprecated';
-      badge.textContent = 'deprecated';
+      // The replacement comes from the term projection: d3fend-metadata.json has
+      // the flag only. Absent when the projection predates `replacedBy`.
+      const replacedBy = deprecationNote(`d3f:${localName}`)?.replacedBy ?? [];
+      badge.textContent = replacedBy.length
+        ? `deprecated → ${replacedBy.map((q) => `${labelOf(q)} (${q})`).join(', ')}`
+        : 'deprecated';
+      badge.title = deprecationText({ replacedBy });
       section.appendChild(badge);
     }
 

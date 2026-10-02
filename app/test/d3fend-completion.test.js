@@ -72,4 +72,24 @@ describe('d3fendCompletionSource', () => {
     );
     expect(options[0].section.rank).toBe(2);
   });
+
+  // ATT&CK ids say nothing about the technique: `d3f:phish` has to find T1566.
+  it('adds a label alias for an opaque id, which filters on the label and inserts the id', () => {
+    const options = d3fendCompletionSource(fakeContext('d3f:')).options;
+    const alias = options.find((option) => option.apply === 'd3f:T1566');
+    expect(alias).toMatchObject({ label: 'd3f:Phishing', displayLabel: 'd3f:T1566', boost: -1 });
+    // The id row is still there, unboosted, so `d3f:T15` ranks ids first.
+    const id = options.find((option) => option.label === 'd3f:T1566');
+    expect(id.boost).toBeUndefined();
+  });
+
+  it('adds no alias when the label is the local name spelled out', () => {
+    const options = d3fendCompletionSource(fakeContext('d3f:')).options;
+    expect(options.filter((option) => (option.apply ?? option.label) === 'd3f:Password')).toHaveLength(1);
+  });
+
+  it('leaves deprecated terms out, both by id and by label', () => {
+    const options = d3fendCompletionSource(fakeContext('d3f:')).options;
+    expect(options.some((option) => (option.apply ?? option.label) === 'd3f:T1093')).toBe(false);
+  });
 });
