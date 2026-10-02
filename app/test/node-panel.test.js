@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { addButtonTitle, groupByAncestor, groupRelations, isLabelRedundant } from '../src/viz/nodePanel.js';
+import {
+  addButtonTitle,
+  classSwapLabel,
+  groupByAncestor,
+  groupRelations,
+  isLabelRedundant,
+} from '../src/viz/nodePanel.js';
 import { ADDED_MARKER } from '../src/editor/insertMeasure.js';
 import { relationsFor } from '../src/editor/d3fendRestrictions.js';
 import d3fendMetadata from '../src/data/d3fend-metadata.json';
@@ -136,6 +142,18 @@ describe('isLabelRedundant', () => {
 
   it('is false when the label and local name share no text, as with ATT&CK ids', () => {
     expect(isLabelRedundant('Spearphishing', 'T1566')).toBe(false);
+  });
+});
+
+describe('classSwapLabel', () => {
+  it('is label and qname for a current class', () => {
+    expect(classSwapLabel('d3f:Network')).toBe('Network (d3f:Network)');
+  });
+
+  it('marks a deprecated class and names what replaces it', () => {
+    expect(classSwapLabel('d3f:T1093')).toBe(
+      'Process Hollowing (d3f:T1093) — Deprecated, use Process Hollowing (d3f:T1055.012)',
+    );
   });
 });
 

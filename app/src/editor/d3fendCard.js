@@ -1,4 +1,4 @@
-import { labelOf, termSections } from './d3fendHierarchy.js';
+import { deprecationText, labelOf, termSections } from './d3fendHierarchy.js';
 
 /**
  * The card describing one term — title, ancestor path, definition, inverse, parents,
@@ -13,10 +13,15 @@ import { labelOf, termSections } from './d3fendHierarchy.js';
  * CodeMirror hover tooltip stays open while the pointer is inside it, which is
  * long enough to walk the tree by clicking.
  *
+ * `onReplace(qname)` is optional. On a deprecated term it turns each replacement
+ * into a "Replace with" button that rewrites the hovered token; without it the
+ * replacements are navigation buttons like the rest
+ * (docs/adr/0041-deprecated-d3fend-terms.md).
+ *
  * Null for a term no loaded vocabulary knows, so callers can decline to show
  * anything at all.
  */
-export function renderD3fendCard(qname, { onNavigate }) {
+export function renderD3fendCard(qname, { onNavigate, onReplace }) {
   const sections = termSections(qname);
   if (!sections) return null;
 
@@ -36,6 +41,29 @@ export function renderD3fendCard(qname, { onNavigate }) {
   heading.textContent = sections.title;
   title.appendChild(heading);
   card.appendChild(title);
+
+  // Right under the title: it decides whether the rest of the card is worth
+  // reading, and the replacement is what the reader should write instead.
+  if (sections.deprecation) {
+    const row = document.createElement('div');
+    row.className = 'cm-d3fend-card-row cm-d3fend-card-deprecated';
+    const tag = document.createElement('span');
+    tag.className = 'cm-d3fend-card-label';
+    tag.textContent = sections.deprecation.replacedBy.length ? 'Deprecated, replaced by:' : 'Deprecated';
+    tag.title = deprecationText(sections.deprecation);
+    row.appendChild(tag);
+    for (const replacement of sections.deprecation.replacedBy) {
+      if (!onReplace) {
+        row.appendChild(relationButton(replacement, onNavigate));
+        continue;
+      }
+      const btn = relationButton(replacement, onReplace);
+      btn.textContent = `Replace with ${labelOf(replacement)}`;
+      btn.title = `Rewrite ${qname} as ${replacement} here`;
+      row.appendChild(btn);
+    }
+    card.appendChild(row);
+  }
 
   if (sections.path.length) {
     const path = document.createElement('div');
