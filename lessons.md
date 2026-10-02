@@ -2130,3 +2130,26 @@ when the label is just the local name with spaces added — redundant for
   failures (`T1093`, `IMP-0001`) are expected until `rebuild-data.sh` runs.
   Baseline before the change was 22 failures in 12 unrelated files.
 - **`lessons.md` now has an index.** Read it first, then only linked entries.
+
+## 2026-10-02 — double-click a tab to maximize its view
+
+- **Maximize is transient state in `layout/columns.js`,** not in the layout
+  model: nothing to persist or migrate, and restore reuses the saved weights.
+- **`dblclick` never fires on the tab; use `click` with `event.detail === 2`.**
+  The first click rebuilds every tab button (`renderContent` →
+  `replaceChildren`), so the two clicks land on different elements, and a
+  `dblclick` is dispatched on their nearest common ancestor — the tab bar.
+  `event.target.closest('.tab')` therefore returned null and nothing happened.
+  `detail` is the browser's click counter and ignores the changed target.
+- **Listen on the bar, not the button:** the button the first click hit is
+  detached by the time the second one arrives.
+- **Hidden columns use `display: none` only while maximized,** with a single
+  `1fr` track; the `col--empty` rule keeps its tracks because it must not shift
+  the other columns.
+- **I repeated the 2026-09-11 mistake:** I reported "`node` is not installed"
+  from the host PATH instead of using `docker compose exec -T -w /code/app dev`.
+  The user had to point at the container again. Check `docker compose ps` first.
+- **The suite cannot catch this:** no jsdom, so `columns.js` has no tests. The
+  run only confirms the 22-failure baseline is unchanged. A behaviour this
+  DOM-specific needs the dev server and a hard reload — `app/dist/` is a build
+  from September and does not contain source edits.

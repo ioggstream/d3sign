@@ -52,6 +52,8 @@ export function createColumnLayout({ grid, columnEls, gutterEls, views }) {
   // Skipped on the first render: the panes have not been built yet, so there is
   // nothing to re-measure and no focus to restore.
   let rendered = false;
+  // Transient, never saved: the view whose column fills the window, or null.
+  let maximized = null;
 
   /**
    * Which two columns each gutter divides, skipping empty ones.
@@ -71,6 +73,14 @@ export function createColumnLayout({ grid, columnEls, gutterEls, views }) {
 
   /** Column widths and gutter presence — the part a drag re-runs on every move. */
   function renderSizes() {
+    const maxAt = maximized ? columnOfView(layout, maximized) : -1;
+    grid.classList.toggle('maximized', maxAt >= 0);
+    columnEls.forEach((el, i) => el.classList.toggle('col--hidden', maxAt >= 0 && i !== maxAt));
+    if (maxAt >= 0) {
+      grid.style.gridTemplateColumns = '1fr';
+      gutterEls.forEach((el) => el.classList.add('gutter--disabled'));
+      return;
+    }
     const fractions = renderedFractions(layout);
     const pairs = gutterPairs();
     const tracks = [];
@@ -92,7 +102,7 @@ export function createColumnLayout({ grid, columnEls, gutterEls, views }) {
     button.setAttribute('aria-controls', view.element.id);
     button.setAttribute('aria-selected', String(selected));
     button.tabIndex = selected ? 0 : -1;
-    button.title = view.hint ?? view.title;
+    button.title = `${view.hint ?? view.title} (double-click to maximize / restore)`;
     button.append(view.title);
     // Printed on the tab from the same field the shortcut table reads, so the
     // two cannot drift apart — the failure ADR 0013 calls out by name.
@@ -148,13 +158,41 @@ export function createColumnLayout({ grid, columnEls, gutterEls, views }) {
     saveLayout(layout);
   }
 
+  function toggleMaximize(viewId) {
+    if (!byId.has(viewId)) return;
+    const wasMaximized = maximized === viewId;
+    if (wasMaximized) {
+      maximized = null;
+    } else {
+      maximized = viewId;
+      layout = setActiveTab(layout, viewId);
+    }
+    commit();
+    // The pane sizes changed without any pane being hidden or shown, so
+    // renderContent fired nothing: re-measure whatever is now visible.
+    for (const view of views) {
+      if (isViewVisible(layout, view.id)) view.onShow?.();
+    }
+  }
+
   columnEls.forEach((el) => {
-    if (!el.querySelector('.tab-bar')) {
-      const bar = document.createElement('div');
+    let bar = el.querySelector('.tab-bar');
+    if (!bar) {
+      bar = document.createElement('div');
       bar.className = 'tab-bar';
       bar.setAttribute('role', 'tablist');
       el.prepend(bar);
     }
+    // `click` with `detail === 2`, not `dblclick`: the first click rebuilds the
+    // tab bar, so the two clicks land on different buttons and `dblclick` fires
+    // on their nearest common ancestor — this bar, never the tab. `detail` is
+    // the browser's click counter and does not care that the target changed.
+    // Delegated because the button the listener would sit on is already gone.
+    bar.addEventListener('click', (event) => {
+      if (event.detail !== 2) return;
+      const tab = event.target.closest?.('.tab');
+      if (tab) toggleMaximize(tab.id.replace(/^tab-/, ''));
+    });
   });
 
   gutterEls.forEach((gutter, i) => {
@@ -187,12 +225,16 @@ export function createColumnLayout({ grid, columnEls, gutterEls, views }) {
     /** The view the move commands act on. */
     activeView: () => layout.activeView,
     /** Brings a view on screen, wherever it lives. */
+    toggleMaximize,
+    isMaximized: () => maximized,
     revealView(viewId) {
+      if (maximized && columnOfView(layout, viewId) !== columnOfView(layout, maximized)) maximized = null;
       layout = setActiveTab(layout, viewId);
       commit();
     },
     /** Moves a view one column left (-1) or right (+1) and shows it there. */
     moveActiveViewBy(delta) {
+      if (maximized) maximized = layout.activeView;
       layout = moveViewBy(layout, layout.activeView, delta);
       commit();
     },
@@ -209,6 +251,7 @@ export function createColumnLayout({ grid, columnEls, gutterEls, views }) {
     cycleView(viewId) {
       const view = byId.get(viewId);
       if (!view) return;
+      maximized = null;
       const home = view.homeColumn ?? view.defaultColumn ?? 0;
       const away = view.defaultColumn ?? 0;
       const at = columnOfView(layout, viewId);
@@ -228,6 +271,7 @@ export function createColumnLayout({ grid, columnEls, gutterEls, views }) {
     /** Forgets the saved arrangement and goes back to the shipped one. */
     reset() {
       clearLayout();
+      maximized = null;
       layout = createDefaultLayout(views);
       commit();
     },

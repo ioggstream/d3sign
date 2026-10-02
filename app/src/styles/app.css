@@ -406,6 +406,11 @@ main#app-grid {
    so their tracks are collapsed to 0 instead (see layout/columns.js). */
 .col--empty { overflow: hidden; visibility: hidden; }
 
+/* Maximized view: the grid has a single 1fr track, so every other column and
+   every gutter leaves the grid entirely. Restoring re-applies the saved tracks. */
+.col--hidden,
+main#app-grid.maximized .gutter-col { display: none; }
+
 .tab-bar {
   display: flex;
   gap: var(--s-1);
