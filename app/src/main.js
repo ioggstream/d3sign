@@ -1490,11 +1490,13 @@ function queryEdgeAlternatives(edgeData) {
  *
  * `defaultColumn` is where a first-time user finds it — the TriG pane starts in
  * the right column, beside the graph, because it is a secondary view and the
- * graph should have the width until asked otherwise. `homeColumn` is where
- * Alt+, sends it back to, which is the whole point of the middle column.
+ * graph should have the width until `Alt+Shift+←` asks otherwise. Where a view
+ * sits after that is the user's business: no view has a column of its own.
  *
  * The shortcut lives here rather than in a table of its own, so a view's key is
  * stated in exactly one place and the tab that advertises it cannot disagree.
+ * Every view has one, and it only ever reveals that view — moving one between
+ * columns is Alt+Shift+←/→ (docs/adr/0022-column-tab-groups.md).
  */
 const VIEWS = [
   {
@@ -1546,13 +1548,10 @@ const VIEWS = [
   {
     id: 'trig',
     title: 'TriG (RDF)',
+    shortcut: 'KeyR',
     element: document.getElementById('turtle-pane'),
     defaultColumn: 2,
-    homeColumn: 1,
-    // Not a `shortcut`: Alt+, is a layout key that answers from any tab, so it is
-    // handled on its own rather than through the reveal-this-tab table.
-    keyHint: 'Alt+,',
-    hint: 'TriG (RDF) — Alt+, moves it between its own column and this tab bar',
+    hint: 'TriG (RDF) — the whole RDF document, and hand-edits drive the graph (Alt+R)',
     onShow: () => turtlePane.requestMeasure(),
     onMove: ({ hadFocus }) => {
       turtlePane.requestMeasure();
@@ -1583,7 +1582,6 @@ const dock = createColumnLayout({
 
 renderFiles();
 
-document.getElementById('turtle-hide-button').addEventListener('click', () => dock.cycleView('trig'));
 document.getElementById('reset-layout-button').addEventListener('click', () => dock.reset());
 
 // ---------------------------------------------------------------------------
@@ -1815,12 +1813,6 @@ window.addEventListener(
       if (!delta) return;
       event.preventDefault();
       dock.moveActiveViewBy(delta);
-      return;
-    }
-    // A layout shortcut, so unlike the chips it answers from any tab.
-    if (event.code === 'Comma') {
-      event.preventDefault();
-      dock.cycleView('trig');
       return;
     }
     const chip = CHIP_SHORTCUTS[event.code];

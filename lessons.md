@@ -98,6 +98,8 @@ task. Add every new entry to one topic below.
 - [Link shape and `breadthfirst`](#2026-09-13--link-shape-as-a-preference-and-where-breadthfirst-starts)
 - [Tiers from travelled links](#2026-09-13--tiers-come-from-the-links-something-travels-along)
 - [Links across containers (ADR 0040)](#2026-09-21--links-across-containers-the-layout-adapter-was-the-problem-adr-0040)
+- [Double-click a tab to maximize](#2026-10-02--double-click-a-tab-to-maximize-its-view)
+- [One key per view](#2026-10-03--one-key-per-view-and-the-cost-of-a-key-that-moves-things)
 
 ### Build, data and CI
 
@@ -2153,3 +2155,30 @@ when the label is just the local name with spaces added — redundant for
   run only confirms the 22-failure baseline is unchanged. A behaviour this
   DOM-specific needs the dev server and a hard reload — `app/dist/` is a build
   from September and does not contain source edits.
+
+## 2026-10-03 — one key per view, and the cost of a key that moves things
+
+`Alt+,` revealed the TriG pane on the first press and *moved it to another
+column* on the second. The user pressed it to look at the RDF and got a
+re-arranged window. Replaced by `Alt+R`, which only reveals. The ADRs were
+rewritten as if the cycle had never existed (ADR 0042 was folded into 0009,
+0013 and 0022), so the history lives here and in git.
+
+- **A key whose meaning depends on where the pane already is will surprise
+  someone.** Reveal and move are different verbs; `Alt+Shift+←/→` already owned
+  move, so the cycle was a second, undiscoverable mechanism for it.
+- **A shortcut that needs a hand-written hint is a design smell.** `trig` was
+  the only view with `keyHint` and the only one with `homeColumn`, because it
+  was the only one whose key was not `Alt+<letter>` and not just a reveal. One
+  registry field (`shortcut: 'KeyR'`) replaced three and deleted a 25-line
+  method.
+- **A hardcoded `event.code` branch sitting beside a table derived from a
+  registry has a shelf life.** The branch was the special case; deleting it let
+  `TAB_SHORTCUTS` pick the key up with no other edit.
+- **Check the modifier guard before claiming a key is taken.** Bare `r` rotates
+  the graph, but that table is behind `!event.altKey`, so `Alt+R` was free.
+- **Supersede ADRs additively:** amend the Status block and append an italic
+  note under the original bullet; never rewrite a decision. The DONTREADME
+  sections are the exception — they describe current code for agents, so they
+  get corrected. Grep for the retired chord afterwards: `Alt+,` was still
+  documented in ADR 0009 twice, in a file nobody thought to open.

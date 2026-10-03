@@ -143,21 +143,6 @@ at at a time.
   auto-repeat is declined, since every turn
   re-separates the overlapping pairs and refits.
 
-- [x] `Alt+,` folds the TriG column away and hands its
-  width to the graph. It answers from any tab — this
-  is a layout shortcut, not a graph one.
-
-- [x] A folded TriG pane is not gone: the same section
-  is moved into the views column and appears as a
-  third tab beside the preview and the graph, labelled
-  with its `Alt+,` shortcut like they are. The key
-  therefore cycles docked → folded (graph keeps the
-  width) → TriG tab selected → docked.
-  *The cycle is unchanged, but [ADR 0022](0022-column-tab-groups.md) expresses
-  it against the layout model, so the "only one home is live at a time" rule and
-  the hidden-tab special case are gone: every view is a tab in exactly one
-  column at all times, and the TriG pane starts folded rather than docked.*
-
 - [x] Layout spacing and the rotation geometry are
   pure data and pure functions, kept out of the module
   that owns the cytoscape instance so they are
@@ -275,11 +260,16 @@ before trusting them.
   `maximal` or `acyclic`: the first abandons its
   adjustment on a cycle, the second loops forever on
   one.
-- `Alt+,` is `dock.cycleView('trig')`; the width it
-  frees is redistributed because column widths are
+- A column emptied by `Alt+Shift+←/→` hands its width
+  back because column widths are
   weights renormalised over the non-empty columns
   ([ADR 0022](0022-column-tab-groups.md)). The empty
   column and its gutter stay grid items with their
   tracks collapsed to `0`, since a `display: none`
   grid item stops being placed and would slide the
-  next column into a 6px gutter track.
+  next column into a 6px gutter track. Maximizing a
+  view (double-click its tab) is the one exception: it
+  replaces the whole track list with a single `1fr`,
+  so the other columns and every gutter leave the grid
+  with `display: none` and there is no track left to
+  slide into.

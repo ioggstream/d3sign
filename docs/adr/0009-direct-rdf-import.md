@@ -23,18 +23,20 @@ height available to both.
 
 - [x] Mermaid stays a one-way source: there is no RDF→mermaid generator, and the
   mermaid parser remains the only translation direction.
+
 - [x] The RDF pane becomes editable and moves into a
   column of its own, with the mermaid editor to its
   left and the preview/graph tabs to its right.
-  `Alt+,` folds the column away, moving the pane into
-  the views column as a third tab
-  ([ADR 0013](0013-graph-view-controls.md)) rather
-  than hiding it.
+  Like every other view it can be moved between
+  columns with `Alt+Shift+←/→`
+  ([ADR 0022](0022-column-tab-groups.md)).
+
 - [x] The pane holds the whole document as TriG, not
   one graph's Turtle: the serializer already writes
   named graphs as blocks, so a parser reads them
   straight back with graph membership intact. Triples
   typed outside any block land in a `manual` graph.
+
 - [x] Edits are applied on a debounce, or at once on
   `Ctrl+Enter` and on blur — half-typed RDF is invalid
   far more often than half-typed mermaid, so
@@ -42,17 +44,20 @@ height available to both.
   errors. The debounce is several seconds, not the
   editor's. Text that fails to parse changes nothing
   and reports on the lint line.
+
 - [x] A successful parse rebuilds the parsed
   contributions wholesale: the pane is the whole
   document, so a deleted block is a deleted graph.
   Contributions, not just the store, because a later
   visibility toggle re-applies them.
+
 - [x] Editing the pane marks it dirty. Mermaid edits
   keep driving the graph but stop rewriting the pane,
   and a badge plus a `Regenerate` button, which
   re-runs the mermaid source, is the only way back.
   This replaces the silent overwrite originally
   proposed here.
+
 - [x] Visibility selection stays sticky across all of
   this: it is saved only from explicit user toggles,
   never from a pane-driven rebuild, because saving
@@ -77,7 +82,8 @@ Cons:
   session: it is loaded once, so it only returns on
   reload. Unchecking it in the Graphs chip is the
   reversible way to get rid of it.
-- Three columns want roughly 1200 px of width; below that `Alt+,` is not
+- Three columns want roughly 1200 px of width; below that moving a view out of
+  the way (`Alt+Shift+←/→`, or double-clicking a tab to maximize) is not
   optional.
 
 ## DONTREADME

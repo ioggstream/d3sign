@@ -27,7 +27,7 @@ drawing.
 - [x] A **fourth tab** in the views column,
   `Alt+Q`. The results table wants width, and that
   column is the `2fr` track which grows further when
-  the TriG column is folded — the default
+  the TriG pane is a tab beside the graph — the default
   ([ADR 0009](0009-direct-rdf-import.md)). A fourth
   grid column would break that ADR's 1200 px budget; a
   modal could not stay open while the graph is

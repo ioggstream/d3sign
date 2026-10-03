@@ -18,7 +18,6 @@ import {
   columnOfView,
   createDefaultLayout,
   isViewVisible,
-  moveView,
   moveViewBy,
   renderedFractions,
   setActiveTab,
@@ -37,12 +36,10 @@ const MIN_COLUMN_PX = 200;
  *   id            stable, persisted, and the key the shortcut table uses
  *   title         the tab label
  *   shortcut      KeyboardEvent.code for Alt+<key>, or absent for no shortcut
- *   keyHint       what the tab prints, when the key is not an Alt+<letter>
  *   hint          the tab's tooltip (defaults to the title)
  *   element       the pane element, already in the document
  *   defaultColumn where it goes for a first-time user
  *   defaultActive whether it is the tab that column shows
- *   homeColumn    where `cycleView` sends it back to (defaults to defaultColumn)
  *   onShow()      it just became the visible tab of its column
  *   onMove({hadFocus})  its DOM parent just changed
  */
@@ -106,7 +103,7 @@ export function createColumnLayout({ grid, columnEls, gutterEls, views }) {
     button.append(view.title);
     // Printed on the tab from the same field the shortcut table reads, so the
     // two cannot drift apart — the failure ADR 0013 calls out by name.
-    const hint = view.keyHint ?? (view.shortcut ? `Alt+${view.shortcut.replace(/^Key/, '')}` : null);
+    const hint = view.shortcut ? `Alt+${view.shortcut.replace(/^Key/, '')}` : null;
     if (hint) {
       const key = document.createElement('span');
       key.className = 'tab-key';
@@ -241,32 +238,6 @@ export function createColumnLayout({ grid, columnEls, gutterEls, views }) {
     /** Puts keyboard focus on a view's tab button, for the Alt+<key> shortcuts. */
     focusTab(viewId) {
       document.getElementById(`tab-${viewId}`)?.focus();
-    },
-    /**
-     * The three-state cycle Alt+, has always had for the TriG pane, generalised:
-     * its own column → a tab beside the others → that tab selected → its own
-     * column again (docs/adr/0013-graph-view-controls.md). So one key both frees
-     * the width and brings the pane back.
-     */
-    cycleView(viewId) {
-      const view = byId.get(viewId);
-      if (!view) return;
-      maximized = null;
-      const home = view.homeColumn ?? view.defaultColumn ?? 0;
-      const away = view.defaultColumn ?? 0;
-      const at = columnOfView(layout, viewId);
-      if (at === home && home !== away) {
-        // Fold: the destination keeps the tab it was showing, so the width the
-        // fold just freed goes to what the user was already looking at.
-        const keep = layout.columns[away].active;
-        layout = moveView(layout, viewId, away);
-        if (keep) layout = setActiveTab(layout, keep);
-      } else if (!isViewVisible(layout, viewId)) {
-        layout = setActiveTab(layout, viewId);
-      } else {
-        layout = moveView(layout, viewId, home);
-      }
-      commit();
     },
     /** Forgets the saved arrangement and goes back to the shipped one. */
     reset() {

@@ -19,13 +19,9 @@ were markup, not data.
 Two costs followed.
 
 A user could not arrange the workspace. Wanting the graph and the SPARQL results
-side by side, or the mermaid editor out of the way, meant editing the HTML. The
-one exception was `Alt+,`, which folded the TriG column into a fourth tab — and
-it did so by re-parenting the live pane element, which is proof that panes
-survive being moved. It was a general mechanism serving exactly one pane.
+side by side, or the mermaid editor out of the way, meant editing the HTML.
 
-Nothing persisted. Tab selection, column widths and the fold state were all lost
-on reload, because they only ever existed as inline styles and `hidden`
+Nothing persisted. Tab selection and column widths were lost on reload, because they only ever existed as inline styles and `hidden`
 attributes. Filters, graph visibility and view preferences were all already
 stored in `localStorage`; the arrangement was the one piece of view state that
 was not.
@@ -36,7 +32,7 @@ depends on both being correct:
 - `makeResizableGutter` read its starting sizes from
   `getComputedStyle(...).gridTemplateColumns`, which resolves to **pixels**, and
   wrote them back as `fr`. It survived only because a drag renormalises the
-  ratio — but with the TriG column folded the template held literal `0px` tracks,
+  ratio — but with a column collapsed the template held literal `0px` tracks,
   so dragging the main gutter could resurrect a column the user had collapsed.
 - The graph pane's `ResizeObserver` called `cy.fit()` on every tick, so any
   gutter drag or window resize discarded the pan and zoom the user had set.
@@ -77,7 +73,7 @@ depends on both being correct:
 
 - [x] **Column widths are remembered weights, renormalised over the non-empty
   columns.** An empty column is exactly zero wide and its neighbours share out
-  what it would have had, so folding a column away and bringing it back needs
+  what it would have had, so emptying a column and refilling it needs
   nothing remembered on the side. The column and its gutter keep their grid
   tracks — a `display: none` grid item stops being placed and would slide the
   next column into a 6px gutter track, which is the same reason ADR 0013 gave.
@@ -107,12 +103,10 @@ depends on both being correct:
   and the key that is actually matched cannot happen for tabs. (It remains
   possible for the chips and the graph keys, which are still written twice.)
 
-- [x] **`Alt+,` keeps its three-state cycle** — own column → a tab beside the
-  others → that tab selected → own column — but now as a general operation on
-  the model: `cycleView` sends any view between its `homeColumn` and its
-  `defaultColumn`. Folding leaves the destination showing the tab it already
-  had, so the freed width goes to what the user was looking at. The TriG pane's
-  header button does the same thing.
+- [x] **A view's shortcut only reveals it.** Moving a view between columns is
+  `Alt+Shift+←/→` and nothing else: no view has a key that does both, and none
+  has a column of its own — `defaultColumn` is only where a first-time user
+  finds it.
 
 - [x] **The graph re-frames on show, not on resize.** `resize()` re-measures;
   `fitView()` re-measures and frames the drawing. The `ResizeObserver` calls the
@@ -160,9 +154,9 @@ Cons:
   rather than wrapping — a second row would eat the panel's `1fr` track — but
   there is no overflow menu, so a narrow column with five tabs is awkward.
 - The default arrangement's proportions changed very slightly: widths are now
-  weights renormalised over the non-empty columns, so docking the TriG pane back
-  gives 20/20/60 where the old fixed `1fr 6px 1fr 6px 2fr` gave 25/25/50. The
-  boot state (TriG folded) is unchanged at 25/75, and the first gutter drag
+  weights renormalised over the non-empty columns, so moving the TriG pane into a
+  column of its own gives 20/20/60 where the old fixed `1fr 6px 1fr 6px 2fr` gave
+  25/25/50. The boot state (middle column empty) is unchanged at 25/75, and the first gutter drag
   replaces both with the user's own numbers.
 
 ## DONTREADME
@@ -179,7 +173,7 @@ stale: check the code before trusting them.
   [app/test/layout-persist.test.js](../../app/test/layout-persist.test.js).
 - The renderer is [app/src/layout/columns.js](../../app/src/layout/columns.js).
   `createColumnLayout({grid, columnEls, gutterEls, views})` returns
-  `isVisible / activeView / revealView / moveActiveViewBy / focusTab / cycleView / reset`. `renderSizes` is the part a drag re-runs; `renderContent` rebuilds
+  `isVisible / activeView / revealView / moveActiveViewBy / focusTab / reset`. `renderSizes` is the part a drag re-runs; `renderContent` rebuilds
   the tab bars and re-parents panes, and is what fires `onShow`/`onMove`. Hooks
   are suppressed on the first render, because the panes have not been built yet.
 - The view registry is the `VIEWS` array in `main.js`, not a module of its own:

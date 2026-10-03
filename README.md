@@ -43,7 +43,7 @@ copy, and files can be downloaded to disk or imported from it
 ([docs/adr/0023-browser-local-file-store.md](docs/adr/0023-browser-local-file-store.md)),
 an
 editable TriG pane holding the whole RDF document (hand-edits drive the graph;
-`Alt+,` moves it between its own column and a tab beside the graph — see
+`Alt+R` reveals it — see
 [docs/adr/0009-direct-rdf-import.md](docs/adr/0009-direct-rdf-import.md)), and
 the interactive **D3FEND Graph** — a Cytoscape.js view with per-predicate
 filtering and inverse-direction toggling. Its header also carries a layout
@@ -88,7 +88,8 @@ the class and D3FEND's name for it, e.g.
 below where the node is declared and under an `%% Added via UI` comment
 ([docs/adr/0018-add-defensive-measure.md](docs/adr/0018-add-defensive-measure.md)).
 The mermaid preview and the graph start as tabs of the third column, reachable
-with `Alt+M` and `Alt+G` (`Alt+E` for the source editor), and while the graph is
+with `Alt+M` and `Alt+G` (`Alt+E` for the source editor, `Alt+R` for TriG), and
+while the graph is
 on screen `Alt+T`, `Alt+N`, `Alt+L` and `Alt+V`
 open the named-graph filter, the node-kind filter, the link-kind filter and the
 preferences from the keyboard — each chip prints its own chord (in the

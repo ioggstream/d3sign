@@ -112,19 +112,18 @@
       <div class="tab-bar" role="tablist" aria-label="Right column views"></div>
 
       <!-- Starts here rather than in the middle column: the TriG pane is a
-           secondary view, so the graph gets the width until Alt+, asks otherwise. -->
+           secondary view, so the graph gets the width until Alt+Shift+← asks
+           otherwise. -->
       <section id="turtle-pane" class="pane" role="tabpanel" hidden>
         <div class="pane-header">
           <h2>TriG (RDF)</h2>
-          <span class="tab-key">Alt+,</span>
+          <span class="tab-key">Alt+R</span>
           <span id="turtle-dirty" class="dirty-badge" hidden>edited</span>
           <div class="turtle-tools">
             <button type="button" id="regenerate-turtle-button" class="copy-button" hidden
                     title="Discard the hand-edits and re-serialize from the mermaid source">Regenerate</button>
             <button type="button" id="copy-turtle-button" class="copy-button"
                     title="Copy the whole TriG document — every named graph — to the clipboard">Copy</button>
-            <button type="button" id="turtle-hide-button" class="icon-button"
-                    title="Move to its own column (Alt+,)">⇤</button>
           </div>
         </div>
         <div id="turtle-host"></div>
