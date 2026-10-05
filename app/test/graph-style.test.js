@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import {
   CATEGORY_COLORS,
+  SEARCH_FOCUS_CLASS,
+  SEARCH_HIT_CLASS,
   buildStyle,
   categoryColor,
   derivedEdgeWidth,
@@ -474,5 +476,32 @@ describe('path focus classes', () => {
 
   it('keeps edge selection as the final style winner', () => {
     expect(indexOf('edge:selected')).toBeGreaterThan(indexOf('edge.path-focus-edge'));
+  });
+});
+
+describe('search classes', () => {
+  const style = buildStyle(DEFAULT_PREFS, ICON_SET);
+  const indexOf = (selector) => style.findIndex((rule) => rule.selector === selector);
+
+  it('names the classes viz/graphPane.js puts on', () => {
+    expect(SEARCH_HIT_CLASS).toBe('search-hit');
+    expect(SEARCH_FOCUS_CLASS).toBe('search-focus');
+  });
+
+  it('lifts a hit back out of the dimming', () => {
+    const hit = ruleFor(style, `node.${SEARCH_HIT_CLASS}`).style;
+    expect(hit.opacity).toBe(1);
+    expect(hit['border-width']).toBeGreaterThan(0);
+  });
+
+  it('haloes the node the search landed on', () => {
+    const landed = ruleFor(style, `node.${SEARCH_FOCUS_CLASS}`).style;
+    expect(landed['underlay-opacity']).toBeGreaterThan(0);
+    expect(landed['underlay-padding']).toBeGreaterThan(0);
+  });
+
+  it('keeps selection the final winner over both', () => {
+    expect(indexOf('node:selected')).toBeGreaterThan(indexOf(`node.${SEARCH_HIT_CLASS}`));
+    expect(indexOf('node:selected')).toBeGreaterThan(indexOf(`node.${SEARCH_FOCUS_CLASS}`));
   });
 });

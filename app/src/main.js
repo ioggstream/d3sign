@@ -1697,9 +1697,11 @@ function isGraphShortcutContext(event) {
  * `g` means something on both. A key that declines still counts as handled — it
  * belongs to the graph, so it must not fall through to whatever else is on screen.
  *
- * `r` is the exception on both counts: it turns the whole drawing, so it answers
- * with nothing selected and has no element menu to be printed in. Its home is the
- * rotate buttons' tooltips (docs/adr/0013-graph-view-controls.md).
+ * `r` and `/` are the exceptions on both counts. `r` turns the whole drawing and
+ * `/` opens the find bar, so both answer with nothing selected and neither has an
+ * element menu to be printed in: `r` is taught by the rotate buttons' tooltips
+ * (docs/adr/0013-graph-view-controls.md) and `/` by the find bar's own
+ * placeholder (docs/adr/0042-find-and-focus-node.md).
  */
 const GRAPH_SHORTCUTS = {
   f: () => {
@@ -1763,6 +1765,17 @@ const GRAPH_SHORTCUTS = {
     if (selection?.kind !== 'node') return;
     stepPathFocus('incoming');
   },
+  // The one key here that acts on nothing and reaches everything: it opens the
+  // find bar over the drawing, which is how a reader gets *to* a selection
+  // rather than doing something with one (docs/adr/0042-find-and-focus-node.md).
+  // `/` because that is what a find bar is opened with nearly everywhere else,
+  // and because the mnemonic letters were running out.
+  //
+  // Nothing more is needed to keep the rest of this table quiet while the user
+  // types into it: `isTypingTarget` already declines every bare key whose target
+  // is an input, which is also what leaves Escape to the bar's own handler. And
+  // `preventDefault` below is what stops Firefox's own quick-find opening on top.
+  '/': () => graphPane.openSearch(),
   // Rotation is a view transform, not an element action, so it needs no selection.
   // `Shift+R` turns the other way: the dispatcher matches on the lowercased key, so
   // the direction is read off the modifier rather than being a second entry here.

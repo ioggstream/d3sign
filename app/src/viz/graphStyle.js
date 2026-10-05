@@ -83,6 +83,21 @@ const PATH_FOCUS_NODE_COLOR = '#0b7285';
 const PATH_FOCUS_EDGE_COLOR = '#0c8599';
 
 /**
+ * What the find bar marks its hits in (docs/adr/0042-find-and-focus-node.md).
+ *
+ * Amber: the highlighter colour, which is the metaphor exactly, and far enough
+ * from both the path-focus teals and the two reds that a hit is never read as a
+ * selection or as an adversary's.
+ *
+ * The classes are exported because viz/graphPane.js is what puts them on, the
+ * way it does the path-focus bands — the stylesheet and the pane have to agree
+ * on the name, so only one of them gets to spell it.
+ */
+const SEARCH_COLOR = '#f08c00';
+export const SEARCH_HIT_CLASS = 'search-hit';
+export const SEARCH_FOCUS_CLASS = 'search-focus';
+
+/**
  * How far along a directional flow focus an element sits, banded. The walk
  * reports a hop count (viz/pathFocus.js); everything past the last band shares
  * it, because the point is telling near from far and not counting to nine.
@@ -378,6 +393,41 @@ export function buildStyle(prefs, iconSet = null) {
       style: { opacity, 'border-opacity': borderOpacity, 'border-width': borderWidth },
     });
   }
+
+  // A node the find bar matched, and the one it landed on
+  // (docs/adr/0042-find-and-focus-node.md). The dimming of everything else is
+  // `path-focus-dim` above, reused: "these are the elements in play" is one
+  // thing to tell a reader, however the set was arrived at.
+  //
+  // Amber because it is the highlighter colour, which is precisely the metaphor,
+  // and because every nearer colour is spoken for — the path-focus teals, the
+  // offensive red, the selection red, the location pink. A hit is not a
+  // selection and must not be mistaken for one: only the landed-on node becomes
+  // the selection, and it says so in red on top of this.
+  style.push({
+    selector: `node.${SEARCH_HIT_CLASS}`,
+    style: {
+      opacity: 1,
+      'text-opacity': 1,
+      'border-color': SEARCH_COLOR,
+      'border-width': 2,
+      'border-opacity': 1,
+    },
+  });
+
+  // Where the search just landed, for the two seconds viz/graphPane.js leaves it
+  // on. The viewport having moved is not by itself a signal when the eye was
+  // elsewhere a moment ago — the same job the editor's reveal flash does.
+  style.push({
+    selector: `node.${SEARCH_FOCUS_CLASS}`,
+    style: {
+      opacity: 1,
+      'text-opacity': 1,
+      'underlay-color': SEARCH_COLOR,
+      'underlay-opacity': 0.35,
+      'underlay-padding': 10,
+    },
+  });
 
   // Selection, last of the node rules so it wins.
   //

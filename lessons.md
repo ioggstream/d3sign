@@ -2161,8 +2161,10 @@ when the label is just the local name with spaces added — redundant for
 `Alt+,` revealed the TriG pane on the first press and *moved it to another
 column* on the second. The user pressed it to look at the RDF and got a
 re-arranged window. Replaced by `Alt+R`, which only reveals. The ADRs were
-rewritten as if the cycle had never existed (ADR 0042 was folded into 0009,
-0013 and 0022), so the history lives here and in git.
+rewritten as if the cycle had never existed — the draft ADR that held the
+decision was deleted and folded into 0009, 0013 and 0022 — so the history lives
+here and in git. (That draft held the number 0042, which has since been reused
+for the find bar; it is not the same decision.)
 
 - **A key whose meaning depends on where the pane already is will surprise
   someone.** Reveal and move are different verbs; `Alt+Shift+←/→` already owned
@@ -2182,3 +2184,37 @@ rewritten as if the cycle had never existed (ADR 0042 was folded into 0009,
   sections are the exception — they describe current code for agents, so they
   get corrected. Grep for the retired chord afterwards: `Alt+,` was still
   documented in ADR 0009 twice, in a file nobody thought to open.
+
+## 2026-10-03 — a find bar, and the guards that were already there
+
+`/` opens a find bar over the graph; `Enter` selects, centres and zooms the hit
+and flashes its mermaid line (ADR 0042). Almost none of it was new code.
+
+- **Check what the existing guards already cover before writing new ones.** The
+  obvious worry was `f` folding while the user types "profile". It cannot:
+  `isTypingTarget` has always declined bare keys whose target is an input, and
+  the same check is what leaves Escape to the bar. Nothing needed adding — the
+  feature cost one line in `GRAPH_SHORTCUTS`.
+- **Stopping propagation on a keydown would not have helped anyway.** The
+  shell's listener is on `window` in the *capture* phase, so it runs before any
+  handler on the input. A child cannot stop what has already happened.
+- **`anchoredViewport` was written for re-layouts and answers "focus this node"
+  unchanged.** It inverts `rendered = position * zoom + pan`; pass the host's
+  centre instead of the node's old pixel and the same function centres. Look for
+  the arithmetic you need before deriving it again.
+- **A zoom floor is `Math.max(cy.zoom(), FLOOR)`, not a zoom level.** Setting a
+  level would throw away a magnification the reader chose on purpose; a floor
+  only rescues the case the feature exists for.
+- **Reuse the dim class and you have decided the modes are exclusive.** Search
+  and path focus share `path-focus-dim`, so both on screen is incoherent — hence
+  `setPathFocus` closing the search and `openSearch` clearing the focus. That is
+  a real limitation (no searching within a flow), and the cheaper half of the
+  trade: one visual vocabulary instead of two.
+- **Reusing a deleted ADR's number leaves a dangling reference.** The old 0042
+  was folded into 0009; this file still named it. Grep the number, not just the
+  filename, before taking it.
+- **`node` is not on PATH here — the suite runs in the `dev` compose service.**
+  `docker compose exec -T -w /code/app dev npx vitest run`. The container was
+  already up; `docker compose ps` first, as last time.
+- **The suite's baseline is 22 failures across 12 files.** Compare against that,
+  not against zero. None are in `viz/`.

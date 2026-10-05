@@ -69,7 +69,13 @@ drawn inside or across its border
 ([docs/adr/0016-nodes-outside-their-container.md](docs/adr/0016-nodes-outside-their-container.md)).
 Right-clicking one offers to fold it into a single node standing for its whole
 subtree, with its children's outside links redrawn as dashed links on the
-container itself. Clicking a node selects it — the graph header then names it,
+container itself. Getting *to* a node you can name is `/`: it opens a find bar
+over the drawing, typing dims everything whose mermaid id or label does not
+contain what was typed, `↓`/`↑` walk the hits, and `Enter` takes the one the
+view is sitting on — selecting it, centring it, zooming in far enough to read it
+if the drawing was framed whole, and flashing the mermaid line it was written on
+([docs/adr/0042-find-and-focus-node.md](docs/adr/0042-find-and-focus-node.md)).
+Clicking a node selects it — the graph header then names it,
 `f` folds or unfolds it and `g` jumps to its mermaid source — and double-clicking
 it opens its information panel. Clicking a link selects it the same way: `s` then
 swaps which way it is drawn, renaming the predicate to its inverse, `g` jumps to

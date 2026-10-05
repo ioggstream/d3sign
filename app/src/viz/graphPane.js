@@ -12,6 +12,8 @@ import {
 import { TIER_FLOW_KINDS, layoutRoots, tierLayers } from './tierLayers.js';
 import {
   PATH_FOCUS_DEPTH_CLASSES,
+  SEARCH_FOCUS_CLASS,
+  SEARCH_HIT_CLASS,
   buildStyle,
   pathFocusDepthBand,
   pathFocusDepthClass,
@@ -25,6 +27,7 @@ import {
 import { separateSiblings, siblingLevels } from './separateSiblings.js';
 import { loadIconSet } from './icons.js';
 import { edgeMenuItems, nodeMenuItems } from './nodeMenu.js';
+import { matchNodes } from './nodeSearch.js';
 import { directionalFlow } from './pathFocus.js';
 import { anchoredViewport } from './viewAnchor.js';
 
@@ -48,6 +51,26 @@ const PATH_FOCUS_DIM_CLASS = 'path-focus-dim';
 const PATH_FOCUS_NODE_CLASS = 'path-focus-node';
 const PATH_FOCUS_EDGE_CLASS = 'path-focus-edge';
 const PATH_FOCUS_DEPTH_CLASS_LIST = PATH_FOCUS_DEPTH_CLASSES.join(' ');
+
+/**
+ * How long the halo marking the node a search landed on stays lit. The same two
+ * seconds as the edge toast above and the editor's reveal flash
+ * (editor/revealFlash.js) — a jump that lands somewhere says "here", then gets
+ * out of the way, and it should say it for the same length of time wherever it
+ * happens.
+ */
+const SEARCH_FLASH_MS = 2000;
+
+/**
+ * Least zoom a searched-for node is shown at.
+ *
+ * The focus never zooms *out* — a reader who zoomed in did so on purpose — so
+ * this is only ever a floor, and it exists for the one case search is for: the
+ * whole diagram framed, every node an unreadable speck, and the match no more
+ * legible than anything else. At 1 the node is drawn at its natural size, which
+ * is the size the label was laid out for.
+ */
+const SEARCH_ZOOM_FLOOR = 1;
 
 /**
  * Least gap the separation pass leaves between two sibling boxes.
@@ -268,6 +291,97 @@ function createNodeTooltip(host) {
   return { show, hide };
 }
 
+/**
+ * The find bar: a text box over the drawing that narrows it to the nodes whose
+ * name contains what is typed (docs/adr/0042-find-and-focus-node.md).
+ *
+ * A plain DOM child of the cytoscape container, like the context menu and the
+ * tooltip, and interactive like the menu — so it carries the menu's warning
+ * too: cytoscape binds its pointer handlers to the *container* and reads an
+ * event anywhere inside it as a canvas event, so without stopping them here a
+ * click in the input is also read as a click on the background, whose handler
+ * would dismiss things out from under it.
+ *
+ * Keystrokes are deliberately *not* stopped. The shell's keydown listener is on
+ * `window` in the capture phase, so stopping propagation here would not reach it
+ * anyway — what keeps `f` from folding while the user types it is `isTypingTarget`
+ * (main.js), which already declines every bare graph key whose target is an
+ * input. One guard, in the place that owns the shortcuts.
+ *
+ * `onInput`, `onStep`, `onCommit` and `onClose` are the four things a find bar
+ * can be asked for: narrow, walk the hits, take this one, give up.
+ */
+function createSearchBar(host, { onInput, onStep, onCommit, onClose }) {
+  const bar = document.createElement('div');
+  bar.className = 'graph-search';
+  bar.hidden = true;
+
+  // `text`, not `search`: the browser's search field swallows Escape, and Escape
+  // is how this closes. The same trap filterChip.js documents on its own box.
+  const input = document.createElement('input');
+  input.type = 'text';
+  // Both classes: the chips' search box is the one this borrows its looks from,
+  // and the second only narrows it to something that fits over a canvas.
+  input.className = 'filter-popover-search graph-search-input';
+  input.placeholder = 'Find a node…';
+  input.setAttribute('aria-label', 'Find a node');
+
+  // How many nodes answer to what has been typed, and which of them the view is
+  // sitting on. Without it an empty-looking result is indistinguishable from a
+  // drawing where everything happens to match.
+  const count = document.createElement('span');
+  count.className = 'graph-search-count';
+
+  bar.append(input, count);
+  host.appendChild(bar);
+
+  for (const type of ['mousedown', 'mouseup', 'click']) {
+    bar.addEventListener(type, (event) => event.stopPropagation());
+  }
+
+  function close() {
+    bar.hidden = true;
+    input.value = '';
+    count.textContent = '';
+  }
+
+  input.addEventListener('input', () => onInput(input.value));
+  input.addEventListener('keydown', (event) => {
+    // Arrows walk the hits and must not also move the caret; Enter and Escape
+    // have no default here worth keeping either.
+    const handled = {
+      Enter: onCommit,
+      Escape: onClose,
+      ArrowDown: () => onStep(1),
+      ArrowUp: () => onStep(-1),
+    }[event.key];
+    if (!handled) return;
+    event.preventDefault();
+    handled();
+  });
+
+  return {
+    open() {
+      bar.hidden = false;
+      input.value = '';
+      count.textContent = '';
+      input.focus();
+    },
+    close,
+    /**
+     * `index` is 1-based and 0 means "not landed on one yet", which is the state
+     * right after typing: the hits are lit but the view has not moved.
+     */
+    setCount(total, index) {
+      if (!total) {
+        count.textContent = input.value.trim() ? 'no match' : '';
+        return;
+      }
+      count.textContent = index ? `${index}/${total}` : `${total}`;
+    },
+  };
+}
+
 export function createGraphPane(host, {
   onShowInfo,
   onShowEdgeInfo,
@@ -297,6 +411,14 @@ export function createGraphPane(host, {
   let flowRootId = null;
   let iconSet = null;
   let pathFocus = null;
+  // The running find, or null when the bar is shut: `{ query, matches, index,
+  // stepped }`. `matches` is re-derived from the drawing on every redraw rather
+  // than remembered, so a node a fold has just swallowed stops being a hit
+  // instead of becoming an id that no longer resolves. `stepped` is what tells
+  // "the first hit" from "the hit the reader walked to", so the first ArrowDown
+  // lands on the first match rather than skipping it.
+  let search = null;
+  let searchFlashTimer = null;
 
   const cy = cytoscape({
     container: host,
@@ -548,6 +670,12 @@ export function createGraphPane(host, {
   const contextMenu = createContextMenu(host);
   const nodeTooltip = createNodeTooltip(host);
   const edgeTooltip = createNodeTooltip(host);
+  const searchBar = createSearchBar(host, {
+    onInput: runSearch,
+    onStep: stepSearch,
+    onCommit: commitSearch,
+    onClose: closeSearch,
+  });
   function clearPathFocusClasses() {
     cy.batch(() => {
       cy.nodes().removeClass(
@@ -612,6 +740,147 @@ export function createGraphPane(host, {
           .addClass(`${PATH_FOCUS_EDGE_CLASS} ${band(focused.edgeDepths.get(id))}`.trim());
       }
     });
+  }
+
+  /** The drawn nodes as the matcher takes them (viz/nodeSearch.js). */
+  function searchRecords() {
+    return cy.nodes().map((node) => ({
+      id: node.id(),
+      displayId: node.data('displayId'),
+      name: node.data('name'),
+    }));
+  }
+
+  function clearSearchClasses() {
+    clearTimeout(searchFlashTimer);
+    cy.batch(() => {
+      cy.nodes().removeClass(
+        `${PATH_FOCUS_DIM_CLASS} ${SEARCH_HIT_CLASS} ${SEARCH_FOCUS_CLASS}`,
+      );
+      cy.edges().removeClass(PATH_FOCUS_DIM_CLASS);
+    });
+  }
+
+  /**
+   * Lights the hits and dims the rest.
+   *
+   * Said in the path focus's own dim class rather than a second one of its own:
+   * "these are the elements in play, and those are not" is one thing to tell a
+   * reader, and it should look the same whether the set came from a flow walk or
+   * from a name. Which is also why the two are mutually exclusive — see
+   * `openSearch`.
+   *
+   * A query that matches nothing dims nothing: a drawing gone uniformly faint
+   * says less than the bar's own "no match", and leaving it alone keeps the
+   * mistyped keystroke cheap to undo.
+   */
+  function applySearchHighlight() {
+    if (!search?.matches.length) {
+      clearSearchClasses();
+      return;
+    }
+    cy.batch(() => {
+      cy.nodes().addClass(PATH_FOCUS_DIM_CLASS).removeClass(SEARCH_HIT_CLASS);
+      cy.edges().addClass(PATH_FOCUS_DIM_CLASS);
+      for (const id of search.matches) {
+        cy.getElementById(id).removeClass(PATH_FOCUS_DIM_CLASS).addClass(SEARCH_HIT_CLASS);
+      }
+    });
+  }
+
+  /**
+   * Centres `id` and makes sure it is big enough to read, then flashes it.
+   *
+   * The zoom is only ever raised: a reader who zoomed in did so to look at
+   * something, and a search that pulled the view back out would undo the work it
+   * was run in the middle of. `anchoredViewport` (viz/viewAnchor.js) already
+   * inverts cytoscape's `rendered = position * zoom + pan`, which is exactly
+   * "draw this node under that pixel at that zoom" — and one `viewport` call
+   * rather than `zoom` then `pan` for the reason `restoreAnchor` gives: two
+   * calls draw two frames, and the zoom alone would first move the view about
+   * the wrong point.
+   *
+   * The halo is what the editor's reveal flash is: the viewport having moved is
+   * not by itself a signal when the eye was somewhere else a moment ago.
+   */
+  function focusNode(id) {
+    const node = cy.getElementById(id);
+    if (node.empty()) return false;
+    const bounds = host.getBoundingClientRect();
+    cy.viewport(
+      anchoredViewport(
+        { x: bounds.width / 2, y: bounds.height / 2 },
+        Math.max(cy.zoom(), SEARCH_ZOOM_FLOOR),
+        node.position(),
+      ),
+    );
+    clearTimeout(searchFlashTimer);
+    cy.nodes().removeClass(SEARCH_FOCUS_CLASS);
+    node.addClass(SEARCH_FOCUS_CLASS);
+    searchFlashTimer = setTimeout(() => node.removeClass(SEARCH_FOCUS_CLASS), SEARCH_FLASH_MS);
+    return true;
+  }
+
+  /**
+   * Re-runs the query over what is drawn now.
+   *
+   * The view deliberately does not move: the hits light up where they are, and
+   * going to one is a separate press. A search that panned on every keystroke
+   * would drag the drawing about under a reader who is still typing.
+   */
+  function runSearch(query) {
+    search = { query, matches: matchNodes(searchRecords(), query), index: 0, stepped: false };
+    applySearchHighlight();
+    searchBar.setCount(search.matches.length, 0);
+  }
+
+  /** Walks the hits, wrapping. The first press lands on a hit rather than past it. */
+  function stepSearch(delta) {
+    if (!search?.matches.length) return;
+    const total = search.matches.length;
+    if (search.stepped) search.index = (search.index + delta + total) % total;
+    else {
+      search.stepped = true;
+      // Stepping backwards from nowhere means the last hit, the way a wrap would.
+      if (delta < 0) search.index = total - 1;
+    }
+    focusNode(search.matches[search.index]);
+    searchBar.setCount(total, search.index + 1);
+  }
+
+  function closeSearch() {
+    if (!search) return;
+    search = null;
+    clearSearchClasses();
+    searchBar.close();
+  }
+
+  /**
+   * Takes the hit the bar is sitting on: it becomes the selection, the view goes
+   * to it, and the mermaid line it was written on is revealed.
+   *
+   * That last step is the shell's — the view is not allowed to know mermaid
+   * exists (docs/adr/0014-graph-view-from-rdf-only.md) — so it goes out through
+   * the same two callbacks the context menu's "Go to mermaid source" uses, and a
+   * node with no mermaid origin simply gets no jump, exactly as it gets no menu
+   * item.
+   *
+   * The bar shuts first, so the dimming is gone by the time the reader looks at
+   * where they landed: the question has been answered, and the rest of the
+   * drawing is the context for the answer.
+   */
+  function commitSearch() {
+    const id = search?.matches[search.index];
+    // Nothing to take, so nothing happens — and nothing is said either: the bar
+    // is already reading "no match", and the toast that would say it again is
+    // drawn in the same place the bar is sitting.
+    if (!id) return;
+    closeSearch();
+    cy.elements().unselect();
+    cy.getElementById(id).select();
+    focusNode(id);
+    reportSelection();
+    if (canGoToSource?.(id)) onGoToSource?.(id);
   }
 
   // Otherwise the browser's own menu opens on top of ours.
@@ -790,6 +1059,11 @@ export function createGraphPane(host, {
       // has just been rewritten, so the shell's copy is stale either way.
       reportSelection();
       applyPathFocus();
+      // The classes went with the elements that carried them, and what matches
+      // may have changed with them — a fold swallows nodes, a filter hides them.
+      // Re-run rather than re-apply, and let the walk start over: "the third
+      // hit" means something else in a drawing that is no longer the same one.
+      if (search) runSearch(search.query);
 
       runLayout(anchor);
       return stats;
@@ -874,6 +1148,20 @@ export function createGraphPane(host, {
       return true;
     },
     /**
+     * Opens the find bar and puts the caret in it.
+     *
+     * Clears any path focus on the way in: the two say what they have to say in
+     * the same dim class, so they cannot both be on screen, and the one just
+     * asked for is the one the reader wants. Re-opening an already open bar
+     * empties it, which is what a second `/` means — start again.
+     */
+    openSearch() {
+      pathFocus = null;
+      clearPathFocusClasses();
+      search = { query: '', matches: [], index: 0, stepped: false };
+      searchBar.open();
+    },
+    /**
      * Flashes a transient message over the drawing.
      *
      * Exposed because the shell owns the shortcuts (docs/adr/0013-graph-view-controls.md)
@@ -890,6 +1178,9 @@ export function createGraphPane(host, {
        */
       setPathFocus(nodeId, direction, maxDepth = Infinity) {
         if (!PATH_FOCUS_DIRECTIONS.has(direction)) return false;
+        // The two share the dim class, so they share the drawing: whichever was
+        // asked for last is the one the reader meant.
+        closeSearch();
         pathFocus = { nodeId, direction, maxDepth, truncated: false };
         applyPathFocus();
         return Boolean(pathFocus);
