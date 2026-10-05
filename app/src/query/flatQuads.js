@@ -47,6 +47,32 @@ export function quadFromFlat(flat, graphName) {
   return quad(subject, predicate, object, namedNode(graphName));
 }
 
+function flatTerm(term) {
+  if (term.termType === 'Literal') {
+    return {
+      termType: 'Literal',
+      value: term.value,
+      language: term.language || '',
+      datatype: term.datatype ? term.datatype.value : '',
+    };
+  }
+  return { termType: term.termType, value: term.value };
+}
+
+/**
+ * The inverse of `quadFromFlat`: a quad as plain objects that survive
+ * `postMessage` — what the VS Code host sends a webview, and what a webview sends
+ * back when the user adds a graph (docs/adr/0043-vscode-extension.md). The graph
+ * term is dropped; a contribution carries its graph name itself.
+ */
+export function flatFromQuad(q) {
+  return { subject: flatTerm(q.subject), predicate: flatTerm(q.predicate), object: flatTerm(q.object) };
+}
+
+export function flatFromQuads(quads) {
+  return quads.map(flatFromQuad);
+}
+
 /** Every convertible quad of a CONSTRUCT result, tagged with `graphName`. */
 export function quadsFromFlat(flats, graphName) {
   return flats.map((flat) => quadFromFlat(flat, graphName)).filter(Boolean);

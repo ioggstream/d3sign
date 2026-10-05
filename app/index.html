@@ -136,53 +136,15 @@
         </div>
       </section>
 
-      <section id="graph-pane" class="pane" role="tabpanel">
-        <div class="pane-header">
-          <h2>D3FEND Graph</h2>
-          <div id="graph-filter-chips" class="filter-chips"></div>
-          <div id="graph-selection" class="graph-selection is-empty">no selection</div>
-          <div class="graph-tools">
-            <select id="layout-select" title="Layout algorithm"></select>
-            <button type="button" id="rotate-ccw" class="icon-button" title="Rotate 90° counter-clockwise (Shift+R)">⟲</button>
-            <button type="button" id="rotate-cw" class="icon-button" title="Rotate 90° clockwise (R)">⟳</button>
-          </div>
-        </div>
-        <div id="cy-host"></div>
-        <dialog id="node-panel" class="node-panel"></dialog>
-      </section>
+      <!-- Filled by mountGraphView (src/viz/mountGraphView.js), which owns this pane's
+           markup so the VS Code webview mounts the same one
+           (docs/adr/0043-vscode-extension.md). -->
+      <section id="graph-pane" class="pane" role="tabpanel"></section>
 
-      <!-- Rows rather than columns: the results table wants the full width, and
-           this column is the widest one (docs/adr/0021-sparql-query-pane.md). -->
-      <section id="query-pane" class="pane" role="tabpanel" hidden>
-        <div class="pane-header">
-          <h2>SPARQL</h2>
-          <div id="query-filter-chips" class="filter-chips"></div>
-          <select id="query-select" title="Load a query from the library"></select>
-          <select id="saved-query-select" title="Reopen a query saved in this browser"></select>
-          <div class="query-tools">
-            <button type="button" id="save-query-button" class="copy-button"
-                    title="Save this query in the browser (Ctrl+S)">Save <span class="tab-key">Ctrl+S</span></button>
-            <button type="button" id="toggle-saved-button" class="icon-button" aria-expanded="false"
-                    title="Show the queries saved in this browser">▤</button>
-            <button type="button" id="run-query-button" class="copy-button btn--primary"
-                    title="Run the query (Ctrl+Enter)">▶ Run <span class="tab-key">Ctrl+Enter</span></button>
-            <button type="button" id="cancel-query-button" class="icon-button" hidden
-                    title="Cancel by restarting the query engine — a running SPARQL query cannot be interrupted">⏹</button>
-            <button type="button" id="copy-query-button" class="copy-button"
-                    title="Copy the query text to the clipboard, without the prefix preamble">Copy</button>
-          </div>
-        </div>
-        <!-- A plain block above the grid, not a third grid row: the pane's row
-             gutter divides the editor from the results and must keep doing
-             exactly that (docs/adr/0021-sparql-query-pane.md). -->
-        <div id="saved-queries" class="saved-queries" hidden></div>
-        <div id="query-grid">
-          <div id="query-host"></div>
-          <div class="gutter gutter-row" id="gutter-query-row"></div>
-          <div id="query-results" class="query-results"></div>
-        </div>
-        <div id="query-status" class="query-status">no query run yet</div>
-      </section>
+      <!-- Filled by mountQueryView (src/query/mountQueryView.js). Rows rather than
+           columns inside: the results table wants the full width, and this column is
+           the widest one (docs/adr/0021-sparql-query-pane.md). -->
+      <section id="query-pane" class="pane" role="tabpanel" hidden></section>
     </div>
   </main>
   </div>

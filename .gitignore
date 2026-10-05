@@ -137,6 +137,9 @@ dmypy.json
 # CI
 .gitlab-ci-local/
 
+# VS Code extension build output
+*.vsix
+
 # Dependencies
 node_modules
 .turbo

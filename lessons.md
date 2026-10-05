@@ -18,6 +18,8 @@ task. Add every new entry to one topic below.
 - [A disabled feature hides bugs](#2026-08-13--a-disabled-feature-hides-the-bugs-in-the-code-that-would-have-run-it)
 - [A hook that writes nothing](#2026-09-11--files-were-modified-by-this-hook-from-a-hook-that-writes-nothing)
 - [Usage breakdown](#usage-breakdown)
+- [The second host was a third module](#2026-10-05--the-second-host-was-a-third-module-not-a-second-mount)
+- [Phase 1: the extension skeleton](#2026-10-05--phase-1-the-extension-skeleton-compiles-it-has-not-run)
 
 ### Tests and fixtures
 
@@ -2218,3 +2220,85 @@ and flashes its mermaid line (ADR 0042). Almost none of it was new code.
   already up; `docker compose ps` first, as last time.
 - **The suite's baseline is 22 failures across 12 files.** Compare against that,
   not against zero. None are in `viz/`.
+
+## 2026-10-05 — the second host was a third module, not a second mount
+
+Planning a VS Code extension, the first cut was "extract `mountGraphView` and
+`mountQueryView` from `main.js`". Reading `handleTextChange` showed that cut was
+wrong.
+
+- **The graph wiring was half document, half view.** Lines 839-901 (parse,
+  expand, emit, merge, stale sweep, enrichment) touch no DOM and are what the VS
+  Code host needs to run in Node. A graph mount would have dragged them into a
+  webview. They became `rdf/documentModel.js`, so there are three units and not
+  two (ADR 0043).
+- **The store belongs to the view.** Visibility only changes what is drawn. The
+  TriG pane and the query engine read contributions, not the store. With the
+  store inside the graph view, the three scattered `store.replaceGraph(name, [])` calls collapse into one rule in `setDocument`.
+- **A webview cannot answer synchronously, but the text can.** The menu asks
+  `hasSource` before it is built. Posting the text with each `document` message
+  lets the webview answer from `collectSourceLocations` locally. The host
+  recomputes the action on the live document, so no offset crosses the bridge.
+- **`window.prompt` does not exist in a VS Code webview.** Mint, saved queries
+  and delete-confirm all use it. They have to go through an injected async
+  `shell.prompt`/`shell.confirm`, and that has to be decided before the code
+  moves, not discovered after.
+- **Write the spec where the cheaper model will read it.** ADR 0043's
+  DONTREADME holds signatures, line ranges and the message table, so the
+  implementation sessions (Sonnet) read one file instead of `main.js`.
+- **Baseline taken with a Haiku subagent**: 22 failures, 12 files, unchanged
+  from the entry above.
+
+## 2026-10-05 — phase 0 landed: the split, what it cost, one slip
+
+`main.js` went from 1857 to ~560 lines. The graph and SPARQL panes are
+`mountGraphView` / `mountQueryView`, the text → graphs step is
+`rdf/documentModel.js` (ADR 0043, "Phase 0 as built"). 22 failures in 12 files
+before and after; `vite build` resolves; the SPA itself was not run.
+
+- **A gate that counts is weaker than a gate that names.** The baseline report was
+  cut off by `tail`, so only part of the failing names were known. Ask the test
+  runner for the failing names as JSON
+  (`vitest run --reporter=json`, then a one-line `node -e`), so the next phase
+  can diff names, not counts.
+- **`vite build --outDir /tmp/...` inside the container is the import check.** No
+  test imports a mount: they need a DOM and `import.meta.glob`. The build resolves
+  every import without writing into the repo.
+- **Moving wiring turned up two renders that were one.** `applyGraphVisibility`
+  drew with the old filter state and `handleTextChange` drew again with the new
+  one. Moving the code made the double draw visible; `setDocument` draws once. It
+  is listed in the ADR as a behaviour change, not hidden in the diff.
+- **A test that splits serialized output on blank lines is a bad test.** The first
+  "deleted block" case cut TriG text apart and failed for a reason unrelated to
+  the model. Build the expected input from a second model instead.
+- **Slip: `index.html` was edited with a `python3` heredoc.** The result is right
+  and the rule is "files through Edit/Write only". Two empty `<section>` tags did
+  not need a script; the Edit tool takes a unique `old_string` of any length.
+
+## 2026-10-05 — phase 1: the extension skeleton compiles, it has not run
+
+`vscode/` holds the host, the graph page, the TriG document, diagnostics and the
+Docker build (ADR 0043, "Phase 1 as built"). Gate: same 22 failing tests by name,
+new tests pass, both bundles compile, `vite build` resolves. Nothing was run in VS
+Code, and the ADR lists what that leaves unchecked.
+
+- **A bundle check needs no `vscode/node_modules`.** `esbuild.mjs` imports
+  `esbuild` from `vscode/`, which is not installed here. The same two `build()`
+  calls run from `/code/app` through `node --input-type=module -e`, with the entry
+  paths under `/code/vscode` and output to the container's `/tmp`. It resolves every
+  import, including the shared sources' `n3` and `yaml`.
+- **A shared module must not know its host.** `mountGraphView` called
+  `shell.source.addRelation` and used the boolean at once; across a webview it is a
+  promise. Making the two callers `await` was one line each, and it was cheap only
+  because phase 0 had put every host call behind `shell`.
+- **A diagnostic needs a position, and the parser has none.** Warnings are strings,
+  so they sit on line 1. Fixing that is a parser change, not extension work.
+- **A webview cannot answer "does this have a source line?" by asking.** The host
+  sends the text with each `document` message and the page answers from
+  `collectSourceLocations` itself; only the edit and the reveal go back, computed on
+  the live document.
+- **Slip: I told a Haiku subagent to write scratch files under host `/tmp`.** The
+  rule is no filesystem access outside the project. I stopped it and re-ran the
+  checks with the output piped, not saved; files named `d3-names-*.txt` or `d3x/`
+  may have been written to host `/tmp` before it stopped. When a check needs a
+  diff, have the subagent print the list and compare it in the session.

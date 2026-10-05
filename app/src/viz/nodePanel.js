@@ -163,8 +163,10 @@ function renderAddButton(rel, onAdd) {
   button.className = 'node-panel-chip-add';
   button.textContent = '+';
   button.title = addButtonTitle(rel);
-  button.addEventListener('click', () => {
-    if (!onAdd(rel)) return;
+  // Awaited: in the VS Code webview the edit is applied by the extension host, so
+  // the answer is a promise there (docs/adr/0043-vscode-extension.md).
+  button.addEventListener('click', async () => {
+    if (!(await onAdd(rel))) return;
     button.disabled = true;
     button.textContent = '✓';
     button.title = `Added below this node in the mermaid source, under a "${ADDED_MARKER}" comment — rename or delete it there.`;
