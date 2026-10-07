@@ -41,6 +41,15 @@ Elements:
   buttons that redraw the card for that term — so
   browsing the hierarchy is hovering, with no second
   panel to open or dismiss.
+- [x] A term whose id is not self-explanatory, such as
+  `d3f:T1566` "Phishing" or `d3f:AML.T0000`, also
+  matches on its `rdfs:label`: `d3f:phish` finds
+  `d3f:T1566`. Label matches rank below id matches,
+  so `d3f:T15` still lists the `T15xx` ids first. A
+  term whose label is its local name spelled out,
+  such as `d3f:Password`, gets no second row.
+- [x] Deprecated terms are not offered; see
+  [ADR 0041](0041-deprecated-d3fend-terms.md).
 
 ## Consequences
 
@@ -113,6 +122,14 @@ before trusting them.
   `build-d3fend-categories.py`, whose outputs
   (`d3fend-metadata.json`, `d3fend-categories.json`)
   carry the same regeneration cost.
+- Label matching is a second option per opaque term,
+  built by `labelAlias` in `d3fendCompletion.js`:
+  `label` holds the `rdfs:label`, because CodeMirror
+  filters on `label` only; `apply` and `displayLabel`
+  hold the qname; `boost: -1` ranks it below. The
+  opaque test is `isLabelRedundant` in
+  `d3fendHierarchy.js`. `completionPanel.js` draws
+  `displayLabel ?? label`.
 - `getItem` and the `parents` field of the same data
   file are reused by the graph's icon resolution
   ([ADR 0015](0015-graph-visualization-preferences.md)).

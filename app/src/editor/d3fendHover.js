@@ -52,8 +52,18 @@ const d3fendHoverTooltip = hoverTooltip(
         // Navigation redraws inside the same tooltip rather than opening
         // anything: the tooltip is anchored to the hovered token, and a term two
         // clicks away has no position in the document to anchor to.
+        //
+        // `onReplace` only on the hovered term itself: after navigating, the card
+        // describes a term that is not the token under the tooltip, and rewriting
+        // the token from there would replace something the card is not about.
+        const replace = (replacement) =>
+          view.dispatch({
+            changes: { from: line.from + tok.start, to: line.from + tok.end, insert: replacement },
+            effects: dismissHover.of(null),
+          });
         const show = (target) => {
-          const card = renderD3fendCard(target, { onNavigate: show });
+          const onReplace = target === tok.name ? replace : undefined;
+          const card = renderD3fendCard(target, { onNavigate: show, onReplace });
           if (card) dom.replaceChildren(card);
         };
         show(tok.name);

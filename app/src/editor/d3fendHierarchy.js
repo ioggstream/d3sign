@@ -34,6 +34,42 @@ export const getChildren = (qname) => CHILDREN[qname] ?? [];
 // knows — which is what a hand-typed or misspelled reference looks like.
 export const labelOf = (qname) => getItem(qname)?.label ?? qname;
 
+/**
+ * Whether `label` is just `localName` with spaces and case added — e.g.
+ * "File Eviction" for `FileEviction` — so printing both is the same fact
+ * twice. Not true of an ATT&CK-derived class like `T1566`, whose label
+ * ("Phishing") shares no text with the id at all.
+ *
+ * Here rather than in the node panel because completion needs it too: a term
+ * whose label is not redundant is one whose id cannot be found by its name.
+ */
+export function isLabelRedundant(label, localName) {
+  const normalize = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+  return normalize(label) === normalize(localName);
+}
+
+/**
+ * `{ replacedBy: [qname] }` for a deprecated term, `null` otherwise. `replacedBy`
+ * is empty when the ontology states no replacement
+ * (docs/adr/0041-deprecated-d3fend-terms.md).
+ */
+export function deprecationNote(qname) {
+  const parts = splitQname(qname);
+  const item = getItem(qname);
+  if (!parts || !item?.deprecated) return null;
+  return { replacedBy: (item.replacedBy ?? []).map((name) => qualify(parts.prefix, name)) };
+}
+
+/**
+ * "Deprecated, use Hijack Execution Flow (d3f:T1574.010)", or plain "Deprecated"
+ * when no replacement is stated. One wording for the hover card, the node panel's
+ * badge and its class dropdown.
+ */
+export function deprecationText({ replacedBy }) {
+  if (!replacedBy.length) return 'Deprecated';
+  return `Deprecated, use ${replacedBy.map((q) => `${labelOf(q)} (${q})`).join(' or ')}`;
+}
+
 /** A term's own parents, as qnames — the projections store them either way. */
 export function getParents(qname) {
   const parts = splitQname(qname);
@@ -105,6 +141,8 @@ export function termSections(qname) {
     // Root-first ancestor labels, already display-ready.
     path: getAncestorPath(qname),
     inverseOf: item.inverseOf ? qualify(parts.prefix, item.inverseOf) : null,
+    // `{ replacedBy }` on a deprecated term, null otherwise — see `deprecationNote`.
+    deprecation: deprecationNote(qname),
     parents: getParents(qname),
     children: getChildren(qname),
   };
@@ -117,6 +155,7 @@ export function hierarchyText(qname) {
   if (!sections) return undefined;
 
   const lines = [sections.documentation];
+  if (sections.deprecation) lines.push(deprecationText(sections.deprecation));
   if (sections.sources.length) lines.push(`Source: ${sections.sources.map((s) => s.label).join('; ')}`);
   if (sections.path.length) lines.push(`Path: ${sections.path.join(' › ')}`);
   if (sections.inverseOf) lines.push(`Inverse: ${sections.inverseOf}`);

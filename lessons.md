@@ -1,5 +1,111 @@
 # Lessons
 
+Read this index, then only the entries relevant to the
+task. Add every new entry to one topic below.
+
+## Index
+
+### Workflow and verification
+
+- [Tests run in the docker `dev` service](#2026-09-11--node-lives-in-the-docker-dev-service)
+- [Test the pure decision, not the DOM](#2026-08-08--test-the-pure-decision-not-the-dom-when-the-suite-has-no-dom-env)
+- [Read the file, not the cached copy](#2026-08-11--read-the-file-dont-trust-the-copy-you-already-have)
+- [Validate bulk RDF edits structurally](#2026-08-13--validate-rdf-bulk-edits-with-structural-checks-not-one-fragile-regex)
+- [No command execution: report the gap](#2026-08-07--when-command-execution-is-unavailable-validate-through-editor-diagnostics-and-report-the-gap)
+- [Missing npm blocks runtime checks](#2026-08-08--ctrlcmd-click-should-mirror-hierarchy-lookup-and-missing-npm-blocks-runtime-verification)
+- [Measure before designing](#2026-08-10--measure-the-transformation-before-designing-around-it)
+- [The existing hack proved the rework cheap](#2026-08-07--the-existing-hack-was-the-proof-the-rework-was-cheap)
+- [A disabled feature hides bugs](#2026-08-13--a-disabled-feature-hides-the-bugs-in-the-code-that-would-have-run-it)
+- [A hook that writes nothing](#2026-09-11--files-were-modified-by-this-hook-from-a-hook-that-writes-nothing)
+- [Usage breakdown](#usage-breakdown)
+
+### Tests and fixtures
+
+- [An ontology bump moves asserted numbers](#2026-09-10--an-ontology-bump-moves-the-numbers-a-test-asserts)
+- [Parser tests vs example diagrams](#2026-08-07--parser-tests-must-not-assert-on-the-example-diagrams)
+- [Only supported link-label syntax in tests](#2026-08-08--tests-should-only-use-supported-mermaid-link-label-syntax)
+- [Stale graph-style assertions](#2026-09-10--five-stale-graph-style-assertions-three-redesigns-behind-them)
+- [A fixture that omits the feature's field](#2026-09-10--a-fixture-that-omits-the-field-the-feature-is-made-of)
+
+### Editor, completion and hover
+
+- [Completion trigger, not the keymap](#2026-08-08--completion-doesnt-work-was-the-trigger-condition-not-the-keymap)
+- [One wrong return type killed tooltips](#2026-08-14--one-wrong-return-type-deactivated-every-tooltip-in-the-editor)
+- [Completion panel off screen](#2026-08-13--the-completion-panel-was-rendered-into-a-grid-cell-off-the-screen)
+- [Ctrl+Space and IME on Linux](#2026-08-08--ctrlspace-can-be-unavailable-on-linux-due-to-imeglobal-shortcut-capture)
+- [Overriding one binding in a shared keymap](#2026-08-07--reordering-a-shared-keymap-to-override-one-binding-costs-more-than-sidestepping-it)
+- [Font size never re-measured](#2026-08-14--a-font-size-the-editor-never-re-measures-is-only-half-applied)
+- [Editor scrolled via its host](#2026-08-12--the-mermaid-editor-scrolled-via-its-host-not-via-codemirror)
+- [A shortcut has to be printed](#2026-08-07--a-control-that-has-a-shortcut-has-to-print-it)
+- [Rotate shortcut was a binding](#2026-09-10--the-rotate-shortcut-was-a-binding-not-a-feature)
+- [Label completion and deprecated terms](#2026-09-25--label-completion-and-deprecated-d3fend-terms)
+
+### Mermaid parsing and templates
+
+- [Unsupported renderer syntax](#2026-08-07--a-syntax-the-target-renderer-rejects-is-not-a-supported-syntax)
+- [Normalize edge endpoint declarations](#2026-08-08--edge-endpoint-node-declarations-must-be-normalized-through-the-node-parser)
+- [A subgraph cannot mean members](#2026-09-08--a-subgraph-cannot-mean-these-are-the-members)
+- [Templates as a source rewrite](#2026-09-08--implementing-templates-expansion-as-a-source-rewrite)
+- [A box as a set, untagged endpoints](#2026-09-13--a-box-as-a-set-and-the-untagged-edge-endpoint)
+
+### RDF, SPARQL and knowledge bases
+
+- [Hierarchy walk in the wrong GRAPH block](#2026-09-01--a-hierarchy-walk-moved-inside-the-wrong-graph-block-empties-a-not-exists)
+- [FILTER on a graph name is a scan](#2026-08-31--a-filter-on-a-graph-name-is-a-scan-not-a-lookup)
+- [Empty default graph](#2026-08-28--an-empty-default-graph-makes-a-correct-query-return-nothing)
+- [Blank node stringified into the UI](#2026-08-14--a-blank-node-stringified-into-the-ui)
+- [Direct triples exist vs complete](#2026-08-07--the-direct-triples-exist-is-not-the-same-as-the-direct-triples-are-complete)
+- [Who decompresses](#2026-08-07--who-decompresses-is-not-the-clients-decision-to-make)
+- [A prefix map for a serializer](#2026-08-07--a-prefix-map-handed-to-a-serializer-is-not-a-display-convenience)
+- [A bare local name is not an identity](#2026-08-10--a-bare-local-name-stopped-being-an-identity)
+- [Legal knowledge bases session state](#2026-08-10--session-state-legal-knowledge-bases-landed-compliance-view-not-started)
+- [Readable but unwritable vocabulary](#2026-08-13--a-vocabulary-can-be-readable-and-unwritable-and-nobody-notices)
+- [`prefix:local-name` is not class or property](#2026-09-11--prefixlocal-name-does-not-say-class-or-property)
+- [Normalize an inverse at emission](#2026-09-14--normalize-an-inverse-at-emission-not-in-the-model)
+- [Storage backend chosen by boot path](#2026-08-08--the-boot-path-chose-the-storage-backend-not-the-data-size)
+- [Migration chain needs the raw payload](#2026-09-12--a-migration-chain-needs-the-raw-payload-at-every-hop)
+- [Merged defaults hide absent values](#2026-09-11--merged-defaults-cannot-tell-a-saved-value-from-an-absent-one)
+
+### D3FEND modelling
+
+- [No data vs processing subtree](#2026-08-11--d3fend-has-no-data-vs-processing-subtree)
+- [The missing bucket was structural](#2026-08-12--the-missing-bucket-was-a-structural-question-not-a-taxonomic-one)
+- [Attacks and defences on the same branch](#2026-08-13--d3fend-files-attacks-and-defences-on-the-same-branch)
+- [Symmetric relation read as one](#2026-08-10--a-symmetric-relation-is-two-triples-but-one-thing-to-read)
+- [One-directional symmetric lookup](#2026-08-14--a-one-directional-lookup-for-a-symmetric-relation)
+- [Connection URL fronting a cluster](#2026-09-09--a-connection-url-fronting-a-cluster-has-no-single-d3fend-class)
+- [Cloud database has no host](#2026-09-09--the-cloud-database-is-the-class-that-has-no-host)
+- [Fault tolerance in the graph](#2026-09-09--a-platform-is-fault-tolerant-only-if-the-graph-says-two-things-are-one-thing)
+
+### Node panel
+
+- [Panel read a different ontology](#2026-08-13--the-node-panel-was-reading-a-different-ontology-than-the-sparql-pane)
+- [Non-modal info card](#2026-09-14--the-info-panel-as-a-non-modal-card-adr-0037)
+- [Hide the cURIe when it repeats the label](#2026-09-16--hide-the-curie-in-the-class-heading-when-it-repeats-the-label)
+- [Results table exit, clipboard helper](#2026-08-28--the-results-table-had-no-exit-and-the-clipboard-helper-was-trapped-in-mainjs)
+
+### Graph view and layout
+
+- [View-derived id across a rewrite](#2026-08-07--a-view-derived-id-cannot-carry-a-selection-across-the-change-that-rewrites-it)
+- [Flow-focus dimming opacity](#2026-08-07--flow-focus-dimming-needs-mid-opacity-to-preserve-graph-context)
+- [Flow focus as graph-level classes](#2026-08-07--directional-flow-focus-works-best-as-graph-level-classes-not-filter-state-rewrites)
+- [Library error path writes outside](#2026-08-13--a-librarys-error-path-can-write-outside-your-container)
+- [Folding reset the view](#2026-09-08--folding-reset-the-view-and-the-fix-was-one-node-not-the-viewport)
+- [Grouping by relation: boxes](#2026-09-09--grouping-by-relation-four-reasons-a-box-is-the-wrong-element)
+- [Guard never needed](#2026-09-12--the-guard-the-codebase-had-never-needed)
+- [Colour constant nobody looks up](#2026-09-11--a-colour-constant-nothing-could-ever-look-up)
+- [Floating banner blocks the reader](#2026-09-12--a-floating-banner-is-a-control-the-reader-cannot-reach-past)
+- [Link shape and `breadthfirst`](#2026-09-13--link-shape-as-a-preference-and-where-breadthfirst-starts)
+- [Tiers from travelled links](#2026-09-13--tiers-come-from-the-links-something-travels-along)
+- [Links across containers (ADR 0040)](#2026-09-21--links-across-containers-the-layout-adapter-was-the-problem-adr-0040)
+
+### Build, data and CI
+
+- [Build did not know its base path](#2026-08-12--the-build-had-no-idea-where-it-would-be-served-from)
+- [First CI and Pages deploy](#2026-08-28--first-ci-build--github-pages-deploy-zizmor-clean)
+- [Per-branch Pages previews](#2026-08-28--per-branch-pages-previews-and-why-deploy-pages-cannot-do-it)
+- [One variable drives the D3FEND release](#2026-09-08--the-header-states-the-d3fend-release-and-one-variable-drives-it)
+
 ## 2026-09-01 — a hierarchy walk moved inside the wrong GRAPH block empties a NOT EXISTS
 
 Task: `04-undefended-data-flows.rq` reported every artifact as undefended,
@@ -2006,3 +2112,44 @@ when the label is just the local name with spaces added — redundant for
 - Orphaned by the rewrite and to be deleted: `app/src/viz/elkRoutes.js` and
   `app/test/elk-routes.test.js` (their content lives on in `linkRoutes.js` and
   `link-routes.test.js`).
+
+## 2026-09-25 — label completion and deprecated D3FEND terms
+
+- **The replacement of a deprecated class is in `rdfs:seeAlso`,** not only in
+  the comment. I first planned to parse "revoked by T…" out of `rdfs:comment`;
+  the user asked to check `seeAlso`, which names a D3FEND class on 186 of 232
+  deprecated classes and agrees with the comment on all 186. Survey every
+  predicate on the subject before parsing free text.
+- **CodeMirror filters on `label` only.** Matching by `rdfs:label` means a second
+  option per opaque id: `label` = the rdfs:label, `apply`/`displayLabel` = the
+  qname, `boost: -1`. The custom completion panel must draw `displayLabel`.
+- **Dry-run a generator by calling `build()`, not `main()`:** comparing its
+  output to the committed JSON showed only the two new fields changed, without
+  writing anything.
+- **Data-dependent tests fail until the projection is regenerated:** 4 new
+  failures (`T1093`, `IMP-0001`) are expected until `rebuild-data.sh` runs.
+  Baseline before the change was 22 failures in 12 unrelated files.
+- **`lessons.md` now has an index.** Read it first, then only linked entries.
+
+## 2026-10-02 — double-click a tab to maximize its view
+
+- **Maximize is transient state in `layout/columns.js`,** not in the layout
+  model: nothing to persist or migrate, and restore reuses the saved weights.
+- **`dblclick` never fires on the tab; use `click` with `event.detail === 2`.**
+  The first click rebuilds every tab button (`renderContent` →
+  `replaceChildren`), so the two clicks land on different elements, and a
+  `dblclick` is dispatched on their nearest common ancestor — the tab bar.
+  `event.target.closest('.tab')` therefore returned null and nothing happened.
+  `detail` is the browser's click counter and ignores the changed target.
+- **Listen on the bar, not the button:** the button the first click hit is
+  detached by the time the second one arrives.
+- **Hidden columns use `display: none` only while maximized,** with a single
+  `1fr` track; the `col--empty` rule keeps its tracks because it must not shift
+  the other columns.
+- **I repeated the 2026-09-11 mistake:** I reported "`node` is not installed"
+  from the host PATH instead of using `docker compose exec -T -w /code/app dev`.
+  The user had to point at the container again. Check `docker compose ps` first.
+- **The suite cannot catch this:** no jsdom, so `columns.js` has no tests. The
+  run only confirms the 22-failure baseline is unchanged. A behaviour this
+  DOM-specific needs the dev server and a hard reload — `app/dist/` is a build
+  from September and does not contain source edits.

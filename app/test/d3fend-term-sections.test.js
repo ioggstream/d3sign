@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { getAlternatives, hierarchyText, termSections } from '../src/editor/d3fendHierarchy.js';
+import {
+  deprecationNote,
+  deprecationText,
+  getAlternatives,
+  hierarchyText,
+  termSections,
+} from '../src/editor/d3fendHierarchy.js';
 
 // `termSections` is what the hover card draws (via renderD3fendCard) and what
 // `hierarchyText` flattens for the completion popup. Asserted here rather than
@@ -93,5 +99,30 @@ describe('getAlternatives', () => {
 
   it('is empty for a name outside every vocabulary', () => {
     expect(getAlternatives('d3f:NotAThing')).toEqual({ parents: [], siblings: [], children: [] });
+  });
+});
+
+describe('deprecationNote', () => {
+  // D3FEND states the replacement as rdfs:seeAlso and in the comment
+  // ("revoked by T1055.012"); build-d3fend-completions.py reads it into replacedBy.
+  it('names the replacement of a revoked ATT&CK technique, qualified', () => {
+    expect(deprecationNote('d3f:T1093')).toEqual({ replacedBy: ['d3f:T1055.012'] });
+    expect(termSections('d3f:T1093').deprecation).toEqual({ replacedBy: ['d3f:T1055.012'] });
+  });
+
+  it('is an empty replacement list when the ontology states none', () => {
+    expect(deprecationNote('d3f:IMP-0001')).toEqual({ replacedBy: [] });
+    expect(deprecationText({ replacedBy: [] })).toBe('Deprecated');
+  });
+
+  it('is null for a current term and for an unknown one', () => {
+    expect(deprecationNote('d3f:Network')).toBeNull();
+    expect(deprecationNote('d3f:NotAThing')).toBeNull();
+  });
+
+  it('reads as one sentence with label and qname', () => {
+    expect(deprecationText({ replacedBy: ['d3f:T1055.012'] })).toBe(
+      'Deprecated, use Process Hollowing (d3f:T1055.012)',
+    );
   });
 });

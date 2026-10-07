@@ -32,8 +32,9 @@ A single-page application implementing all three features lives in
 [app/](app/). It runs fully client-side (no backend), in three columns. Each
 column is a tab group and every view can live in any of them: `Alt+Shift+←` and
 `Alt+Shift+→` move the selected view one column over, the arrangement and the
-column widths are remembered across reloads, and `Reset layout` in the header
-puts everything back
+column widths are remembered across reloads, double-clicking a tab maximizes
+its view to the whole window (double-click again to restore; not remembered),
+and `Reset layout` in the header puts everything back
 ([docs/adr/0022-column-tab-groups.md](docs/adr/0022-column-tab-groups.md)). The
 views are: a text-only editor (CodeMirror) for the mermaid+d3fend source, a
 `Files` pane (`Alt+F`) holding documents stored in the browser — the one being
