@@ -430,6 +430,11 @@ export function buildGraphModel(store, { edgeComments = [] } = {}) {
   // Classes are only complete once every quad has been seen.
   for (const node of nodes.values()) {
     node.rdfType = node.types.length ? shortLabel(node.types[0]) : null;
+    // Every class, not just the drawn one: a node that is two things at once gets
+    // a compound icon built from them (viz/icons.js). Which one leads is decided
+    // there, from the ontology — the order here is the store's, which interns
+    // terms globally, so it reflects the whole document rather than this node.
+    node.rdfTypes = node.types.map(shortLabel);
     node.coreCategory = coreCategoryOf(node.types);
     node.nodeKind = classifyNodeCategory(node.coreCategory);
     node.offensive = isOffensive(node.types);

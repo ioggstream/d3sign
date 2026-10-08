@@ -44,4 +44,12 @@ subgraph local["local workstation d3f:LaptopComputer"]
   repo -.->|d3f:initiates| hook-push
 
 end
+
+%% Two classes, because D3FEND has no single one for a repository served over the
+%% network: it names DatabaseServiceApplication and DHCPServiceApplication, but
+%% nothing for this. The graph view draws it as the class that does not exist —
+%% the CodeRepository glyph badged as a ServiceApplication. Which of the two
+%% badges is decided by BADGE_CLASSES in viz/icons.js, not by the order here.
+forge["d3f:ServiceApplication d3f:CodeRepository hosted forge"]
+repo -->|d3f:copies| forge
 ```

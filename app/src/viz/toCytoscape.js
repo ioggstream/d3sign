@@ -656,6 +656,14 @@ export function toCytoscapeElements(model, filterState, viewOptions = {}) {
     // set is keyed on. Resolving it to an icon is the stylesheet's job
     // (viz/graphStyle.js) — this module stays a pure view of the RDF.
     if (node.rdfType?.startsWith('d3f:')) data.typeName = node.rdfType.slice('d3f:'.length);
+    // Every D3FEND class the node carries, for the compound icon. Set only when
+    // there is more than one, like `folded` and `offensive`: a single-class node's
+    // data stays exactly as it was, and so does the `[typeName]` selector that
+    // decides which nodes are drawn as icons at all.
+    const d3fNames = (node.rdfTypes ?? [])
+      .filter((t) => t.startsWith('d3f:'))
+      .map((t) => t.slice('d3f:'.length));
+    if (d3fNames.length > 1) data.typeNames = d3fNames;
     // Where the node sits, resolved in rdf/graphModel.js from its own location edge
     // or from the place containing it. The 📍 is composed here, the way `foldNote`
     // composes its ▸ — the stylesheet draws labels and never decorates them.

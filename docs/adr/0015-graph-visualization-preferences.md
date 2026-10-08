@@ -6,6 +6,10 @@ Date: 2026-08-03
 
 Accepted
 
+Amended by [ADR 0044](0044-compound-class-icons.md),
+which composes an icon from several of a node's classes
+and moves the tint onto the root `<svg>`.
+
 ## Context
 
 The graph pane was called *Filtered graph*, which named a mechanism (the filter

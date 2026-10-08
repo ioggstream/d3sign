@@ -2302,3 +2302,55 @@ Code, and the ADR lists what that leaves unchecked.
   checks with the output piped, not saved; files named `d3-names-*.txt` or `d3x/`
   may have been written to host `/tmp` before it stopped. When a check needs a
   diff, have the subagent print the list and compare it in the session.
+
+### 2026-10-08 — Build-only Dockerfile: non-root user and checkov skips
+
+- **`# noqa` is not a checkov skip.** Checkov reads `# checkov:skip=CKV_ID: reason`
+  inside the Dockerfile. `HEALTHCHECK none` was a workaround for a container that
+  never runs.
+- **`WORKDIR` creates its directory as root.** With `USER node`, create the
+  directories first (`RUN mkdir`) and use `COPY --chown=node:node`; `/out` moved to
+  `/home/node/out` because `node` cannot write to `/`. Not built yet: the user runs
+  `sh vscode/build.sh`.
+
+### 2026-10-08 — Compound icons from several d3f classes (ADR 0044)
+
+- **Substituting `currentColor` in an icon body breaks any mask in it.** The tint
+  was `body.replaceAll('currentColor', color)`. The icon set's twelve compound
+  icons cut their badge out with a `<mask>` whose group sets `color="black"` and
+  whose paths say `fill="currentColor"` — the substitution rewrote those paths, so
+  `color="black"` had nothing to resolve and the mask rendered at the tint's
+  luminance (~0.11 for red): an 89%-opaque ghost instead of a hole. Fix: `color`
+  on the root `<svg>`. It is inherited, so the body still tints, but a subtree
+  that sets its own `color` keeps it. Shipped before the feature that needed it.
+- **`node.types` is not in source order.** `N3Store._findInIndex` walks its index
+  by numeric term id, assigned at a term's *first mention anywhere in the store*
+  — so a node's `rdf:type` order reflects the whole document, not the node. I had
+  planned "first tag wins" and asked the user to choose it before checking. Read
+  `node_modules/n3/lib/N3Store.js` before assuming an order survives.
+- **Resolve, then dedupe on the icon, not the class.** Icon resolution walks up
+  the hierarchy and the set is small, so two different classes very often land on
+  the same ancestor icon. Deduping on class names would have badged a glyph with
+  itself.
+- **The generic class is the badge, not the glyph.** I built it the other way
+  round and the user corrected it. The icon set already said so: the
+  combinations it names compose as `database_{application-outline}` and
+  `email_{cog-transfer-outline}` — the specific thing draws, "served as X"
+  decorates. Read how existing data composes before inventing an orientation.
+- **An inherited-match list makes a terrible gate.** `BADGE_CLASSES` decides which
+  class decorates which, matching by inheritance. I first used it as a gate — compound only
+  when *exactly one* class matches — and it passed every test I wrote, because I
+  tested the pair the user gave me. `ComputerPlatform`, `Application` and
+  `Software` sit near the top of their subtrees, so most of D3FEND inherits from
+  one: `Host` + `WebServer`, `Process` + `Browser` and half of every plausible
+  pair had two "base" classes and silently drew a single icon. Rank, don't gate.
+  When a rule is "is it in this list", enumerate real inputs against it before
+  believing the tests.
+- **Test the pipeline, not just the unit.** icons.test.js passed throughout. The
+  end-to-end test (compound-icons.test.js: markdown → parser → RDF → model →
+  stylesheet) is what would have shown the gap, and my first attempt at it failed
+  on my own harness — `parseDiagram` wants fenced markdown, `emitQuads(ast, name)`
+  returns `{quads, graphName}`, and the store takes `replaceGraph`.
+- 22 tests fail on this branch before any change; that is the baseline to compare
+  against (`vitest run --reporter=json`, then filter `status == 'failed'` — the
+  default reporter's tail cuts off the names).

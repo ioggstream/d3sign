@@ -77,7 +77,9 @@ describe('buildStyle in icon mode', () => {
   it('tints a resolved icon with the branch colour on a white chip', () => {
     const artifact = element({ typeName: 'File', coreCategory: 'Artifact' });
     const uri = resolve(typed['background-image'], artifact);
-    expect(decodeURIComponent(uri)).toContain(`fill="${CATEGORY_COLORS.Artifact}"`);
+    // On the root, not on the paths: the body keeps its `currentColor` so that a
+    // compound icon's mask can shadow the tint with its own black (see icons.js).
+    expect(decodeURIComponent(uri)).toContain(`color="${CATEGORY_COLORS.Artifact}"`);
     expect(resolve(typed['background-color'], artifact)).toBe('#fff');
     expect(resolve(typed['border-width'], artifact)).toBe(1);
   });
@@ -85,7 +87,7 @@ describe('buildStyle in icon mode', () => {
   it('tints an offensive technique red in icon mode too', () => {
     const attack = element({ typeName: 'File', coreCategory: 'Plan', offensive: true });
     expect(decodeURIComponent(resolve(typed['background-image'], attack))).toContain(
-      `fill="${nodeColor(attack)}"`,
+      `color="${nodeColor(attack)}"`,
     );
     expect(resolve(typed['border-color'], attack)).toBe(nodeColor(attack));
     expect(nodeColor(attack)).not.toBe(CATEGORY_COLORS.Plan);

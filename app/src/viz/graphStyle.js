@@ -6,7 +6,7 @@
  * cytoscape instance: `buildStyle` is a pure function of its two arguments.
  */
 
-import { iconDataUri, resolveIconName } from './icons.js';
+import { composeIconUri } from './icons.js';
 import {
   CONTAINER_INSET,
   CONTAINER_LABEL_MAX_WIDTH,
@@ -177,10 +177,27 @@ export const categoryColor = (coreCategory) => CATEGORY_COLORS[coreCategory] ?? 
 export const nodeColor = (element) =>
   element.data('offensive') ? OFFENSIVE_COLOR : categoryColor(element.data('coreCategory'));
 
-/** The icon URI for an element, or undefined when its type resolves to none. */
-function iconFor(iconSet, element) {
-  const name = resolveIconName(iconSet, element.data('typeName'));
-  return name && iconDataUri(iconSet, name, nodeColor(element));
+/**
+ * The icon URI for an element, or undefined when its classes resolve to none.
+ *
+ * Memoized per style object, which is what makes it affordable to read it from
+ * four properties of the same rule: cytoscape re-invokes a mapper every time it
+ * redraws a dirtied element, and composing a compound icon builds SVG strings.
+ * `iconSet` and `prefs` are fixed for one `buildStyle` call, so the class list and
+ * the colour are the whole key.
+ *
+ * `has`, not `??=`: a class with no icon resolves to `undefined`, and that is the
+ * common case worth caching, not a miss to retry.
+ */
+function iconResolver(iconSet) {
+  const cache = new Map();
+  return (element) => {
+    const names = element.data('typeNames') ?? [element.data('typeName')].filter(Boolean);
+    const color = nodeColor(element);
+    const key = `${names.join('|')}\u0000${color}`;
+    if (!cache.has(key)) cache.set(key, composeIconUri(iconSet, names, color));
+    return cache.get(key);
+  };
 }
 
 /**
@@ -190,6 +207,7 @@ function iconFor(iconSet, element) {
  */
 export function buildStyle(prefs, iconSet = null) {
   const iconMode = prefs.nodeStyle === 'icon';
+  const iconFor = iconResolver(iconSet);
   const containerIcon = containerIconSize(prefs);
   // A container's gutter on all four sides. The label band is *not* in here: it is
   // extra node height above the children, applied as a `min-height` bypass by
@@ -224,14 +242,14 @@ export function buildStyle(prefs, iconSet = null) {
       selector: 'node[typeName]',
       style: {
         shape: 'round-rectangle',
-        'background-image': (ele) => iconFor(iconSet, ele) ?? 'none',
+        'background-image': (ele) => iconFor(ele) ?? 'none',
         // `contain` keeps the glyph inside the node at every zoom level, as long
         // as the SVG itself declares an intrinsic size (see icons.js).
         'background-fit': 'contain',
         'background-image-containment': 'inside',
         'background-clip': 'node',
-        'background-color': (ele) => (iconFor(iconSet, ele) ? '#fff' : nodeColor(ele)),
-        'border-width': (ele) => (iconFor(iconSet, ele) ? 1 : 0),
+        'background-color': (ele) => (iconFor(ele) ? '#fff' : nodeColor(ele)),
+        'border-width': (ele) => (iconFor(ele) ? 1 : 0),
         'border-color': (ele) => nodeColor(ele),
       },
     });
@@ -312,7 +330,7 @@ export function buildStyle(prefs, iconSet = null) {
     style.push({
       selector: 'node[isContainer][typeName]',
       style: {
-        'background-image': (ele) => iconFor(iconSet, ele) ?? 'none',
+        'background-image': (ele) => iconFor(ele) ?? 'none',
         'background-fit': 'none',
         'background-width': `${containerIcon}px`,
         'background-height': `${containerIcon}px`,

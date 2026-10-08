@@ -66,6 +66,40 @@ describe('buildGraphModel — from turtle only', () => {
     expect(client.rdfType).toBe('d3f:Browser');
   });
 
+  it('keeps every class of a node that has more than one', () => {
+    // The icon for a node D3FEND has no single class for is composed from these
+    // (viz/icons.js). Whichever is drawn, both have to arrive.
+    const multi = buildGraphModel(
+      storeFromTurtle('G:repo a d3f:ServiceApplication, d3f:CodeRepository .'),
+    ).nodes.get('urn:d3fend-graph:repo');
+    expect([...multi.rdfTypes].sort()).toEqual(['d3f:CodeRepository', 'd3f:ServiceApplication']);
+    // The node still names one class as the one it is drawn and labelled by.
+    expect(multi.rdfTypes).toContain(multi.rdfType);
+  });
+
+  it('carries the classes to cytoscape whatever order the store yields them', () => {
+    // The store interns terms across the whole document, so a node's rdf:type
+    // order follows what *other* nodes mentioned first. An earlier node typed
+    // d3f:CodeRepository used to decide which class drew the icon.
+    const typeNamesFor = (turtle) => {
+      const model = buildGraphModel(storeFromTurtle(turtle));
+      const { elements } = toCytoscapeElements(model, filterState());
+      return elements.find((e) => e.data.id === 'urn:d3fend-graph:repo').data.typeNames;
+    };
+    const alone = typeNamesFor('G:repo a d3f:ServiceApplication, d3f:CodeRepository .');
+    const preceded = typeNamesFor(`
+      G:other a d3f:CodeRepository .
+      G:repo a d3f:ServiceApplication, d3f:CodeRepository .
+    `);
+    expect([...alone].sort()).toEqual([...preceded].sort());
+  });
+
+  it('leaves a single-class node without a type list', () => {
+    const { elements } = toCytoscapeElements(model, filterState());
+    expect(elements.find((e) => e.data.id === 'urn:d3fend-graph:client').data.typeNames)
+      .toBeUndefined();
+  });
+
   it('falls back to the local name when a node has no rdfs:label', () => {
     const server = model.nodes.get('urn:d3fend-graph:server');
     expect(server.id).toBe('server');
