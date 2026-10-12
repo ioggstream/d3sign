@@ -14,6 +14,7 @@ import {
   PATH_FOCUS_DEPTH_CLASSES,
   SEARCH_FOCUS_CLASS,
   SEARCH_HIT_CLASS,
+  SELECTION_LINK_CLASS,
   buildStyle,
   pathFocusDepthBand,
   pathFocusDepthClass,
@@ -1006,6 +1007,20 @@ export function createGraphPane(host, {
   }
 
   if (onSelectionChange) cy.on('select unselect', 'node, edge', reportSelection);
+
+  /**
+   * Highlights every link of the selected node, and dims nothing. Recomputed from
+   * scratch on each change rather than toggled, so a rebuild — which re-selects by
+   * id and so fires `select` again — restores it with no code of its own.
+   */
+  function markSelectionLinks() {
+    cy.batch(() => {
+      cy.edges().removeClass(SELECTION_LINK_CLASS);
+      cy.$('node:selected').connectedEdges().addClass(SELECTION_LINK_CLASS);
+    });
+  }
+
+  cy.on('select unselect', 'node', markSelectionLinks);
 
   // Double-click opens the info panel. Safe as a double now that a single tap only
   // selects: the first of the two taps does the selecting, so there is nothing to

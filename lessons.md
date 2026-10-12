@@ -2354,3 +2354,19 @@ Code, and the ADR lists what that leaves unchecked.
 - 22 tests fail on this branch before any change; that is the baseline to compare
   against (`vitest run --reporter=json`, then filter `status == 'failed'` — the
   default reporter's tail cuts off the names).
+
+## 2026-10-12 — highlight a selected node's links without dimming
+
+Task: selecting a node should highlight all its links and leave other nodes alone.
+
+- **The fix lives in the view, not in toCytoscape.js.** Selection is cytoscape
+  state; element data needs nothing new. A `selection-link` class
+  (`SELECTION_LINK_CLASS`, graphStyle.js) on `node:selected.connectedEdges()`,
+  set by a `select unselect` handler in graphPane.js.
+- **Don't reuse `path-focus-dim`.** It is shared by path focus and search; using
+  it would dim and make selection exclusive with both.
+- **Recompute, don't toggle.** Clearing and re-adding the class on every change
+  means the rebuild path (which re-selects by id and fires `select`) restores it
+  for free.
+- Overlay halo + `z-index`, no `line-color`/`width`/`opacity`: those already encode
+  kind, fold count and effect (same reasoning as `edge:selected`).

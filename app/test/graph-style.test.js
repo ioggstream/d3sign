@@ -3,6 +3,7 @@ import {
   CATEGORY_COLORS,
   SEARCH_FOCUS_CLASS,
   SEARCH_HIT_CLASS,
+  SELECTION_LINK_CLASS,
   buildStyle,
   categoryColor,
   derivedEdgeWidth,
@@ -451,6 +452,27 @@ describe('a selected edge', () => {
     expect(indexOf('edge:selected')).toBeGreaterThan(indexOf('edge[kind="tactical-verb"]'));
     expect(indexOf('edge:selected')).toBeGreaterThan(indexOf('edge[derived]'));
     expect(indexOf('edge:selected')).toBeGreaterThan(indexOf('edge[collapsed]'));
+  });
+});
+
+describe("a selected node's links", () => {
+  const style = buildStyle(DEFAULT_PREFS, ICON_SET);
+  const indexOf = (selector) => style.findIndex((rule) => rule.selector === selector);
+  const links = ruleFor(style, `edge.${SELECTION_LINK_CLASS}`).style;
+
+  it('haloes in the selection colour, leaving the line to say what the link is', () => {
+    expect(links['overlay-color']).toBe(ruleFor(style, 'node:selected').style['border-color']);
+    expect(links['overlay-opacity']).toBeGreaterThan(0);
+    expect('line-color' in links).toBe(false);
+    expect('width' in links).toBe(false);
+  });
+
+  it('dims nothing', () => {
+    expect('opacity' in links).toBe(false);
+  });
+
+  it('yields to an edge selection', () => {
+    expect(indexOf('edge:selected')).toBeGreaterThan(indexOf(`edge.${SELECTION_LINK_CLASS}`));
   });
 });
 

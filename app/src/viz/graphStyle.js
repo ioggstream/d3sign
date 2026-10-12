@@ -98,6 +98,13 @@ export const SEARCH_HIT_CLASS = 'search-hit';
 export const SEARCH_FOCUS_CLASS = 'search-focus';
 
 /**
+ * What viz/graphPane.js puts on every link touching the selected node, so the
+ * node's relations read at a glance. Exported for the same reason as the search
+ * classes. Emphasis only: nothing else is dimmed, unlike path focus and search.
+ */
+export const SELECTION_LINK_CLASS = 'selection-link';
+
+/**
  * How far along a directional flow focus an element sits, banded. The walk
  * reports a hop count (viz/pathFocus.js); everything past the last band shares
  * it, because the point is telling near from far and not counting to nine.
@@ -650,6 +657,20 @@ export function buildStyle(prefs, iconSet = null) {
       style: { 'overlay-opacity': overlayOpacity, 'overlay-padding': overlayPadding },
     });
   }
+
+  // The links of the selected node: the same halo as a selected edge, in the same
+  // colour, for the same reason — line colour, style, width and arrows are all
+  // spoken for. No `opacity`, so nothing else on screen changes; `z-index` lifts
+  // them over the unrelated links they cross.
+  style.push({
+    selector: `edge.${SELECTION_LINK_CLASS}`,
+    style: {
+      'overlay-color': SELECTION_COLOR,
+      'overlay-opacity': 0.25,
+      'overlay-padding': 4,
+      'z-index': 10,
+    },
+  });
 
   // Selection, last of the edge rules so it wins — same reason as the node one.
   //
